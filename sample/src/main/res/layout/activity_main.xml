@@ -22,19 +22,14 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <FrameLayout
+    <com.mapbox.mapboxsdk.maps.MapView
+            android:id="@+id/map"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <include layout="@layout/content_main"/>
-        <com.mapbox.mapboxsdk.maps.MapView
-                android:id="@+id/map"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:rotate_enabled="false"
-                app:tilt_enabled="false"
-                app:compass_enabled="false"/>
-    </FrameLayout>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:rotate_enabled="false"
+            app:tilt_enabled="false"
+            app:compass_enabled="false"/>
 
     <android.support.design.widget.FloatingActionButton
             android:id="@+id/traffic_fab"
@@ -43,6 +38,4 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/ic_flight"/>
-
-
 </android.support.design.widget.CoordinatorLayout>
