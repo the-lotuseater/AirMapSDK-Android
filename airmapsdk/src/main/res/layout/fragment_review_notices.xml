@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/next_button"
+        android:orientation="vertical">
+
+    <Switch
+            android:id="@+id/submit_notice_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/airmap_submit_digital_notice"
+            android:textStyle="bold"
+            android:checked="true"/>
+
+    <ListView
+            android:id="@+id/digital_notice_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    <TextView
+            android:id="@+id/not_digital_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:paddingTop="16dp"
+            android:text="@string/airmap_not_accept_notice"/>
+
+    <ListView
+            android:id="@+id/not_digital_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+</LinearLayout>

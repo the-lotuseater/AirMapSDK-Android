@@ -1,0 +1,2 @@
+include ':airmapsdk', ':sample'
+//rootProject.name = 'airmapsdk-android' //The artifactId

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        tools:context="com.airmap.airmapsdktest.TrafficAlertActivity">
+
+    <com.mapbox.mapboxsdk.maps.MapView
+            android:id="@+id/mapview"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            app:center_latitude="33.941389"
+            app:center_longitude="-118.368156"
+            app:zoom="11"
+            app:tilt_enabled="false"
+            app:rotate_enabled="false"
+            app:style_url="@string/style_mapbox_streets"/>
+
+</RelativeLayout>

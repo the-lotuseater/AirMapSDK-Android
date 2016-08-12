@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        package="com.airmap.airmapsdk">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <application
+            android:allowBackup="true"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme">
+        <service android:name="org.eclipse.paho.android.service.MqttService"/>
+        <service android:name="com.mapbox.mapboxsdk.telemetry.TelemetryService"/>
+
+        <activity
+                android:name=".UI.Activities.CreateFlightActivity"
+                android:label="@string/airmap_title_activity_create_flight"
+                android:launchMode="singleTop"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppTheme.NoActionBar"
+                android:windowSoftInputMode="adjustResize"/>
+        <activity
+                android:name=".UI.Activities.DecisionFlowActivity"
+                android:label="@string/airmap_title_activity_decision_flow"
+                android:launchMode="singleTop"
+                android:screenOrientation="portrait"
+                android:parentActivityName=".UI.Activities.CreateFlightActivity"
+                android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".UI.Activities.CreateFlightActivity"/>
+        </activity>
+        <activity
+                android:name=".UI.Activities.CustomPropertiesActivity"
+                android:label="@string/airmap_title_activity_custom_properties"
+                android:launchMode="singleTop"
+                android:parentActivityName=".UI.Activities.CreateFlightActivity"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".UI.Activities.CreateFlightActivity"/>
+        </activity>
+        <activity
+                android:name=".UI.Activities.ProfileActivity"
+                android:label="@string/airmap_title_activity_profile"
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.NoActionBar"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+                android:name=".UI.Activities.CreateEditAircraftActivity"
+                android:label="@string/airmap_title_activity_create_aircraft"
+                android:launchMode="singleTop"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+                android:name=".UI.Activities.LoginActivity"
+                android:label="@string/airmap_title_activity_login"
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.NoActionBar"/>
+    </application>
+
+</manifest>

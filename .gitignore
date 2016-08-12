@@ -1,0 +1,10 @@
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+airmapsdk/src/main/assets/airmap.config.json
+sample/src/main/assets/airmap.config.json

@@ -1,0 +1,33 @@
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        tools:context=".UI.Fragments.ListPermitsFragment">
+
+    <TextView
+            android:id="@+id/summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:padding="16dp"
+            android:textStyle="bold"/>
+
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/permit_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/summary"
+            android:layout_above="@+id/next_button"
+            android:padding="16dp"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+
+    <Button
+            android:id="@+id/next_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="@string/airmap_next"/>
+
+</RelativeLayout>

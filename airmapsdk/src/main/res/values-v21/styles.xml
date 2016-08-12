@@ -1,0 +1,9 @@
+<resources>
+
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:colorButtonNormal">@color/colorAccent</item>
+    </style>
+</resources>
