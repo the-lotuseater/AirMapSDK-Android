@@ -22,8 +22,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".TrafficAlertActivity"/>
-
         <service android:name="com.mapbox.mapboxsdk.telemetry.TelemetryService" />
 
     </application>
