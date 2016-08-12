@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private FloatingActionButton trafficFab;
 
-    private List<MarkerOptions> markers; //List to keep track of annotations on the map
+    private List<MarkerOptions> markers; //List to keep track of traffic annotations on the map
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
         markers = new ArrayList<>();
+        Toast.makeText(MainActivity.this, "Tap and hold to create a flight", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -130,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
             AirMap.disableTrafficAlerts();
         }
+
+        //This part is not required to start traffic alerts
         AirMap.getCurrentFlight(new AirMapCallback<AirMapFlight>() { //Check if user has an active flight
             @Override
             public void onSuccess(AirMapFlight response) {
@@ -157,14 +160,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onAddTraffic(List<AirMapTraffic> added) {
         for (final AirMapTraffic traffic : added) {
-            final MarkerOptions marker = new MarkerOptions().
-                    position(getLatLngFromCoordinate(traffic.getCoordinate())).
-                    title(traffic.getId()).
-                    icon(getIcon(traffic));
+            final MarkerOptions marker = new MarkerOptions()
+                    .position(getLatLngFromCoordinate(traffic.getCoordinate())) //Place an annotation at the traffic's location
+                    .title(traffic.getId()) //Set the title of the popup window
+                    .icon(getIcon(traffic)); //Set the icon
             markers.add(marker);
             runOnUiThread(new Runnable() {
                 public void run() {
-                    map.addMarker(marker);
+                    map.addMarker(marker); //Add it to the map
                 }
             });
         }
@@ -179,21 +182,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onUpdateTraffic(List<AirMapTraffic> updated) {
         for (AirMapTraffic traffic : updated) {
-            final MarkerOptions options = searchForId(traffic.getId());
+            final MarkerOptions options = searchForId(traffic.getId()); //Find the annotation that needs to be updated
             if (options == null) {
-                return;
+                return; //If no traffic with that Id, don't do anything
             }
             final LatLng old = options.getPosition();
-            markers.remove(options);
-            options.position(getLatLngFromCoordinate(traffic.getCoordinate()));
-            options.icon(getIcon(traffic));
-            markers.add(options);
+            markers.remove(options); //Remove old annotation from list
+            options.position(getLatLngFromCoordinate(traffic.getCoordinate())); //Update the annotation's location
+            options.icon(getIcon(traffic)); //The icon for the traffic may have changed (it could have changed directions)
+            markers.add(options); //Add new annotation to list
             runOnUiThread(new Runnable() {
                 public void run() {
                     Marker marker = options.getMarker();
                     ValueAnimator markerAnimator = ObjectAnimator.ofObject(marker, "position", new LatLngEvaluator(), old, marker.getPosition());
                     markerAnimator.setDuration(1100);
-                    markerAnimator.start();
+                    markerAnimator.start(); //Animate the traffic's location from old position to new position
                 }
             });
         }
@@ -207,14 +210,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onRemoveTraffic(List<AirMapTraffic> removed) {
         for (AirMapTraffic traffic : removed) {
-            final MarkerOptions options = searchForId(traffic.getId());
+            final MarkerOptions options = searchForId(traffic.getId()); //Find the traffic that needs to be removed
             if (options == null) {
                 return;
             }
             markers.remove(options);
             runOnUiThread(new Runnable() {
                 public void run() {
-                    map.removeMarker(options.getMarker());
+                    map.removeMarker(options.getMarker()); //Remove the traffic
                 }
             });
         }
@@ -237,6 +240,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      * @return An icon
      */
     private Icon getIcon(AirMapTraffic traffic) {
+        //Generate the icon dynamically based on which direction the traffic is pointing/traveling
         IconFactory factory = IconFactory.getInstance(this);
         int id = 0;
         if (traffic == null) {
