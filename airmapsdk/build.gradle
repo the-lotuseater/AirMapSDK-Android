@@ -54,9 +54,9 @@ dependencies {
 
 
 
-def siteUrl = 'http://airmap.com'
+def siteUrl = 'http://www.airmap.com'
 def projectName = 'com.airmap.airmapsdk'
-def gitUrl = 'https://github.com/airmap/android-sdk-src.git'
+def gitUrl = 'https://github.com/airmap/AirMapSDK-Android.git'
 def libVersion = '1.0.0'
 
 bintray {
@@ -84,7 +84,7 @@ install {
             licenses {
                 license {
                     name 'The MIT License'
-                    url 'https://opensource.org/licenses/MIT'
+                    url 'https://github.com/airmap/AirMapSDK-Android/blob/master/LICENSE'
                 }
             }
             developers {

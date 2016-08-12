@@ -92,7 +92,7 @@ public class TrafficService extends BaseService {
                     AirMap.getCurrentFlight(new AirMapCallback<AirMapFlight>() {
                         @Override
                         public void onSuccess(AirMapFlight response) {
-                            if (!response.getFlightId().equals(flightId)) {
+                            if (response != null && !response.getFlightId().equals(flightId)) {
                                 connect();
                             }
                         }
@@ -338,7 +338,7 @@ public class TrafficService extends BaseService {
         try {
             for (String channel : currentChannels) {
                 if (client != null && channel != null)
-                client.unsubscribe(channel);
+                    client.unsubscribe(channel);
             }
         } catch (MqttException e) {
             e.printStackTrace();
@@ -436,16 +436,17 @@ public class TrafficService extends BaseService {
          */
         @Override
         public void onSuccess(AirMapFlight response) {
-            flightId = response.getFlightId();
-//            options.setUserName(response.getPilotId());
-            options.setUserName(flightId);
-            AirMapLog.v("TrafficService", options.toString());
-            AirMapLog.i("TrafficService", "Got flight with id: " + flightId);
-            AirMapLog.i("TrafficService", "Connecting to MQTT server");
-            try {
-                client.connect(options, ConnectionState.Connecting, actionListener);
-            } catch (MqttException e) {
-                onDisconnect(false);
+            if (response != null) {
+                flightId = response.getFlightId();
+                options.setUserName(flightId);
+                AirMapLog.v("TrafficService", options.toString());
+                AirMapLog.i("TrafficService", "Got flight with id: " + flightId);
+                AirMapLog.i("TrafficService", "Connecting to MQTT server");
+                try {
+                    client.connect(options, ConnectionState.Connecting, actionListener);
+                } catch (MqttException e) {
+                    onDisconnect(false);
+                }
             }
         }
 
