@@ -1,4 +1,6 @@
 # AirMap Android SDK
+[![Bintray](https://img.shields.io/bintray/v/airmapio/maven/com.airmap.airmapsdk.svg)](http://jcenter.bintray.com/com/airmap/airmapsdk/airmapsdk/)
+[![license](https://img.shields.io/github/license/airmap/AirMapSDK-Android.svg)](https://github.com/airmap/AirMapSDK-Android/blob/master/LICENSE)
 
 Create Flights, Send Telemetry Data, Get Realtime Traffic Alerts.
 
