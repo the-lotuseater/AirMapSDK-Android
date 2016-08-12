@@ -37,10 +37,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, AirMapTrafficListener, MapboxMap.OnMapLongClickListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
+        View.OnClickListener, AirMapTrafficListener, MapboxMap.OnMapLongClickListener {
     private final int REQUEST_LOGIN = 1; //The request code for the LoginActivity
     private final int REQUEST_FLIGHT = 2; //The request code for creating a flight
-    private final String[] compassDirections = new String[]{"n", "nne", "ne", "ene", "e", "ese", "se", "sse", "s", "ssw", "sw", "wsw", "w", "wnw", "nw", "nnw"}; //Compass directions
+    private final String[] compassDirections = new String[]{"n", "nne", "ne", "ene", "e", "ese",
+            "se", "sse", "s", "ssw", "sw", "wsw", "w", "wnw", "nw", "nnw"}; //Compass directions
 
     private MapView mapView; //A MapBox MapView
     private MapboxMap map; //A MapboxMap is used to interact with the MapBox SDK
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
         markers = new ArrayList<>();
-        Toast.makeText(MainActivity.this, "Tap and hold to create a flight", Toast.LENGTH_SHORT).show();
+        showToast("Tap and hold to create a flight");
     }
 
     /**
@@ -82,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_LOGIN && resultCode == RESULT_OK) { //Check if login was successful
             AirMapPilot pilot = (AirMapPilot) data.getSerializableExtra(LoginActivity.PILOT); //Get the pilot from the data
-            Toast.makeText(MainActivity.this, "Hi, " + pilot.getFirstName() + "!", Toast.LENGTH_SHORT).show();
+            showToast("Hi, " + pilot.getFirstName() + "!");
             trafficFab.show(); //Show the button now that the user is logged in
             AirMap.getAllPublicAndAuthenticatedPilotFlights(null, new Date(), new AirMapCallback<List<AirMapFlight>>() { //Get all public flights and display them on the map
                 @Override
@@ -99,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 @Override
                 public void onError(AirMapException e) {
-                    e.printStackTrace();
                     Log.e("MainActivity", "Error getting flights");
                 }
             });
@@ -137,12 +138,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onSuccess(AirMapFlight response) {
                 if (response == null) {
-                    view.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MainActivity.this, "You do not have an active flight", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    showToast("You do not have an active flight");
                 }
             }
 
@@ -254,43 +250,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     /**
-     * Converts a bearing into a compass direction
-     *
-     * @param bearing The bearing to convert
-     * @return A compass direction
-     */
-    public String directionFromBearing(double bearing) {
-        int index = (int) ((bearing / 22.5) + 0.5) % 16;
-        return compassDirections[index];
-
-    }
-
-    /**
-     * Utility method to convert from an AirMap Coordinate to a MapBox LatLng
-     *
-     * @param coordinate An AirMap Coordinate
-     * @return A MapBox LatLng
-     */
-    public LatLng getLatLngFromCoordinate(Coordinate coordinate) {
-        if (coordinate != null) {
-            return new LatLng(coordinate.getLatitude(), coordinate.getLongitude());
-        }
-        return null;
-    }
-
-    /**
-     * Utility method to convert from a MapBox LatLng to an AirMap Coordinate
-     * @param point A MapBox LatLng
-     * @return An AirMap Coordinate
-     */
-    public Coordinate getCoordinateFromLatLng(LatLng point) {
-        if (point != null) {
-            return new Coordinate(point.getLatitude(), point.getLongitude());
-        }
-        return null;
-    }
-
-    /**
      * Search for an annotation
      *
      * @param id The id to search for
@@ -311,13 +270,58 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static class LatLngEvaluator implements TypeEvaluator<LatLng> {
         // Method is used to interpolate the marker animation.
         private LatLng latLng = new LatLng();
-
         @Override
         public LatLng evaluate(float fraction, LatLng startValue, LatLng endValue) {
             latLng.setLatitude(startValue.getLatitude() + ((endValue.getLatitude() - startValue.getLatitude()) * fraction));
             latLng.setLongitude(startValue.getLongitude() + ((endValue.getLongitude() - startValue.getLongitude()) * fraction));
             return latLng;
         }
+    }
+
+    /**
+     * Converts a bearing into a compass direction
+     *
+     * @param bearing The bearing to convert
+     * @return A compass direction
+     */
+    public String directionFromBearing(double bearing) {
+        int index = (int) ((bearing / 22.5) + 0.5) % 16;
+        return compassDirections[index];
+
+    }
+
+    /**
+     * Utility method to convert from an AirMap Coordinate to a MapBox LatLng
+     *
+     * @param coordinate An AirMap Coordinate
+     * @return A MapBox LatLng
+     */
+    public static LatLng getLatLngFromCoordinate(Coordinate coordinate) {
+        if (coordinate != null) {
+            return new LatLng(coordinate.getLatitude(), coordinate.getLongitude());
+        }
+        return null;
+    }
+
+    /**
+     * Utility method to convert from a MapBox LatLng to an AirMap Coordinate
+     * @param point A MapBox LatLng
+     * @return An AirMap Coordinate
+     */
+    public static Coordinate getCoordinateFromLatLng(LatLng point) {
+        if (point != null) {
+            return new Coordinate(point.getLatitude(), point.getLongitude());
+        }
+        return null;
+    }
+
+    public void showToast(final String text) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     //MapBox required Override methods
