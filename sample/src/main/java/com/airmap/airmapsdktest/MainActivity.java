@@ -129,15 +129,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onClick(final View view) {
         if (!AirMap.getAirMapTrafficService().isConnected()) {
             AirMap.enableTrafficAlerts(this);
+            showToast("Now receiving traffic alerts");
         } else {
             AirMap.disableTrafficAlerts();
+            showToast("Turning off traffic alerts");
         }
 
         //This part is not required to start traffic alerts
         AirMap.getCurrentFlight(new AirMapCallback<AirMapFlight>() { //Check if user has an active flight
             @Override
             public void onSuccess(AirMapFlight response) {
-                if (response == null) {
+                if (response == null) { //If response is null, then there is no active flight
                     showToast("You do not have an active flight");
                 }
             }
