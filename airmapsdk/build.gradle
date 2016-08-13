@@ -12,7 +12,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 24
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -57,7 +57,7 @@ dependencies {
 def siteUrl = 'http://www.airmap.com'
 def projectName = 'com.airmap.airmapsdk'
 def gitUrl = 'https://github.com/airmap/AirMapSDK-Android.git'
-def libVersion = '1.0.0'
+def libVersion = '1.0.1'
 
 bintray {
     user = 'vanshg'
