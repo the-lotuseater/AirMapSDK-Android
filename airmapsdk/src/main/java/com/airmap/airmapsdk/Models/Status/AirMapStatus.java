@@ -60,7 +60,7 @@ public class AirMapStatus implements Serializable, AirMapBaseModel {
     /**
      * Initialize an AirMapStatus from JSON
      *
-     * @param statusJson A JSON reprsentation of an AirMapStatus
+     * @param statusJson A JSON representation of an AirMapStatus
      */
     public AirMapStatus(JSONObject statusJson) {
         constructFromJson(statusJson);

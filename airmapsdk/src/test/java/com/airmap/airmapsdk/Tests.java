@@ -244,7 +244,7 @@ public class Tests extends AndroidTestCase {
 
     @Test
     public void flightPointStatusTest() throws InterruptedException {
-        AirMap.checkCoordinate(new Coordinate(31.5, -118), 100, null, null, true, new Date(), new AirMapCallback<AirMapStatus>() {
+        AirMap.checkCoordinate(new Coordinate(31.5, -118), 100d, null, null, true, new Date(), new AirMapCallback<AirMapStatus>() {
             @Override
             public void onSuccess(AirMapStatus response) {
                 assertNotNull(response);
