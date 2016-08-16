@@ -225,7 +225,7 @@ public class AirMapFlight implements Serializable, AirMapBaseModel {
      *
      * @return Whether the flight is current or not
      */
-    public boolean isCurrent() {
+    public boolean isActive() {
         Date now = new Date();
         return startsAt != null && endsAt != null && now.after(startsAt) && now.before(endsAt);
     }
