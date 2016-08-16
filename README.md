@@ -19,8 +19,7 @@ Create Flights, Send Telemetry Data, Get Realtime Traffic Alerts.
 
 Start by adding the Android SDK to your project:
 
-* Add `compile('com.airmap.sdk:airmapsdk:1.0.0'){ exclude module: 'support-v4' }`
- to your module level `build.gradle` file
+* Add `compile('com.airmap.sdk:airmapsdk:1.0.1'){ exclude module: 'support-v4' }` to your module level `build.gradle` file
 * Add `maven { url "https://repo.eclipse.org/content/repositories/paho-releases/" }` to your application-level `build.gradle` file
 
 
