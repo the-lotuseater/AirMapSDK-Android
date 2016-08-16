@@ -74,10 +74,10 @@ class FlightService extends BaseService {
      * @param listener The callback that is invoked on success or error
      */
     public static void getAllPublicAndAuthenticatedPilotFlights(@Nullable Integer limit, final Date date, final AirMapCallback<List<AirMapFlight>> listener) {
-        if (AirMap.hasValidCredentials()) {
-            AirMap.getFlights(limit, null, null, date, date, null, null, null, null, null, new AirMapCallback<List<AirMapFlight>>() {
-                @Override
-                public void onSuccess(final List<AirMapFlight> publicFlights) {
+        AirMap.getFlights(limit, null, null, date, date, null, null, null, null, null, new AirMapCallback<List<AirMapFlight>>() {
+            @Override
+            public void onSuccess(final List<AirMapFlight> publicFlights) {
+                if (AirMap.hasValidAuthenticatedUser()) {
                     AirMap.getFlights(null, AirMap.getUserId(), null, date, date, null, null, null, null, null, new AirMapCallback<List<AirMapFlight>>() {
                         @Override
                         public void onSuccess(List<AirMapFlight> authenticatedUserFlights) {
@@ -92,16 +92,16 @@ class FlightService extends BaseService {
                             listener.onError(e);
                         }
                     });
+                } else {
+                    listener.onSuccess(publicFlights);
                 }
+            }
 
-                @Override
-                public void onError(AirMapException e) {
-                    listener.onError(e);
-                }
-            });
-        } else {
-            listener.onError(new AirMapException("No authenticated user"));
-        }
+            @Override
+            public void onError(AirMapException e) {
+                listener.onError(e);
+            }
+        });
     }
 
     /**
