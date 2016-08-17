@@ -520,6 +520,6 @@ public class TrafficService extends BaseService {
     }
 
     protected void setAuthToken(String auth) {
-        options.setPassword(auth.toCharArray());
+        options.setPassword(auth != null ? auth.toCharArray() : new char[]{}); //Auth might be null
     }
 }
