@@ -254,7 +254,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         profile.setEmail(emailEditText.getText().toString());
         profile.setFirstName(firstNameEditText.getText().toString());
         profile.setLastName(lastNameEditText.getText().toString());
-        profile.getUserMetaData().setMetaData(new HashMap<String, Object>(editedExtras)); //Convert from <String, String> to <String, Object>
+        if (editedExtras != null) {
+            profile.getUserMetaData().setMetaData(new HashMap<String, Object>(editedExtras)); //Convert from <String, String> to <String, Object>
+        }
         AirMap.updatePilot(profile, new AirMapCallback<AirMapPilot>() {
             @Override
             public void onSuccess(AirMapPilot response) {
