@@ -108,11 +108,11 @@ class FlightService extends BaseService {
      * Get a flight by ID
      *
      * @param flightId The ID of the flight to get
-     * @param listener The callback that is invoked on success or error
      * @param enhance  If true, the response will include explicit profile and aircraft information
      *                 instead of just IDs
+     * @param listener The callback that is invoked on success or error
      */
-    public static void getFlight(String flightId, AirMapCallback<AirMapFlight> listener, boolean enhance) {
+    public static void getFlight(String flightId, boolean enhance, AirMapCallback<AirMapFlight> listener) {
         String url = String.format(flightByIdUrl, flightId);
         Map<String, String> params = new HashMap<>();
         params.put("enhance", String.valueOf(enhance));
