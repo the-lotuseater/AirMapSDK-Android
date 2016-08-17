@@ -49,7 +49,7 @@ public class Coordinate implements Serializable {
         if (isValidLat(latitude)) {
             this.latitude = latitude;
         } else {
-            throw new IllegalArgumentException("Latitude must be between -90 and 90");
+//            throw new IllegalArgumentException("Latitude must be between -90 and 90");
         }
     }
 
@@ -61,7 +61,7 @@ public class Coordinate implements Serializable {
         if (isValidLng(longitude)) {
             this.longitude = longitude;
         } else {
-            throw new IllegalArgumentException("Longitude must be between -180 and 180");
+//            throw new IllegalArgumentException("Longitude must be between -180 and 180");
         }
     }
 

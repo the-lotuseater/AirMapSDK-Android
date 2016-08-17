@@ -513,9 +513,21 @@ public class AirMap {
      *
      * @param flightId The ID of the flight to get
      * @param callback The callback that is invoked on success or error
+     * @param enhance  If true, the response will include explicit profile and aircraft information
+     *                 instead of just IDs
+     */
+    public static void getFlight(String flightId, @Nullable AirMapCallback<AirMapFlight> callback, boolean enhance) {
+        FlightService.getFlight(flightId, callback, enhance);
+    }
+
+    /**
+     * Get a flight by its ID
+     *
+     * @param flightId The ID of the flight to get
+     * @param callback The callback that is invoked on success or error
      */
     public static void getFlight(String flightId, @Nullable AirMapCallback<AirMapFlight> callback) {
-        FlightService.getFlight(flightId, callback);
+        getFlight(flightId, callback, false);
     }
 
     /**
