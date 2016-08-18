@@ -26,9 +26,8 @@ public class ReviewPermitsFragment extends Fragment {
     private static final String PERMITS = "permits";
     private static final int REQUEST_CUSTOM_PROPERTIES = 3;
 
-    private ArrayList<AirMapAvailablePermit> selectedPermits;
-
     private ListView listView;
+    private ArrayAdapter<AirMapAvailablePermit> adapter;
 
     public ReviewPermitsFragment() {
         // Required empty public constructor
@@ -46,7 +45,6 @@ public class ReviewPermitsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_review_permits, container, false);
-        selectedPermits = (ArrayList<AirMapAvailablePermit>) getArguments().getSerializable(PERMITS);
         initializeViews(view);
         populateViews();
         return view;
@@ -57,13 +55,14 @@ public class ReviewPermitsFragment extends Fragment {
     }
 
     private void populateViews() {
-        ArrayAdapter<AirMapAvailablePermit> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, selectedPermits);
+        ArrayList<AirMapAvailablePermit> selectedPermits = (ArrayList<AirMapAvailablePermit>) getArguments().getSerializable(PERMITS);
+        adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, selectedPermits);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getContext(), CustomPropertiesActivity.class);
-                intent.putExtra(CustomPropertiesActivity.PERMIT, selectedPermits.get(position));
+                intent.putExtra(CustomPropertiesActivity.PERMIT, adapter.getItem(position));
                 startActivityForResult(intent, REQUEST_CUSTOM_PROPERTIES);
             }
         });
@@ -73,9 +72,12 @@ public class ReviewPermitsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CUSTOM_PROPERTIES) {
             if (resultCode == Activity.RESULT_OK) {
-                AirMapAvailablePermit permit = (AirMapAvailablePermit) data.getSerializableExtra(PERMITS);
-                selectedPermits.remove(permit); //Will remove permit with old custom properties based on ID
-                selectedPermits.add(permit); //Will add the permit with the updated custom properties
+                AirMapAvailablePermit permit = (AirMapAvailablePermit) data.getSerializableExtra(CustomPropertiesActivity.PERMIT);
+                if (adapter != null) {
+                    adapter.remove(permit); //Will remove permit with old custom properties based on ID
+                    adapter.add(permit); //Will add the permit with the updated custom properties
+                    adapter.notifyDataSetChanged();
+                }
             }
         }
     }

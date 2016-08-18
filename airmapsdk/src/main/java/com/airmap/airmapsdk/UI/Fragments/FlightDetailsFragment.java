@@ -274,7 +274,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
     private void setupFlightDateTimePicker() {
         final Calendar flightDate = Calendar.getInstance();
-        flightDate.setTime(mListener.getFlight().getStartsAt());
+        flightDate.setTime(mListener.getFlight().getStartsAt() == null ? new Date() : mListener.getFlight().getStartsAt());
         updateStartsAtTextView();
         startsAtTouchTarget.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -304,7 +304,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 }, nowYear, nowMonth, nowDay);
                 Date now = new Date();
                 long sevenDays = 1000 * 60 * 60 * 24 * 7;
-                dialog.getDatePicker().setMinDate(now.getTime());
+                dialog.getDatePicker().setMinDate(now.getTime() - 10000); //Subtract a second because of a crash on older devices/api levels
                 dialog.getDatePicker().setMaxDate(now.getTime() + sevenDays);
                 dialog.show();
             }

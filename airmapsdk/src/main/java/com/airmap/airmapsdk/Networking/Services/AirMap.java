@@ -793,11 +793,7 @@ public class AirMap {
      *                 key, value: EditText Hint)
      */
     public static void showProfile(Activity activity, @Nullable HashMap<String, String> extras) {
-        Intent intent = new Intent(activity, ProfileActivity.class);
-        if (extras != null) {
-            intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
-        }
-        activity.startActivity(intent);
+        showProfile(activity, AirMap.getUserId(), extras);
     }
 
     /**
@@ -808,11 +804,7 @@ public class AirMap {
      *                 key, value: EditText Hint)
      */
     public static void showProfile(android.support.v4.app.Fragment fragment, @Nullable HashMap<String, String> extras) {
-        Intent intent = new Intent(fragment.getContext(), ProfileActivity.class);
-        if (extras != null) {
-            intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
-        }
-        fragment.startActivity(intent);
+        showProfile(fragment, AirMap.getUserId(), extras);
     }
 
     /**
@@ -823,7 +815,63 @@ public class AirMap {
      *                 key, value: EditText Hint)
      */
     public static void showProfile(Fragment fragment, @Nullable HashMap<String, String> extras) {
+        showProfile(fragment, AirMap.getUserId(), extras);
+    }
+
+    /**
+     * Display the authenticated pilot's profile
+     *
+     * @param activity the activity to start the UI with
+     * @param pilotId  The ID of the pilot to show the profile for
+     * @param extras   Extra information to collect from the pilot in the profile page (key: json
+     *                 key, value: EditText Hint)
+     */
+    public static void showProfile(Activity activity, String pilotId, @Nullable HashMap<String, String> extras) {
+        if ((pilotId == null || pilotId.isEmpty()) && AirMap.hasValidAuthenticatedUser()) {
+            pilotId = AirMap.getUserId();
+        }
+        Intent intent = new Intent(activity, ProfileActivity.class);
+        intent.putExtra(ProfileActivity.ARG_PILOT_ID, pilotId);
+        if (extras != null) {
+            intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
+        }
+        activity.startActivity(intent);
+    }
+
+    /**
+     * Display the authenticated pilot's profile
+     *
+     * @param fragment the fragment to start the UI with
+     * @param pilotId  The ID of the pilot to show the profile for
+     * @param extras   Extra information to collect from the pilot in the profile page (key: json
+     *                 key, value: EditText Hint)
+     */
+    public static void showProfile(android.support.v4.app.Fragment fragment, String pilotId, @Nullable HashMap<String, String> extras) {
+        if ((pilotId == null || pilotId.isEmpty()) && AirMap.hasValidAuthenticatedUser()) {
+            pilotId = AirMap.getUserId();
+        }
+        Intent intent = new Intent(fragment.getContext(), ProfileActivity.class);
+        intent.putExtra(ProfileActivity.ARG_PILOT_ID, pilotId);
+        if (extras != null) {
+            intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
+        }
+        fragment.startActivity(intent);
+    }
+
+    /**
+     * Display the authenticated pilot's profile
+     *
+     * @param fragment the fragment to start the UI with
+     * @param pilotId  The ID of the pilot to show the profile for
+     * @param extras   Extra information to collect from the pilot in the profile page (key: json
+     *                 key, value: EditText Hint)
+     */
+    public static void showProfile(Fragment fragment, String pilotId, @Nullable HashMap<String, String> extras) {
+        if ((pilotId == null || pilotId.isEmpty()) && AirMap.hasValidAuthenticatedUser()) {
+            pilotId = AirMap.getUserId();
+        }
         Intent intent = new Intent(fragment.getActivity(), ProfileActivity.class);
+        intent.putExtra(ProfileActivity.ARG_PILOT_ID, pilotId);
         if (extras != null) {
             intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
         }

@@ -32,6 +32,8 @@ import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
+    public static final String ARG_PILOT_ID = "pilotId";
+
     private Toolbar toolbar;
     private ImageView profileImageView;
     private TextView nameTextView;
@@ -58,11 +60,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(R.string.airmap_pilot_profile);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        if (getIntent() != null && getIntent().hasExtra(CreateFlightActivity.KEY_VALUE_EXTRAS)) {
+        if (getIntent().hasExtra(CreateFlightActivity.KEY_VALUE_EXTRAS)) {
             extras = (HashMap<String, String>) getIntent().getSerializableExtra(CreateFlightActivity.KEY_VALUE_EXTRAS);
             editedExtras = new HashMap<>();
         }
-        AirMap.getPilot(new AirMapCallback<AirMapPilot>() {
+        String pilotId = getIntent().getStringExtra(ARG_PILOT_ID);
+        AirMap.getPilot(pilotId, new AirMapCallback<AirMapPilot>() {
             @Override
             public void onSuccess(AirMapPilot response) {
                 profile = response;
@@ -105,6 +108,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void populateViews() {
+        setEditable();
         Picasso.with(this)
                 .load(profile.getPictureUrl())
                 .placeholder(R.drawable.airmap_profile_default)
@@ -118,8 +122,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             phoneEditText.setText(profile.getPhone()); //If we don't check, the EditText might show "null"
         }
         populateExtras();
-        aircraftCounterTextView.setText(String.valueOf(profile.getStats().getAircraftStats().getTotal()));
-        flightCounterTextView.setText(String.valueOf(profile.getStats().getFlightStats().getTotal()));
+        try {
+            aircraftCounterTextView.setText(String.valueOf(profile.getStats().getAircraftStats().getTotal()));
+        } catch (Exception e) {
+            e.printStackTrace(); //Probably some NPE
+            aircraftCounterTextView.setText("0");
+        }
+        try {
+            flightCounterTextView.setText(String.valueOf(profile.getStats().getFlightStats().getTotal()));
+        } catch (Exception e) {
+            e.printStackTrace(); //Probably some NPE
+            flightCounterTextView.setText("0");
+        }
         saveButton.setOnClickListener(this);
         final DialogInterface.OnClickListener dismissOnClickListener = new DialogInterface.OnClickListener() {
             @Override
@@ -213,6 +227,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         .show();
             }
         });
+    }
+
+    /**
+     * Disables EditTexts if not viewing own profile
+     */
+    private void setEditable() {
+        boolean editable = profile.getPilotId().equals(AirMap.getUserId()); //You can edit if you are displaying your own profile
+        firstNameEditText.setEnabled(editable);
+        lastNameEditText.setEnabled(editable);
+        emailEditText.setEnabled(editable);
+        phoneEditText.setEnabled(editable);
+        saveButton.setVisibility(editable ? View.VISIBLE : View.GONE);
     }
 
     private void populateExtras() {

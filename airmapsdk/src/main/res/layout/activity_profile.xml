@@ -220,7 +220,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:text="@string/airmap_save"/>
+                android:text="@string/airmap_save"
+                android:visibility="gone"/>
     </RelativeLayout>
 
 
