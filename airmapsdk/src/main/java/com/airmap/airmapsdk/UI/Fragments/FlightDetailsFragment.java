@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,6 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -88,7 +88,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     private SeekBar durationSeekBar;
     private TextView pilotProfileTextView;
     private Spinner aircraftSpinner;
-    private Switch shareAirMapSwitch;
+    private SwitchCompat shareAirMapSwitch;
     private Button saveNextButton;
     private FrameLayout progressBarContainer;
 
@@ -128,7 +128,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         durationSeekBar = (SeekBar) view.findViewById(R.id.duration_seekbar);
         pilotProfileTextView = (TextView) view.findViewById(R.id.pilot_profile_text);
         aircraftSpinner = (Spinner) view.findViewById(R.id.aircraft_spinner);
-        shareAirMapSwitch = (Switch) view.findViewById(R.id.share_airmap_switch);
+        shareAirMapSwitch = (SwitchCompat) view.findViewById(R.id.share_airmap_switch);
         saveNextButton = (Button) view.findViewById(R.id.save_next_button);
         progressBarContainer = (FrameLayout) view.findViewById(R.id.progress_bar_container);
     }

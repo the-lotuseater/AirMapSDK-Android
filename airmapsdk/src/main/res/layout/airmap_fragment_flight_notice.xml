@@ -14,7 +14,7 @@
             android:layout_above="@+id/next_button"
             android:orientation="vertical">
 
-        <Switch
+        <android.support.v7.widget.SwitchCompat
                 android:id="@+id/submit_notice_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

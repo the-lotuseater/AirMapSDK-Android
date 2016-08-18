@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,6 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.airmap.airmapsdk.Models.Flight.AirMapFlight;
@@ -32,7 +32,7 @@ public class FlightNoticeFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private Switch submitNoticeSwitch;
+    private SwitchCompat submitNoticeSwitch;
     private ListView digitalNoticeList;
     private TextView notDigitalLabel;
     private ListView notDigitalNoticeList;
@@ -79,7 +79,7 @@ public class FlightNoticeFragment extends Fragment {
     }
 
     private void initializeViews(View view) {
-        submitNoticeSwitch = (Switch) view.findViewById(R.id.submit_notice_switch);
+        submitNoticeSwitch = (SwitchCompat) view.findViewById(R.id.submit_notice_switch);
         digitalNoticeList = (ListView) view.findViewById(R.id.digital_notice_list);
         notDigitalLabel = (TextView) view.findViewById(R.id.not_digital_label);
         notDigitalNoticeList = (ListView) view.findViewById(R.id.not_digital_list);
