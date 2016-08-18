@@ -49,13 +49,15 @@
                             android:layout_width="75dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_toEndOf="@+id/radius_label"/>
+                            android:layout_toEndOf="@+id/radius_label"
+                            android:layout_toRightOf="@+id/radius_label"/>
 
                     <SeekBar
                             android:id="@+id/radius_seekbar"
                             android:layout_width="200dp"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"/>
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"/>
 
                 </RelativeLayout>
 
@@ -76,13 +78,15 @@
                             android:layout_width="75dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_toEndOf="@+id/altitude_label"/>
+                            android:layout_toEndOf="@+id/altitude_label"
+                            android:layout_toRightOf="@+id/altitude_label"/>
 
                     <SeekBar
                             android:id="@+id/altitude_seekbar"
                             android:layout_width="200dp"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"/>
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -104,6 +108,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
                             android:textStyle="bold"/>
 
                 </RelativeLayout>
@@ -125,13 +130,15 @@
                             android:layout_width="75dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_toEndOf="@+id/duration_label"/>
+                            android:layout_toEndOf="@+id/duration_label"
+                            android:layout_toRightOf="@+id/duration_label"/>
 
                     <SeekBar
                             android:id="@+id/duration_seekbar"
                             android:layout_width="200dp"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"/>
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"/>
                 </RelativeLayout>
 
                 <TextView
@@ -162,7 +169,8 @@
                             android:layout_height="wrap_content"
                             android:paddingTop="4dp"
                             android:layout_below="@+id/aircraft_label"
-                            android:layout_alignParentEnd="true"/>
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"/>
 
                 </RelativeLayout>
 
@@ -186,7 +194,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
-                            android:drawableStart="@drawable/airmap_logo"/>
+                            android:layout_alignParentRight="true"
+                            android:drawableStart="@drawable/airmap_logo"
+                            android:drawableLeft="@drawable/airmap_logo"/>
                 </RelativeLayout>
             </LinearLayout>
 
