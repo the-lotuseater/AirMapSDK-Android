@@ -63,7 +63,7 @@ public class AirMapTraffic implements Serializable, AirMapBaseModel {
             setProperties(new AirMapTrafficProperties(json.optJSONObject("properties")));
             setTimestamp(new Date(json.optLong("timestamp")));
             setRecordedTime(new Date(json.optLong("recorded_time") * 1000)); //recorded time comes back in seconds not millis
-            setCoordinate(new Coordinate(json.optDouble("latitude"), json.optDouble("longitude")));
+            setCoordinate(new Coordinate(json.optDouble("latitude", 0), json.optDouble("longitude", 0)));
             setInitialCoordinate(getCoordinate());
             incomingTime = new Date();
         }

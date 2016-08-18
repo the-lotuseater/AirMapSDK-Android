@@ -91,7 +91,7 @@ public class AirMapFlight implements Serializable, AirMapBaseModel {
     public AirMapFlight constructFromJson(JSONObject json) {
         if (json != null) {
             setFlightId(json.optString("id"));
-            setCoordinate(new Coordinate(json.optDouble("latitude"), json.optDouble("longitude")));
+            setCoordinate(new Coordinate(json.optDouble("latitude", 0), json.optDouble("longitude", 0)));
             setMaxAltitude(json.optDouble("max_altitude"));
             setCity(json.optString("city"));
             setState(json.optString("state"));

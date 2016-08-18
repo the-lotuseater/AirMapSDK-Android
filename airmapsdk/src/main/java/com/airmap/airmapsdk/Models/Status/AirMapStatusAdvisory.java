@@ -83,9 +83,9 @@ public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
             setState(json.optString("state"));
             setColor(AirMapStatus.StatusColor.fromString(json.optString("color")));
             setGeometryString(json.optString("geometry"));
-            double lat = json.optDouble("latitude", -1);
-            double lng = json.optDouble("longitude", -1);
-            if (lat != -1 && lng != -1) {
+            double lat = json.optDouble("latitude");
+            double lng = json.optDouble("longitude");
+            if (lat != Double.NaN && lng != Double.NaN) {
                 setCoordinate(new Coordinate(lat, lng));
             }
             setLastUpdated(getDateFromIso8601String(json.optString("last_updated")));
