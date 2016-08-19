@@ -29,7 +29,7 @@ public class AirMapWildfireProperties implements AirMapBaseModel, Serializable {
     @Override
     public AirMapWildfireProperties constructFromJson(JSONObject json) {
         if (json != null) {
-            setSize(json.optInt("size"));
+            setSize(json.optInt("size", -1));
             setEffectiveDate(Utils.getDateFromIso8601String(json.optString("date_effective")));
         }
         return this;

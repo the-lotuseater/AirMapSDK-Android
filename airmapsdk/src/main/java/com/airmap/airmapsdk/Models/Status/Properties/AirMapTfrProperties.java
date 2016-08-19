@@ -35,8 +35,8 @@ public class AirMapTfrProperties implements Serializable, AirMapBaseModel {
     public AirMapTfrProperties constructFromJson(JSONObject json) {
         if (json != null) {
             setUrl(json.optString("url"));
-            setStartTime(Utils.getDateFromIso8601String(json.optString("effective_start")));
-            setEndTime(Utils.getDateFromIso8601String(json.optString("effective_end")));
+            setStartTime(Utils.getDateFromIso8601String(json.optString("effective_start", null)));
+            setEndTime(Utils.getDateFromIso8601String(json.optString("effective_end", null)));
         }
         return this;
     }
