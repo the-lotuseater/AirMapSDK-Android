@@ -107,7 +107,7 @@ public class AirMapStatus implements Serializable, AirMapBaseModel {
         Map<String, String> params = new HashMap<>();
         params.put("latitude", String.valueOf(coordinate.getLatitude()));
         params.put("longitude", String.valueOf(coordinate.getLongitude()));
-        if (types != null) {
+        if (types != null && !types.isEmpty()) {
             String typesString = TextUtils.join(",", types); //Will call toString on the AirMapLayerType, which will return the appropriate string
             params.put("types", typesString);
         }
