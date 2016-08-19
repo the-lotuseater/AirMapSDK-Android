@@ -59,7 +59,6 @@ public class LoginActivity extends AppCompatActivity {
                 final boolean shouldOverrideUrlLoading = Auth.login(url, LoginActivity.this, new LoginCallback() {
                     @Override
                     public void onSuccess(Auth.AuthCredential authCredential) {
-                        Toast.makeText(LoginActivity.this, "You are now logged in", Toast.LENGTH_SHORT).show();
                         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putString(Utils.REFRESH_TOKEN_KEY, authCredential.getRefreshToken());

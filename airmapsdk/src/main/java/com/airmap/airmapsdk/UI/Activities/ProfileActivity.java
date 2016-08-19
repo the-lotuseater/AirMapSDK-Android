@@ -79,10 +79,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onError(final AirMapException e) {
+                toast("Error getting profile");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(ProfileActivity.this, "Error getting profile", Toast.LENGTH_SHORT).show();
                         Log.e("ProfileFragment", e.getMessage());
                         e.printStackTrace();
                     }

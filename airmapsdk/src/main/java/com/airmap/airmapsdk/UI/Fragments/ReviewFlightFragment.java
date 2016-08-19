@@ -83,6 +83,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
             public void onClick(View v) {
                 progressBarContainer.setVisibility(View.VISIBLE);
                 applyPermitsToFlight();
+                submitButton.setEnabled(false);
             }
         });
         PagerTabStrip strip = (PagerTabStrip) view.findViewById(R.id.tab_strip);
@@ -99,11 +100,13 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     }
 
     private void applyForPermits() {
-        for (AirMapAvailablePermit permitToApplyFor : mListener.getPermitsToApplyFor()) {
+        ArrayList<AirMapAvailablePermit> copy = new ArrayList<>(mListener.getPermitsToApplyFor()); //We iterate over the copy, remove from the original (because we are in a different thread)
+        for (final AirMapAvailablePermit permitToApplyFor : copy) {
             AirMap.applyForPermit(permitToApplyFor, new AirMapCallback<AirMapPilotPermit>() {
                 @Override
                 public void onSuccess(AirMapPilotPermit response) {
                     mListener.getFlight().addPermitId(response.getId());
+                    mListener.getPermitsToApplyFor().remove(permitToApplyFor);
                     totalPermitsObtained++;
                     if (totalPermitsObtained == totalNumberOfPermits) {
                         submitFlight();
@@ -117,6 +120,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                         public void run() {
                             progressBarContainer.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Error applying for permit", Toast.LENGTH_SHORT).show();
+                            submitButton.setEnabled(true);
                         }
                     });
                 }
@@ -140,6 +144,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                     @Override
                     public void run() {
                         progressBarContainer.setVisibility(View.GONE);
+                        submitButton.setEnabled(true);
                         Toast.makeText(getContext(), "Error submitting flight", Toast.LENGTH_SHORT).show();
                     }
                 });

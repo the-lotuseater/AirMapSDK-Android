@@ -389,12 +389,6 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             @Override
             public void onSuccess(AirMapFlight response) {
                 hideProgressBar();
-                saveNextButton.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getContext(), "Successfully created flight!", Toast.LENGTH_SHORT).show();
-                    }
-                });
                 mListener.flightDetailsSaveClicked(response);
             }
 
