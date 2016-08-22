@@ -99,7 +99,7 @@ public class AirMapFlight implements Serializable, AirMapBaseModel {
             setNotify(json.optBoolean("notify"));
             setPilotId(json.optString("pilot_id"));
             setPilot(new AirMapPilot(json.optJSONObject("pilot")));
-            setAircraftId(json.optString("aircraft_id"));
+            setAircraftId(json.optString("aircraft_id", null));
             setAircraft(new AirMapAircraft(json.optJSONObject("aircraft")));
             setPublic(json.optBoolean("public"));
             setBuffer(json.optDouble("buffer"));

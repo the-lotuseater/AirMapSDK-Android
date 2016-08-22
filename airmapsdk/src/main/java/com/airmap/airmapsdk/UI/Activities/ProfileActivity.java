@@ -234,11 +234,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
      */
     private void setEditable() {
         boolean editable = profile.getPilotId().equals(AirMap.getUserId()); //You can edit if you are displaying your own profile
-        firstNameEditText.setEnabled(editable);
-        lastNameEditText.setEnabled(editable);
-        emailEditText.setEnabled(editable);
-        phoneEditText.setEnabled(editable);
-        saveButton.setVisibility(editable ? View.VISIBLE : View.GONE);
+        int visibility = editable ? View.VISIBLE : View.GONE;
+        firstNameEditText.setVisibility(visibility);
+        lastNameEditText.setVisibility(visibility);
+        emailEditText.setVisibility(visibility);
+        phoneEditText.setVisibility(visibility);
+        saveButton.setVisibility(visibility);
     }
 
     private void populateExtras() {

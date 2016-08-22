@@ -71,8 +71,8 @@ public class Utils {
         } catch (ParseException e) {
             AirMapLog.e("AirMap Utils", "Error parsing date: " + e.getMessage());
             e.printStackTrace();
-            return new Date();
         }
+        return null;
     }
 
     public static boolean statusSuccessful(JSONObject object) {
