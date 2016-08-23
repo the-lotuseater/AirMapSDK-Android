@@ -195,6 +195,8 @@ public class CreateFlightActivity extends AppCompatActivity implements
     @Override
     public void flightDetailsNextClicked(AirMapStatus flightStatus) {
         this.flightStatus = flightStatus;
+        statusPermits.clear();
+        notices.clear();
         List<AirMapStatusAdvisory> advisories = flightStatus.getAdvisories();
         for (AirMapStatusAdvisory advisory : advisories) {
             AirMapStatusRequirement requirement = advisory.getRequirements();
@@ -227,6 +229,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
                         @Override
                         public void run() {
                             adapter.add(ListPermitsFragment.newInstance());
+                            viewPager.setCurrentItem(1, true);
                         }
                     });
                 }

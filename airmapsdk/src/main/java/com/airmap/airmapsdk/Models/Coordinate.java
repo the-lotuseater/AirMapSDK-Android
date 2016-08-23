@@ -1,5 +1,7 @@
 package com.airmap.airmapsdk.Models;
 
+import com.mapbox.mapboxsdk.geometry.LatLng;
+
 import java.io.Serializable;
 
 /**
@@ -39,6 +41,12 @@ public class Coordinate implements Serializable {
     public Coordinate(double lat, double lng) {
         setLatitude(lat);
         setLongitude(lng);
+    }
+
+    public Coordinate(LatLng mapboxLatLng) {
+        mapboxLatLng = mapboxLatLng.wrap(); //In case the lat/lng are out of bounds
+        setLatitude(mapboxLatLng.getLatitude());
+        setLongitude(mapboxLatLng.getLongitude());
     }
 
     public double getLatitude() {
