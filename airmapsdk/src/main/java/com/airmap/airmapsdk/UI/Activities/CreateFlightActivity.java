@@ -136,6 +136,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
                 fragments.add(0, FlightDetailsFragment.newInstance());
         }
         adapter = new SectionsPagerAdapter(getSupportFragmentManager(), fragments);
+        viewPager.setOffscreenPageLimit(4);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @SuppressWarnings("ConstantConditions")
