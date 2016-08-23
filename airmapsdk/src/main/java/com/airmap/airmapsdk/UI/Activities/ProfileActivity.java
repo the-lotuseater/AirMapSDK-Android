@@ -2,6 +2,7 @@ package com.airmap.airmapsdk.UI.Activities;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
@@ -65,6 +66,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             editedExtras = new HashMap<>();
         }
         String pilotId = getIntent().getStringExtra(ARG_PILOT_ID);
+        if (pilotId == null || pilotId.isEmpty()) {
+            pilotId = AirMap.getUserId();
+        }
+        getPilot(pilotId);
+    }
+
+    private void getPilot(final String pilotId) {
         AirMap.getPilot(pilotId, new AirMapCallback<AirMapPilot>() {
             @Override
             public void onSuccess(AirMapPilot response) {
@@ -79,14 +87,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onError(final AirMapException e) {
-                toast("Error getting profile");
-                runOnUiThread(new Runnable() {
+                Snackbar.make(null, "Error getting profile", Snackbar.LENGTH_SHORT)
+                        .setAction("Retry", new View.OnClickListener() {
                     @Override
-                    public void run() {
-                        Log.e("ProfileFragment", e.getMessage());
-                        e.printStackTrace();
+                    public void onClick(View view) {getPilot(pilotId);
                     }
-                });
+                })
+                        .show();
+                Log.e("ProfileFragment", e.getMessage());
+                e.printStackTrace();
             }
         });
     }
@@ -108,11 +117,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void populateViews() {
-        setEditable();
         Picasso.with(this)
                 .load(profile.getPictureUrl())
                 .placeholder(R.drawable.airmap_profile_default)
                 .into(profileImageView);
+        boolean editable = setEditable();
+        if (!editable) {
+            return; //Don't fill in data if not logged in user
+        }
         nameTextView.setText(String.format("%s %s", profile.getFirstName(), profile.getLastName()));
         usernameTextView.setText(profile.getUsername());
         firstNameEditText.setText(profile.getFirstName());
@@ -232,7 +244,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     /**
      * Disables EditTexts if not viewing own profile
      */
-    private void setEditable() {
+    private boolean setEditable() {
         boolean editable = profile.getPilotId().equals(AirMap.getUserId()); //You can edit if you are displaying your own profile
         int visibility = editable ? View.VISIBLE : View.GONE;
         firstNameEditText.setVisibility(visibility);
@@ -240,6 +252,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         emailEditText.setVisibility(visibility);
         phoneEditText.setVisibility(visibility);
         saveButton.setVisibility(visibility);
+        return editable;
     }
 
     private void populateExtras() {
