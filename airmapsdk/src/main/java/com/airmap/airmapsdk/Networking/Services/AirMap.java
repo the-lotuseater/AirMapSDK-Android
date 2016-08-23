@@ -505,7 +505,13 @@ public class AirMap {
                 }
             }
         };
-        FlightService.getFlights(null, AirMap.getUserId(), null, new Date(), new Date(), null, null, null, null, true, proxy);
+        if (AirMap.getUserId() != null) {
+            FlightService.getFlights(null, AirMap.getUserId(), null, new Date(), new Date(), null, null, null, null, true, proxy);
+        } else {
+            if (callback != null) {
+                callback.onSuccess(null);
+            }
+        }
     }
 
     /**
