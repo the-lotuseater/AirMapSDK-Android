@@ -189,14 +189,29 @@
                         android:paddingBottom="8dp"
                         android:paddingTop="8dp">
 
+                    <ImageView
+                            android:id="@+id/airmap_logo_image"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:src="@drawable/airmap_logo"/>
+
+                    <ImageView
+                            android:id="@+id/airmap_info_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_toRightOf="@+id/airmap_logo_image"
+                            android:layout_marginLeft="8dp"
+                            android:layout_centerVertical="true"
+                            android:tint="@color/colorTextAndIcons"
+                            android:background="?attr/selectableItemBackground"
+                            android:src="@drawable/airmap_info"/>
+
                     <android.support.v7.widget.SwitchCompat
                             android:id="@+id/share_airmap_switch"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:drawableStart="@drawable/airmap_logo"
-                            android:drawableLeft="@drawable/airmap_logo"/>
+                            android:layout_alignParentRight="true"/>
                 </RelativeLayout>
             </LinearLayout>
 

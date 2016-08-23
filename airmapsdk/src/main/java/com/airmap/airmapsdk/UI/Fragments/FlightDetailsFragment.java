@@ -7,6 +7,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SimpleAdapter;
@@ -88,6 +90,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     private SeekBar durationSeekBar;
     private TextView pilotProfileTextView;
     private Spinner aircraftSpinner;
+    private ImageView infoButton;
     private SwitchCompat shareAirMapSwitch;
     private Button saveNextButton;
     private FrameLayout progressBarContainer;
@@ -113,6 +116,17 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         setupOnClickListeners();
         setupSwitches();
         updateSaveNextButtonText();
+
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String url = "https://cdn.airmap.io/static/webviews/faq.html#let-others-know";
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
+
+            }
+        });
         return view;
     }
 
@@ -128,6 +142,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         durationSeekBar = (SeekBar) view.findViewById(R.id.duration_seekbar);
         pilotProfileTextView = (TextView) view.findViewById(R.id.pilot_profile_text);
         aircraftSpinner = (Spinner) view.findViewById(R.id.aircraft_spinner);
+        infoButton = (ImageView) view.findViewById(R.id.airmap_info_button);
         shareAirMapSwitch = (SwitchCompat) view.findViewById(R.id.share_airmap_switch);
         saveNextButton = (Button) view.findViewById(R.id.save_next_button);
         progressBarContainer = (FrameLayout) view.findViewById(R.id.progress_bar_container);
@@ -338,15 +353,18 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
         setupAircraftSpinnerAdapter();
     }
 
     private void setupAircraftSpinnerAdapter() {
+        setupAircraftSpinnerAdapter(mListener.getFlight().getAircraft());
+    }
+
+    private void setupAircraftSpinnerAdapter(final AirMapAircraft aircraft) {
         AirMap.getAircraft(new AirMapCallback<List<AirMapAircraft>>() {
             @Override
             public void onSuccess(final List<AirMapAircraft> response) {
-                final int index = response.indexOf(mListener.getFlight().getAircraft());
+                final int index = response.indexOf(aircraft);
                 final List<Map<String, Object>> data = new ArrayList<>();
                 Map<String, Object> blankValue = new HashMap<>();
                 blankValue.put(nicknameKey, "Select Aircraft");
@@ -367,7 +385,11 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                     @Override
                     public void run() {
                         aircraftSpinner.setAdapter(new SimpleAdapter(getContext(), data, android.R.layout.simple_list_item_2, new String[]{"nickname", "model"}, new int[]{android.R.id.text1, android.R.id.text2}));
-                        aircraftSpinner.setSelection(index == -1 ? 0 : index);
+                        if (index != -1 && index + 1 < aircraftSpinner.getAdapter().getCount()) {
+                            aircraftSpinner.setSelection(index+1);
+                        } else {
+                            aircraftSpinner.setSelection(0);
+                        }
                     }
                 });
             }
@@ -480,7 +502,11 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CREATE_AIRCRAFT) {
             if (resultCode == Activity.RESULT_OK) {
-                setupAircraftSpinnerAdapter(); //Refresh the spinner options
+                AirMapAircraft aircraft = (AirMapAircraft) data.getSerializableExtra(CreateEditAircraftActivity.AIRCRAFT);
+                setupAircraftSpinnerAdapter(aircraft); //Refresh the spinner options
+            }
+            if (aircraftSpinner != null) {
+                aircraftSpinner.setSelection(0); //"Select aircraft"
             }
         }
     }

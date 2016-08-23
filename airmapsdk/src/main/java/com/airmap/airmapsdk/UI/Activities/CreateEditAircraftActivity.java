@@ -39,7 +39,7 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_aircraft);
+        setContentView(R.layout.airmap_activity_create_aircraft);
         initializeViews();
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
