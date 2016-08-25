@@ -83,7 +83,7 @@ public class Utils {
         if (e != null && listener != null) {
             if (e.getMessage().toLowerCase().startsWith("unable to resolve host")) {
                 listener.onError(new AirMapException("No internet connection"));
-            } else {
+            } else if (!e.getMessage().toLowerCase().contains("canceled")) { //Not an error if it was canceled
                 listener.onError(new AirMapException(e.getMessage()));
             }
         }
