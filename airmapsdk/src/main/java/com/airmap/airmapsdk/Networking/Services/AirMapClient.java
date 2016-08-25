@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.CertificatePinner;
 import okhttp3.FormBody;
@@ -71,7 +72,9 @@ public class AirMapClient {
      * @param callback An OkHttp Callback
      */
     public void get(String url, Map<String, String> params, Callback callback) {
-        client.newCall(new Builder().url(urlBodyFromMap(url, params)).get().build()).enqueue(callback);
+        cancelCallWithTag(url);
+        Request request = new Builder().url(urlBodyFromMap(url, params)).get().tag(url).build();
+        client.newCall(request).enqueue(callback);
     }
 
     /**
@@ -81,7 +84,9 @@ public class AirMapClient {
      * @param callback An OkHttp Callback
      */
     public void get(String url, Callback callback) {
-        client.newCall(new Builder().url(url).get().build()).enqueue(callback);
+        cancelCallWithTag(url);
+        Request request = new Builder().url(url).get().tag(url).build();
+        client.newCall(request).enqueue(callback);
     }
 
     /**
@@ -92,7 +97,8 @@ public class AirMapClient {
      * @param callback An OkHttp Callback
      */
     public void post(String url, Map<String, String> params, Callback callback) {
-        Request request = new Builder().url(url).post(bodyFromMap(params)).build();
+        cancelCallWithTag(url);
+        Request request = new Builder().url(url).post(bodyFromMap(params)).tag(url).build();
         client.newCall(request).enqueue(callback);
     }
 
@@ -104,6 +110,7 @@ public class AirMapClient {
      * @param callback An OkHttp Callback
      */
     public void postWithJsonBody(String url, JSONObject params, Callback callback) {
+        cancelCallWithTag(url);
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create(JSON, params.toString());
         Request request = new Builder().url(url).post(body).build();
@@ -128,6 +135,7 @@ public class AirMapClient {
      * @param callback An OkHttp Callback
      */
     public void patch(String url, Map<String, String> params, Callback callback) {
+        cancelCallWithTag(url);
         Request request = new Builder().url(url).patch(bodyFromMap(params)).build();
         client.newCall(request).enqueue(callback);
     }
@@ -140,6 +148,7 @@ public class AirMapClient {
      * @param callback An OkHttp Callback
      */
     public void put(String url, Map<String, String> params, Callback callback) {
+        cancelCallWithTag(url);
         Request request = new Builder().url(url).put(bodyFromMap(params)).build();
         client.newCall(request).enqueue(callback);
     }
@@ -161,6 +170,7 @@ public class AirMapClient {
      * @param callback An OkHttp Callback
      */
     public void delete(String url, Callback callback) {
+        cancelCallWithTag(url);
         Request request = new Builder().url(url).delete().build();
         client.newCall(request).enqueue(callback);
     }
@@ -247,5 +257,20 @@ public class AirMapClient {
             }
         }
         return formBody.build();
+    }
+
+    /**
+     * Cancels requests with the given tag
+     * @param tag The tag of the call to cancel
+     */
+    public void cancelCallWithTag(String tag) {
+        for(Call call : client.dispatcher().queuedCalls()) {
+            if(call.request().tag().equals(tag))
+                call.cancel();
+        }
+        for(Call call : client.dispatcher().runningCalls()) {
+            if(call.request().tag().equals(tag))
+                call.cancel();
+        }
     }
 }

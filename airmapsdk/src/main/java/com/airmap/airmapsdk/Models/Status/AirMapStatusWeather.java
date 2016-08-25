@@ -31,12 +31,12 @@ public class AirMapStatusWeather implements Serializable, AirMapBaseModel {
     @Override
     public AirMapStatusWeather constructFromJson(JSONObject json) {
         if (json != null) {
-            setCondition(json.optString("condition"));
-            setIcon(json.optString("icon"));
-            setHumidity(json.optDouble("humidity"));
-            setPrecipitation(json.optDouble("precipitation"));
-            setTemperature(json.optDouble("temperature"));
-            setVisibility(json.optDouble("visibility"));
+            setCondition(json.optString("condition", null));
+            setIcon(json.optString("icon", null));
+            setHumidity(json.optDouble("humidity", Double.NaN));
+            setPrecipitation(json.optDouble("precipitation", Double.NaN));
+            setTemperature(json.optDouble("temperature", Double.NaN));
+            setVisibility(json.optDouble("visibility", Double.NaN));
             setWind(new AirMapStatusWind(json.optJSONObject("wind")));
         }
         return this;
@@ -48,7 +48,7 @@ public class AirMapStatusWeather implements Serializable, AirMapBaseModel {
      * @return whether the weather is valid or not
      */
     public boolean isValid() {
-        return wind != null && condition != null && condition.isEmpty();
+        return wind != null && condition != null && !condition.isEmpty();
     }
 
     /**
