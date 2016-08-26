@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Call;
+
 /**
  * Created by Vansh Gandhi on 6/23/16.
  * Copyright © 2016 AirMap, Inc. All rights reserved.
@@ -29,7 +31,7 @@ class StatusService extends BaseService {
      * @param date         Date and time for planned flight
      * @param listener     The callback that is invoked on success or error
      */
-    public static void checkCoordinate(Coordinate coordinate, @Nullable Double buffer,
+    public static Call checkCoordinate(Coordinate coordinate, @Nullable Double buffer,
                                        List<MappingService.AirMapAirspaceType> types,
                                        List<MappingService.AirMapAirspaceType> ignoredTypes,
                                        boolean weather, Date date,
@@ -39,7 +41,7 @@ class StatusService extends BaseService {
         if (buffer != null) {
             params.put("buffer", String.valueOf(buffer));
         }
-        AirMap.getClient().get(url, params, new GenericOkHttpCallback(listener, AirMapStatus.class));
+        return AirMap.getClient().get(url, params, new GenericOkHttpCallback(listener, AirMapStatus.class));
     }
 
     /**

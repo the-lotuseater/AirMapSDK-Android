@@ -29,6 +29,7 @@
 
         <ScrollView
                 android:id="@+id/scroll_view"
+                android:visibility="gone"
                 android:layout_above="@+id/save"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -216,6 +217,20 @@
 
             </LinearLayout>
         </ScrollView>
+
+        <FrameLayout
+                android:id="@+id/progress_bar_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:indeterminate="true"
+                    style="@style/Base.Widget.AppCompat.ProgressBar"/>
+        </FrameLayout>
 
         <Button
                 android:id="@id/save"

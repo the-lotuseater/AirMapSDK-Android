@@ -87,7 +87,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onError(final AirMapException e) {
-                Snackbar.make(null, "Error getting profile", Snackbar.LENGTH_SHORT)
+                Snackbar.make(toolbar, "Error getting profile", Snackbar.LENGTH_LONG)
                         .setAction("Retry", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {getPilot(pilotId);
@@ -121,6 +121,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 .load(profile.getPictureUrl())
                 .placeholder(R.drawable.airmap_profile_default)
                 .into(profileImageView);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.progress_bar_container).setVisibility(View.GONE);
+                findViewById(R.id.scroll_view).setVisibility(View.VISIBLE);
+            }
+        });
         boolean editable = setEditable();
         if (!editable) {
             return; //Don't fill in data if not logged in user

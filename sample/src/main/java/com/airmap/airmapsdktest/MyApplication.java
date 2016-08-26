@@ -15,6 +15,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         AirMap.init(this);
+        AirMap.enableLogging(true);
         MapboxAccountManager.start(this, Utils.getMapboxApiKey());
     }
 }

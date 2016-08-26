@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         trafficFab = (FloatingActionButton) findViewById(R.id.traffic_fab);
-        trafficFab.hide(); //Wait until user is logged in to show button
+//        trafficFab.hide(); //Wait until user is logged in to show button
         trafficFab.setOnClickListener(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

@@ -47,6 +47,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import okhttp3.Call;
+
 /**
  * Created by Vansh Gandhi on 6/16/16.
  * Copyright © 2016 AirMap, Inc. All rights reserved.
@@ -990,12 +992,12 @@ public class AirMap {
      * @param date         Date and time for planned flight
      * @param callback     The callback that is invoked on success or error
      */
-    public static void checkCoordinate(Coordinate coordinate, @Nullable Double buffer,
+    public static Call checkCoordinate(Coordinate coordinate, @Nullable Double buffer,
                                        @Nullable List<MappingService.AirMapAirspaceType> types,
                                        @Nullable List<MappingService.AirMapAirspaceType> ignoredTypes,
                                        boolean showWeather, @Nullable Date date,
                                        @Nullable AirMapCallback<AirMapStatus> callback) {
-        StatusService.checkCoordinate(coordinate, buffer, types, ignoredTypes, showWeather, date, callback);
+        return StatusService.checkCoordinate(coordinate, buffer, types, ignoredTypes, showWeather, date, callback);
     }
 
     /**
