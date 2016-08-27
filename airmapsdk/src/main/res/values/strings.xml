@@ -12,7 +12,7 @@
     <string name="airmap_select_permit">Select Permit</string>
     <string name="airmap_select_aircraft">Select Aircraft</string>
     <string name="airmap_share_my_flight">Share My Flight</string>
-    <string name="airmap_pilot_profile">Pilot Profile</string>
+    <string name="airmap_pilot_profile">View Pilot Profile</string>
     <string name="airmap_duration">Duration</string>
     <string name="airmap_starts">Starts</string>
     <string name="airmap_max_altitude">Altitude</string>
@@ -36,4 +36,6 @@
     <string name="airmap_select_a_permit">Select a permit</string>
     <string name="airmap_select_different_permit">Select a different permit</string>
     <string name="airmap_title_activity_login">Login</string>
+    <string name="pilot_and_aircraft_header">Pilot and Aircraft</string>
+    <string name="flight_header">Flight</string>
 </resources>

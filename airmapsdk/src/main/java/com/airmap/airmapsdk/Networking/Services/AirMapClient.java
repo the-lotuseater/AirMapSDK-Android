@@ -72,7 +72,6 @@ public class AirMapClient {
      * @param callback An OkHttp Callback
      */
     public Call get(String url, Map<String, String> params, Callback callback) {
-//        cancelCallWithTag(url);
         Request request = new Builder().url(urlBodyFromMap(url, params)).get().tag(url).build();
         Call call = client.newCall(request);
         call.enqueue(callback);
@@ -86,7 +85,6 @@ public class AirMapClient {
      * @param callback An OkHttp Callback
      */
     public Call get(String url, Callback callback) {
-//        cancelCallWithTag(url);
         Request request = new Builder().url(url).get().tag(url).build();
         Call call = client.newCall(request);
         call.enqueue(callback);
@@ -101,7 +99,6 @@ public class AirMapClient {
      * @param callback An OkHttp Callback
      */
     public Call post(String url, Map<String, String> params, Callback callback) {
-//        cancelCallWithTag(url);
         Request request = new Builder().url(url).post(bodyFromMap(params)).tag(url).build();
         Call call = client.newCall(request);
         call.enqueue(callback);
@@ -116,7 +113,6 @@ public class AirMapClient {
      * @param callback An OkHttp Callback
      */
     public Call postWithJsonBody(String url, JSONObject params, Callback callback) {
-//        cancelCallWithTag(url);
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create(JSON, params.toString());
         Request request = new Builder().url(url).post(body).build();
@@ -143,8 +139,23 @@ public class AirMapClient {
      * @param callback An OkHttp Callback
      */
     public Call patch(String url, Map<String, String> params, Callback callback) {
-//        cancelCallWithTag(url);
         Request request = new Builder().url(url).patch(bodyFromMap(params)).build();
+        Call call = client.newCall(request);
+        call.enqueue(callback);
+        return call;
+    }
+
+    /**
+     * Make a PATCH call with JSON body
+     *
+     * @param url      The full url to PATCH
+     * @param params   The params to add to the request
+     * @param callback An OkHttp Callback
+     */
+    public Call patch(String url, JSONObject params, Callback callback) {
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(JSON, params.toString());
+        Request request = new Builder().url(url).patch(body).build();
         Call call = client.newCall(request);
         call.enqueue(callback);
         return call;
@@ -158,7 +169,6 @@ public class AirMapClient {
      * @param callback An OkHttp Callback
      */
     public Call put(String url, Map<String, String> params, Callback callback) {
-//        cancelCallWithTag(url);
         Request request = new Builder().url(url).put(bodyFromMap(params)).build();
         Call call = client.newCall(request);
         call.enqueue(callback);
@@ -182,7 +192,6 @@ public class AirMapClient {
      * @param callback An OkHttp Callback
      */
     public Call delete(String url, Callback callback) {
-//        cancelCallWithTag(url);
         Request request = new Builder().url(url).delete().build();
         Call call = client.newCall(request);
         call.enqueue(callback);

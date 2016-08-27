@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.Models.Aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.Models.Flight.AirMapFlight;
+import com.airmap.airmapsdk.Models.Pilot.AirMapPilot;
 import com.airmap.airmapsdk.Models.Status.AirMapStatus;
 import com.airmap.airmapsdk.Models.Status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.Networking.Callbacks.AirMapCallback;
@@ -116,7 +117,25 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         setupOnClickListeners();
         setupSwitches();
         updateSaveNextButtonText();
+        AirMap.getPilot(new AirMapCallback<AirMapPilot>() {
+            @Override
+            public void onSuccess(final AirMapPilot response) {
+                if (response != null && response.getFullName() != null && !response.getFullName().isEmpty()) {
+                    pilotProfileTextView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            pilotProfileTextView.setText(response.getFullName());
+                            progressBarContainer.setVisibility(View.GONE);
+                        }
+                    });
+                }
+            }
 
+            @Override
+            public void onError(AirMapException e) {
+                e.printStackTrace();
+            }
+        });
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

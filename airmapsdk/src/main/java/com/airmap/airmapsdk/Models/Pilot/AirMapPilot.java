@@ -52,13 +52,14 @@ public class AirMapPilot implements Serializable, AirMapBaseModel {
     }
 
     //Does not submit phone number
-    public Map<String, String> getAsParams() {
-        Map<String, String> params = new HashMap<>();
+    public JSONObject getAsParams() {
+        Map<String, Object> params = new HashMap<>();
         params.put("first_name", getFirstName());
         params.put("last_name", getLastName());
+        params.put("username", getUsername());
         params.put("user_metadata", getUserMetaData().getAsParams());
         params.put("app_metadata", getAppMetaData().getAsParams());
-        return params;
+        return new JSONObject(params);
     }
 
     public String getEmail() {

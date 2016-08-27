@@ -40,9 +40,8 @@ public class AirMapPilotMetaData implements Serializable, AirMapBaseModel {
         return this;
     }
 
-    public String getAsParams() {
-        JSONObject object = new JSONObject(metaData);
-        return object.toString();
+    public JSONObject getAsParams() {
+        return new JSONObject(metaData);
     }
 
     public Map<String, Object> getMetaData() {

@@ -30,7 +30,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp">
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="4dp"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorAccent"
+                        android:text="@string/flight_header"/>
 
                 <RelativeLayout
                         android:layout_width="match_parent"
@@ -141,12 +153,15 @@
                             android:layout_alignParentRight="true"/>
                 </RelativeLayout>
 
-                <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1px"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
-                        android:background="@android:color/darker_gray"/>
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="4dp"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorAccent"
+                        android:text="@string/pilot_and_aircraft_header"/>
 
                 <TextView
                         android:id="@+id/pilot_profile_text"
@@ -160,8 +175,7 @@
                 <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="8dp">
+                        android:paddingBottom="8dp">
 
                     <TextView
                             android:id="@+id/aircraft_label"
@@ -184,10 +198,10 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingTop="24dp"
                         android:paddingBottom="4dp"
                         android:textSize="12sp"
                         android:textStyle="bold"
+                        android:textColor="@color/colorAccent"
                         android:text="@string/airmap_share_my_flight"/>
 
                 <RelativeLayout
@@ -236,7 +250,6 @@
             android:id="@+id/progress_bar_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
             android:background="#b8000000">
 
         <ProgressBar
