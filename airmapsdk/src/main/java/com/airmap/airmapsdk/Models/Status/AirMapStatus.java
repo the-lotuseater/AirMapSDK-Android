@@ -116,10 +116,9 @@ public class AirMapStatus implements Serializable, AirMapBaseModel {
             params.put("ignored_types", ignoredTypesString);
         }
         params.put("weather", String.valueOf(weather));
-        if (date == null) {
-            date = new Date();
+        if (date != null) {
+            params.put("datetime", Utils.getIso8601StringFromDate(date));
         }
-        params.put("datetime", Utils.getIso8601StringFromDate(date));
         return params;
     }
 

@@ -34,7 +34,6 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
@@ -86,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             AirMapPilot pilot = (AirMapPilot) data.getSerializableExtra(LoginActivity.PILOT); //Get the pilot from the data
             showToast("Hi, " + pilot.getFirstName() + "!");
             trafficFab.show(); //Show the button now that the user is logged in
-            AirMap.getAllPublicAndAuthenticatedPilotFlights(null, new Date(), new AirMapCallback<List<AirMapFlight>>() { //Get all public flights and display them on the map
+            AirMap.getPublicFlights(null, null, null, new AirMapCallback<List<AirMapFlight>>() { //Get all public flights and display them on the map
                 @Override
                 public void onSuccess(List<AirMapFlight> response) {
                     if (map != null) { //Make sure the map has been initialized already

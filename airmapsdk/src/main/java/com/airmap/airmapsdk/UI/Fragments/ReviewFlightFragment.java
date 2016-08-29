@@ -129,8 +129,10 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     }
 
     private void submitFlight() {
-        if (mListener.getFlight().getStartsAt().before(new Date())) { //If the startsAt date is in past
-            mListener.getFlight().setStartsAt(null); //Default to current time
+        if (mListener.getFlight().getStartsAt() != null) {
+            if (mListener.getFlight().getStartsAt().before(new Date())) { //If the startsAt date is in past
+                mListener.getFlight().setStartsAt(null); //Default to current time
+            }
         }
         AirMap.createFlight(mListener.getFlight(), new AirMapCallback<AirMapFlight>() {
             @Override

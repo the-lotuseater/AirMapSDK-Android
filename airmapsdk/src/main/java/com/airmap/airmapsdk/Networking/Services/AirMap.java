@@ -447,39 +447,46 @@ public class AirMap {
     /**
      * List Flights. All parameters are optional and nullable
      *
-     * @param limit       Max number of flights to return
-     * @param pilotId     Search for flights from a particular pilot
-     * @param startAfter  Search for flights that start after this time
-     * @param startBefore Search for flights that start before this time
-     * @param endAfter    Search for flights that end after this time
-     * @param endBefore   Search for flights that end before this time
-     * @param country     Search for flights within this country (Length: 3, case insensitive)
-     * @param city        Search for flights within this city
-     * @param state       Search for flights within this state
-     * @param enhanced    Returns enhanced flight, pilot, and aircraft information
-     * @param callback    The callback that is invoked on success or error
+     * @param limit           Max number of flights to return
+     * @param pilotId         Search for flights from a particular pilot
+     * @param startAfter      Search for flights that start after this time
+     * @param startBefore     Search for flights that start before this time
+     * @param endAfter        Search for flights that end after this time
+     * @param endBefore       Search for flights that end before this time
+     * @param country         Search for flights within this country (Length: 3, case insensitive)
+     * @param startsAfterNow  Search for flights starting after now
+     * @param startsBeforeNow Search for flights starting before now
+     * @param endsAfterNow    Search for flights ending after now
+     * @param endsBeforeNow   Search for flights ending before now
+     * @param city            Search for flights within this city
+     * @param state           Search for flights within this state
+     * @param enhanced        Returns enhanced flight, pilot, and aircraft information
+     * @param callback        The callback that is invoked on success or error
      */
     public static void getFlights(@Nullable Integer limit, @Nullable String pilotId,
                                   @Nullable Date startAfter, @Nullable Date startBefore,
                                   @Nullable Date endAfter, @Nullable Date endBefore,
+                                  @Nullable Boolean startsAfterNow, @Nullable Boolean startsBeforeNow,
+                                  @Nullable Boolean endsAfterNow, @Nullable Boolean endsBeforeNow,
                                   @Nullable String country, @Nullable String city,
                                   @Nullable String state, @Nullable Boolean enhanced,
                                   @Nullable AirMapCallback<List<AirMapFlight>> callback) {
         FlightService.getFlights(limit, pilotId, startAfter, startBefore, endAfter, endBefore,
-                country, city, state, enhanced, callback);
+                startsAfterNow, startsBeforeNow, endsAfterNow, endsBeforeNow, country, city, state,
+                enhanced, callback);
     }
 
     /**
      * Get a list of all public flights combined with the authenticated pilot's private flights
      *
      * @param limit    Max number of flights to return
-     * @param date     Search for active flights during this time
+     * @param from     Search for flights from this date
+     * @param to       Search for flights to this date
      * @param callback The callback that is invoked on success or error
      */
-    public static void getAllPublicAndAuthenticatedPilotFlights(@Nullable Integer limit,
-                                                                Date date,
-                                                                @Nullable AirMapCallback<List<AirMapFlight>> callback) {
-        FlightService.getAllPublicAndAuthenticatedPilotFlights(limit, date, callback);
+    public static void getPublicFlights(@Nullable Integer limit, Date from, Date to,
+                                        @Nullable AirMapCallback<List<AirMapFlight>> callback) {
+        FlightService.getPublicFlights(limit, from, to, callback);
     }
 
     /**
@@ -508,7 +515,7 @@ public class AirMap {
             }
         };
         if (AirMap.getUserId() != null) {
-            FlightService.getFlights(null, AirMap.getUserId(), null, new Date(), new Date(), null, null, null, null, true, proxy);
+            FlightService.getFlights(null, AirMap.getUserId(), null, null, null, null, null, true, true, null, null, null, null, true, proxy);
         } else {
             if (callback != null) {
                 callback.onSuccess(null);
@@ -545,7 +552,7 @@ public class AirMap {
      * @param callback The callback that is invoked on success or error
      */
     public static void getFlights(AirMapPilot pilot, @Nullable AirMapCallback<List<AirMapFlight>> callback) {
-        FlightService.getFlights(null, pilot.getPilotId(), null, null, null, null, null, null, null, true, callback);
+        FlightService.getFlights(null, pilot.getPilotId(), null, null, null, null, null, null, null, null, null, null, null, true, callback);
     }
 
     /**
@@ -554,7 +561,7 @@ public class AirMap {
      * @param callback The callback that is invoked on success or error
      */
     public static void getFlights(@Nullable AirMapCallback<List<AirMapFlight>> callback) {
-        FlightService.getFlights(null, AirMap.getUserId(), null, null, null, null, null, null, null, true, callback);
+        FlightService.getFlights(null, AirMap.getUserId(), null, null, null, null, null, null, null, null, null, null, null, true, callback);
     }
 
     /**

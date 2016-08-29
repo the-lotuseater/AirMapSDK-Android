@@ -31,21 +31,27 @@ class FlightService extends BaseService {
     /**
      * List Flights. All parameters are optional and nullable
      *
-     * @param limit       Max number of flights to return
-     * @param pilotId     Search for flights from a particular pilot
-     * @param startAfter  Search for flights that start after this time
-     * @param startBefore Search for flights that start before this time
-     * @param endAfter    Search for flights that end after this time
-     * @param endBefore   Search for flights that end before this time
-     * @param country     Search for flights within this country (Length: 3, case insensitive)
-     * @param city        Search for flights within this city
-     * @param state       Search for flights within this state
-     * @param enhanced    Returns enhanced flight, pilot, and aircraft information
-     * @param listener    The callback that is invoked on success or error
+     * @param limit           Max number of flights to return
+     * @param pilotId         Search for flights from a particular pilot
+     * @param startAfter      Search for flights that start after this time
+     * @param startBefore     Search for flights that start before this time
+     * @param endAfter        Search for flights that end after this time
+     * @param endBefore       Search for flights that end before this time
+     * @param startsAfterNow  Search for flights starting after now
+     * @param startsBeforeNow Search for flights starting before now
+     * @param endsAfterNow    Search for flights ending after now
+     * @param endsBeforeNow   Search for flights ending before now
+     * @param country         Search for flights within this country (Length: 3, case insensitive)
+     * @param city            Search for flights within this city
+     * @param state           Search for flights within this state
+     * @param enhanced        Returns enhanced flight, pilot, and aircraft information
+     * @param listener        The callback that is invoked on success or error
      */
     public static void getFlights(@Nullable Integer limit, @Nullable String pilotId,
                                   @Nullable Date startAfter, @Nullable Date startBefore,
                                   @Nullable Date endAfter, @Nullable Date endBefore,
+                                  @Nullable Boolean startsAfterNow, @Nullable Boolean startsBeforeNow,
+                                  @Nullable Boolean endsAfterNow, @Nullable Boolean endsBeforeNow,
                                   @Nullable String country, @Nullable String city,
                                   @Nullable String state, @Nullable Boolean enhanced,
                                   @Nullable AirMapCallback<List<AirMapFlight>> listener) {
@@ -54,10 +60,10 @@ class FlightService extends BaseService {
             params.put("limit", limit.toString());
         }
         params.put("pilot_id", pilotId);
-        params.put("start_after", startAfter == null ? null : getIso8601StringFromDate(startAfter));
-        params.put("start_before", startBefore == null ? null : getIso8601StringFromDate(startBefore));
-        params.put("end_after", endAfter == null ? null : getIso8601StringFromDate(endAfter));
-        params.put("end_before", endBefore == null ? null : getIso8601StringFromDate(endBefore));
+        params.put("start_after", startsAfterNow != null && startsAfterNow ? "now" : getIso8601StringFromDate(startAfter));
+        params.put("start_before", startsBeforeNow != null && startsBeforeNow ? "now" : getIso8601StringFromDate(startBefore));
+        params.put("end_after", endsAfterNow != null && endsAfterNow ? "now" : getIso8601StringFromDate(endAfter));
+        params.put("end_before", endsBeforeNow != null && endsBeforeNow ? "now" : getIso8601StringFromDate(endBefore));
         params.put("country", country);
         params.put("city", city);
         params.put("state", state);
@@ -70,15 +76,23 @@ class FlightService extends BaseService {
      * flights
      *
      * @param limit    Max number of flights to return
-     * @param date     Search for active flights during this time
+     * @param from     Search for flights from this date
+     * @param to       Search for flights to this date
      * @param listener The callback that is invoked on success or error
      */
-    public static void getAllPublicAndAuthenticatedPilotFlights(@Nullable Integer limit, final Date date, final AirMapCallback<List<AirMapFlight>> listener) {
-        AirMap.getFlights(limit, null, null, date, new Date(date.getTime() + 60 * 1000), null, null, null, null, true, new AirMapCallback<List<AirMapFlight>>() {
+    //listPublicFlights
+    public static void getPublicFlights(Integer limit, final Date from, final Date to,
+                                        final AirMapCallback<List<AirMapFlight>> listener) {
+        //endafter is fromdate
+        //startsbefore is todate
+
+        final boolean endAfterNow = from == null;
+        final boolean startBeforeNow = to == null;
+        AirMap.getFlights(limit, null, null, to, from, null, null, startBeforeNow, endAfterNow, null, null, null, null, true, new AirMapCallback<List<AirMapFlight>>() {
             @Override
             public void onSuccess(final List<AirMapFlight> publicFlights) {
                 if (AirMap.hasValidAuthenticatedUser()) {
-                    AirMap.getFlights(null, AirMap.getUserId(), null, date, date, null, null, null, null, null, new AirMapCallback<List<AirMapFlight>>() {
+                    AirMap.getFlights(null, AirMap.getUserId(), null, to, from, null, null, startBeforeNow, endAfterNow, null, null, null, null, true, new AirMapCallback<List<AirMapFlight>>() {
                         @Override
                         public void onSuccess(List<AirMapFlight> authenticatedUserFlights) {
                             List<AirMapFlight> allFlights = new ArrayList<>(publicFlights);

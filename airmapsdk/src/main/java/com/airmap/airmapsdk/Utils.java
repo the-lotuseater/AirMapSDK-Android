@@ -231,7 +231,7 @@ public class Utils {
             LatLng point = new LatLng(pointLat, pointLon);
             points.add(point);
         }
-        return new PolygonOptions().addAll(points).strokeColor(0xA8B13232).fillColor(0xA8B13232);
+        return new PolygonOptions().addAll(points).strokeColor(0xA81E88E5).fillColor(0xA81E88E5);
     }
 
     public static String readInputStreamAsString(InputStream in) throws IOException {
