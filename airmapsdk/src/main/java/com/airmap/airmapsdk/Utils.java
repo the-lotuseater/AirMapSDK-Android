@@ -123,8 +123,8 @@ public class Utils {
                 new StringNumberPair("50 ft", feetToMeters(50)),
                 new StringNumberPair("100 ft", feetToMeters(100)),
                 new StringNumberPair("200 ft", feetToMeters(200)),
-                new StringNumberPair("400 ft", feetToMeters(400)),
-                new StringNumberPair("500 ft", feetToMeters(500))
+                new StringNumberPair("300 ft", feetToMeters(300)),
+                new StringNumberPair("400 ft", feetToMeters(400))
         };
     }
 
