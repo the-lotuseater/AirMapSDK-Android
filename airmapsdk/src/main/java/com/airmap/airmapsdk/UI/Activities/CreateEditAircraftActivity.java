@@ -59,6 +59,7 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
         AirMap.getManufacturers(new AirMapCallback<List<AirMapAircraftManufacturer>>() {
             @Override
             public void onSuccess(final List<AirMapAircraftManufacturer> response) {
+                response.add(0, new AirMapAircraftManufacturer().setId("select_manufacturer").setName("Select Manufacturer"));
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -72,7 +73,7 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
                 toast("Error getting manufacturers");
             }
         });
-
+        modelSpinner.setVisibility(View.GONE);
         manufacturerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 AirMapAircraftManufacturer manufacturer = (AirMapAircraftManufacturer) parent.getAdapter().getItem(pos);
@@ -82,12 +83,16 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
                         modelSpinner.setVisibility(View.GONE);
                     }
                 });
+                if (manufacturer.getId().equals("select_manufacturer")) {
+                    return;
+                }
                 AirMap.getModels(manufacturer.getId(), new AirMapCallback<List<AirMapAircraftModel>>() {
                     @Override
                     public void onSuccess(final List<AirMapAircraftModel> response) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                response.add(0, new AirMapAircraftModel().setModelId("select_model").setName("Select Model").setManufacturer(new AirMapAircraftManufacturer().setName("")));
                                 modelSpinner.setAdapter(new ArrayAdapter<>(CreateEditAircraftActivity.this, android.R.layout.simple_spinner_dropdown_item, response));
                                 modelSpinner.setVisibility(View.VISIBLE);
                             }
@@ -159,8 +164,16 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
                 }
             });
         } else {
+            if (nickname.isEmpty()) {
+                Toast.makeText(CreateEditAircraftActivity.this, "Please enter a nickname", Toast.LENGTH_SHORT).show();
+                return;
+            }
             AirMapAircraft aircraft = new AirMapAircraft();
             AirMapAircraftModel model = (AirMapAircraftModel) modelSpinner.getSelectedItem();
+            if (model == null || model.getModelId().equals("select_model")) {
+                Toast.makeText(CreateEditAircraftActivity.this, "Please select a model", Toast.LENGTH_SHORT).show();
+                return;
+            }
             aircraft.setModel(model).setNickname(nickname);
             AirMap.createAircraft(aircraft, new AirMapCallback<AirMapAircraft>() {
                 @Override

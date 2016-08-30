@@ -172,28 +172,14 @@
                         android:background="?attr/selectableItemBackground"
                         android:text="@string/airmap_pilot_profile"/>
 
-                <RelativeLayout
+                <TextView
+                        android:id="@+id/aircraft_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="8dp">
-
-                    <TextView
-                            android:id="@+id/aircraft_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="?attr/selectableItemBackground"
-                            android:text="@string/airmap_select_aircraft"/>
-
-                    <Spinner
-                            android:id="@+id/aircraft_spinner"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingTop="4dp"
-                            android:layout_below="@+id/aircraft_label"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"/>
-
-                </RelativeLayout>
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:text="@string/airmap_select_aircraft"/>
 
                 <TextView
                         android:layout_width="wrap_content"

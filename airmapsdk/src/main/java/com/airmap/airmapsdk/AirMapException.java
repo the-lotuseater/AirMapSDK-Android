@@ -30,7 +30,7 @@ public class AirMapException extends Exception {
             errorMessage = get500sErrorMessage(json);
             detailedMessage = errorMessage;
         } else {
-            errorMessage = "Unknown error";
+            errorMessage = UNKNOWN_ERROR_MESSAGE;
         }
     }
 
@@ -78,6 +78,9 @@ public class AirMapException extends Exception {
     }
 
     private String get400sErrorMessage(JSONObject json) {
+        if (json == null) {
+            return UNKNOWN_ERROR_MESSAGE;
+        }
         JSONObject data = json.optJSONObject("data");
         if (data == null) {
             return UNKNOWN_ERROR_MESSAGE;

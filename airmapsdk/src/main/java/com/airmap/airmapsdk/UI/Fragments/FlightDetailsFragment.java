@@ -6,17 +6,18 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -24,14 +25,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.SimpleAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.Models.Aircraft.AirMapAircraft;
+import com.airmap.airmapsdk.Models.Aircraft.AirMapAircraftManufacturer;
+import com.airmap.airmapsdk.Models.Aircraft.AirMapAircraftModel;
 import com.airmap.airmapsdk.Models.Flight.AirMapFlight;
 import com.airmap.airmapsdk.Models.Pilot.AirMapPilot;
 import com.airmap.airmapsdk.Models.Status.AirMapStatus;
@@ -42,6 +43,7 @@ import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.UI.Activities.CreateEditAircraftActivity;
 import com.airmap.airmapsdk.UI.Activities.CreateFlightActivity;
 import com.airmap.airmapsdk.UI.Activities.ProfileActivity;
+import com.airmap.airmapsdk.UI.Adapters.AircraftAdapter;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -56,10 +58,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import static com.airmap.airmapsdk.Utils.getAltitudePresets;
 import static com.airmap.airmapsdk.Utils.getCirclePolygon;
@@ -90,11 +90,12 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     private TextView durationValueTextView;
     private SeekBar durationSeekBar;
     private TextView pilotProfileTextView;
-    private Spinner aircraftSpinner;
+    private TextView aircraftTextView;
     private ImageView infoButton;
     private SwitchCompat shareAirMapSwitch;
     private Button saveNextButton;
     private FrameLayout progressBarContainer;
+    private List<AirMapAircraft> aircraft;
 
     public FlightDetailsFragment() {
         // Required empty public constructor
@@ -108,8 +109,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.airmap_fragment_flight_details, container, false);
+        aircraft = new ArrayList<>();
         initializeViews(view);
-        setupAircraftSpinner();
+        setupAircraftDialog();
         updateStartsAtTextView();
         setupMap(savedInstanceState);
         //SeekBars are set up once the map is set up
@@ -160,7 +162,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         durationValueTextView = (TextView) view.findViewById(R.id.duration_value);
         durationSeekBar = (SeekBar) view.findViewById(R.id.duration_seekbar);
         pilotProfileTextView = (TextView) view.findViewById(R.id.pilot_profile_text);
-        aircraftSpinner = (Spinner) view.findViewById(R.id.aircraft_spinner);
+        aircraftTextView = (TextView) view.findViewById(R.id.aircraft_label);
         infoButton = (ImageView) view.findViewById(R.id.airmap_info_button);
         shareAirMapSwitch = (SwitchCompat) view.findViewById(R.id.share_airmap_switch);
         saveNextButton = (Button) view.findViewById(R.id.save_next_button);
@@ -354,73 +356,43 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         startsAtTextView.setText(format.format(date));
     }
 
-    private void setupAircraftSpinner() {
-        aircraftSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Map<String, Object> map = (Map<String, Object>) parent.getItemAtPosition(position);
-                if (addAircraftText.equals(map.get("nickname"))) {
-                    mListener.getFlight().setAircraft(null);
-                    Intent intent = new Intent(getContext(), CreateEditAircraftActivity.class);
-                    startActivityForResult(intent, REQUEST_CREATE_AIRCRAFT);
-                } else {
-                    mListener.getFlight().setAircraft((AirMapAircraft) map.get(aircraftKey));
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-        setupAircraftSpinnerAdapter();
-    }
-
-    private void setupAircraftSpinnerAdapter() {
-        setupAircraftSpinnerAdapter(mListener.getFlight().getAircraft());
-    }
-
-    private void setupAircraftSpinnerAdapter(final AirMapAircraft aircraft) {
+    private void setupAircraftDialog() {
         AirMap.getAircraft(new AirMapCallback<List<AirMapAircraft>>() {
             @Override
-            public void onSuccess(final List<AirMapAircraft> response) {
-                final int index = response.indexOf(aircraft);
-                final List<Map<String, Object>> data = new ArrayList<>();
-                Map<String, Object> blankValue = new HashMap<>();
-                blankValue.put(nicknameKey, "Select Aircraft");
-                blankValue.put(modelKey, "");
-                data.add(blankValue);
-                for (AirMapAircraft aircraft : response) {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put(nicknameKey, aircraft.getNickname());
-                    map.put(modelKey, aircraft.getModel().toString());
-                    map.put(aircraftKey, aircraft);
-                    data.add(map);
+            public void onSuccess(List<AirMapAircraft> response) {
+                if (response == null) {
+                    response = new ArrayList<>();
                 }
-                Map<String, Object> add = new HashMap<>();
-                add.put(nicknameKey, addAircraftText);
-                add.put(modelKey, "+");
-                data.add(add);
-                aircraftSpinner.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        aircraftSpinner.setAdapter(new SimpleAdapter(getContext(), data, android.R.layout.simple_list_item_2, new String[]{"nickname", "model"}, new int[]{android.R.id.text1, android.R.id.text2}));
-                        if (index != -1 && index + 1 < aircraftSpinner.getAdapter().getCount()) {
-                            aircraftSpinner.setSelection(index+1);
-                        } else {
-                            aircraftSpinner.setSelection(0);
-                        }
-                    }
-                });
+                response.add(0, new AirMapAircraft().setAircraftId("add_aircraft").setNickname("Add Aircraft").setModel(new AirMapAircraftModel().setName("").setManufacturer(new AirMapAircraftManufacturer().setName("+"))));
+                aircraft = response;
             }
 
             @Override
             public void onError(AirMapException e) {
-                aircraftSpinner.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getContext(), "Error retrieving user aircraft", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                e.printStackTrace();
+            }
+        });
+
+        aircraftTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Select Aircraft")
+                        .setPositiveButton("Ok", null)
+                        .setAdapter(new AircraftAdapter(getContext(), aircraft), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int position) {
+                                if (aircraft.get(position).getAircraftId().equals("add_aircraft")) {
+                                    Intent intent = new Intent(getContext(), CreateEditAircraftActivity.class);
+                                    startActivityForResult(intent, REQUEST_CREATE_AIRCRAFT);
+                                } else {
+                                    mListener.getFlight().setAircraft(aircraft.get(position));
+                                    aircraftTextView.setText(aircraft.get(position).getNickname());
+                                }
+                                dialogInterface.dismiss();
+                            }
+                        })
+                        .show();
             }
         });
     }
@@ -521,11 +493,10 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CREATE_AIRCRAFT) {
             if (resultCode == Activity.RESULT_OK) {
-                AirMapAircraft aircraft = (AirMapAircraft) data.getSerializableExtra(CreateEditAircraftActivity.AIRCRAFT);
-                setupAircraftSpinnerAdapter(aircraft); //Refresh the spinner options
-            }
-            if (aircraftSpinner != null) {
-                aircraftSpinner.setSelection(0); //"Select aircraft"
+                AirMapAircraft newAircraft = (AirMapAircraft) data.getSerializableExtra(CreateEditAircraftActivity.AIRCRAFT);
+                aircraft.add(newAircraft);
+                mListener.getFlight().setAircraft(newAircraft);
+                aircraftTextView.setText(newAircraft.getNickname());
             }
         }
     }
