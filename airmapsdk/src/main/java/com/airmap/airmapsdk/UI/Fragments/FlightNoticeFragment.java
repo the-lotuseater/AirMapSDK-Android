@@ -104,6 +104,11 @@ public class FlightNoticeFragment extends Fragment {
                 }
             }
         }
+
+        // If there aren't any advisories that accept digital notice, then set notify to false
+        if (digitalNotices.size() == 0) {
+            mListener.getFlight().setNotify(false);
+        }
     }
 
     private void setupDigitalNoticeList() {
