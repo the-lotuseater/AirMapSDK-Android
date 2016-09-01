@@ -12,12 +12,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
@@ -59,6 +61,9 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     private FrameLayout progressBarContainer;
     private int totalNumberOfPermits;
     private int totalPermitsObtained = 0;
+    int sizeInDp;
+    float scale;
+    int dpAsPixels;
 
     private MapboxMap map;
 
@@ -76,6 +81,9 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
         initializeViews(view);
         setupMap(savedInstanceState);
         setupViewPager();
+        sizeInDp = 16;
+        scale = getResources().getDisplayMetrics().density;
+        dpAsPixels = (int) (sizeInDp * scale + 0.5f);
         return view;
     }
 
@@ -255,18 +263,25 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                submitButton.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBarContainer.setVisibility(View.GONE);
+                        submitButton.setEnabled(true);
+                    }
+                });
             }
         };
-        int sizeInDp = 16;
-        float scale = getResources().getDisplayMetrics().density;
-        final int dpAsPixels = (int) (sizeInDp * scale + 0.5f);
         final TextInputLayout phoneLayout = new TextInputLayout(getContext()); //The phone EditText
         phoneLayout.setHint("Phone Number");
-        phoneLayout.addView(new TextInputEditText(getContext()));
+        TextInputEditText editText = new TextInputEditText(getContext());
+        editText.setInputType(EditorInfo.TYPE_CLASS_PHONE);
+        editText.setMaxLines(1);
+        editText.setSingleLine();
+        editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        phoneLayout.addView(editText);
         phoneLayout.setPadding(dpAsPixels, dpAsPixels, dpAsPixels, 0);
-        //noinspection ConstantConditions
-        phoneLayout.getEditText().setInputType(EditorInfo.TYPE_CLASS_PHONE);
-        new AlertDialog.Builder(getContext())
+        final AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setMessage(R.string.airmap_phone_number_disclaimer)
                 .setTitle("Phone Number")
                 .setView(phoneLayout)
@@ -274,74 +289,83 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                 .setPositiveButton("Submit", new DialogInterface.OnClickListener() { //Display dialog to enter the verification token
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        AirMap.updatePhoneNumber(phoneLayout.getEditText().getText().toString(), new AirMapCallback<Void>() {
+                        onSubmitPhoneNumber(phoneLayout);
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    onSubmitPhoneNumber(phoneLayout);
+                    dialog.dismiss();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    private void onSubmitPhoneNumber(final TextInputLayout phoneLayout) {
+        AirMap.updatePhoneNumber(phoneLayout.getEditText().getText().toString(), new AirMapCallback<Void>() {
+            @Override
+            public void onSuccess(Void response) {
+                AirMap.sendVerificationToken(new AirMapCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void response) {
+                        showVerifyDialog();
+                    }
+
+                    @Override
+                    public void onError(AirMapException e) {
+                        e.printStackTrace();
+                        toast(e.getMessage());
+                        submitButton.post(new Runnable() {
                             @Override
-                            public void onSuccess(Void response) {
-                                AirMap.sendVerificationToken(new AirMapCallback<Void>() {
-                                    @Override
-                                    public void onSuccess(Void response) {
-                                        final TextInputLayout verifyLayout = new TextInputLayout(getContext()); //The verify token EditText
-                                        verifyLayout.addView(new TextInputEditText(getContext()));
-                                        verifyLayout.setPadding(dpAsPixels, dpAsPixels, dpAsPixels, 0);
-                                        //noinspection ConstantConditions
-                                        verifyLayout.getEditText().setInputType(EditorInfo.TYPE_CLASS_NUMBER);
-                                        mapView.post(new Runnable() { //run on UI thread
-                                            @Override
-                                            public void run() {
-                                                new AlertDialog.Builder(getContext())
-                                                        .setView(verifyLayout)
-                                                        .setMessage("Enter the verification token that was sent to your phone number")
-                                                        .setNegativeButton("Cancel", dismissOnClickListener)
-                                                        .setPositiveButton("Verify", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(final DialogInterface dialog, int which) {
-                                                                AirMap.verifyPhoneToken(verifyLayout.getEditText().getText().toString(), new AirMapCallback<Void>() {
-                                                                    @Override
-                                                                    public void onSuccess(Void response) {
-                                                                        toast("Successfully verified new number");
-                                                                        dialog.dismiss();
-                                                                        doSubmitFlight();
-                                                                    }
-
-                                                                    @Override
-                                                                    public void onError(AirMapException e) {
-                                                                        toast("Error verifying number");
-                                                                        e.printStackTrace();
-                                                                        submitButton.post(new Runnable() {
-                                                                            @Override
-                                                                            public void run() {
-                                                                                progressBarContainer.setVisibility(View.GONE);
-                                                                                submitButton.setEnabled(true);
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                });
-                                                            }
-                                                        })
-                                                        .show();
-                                            }
-                                        });
-                                    }
-
-                                    @Override
-                                    public void onError(AirMapException e) {
-                                        e.printStackTrace();
-                                        toast(e.getMessage());
-                                        submitButton.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                progressBarContainer.setVisibility(View.GONE);
-                                                submitButton.setEnabled(true);
-                                            }
-                                        });
-                                    }
-                                });
+                            public void run() {
+                                progressBarContainer.setVisibility(View.GONE);
+                                submitButton.setEnabled(true);
                             }
+                        });
+                    }
+                });
+            }
 
+            @Override
+            public void onError(AirMapException e) {
+                e.printStackTrace();
+                toast(e.getMessage());
+                submitButton.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBarContainer.setVisibility(View.GONE);
+                        submitButton.setEnabled(true);
+                    }
+                });
+            }
+        });
+    }
+
+    private void showVerifyDialog() {
+        final TextInputLayout verifyLayout = new TextInputLayout(getContext()); //The verify token EditText
+        verifyLayout.setPadding(dpAsPixels, dpAsPixels, dpAsPixels, 0);
+        final TextInputEditText editText = new TextInputEditText(getContext());
+        editText.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        editText.setMaxLines(1);
+        editText.setSingleLine();
+        editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        verifyLayout.addView(editText);
+        mapView.post(new Runnable() { //run on UI thread
+            @Override
+            public void run() {
+                final AlertDialog dialog = new AlertDialog.Builder(getContext())
+                        .setView(verifyLayout)
+                        .setMessage("Enter the verification token that was sent to your phone number")
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onError(AirMapException e) {
-                                e.printStackTrace();
-                                toast(e.getMessage());
+                            public void onClick(DialogInterface dialog, int i) {
+                                dialog.dismiss();
                                 submitButton.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -350,10 +374,50 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                                     }
                                 });
                             }
-                        });
+                        })
+                        .setPositiveButton("Verify", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialog, int which) {
+                                onSubmitVerificationToken(verifyLayout);
+                            }
+                        })
+                        .show();
+                editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            dialog.dismiss();
+                            onSubmitVerificationToken(verifyLayout);
+                            return true;
+                        }
+                        return false;
                     }
-                })
-                .show();
+                });
+            }
+        });
+    }
+
+    private void onSubmitVerificationToken(TextInputLayout verifyLayout) {
+        AirMap.verifyPhoneToken(verifyLayout.getEditText().getText().toString(), new AirMapCallback<Void>() {
+            @Override
+            public void onSuccess(Void response) {
+                toast("Successfully verified new number");
+                doSubmitFlight();
+            }
+
+            @Override
+            public void onError(AirMapException e) {
+                toast("Error verifying number");
+                e.printStackTrace();
+                submitButton.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBarContainer.setVisibility(View.GONE);
+                        submitButton.setEnabled(true);
+                    }
+                });
+            }
+        });
     }
 
     private void toast(final String message) {
