@@ -129,6 +129,9 @@ public class TrafficService extends BaseService {
      * Disconnect from the server and stop receiving updates
      */
     public void disconnect() {
+        if (connectionState == ConnectionState.Disconnected || connectionState == ConnectionState.Connecting || !client.isConnected()) {
+            return;
+        }
         AirMapLog.i("TrafficService", "Disconnecting from alerts");
         removeAllTraffic();
         try {

@@ -122,6 +122,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         AirMap.getPilot(new AirMapCallback<AirMapPilot>() {
             @Override
             public void onSuccess(final AirMapPilot response) {
+                mListener.setPilot(response);
                 if (response != null && response.getFullName() != null && !response.getFullName().isEmpty()) {
                     pilotProfileTextView.post(new Runnable() {
                         @Override
@@ -363,7 +364,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 if (response == null) {
                     response = new ArrayList<>();
                 }
-                response.add(0, new AirMapAircraft().setAircraftId("add_aircraft").setNickname("Add Aircraft").setModel(new AirMapAircraftModel().setName("").setManufacturer(new AirMapAircraftManufacturer().setName("+"))));
+                response.add(new AirMapAircraft().setAircraftId("add_aircraft").setNickname("+ Add Aircraft").setModel(new AirMapAircraftModel().setName("").setManufacturer(new AirMapAircraftManufacturer().setName(""))));
                 aircraft = response;
             }
 
@@ -594,5 +595,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         void flightDetailsNextClicked(AirMapStatus flightStatus);
 
         void flightChanged();
+
+        void setPilot(AirMapPilot response);
     }
 }

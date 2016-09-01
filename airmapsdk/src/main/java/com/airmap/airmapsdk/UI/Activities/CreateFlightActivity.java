@@ -14,6 +14,7 @@ import com.airmap.airmapsdk.Models.Coordinate;
 import com.airmap.airmapsdk.Models.Flight.AirMapFlight;
 import com.airmap.airmapsdk.Models.Permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.Models.Permits.AirMapPilotPermit;
+import com.airmap.airmapsdk.Models.Pilot.AirMapPilot;
 import com.airmap.airmapsdk.Models.Status.AirMapStatus;
 import com.airmap.airmapsdk.Models.Status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.Models.Status.AirMapStatusPermits;
@@ -58,6 +59,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
     private int currentPage;
     private AirMapFlight flight; //The flight the user wants to create
     private AirMapStatus flightStatus; //The status for the flight
+    private AirMapPilot pilot;
     private ArrayList<AirMapStatusRequirementNotice> notices;
 
     private ArrayList<AirMapStatusPermits> statusPermits; //List of all permits that might be required
@@ -439,6 +441,14 @@ public class CreateFlightActivity extends AppCompatActivity implements
     @Override
     public AirMapFlight getFlight() {
         return flight;
+    }
+
+    public AirMapPilot getPilot() {
+        return pilot;
+    }
+
+    public void setPilot(AirMapPilot pilot) {
+        this.pilot = pilot;
     }
 
     @Override
