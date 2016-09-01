@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -51,6 +52,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private AirMapPilot profile;
     private HashMap<String, String> extras;
     private HashMap<String, String> editedExtras;
+    int sizeInDp;
+    float scale;
+    int dpAsPixels;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +74,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             pilotId = AirMap.getUserId();
         }
         getPilot(pilotId);
+        sizeInDp = 16;
+        scale = getResources().getDisplayMetrics().density;
+        dpAsPixels = (int) (sizeInDp * scale + 0.5f);
     }
 
     private void getPilot(final String pilotId) {
@@ -154,96 +161,143 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             flightCounterTextView.setText("0");
         }
         saveButton.setOnClickListener(this);
+        phoneEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                showPhoneDialog();
+            }
+        });
+    }
+
+    private void showPhoneDialog() {
         final DialogInterface.OnClickListener dismissOnClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         };
-        int sizeInDp = 16;
-        float scale = getResources().getDisplayMetrics().density;
-        final int dpAsPixels = (int) (sizeInDp * scale + 0.5f);
-        phoneEditText.setOnClickListener(new View.OnClickListener() { //Throw the user into the phone verification process
+        final TextInputLayout phoneLayout = new TextInputLayout(this); //The phone EditText
+        phoneLayout.setHint("Phone Number");
+        TextInputEditText editText = new TextInputEditText(this);
+        editText.setInputType(EditorInfo.TYPE_CLASS_PHONE);
+        editText.setMaxLines(1);
+        editText.setSingleLine();
+        editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        phoneLayout.addView(editText);
+        phoneLayout.setPadding(dpAsPixels, dpAsPixels, dpAsPixels, 0);
+        final AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.airmap_phone_number_disclaimer)
+                .setTitle("Phone Number")
+                .setView(phoneLayout)
+                .setNegativeButton("Cancel", dismissOnClickListener)
+                .setPositiveButton("Submit", new DialogInterface.OnClickListener() { //Display dialog to enter the verification token
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onSubmitPhoneNumber(phoneLayout);
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void onClick(final View v) {
-                final TextInputLayout phoneLayout = new TextInputLayout(v.getContext()); //The phone EditText
-                phoneLayout.setHint("Phone Number");
-                phoneLayout.addView(new TextInputEditText(v.getContext()));
-                phoneLayout.setPadding(dpAsPixels, dpAsPixels, dpAsPixels, 0);
-                //noinspection ConstantConditions
-                phoneLayout.getEditText().setInputType(EditorInfo.TYPE_CLASS_PHONE);
-                new AlertDialog.Builder(v.getContext())
-                        .setMessage(R.string.airmap_phone_number_disclaimer)
-                        .setTitle("Phone Number")
-                        .setView(phoneLayout)
-                        .setNegativeButton("Cancel", dismissOnClickListener)
-                        .setPositiveButton("Submit", new DialogInterface.OnClickListener() { //Display dialog to enter the verification token
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    onSubmitPhoneNumber(phoneLayout);
+                    dialog.dismiss();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    private void onSubmitPhoneNumber(final TextInputLayout phoneLayout) {
+        final String phone = phoneLayout.getEditText().getText().toString();
+        AirMap.updatePhoneNumber(phone, new AirMapCallback<Void>() {
+            @Override
+            public void onSuccess(Void response) {
+                AirMap.sendVerificationToken(new AirMapCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void response) {
+                        phoneEditText.post(new Runnable() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                AirMap.updatePhoneNumber(phoneLayout.getEditText().getText().toString(), new AirMapCallback<Void>() {
-                                    @Override
-                                    public void onSuccess(Void response) {
-                                        AirMap.sendVerificationToken(new AirMapCallback<Void>() {
-                                            @Override
-                                            public void onSuccess(Void response) {
-                                                final TextInputLayout verifyLayout = new TextInputLayout(v.getContext()); //The verify token EditText
-                                                verifyLayout.addView(new TextInputEditText(v.getContext()));
-                                                verifyLayout.setPadding(dpAsPixels, dpAsPixels, dpAsPixels, 0);
-                                                //noinspection ConstantConditions
-                                                verifyLayout.getEditText().setInputType(EditorInfo.TYPE_CLASS_NUMBER);
-                                                v.post(new Runnable() { //run on UI thread
-                                                    @Override
-                                                    public void run() {
-                                                        new AlertDialog.Builder(v.getContext())
-                                                                .setView(verifyLayout)
-                                                                .setMessage("Enter the verification token that was sent to your phone number")
-                                                                .setNegativeButton("Cancel", dismissOnClickListener)
-                                                                .setPositiveButton("Verify", new DialogInterface.OnClickListener() {
-                                                                    @Override
-                                                                    public void onClick(final DialogInterface dialog, int which) {
-                                                                        AirMap.verifyPhoneToken(verifyLayout.getEditText().getText().toString(), new AirMapCallback<Void>() {
-                                                                            @Override
-                                                                            public void onSuccess(Void response) {
-                                                                                toast("Successfully verified new number");
-                                                                                dialog.dismiss();
-                                                                                v.post(new Runnable() {
-                                                                                    @Override
-                                                                                    public void run() {
-                                                                                        phoneEditText.setText(phoneLayout.getEditText().getText().toString()); //Update the UI with the new phone number
-                                                                                    }
-                                                                                });
-                                                                            }
+                            public void run() {
+                                phoneEditText.setText(phone); //Update the UI with the new phone number
+                            }
+                        });
+                        showVerifyDialog();
+                    }
 
-                                                                            @Override
-                                                                            public void onError(AirMapException e) {
-                                                                                toast("Error verifying number");
-                                                                                e.printStackTrace();
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                })
-                                                                .show();
-                                                    }
-                                                });
-                                            }
+                    @Override
+                    public void onError(AirMapException e) {
+                        e.printStackTrace();
+                        toast(e.getMessage());
+                    }
+                });
+            }
 
-                                            @Override
-                                            public void onError(AirMapException e) {
-                                                e.printStackTrace();
-                                                toast(e.getMessage());
-                                            }
-                                        });
-                                    }
+            @Override
+            public void onError(AirMapException e) {
+                e.printStackTrace();
+                toast(e.getMessage());
+            }
+        });
+    }
 
-                                    @Override
-                                    public void onError(AirMapException e) {
-                                        e.printStackTrace();
-                                        toast(e.getMessage());
-                                    }
-                                });
+    private void showVerifyDialog() {
+        final TextInputLayout verifyLayout = new TextInputLayout(this); //The verify token EditText
+        verifyLayout.setPadding(dpAsPixels, dpAsPixels, dpAsPixels, 0);
+        final TextInputEditText editText = new TextInputEditText(this);
+        editText.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        editText.setMaxLines(1);
+        editText.setSingleLine();
+        editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        verifyLayout.addView(editText);
+        phoneEditText.post(new Runnable() { //run on UI thread
+            @Override
+            public void run() {
+                final AlertDialog dialog = new AlertDialog.Builder(ProfileActivity.this)
+                        .setView(verifyLayout)
+                        .setMessage("Enter the verification token that was sent to your phone number")
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setPositiveButton("Verify", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialog, int which) {
+                                onSubmitVerificationToken(verifyLayout);
                             }
                         })
                         .show();
+                editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            dialog.dismiss();
+                            onSubmitVerificationToken(verifyLayout);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+            }
+        });
+    }
+
+    private void onSubmitVerificationToken(TextInputLayout verifyLayout) {
+        AirMap.verifyPhoneToken(verifyLayout.getEditText().getText().toString(), new AirMapCallback<Void>() {
+            @Override
+            public void onSuccess(Void response) {
+                toast("Successfully verified new number");
+            }
+
+            @Override
+            public void onError(AirMapException e) {
+                toast("Error verifying number");
+                e.printStackTrace();
             }
         });
     }
