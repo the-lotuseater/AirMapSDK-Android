@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -230,7 +231,7 @@ public class AirMapClient {
             }
         });
         //TODO: Check for active connections before reassigning client
-        client = builder.build();
+        client = builder.connectTimeout(15, TimeUnit.SECONDS).build();
     }
 
     /**

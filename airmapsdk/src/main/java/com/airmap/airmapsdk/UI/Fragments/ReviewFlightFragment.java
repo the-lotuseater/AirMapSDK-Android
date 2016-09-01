@@ -139,7 +139,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
             String phone = mListener.getPilot().getPhone();
             if (phone == null || phone.isEmpty() || !mListener.getPilot().getVerificationStatus().isPhone()) {
                 showPhoneDialog();
-                //the phone dialog will submit flight on submit
+                //the phone dialog will submit flight once verified
             }
         } else {
             doSubmitFlight();
