@@ -17,3 +17,4 @@
 #}
 -keepattributes InnerClasses
 -dontoptimize
+-keep class com.bumptech.glide.integration.okhttp3.OkHttpGlideModule

@@ -27,7 +27,7 @@ import com.airmap.airmapsdk.Models.Pilot.AirMapPilot;
 import com.airmap.airmapsdk.Networking.Callbacks.AirMapCallback;
 import com.airmap.airmapsdk.Networking.Services.AirMap;
 import com.airmap.airmapsdk.R;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -124,7 +124,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void populateViews() {
-        Picasso.with(this)
+        Glide.with(this)
                 .load(profile.getPictureUrl())
                 .placeholder(R.drawable.airmap_profile_default)
                 .into(profileImageView);
