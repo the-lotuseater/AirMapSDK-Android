@@ -1,6 +1,6 @@
 ##`1.0.2 (9/1/16)`
 * Renamed `getAllPublicAndAuthenticatedPilotFlights` to `getAllPublicFlights`
-* Getting flights now has a `startsAfterNow`, `startsBeforeNow`, `endsAfterNow`, and `endsBeforeNow`
+* Getting flights now has `startsAfterNow`, `startsBeforeNow`, `endsAfterNow`, and `endsBeforeNow` parameters
 * Renamed `isCurrent` to `isActive` in `AirMapFlight`
 * Added 15 second timeout to requests
 * Added ability to explicitly pass an `enhance` option when getting a flight
