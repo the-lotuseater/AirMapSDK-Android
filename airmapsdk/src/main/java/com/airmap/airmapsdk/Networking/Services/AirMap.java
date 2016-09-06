@@ -173,7 +173,7 @@ public class AirMap {
             JwtClaims claims = consumer.processToClaims(authToken);
             return claims.getExpirationTime();
         } catch (InvalidJwtException | MalformedClaimException e) {
-            e.printStackTrace();
+            AirMapLog.v("AirMap", "Invalid auth token");
             return NumericDate.now();
         }
     }
@@ -215,7 +215,6 @@ public class AirMap {
             JwtClaims claims = consumer.processToClaims(jwt);
             userId = claims.getSubject();
         } catch (InvalidJwtException | MalformedClaimException e) {
-            e.printStackTrace();
             Log.e("AirMap", "Invalid auth token");
         }
     }
@@ -1071,8 +1070,8 @@ public class AirMap {
      * Disconnects from Traffic Alerts
      */
     public static void disableTrafficAlerts() {
-        getAirMapTrafficService().removeAllListeners();
         getAirMapTrafficService().disconnect();
+        getAirMapTrafficService().removeAllListeners();
     }
 
     /**
