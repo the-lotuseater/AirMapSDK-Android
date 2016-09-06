@@ -122,7 +122,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         AirMap.getPilot(new AirMapCallback<AirMapPilot>() {
             @Override
             public void onSuccess(final AirMapPilot response) {
-                mListener.setPilot(response);
+                if (mListener != null) { //Since in a callback, mListener might have been destroy
+                    mListener.setPilot(response);
+                }
                 if (response != null && response.getFullName() != null && !response.getFullName().isEmpty()) {
                     pilotProfileTextView.post(new Runnable() {
                         @Override
