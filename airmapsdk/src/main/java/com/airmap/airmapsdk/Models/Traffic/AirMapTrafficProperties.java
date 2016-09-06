@@ -1,6 +1,6 @@
-package com.airmap.airmapsdk.Models.Traffic;
+package com.airmap.airmapsdk.models.traffic;
 
-import com.airmap.airmapsdk.Models.AirMapBaseModel;
+import com.airmap.airmapsdk.models.AirMapBaseModel;
 
 import org.json.JSONObject;
 

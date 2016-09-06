@@ -1,12 +1,12 @@
-package com.airmap.airmapsdk.Networking.Services;
+package com.airmap.airmapsdk.networking.services;
 
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.airmap.airmapsdk.Models.Coordinate;
-import com.airmap.airmapsdk.Models.Status.AirMapStatus;
-import com.airmap.airmapsdk.Networking.Callbacks.AirMapCallback;
-import com.airmap.airmapsdk.Networking.Callbacks.GenericOkHttpCallback;
+import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.models.status.AirMapStatus;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.callbacks.GenericOkHttpCallback;
 
 import java.util.Date;
 import java.util.List;

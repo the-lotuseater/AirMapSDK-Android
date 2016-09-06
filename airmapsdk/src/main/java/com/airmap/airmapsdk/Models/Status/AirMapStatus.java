@@ -1,10 +1,10 @@
-package com.airmap.airmapsdk.Models.Status;
+package com.airmap.airmapsdk.models.status;
 
 import android.text.TextUtils;
 
-import com.airmap.airmapsdk.Models.AirMapBaseModel;
-import com.airmap.airmapsdk.Models.Coordinate;
-import com.airmap.airmapsdk.Networking.Services.MappingService;
+import com.airmap.airmapsdk.models.AirMapBaseModel;
+import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.Utils;
 
 import org.json.JSONArray;

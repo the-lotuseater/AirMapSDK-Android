@@ -1,10 +1,10 @@
-package com.airmap.airmapsdk.UI.Adapters;
+package com.airmap.airmapsdk.ui.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import com.airmap.airmapsdk.Models.Permits.AirMapAvailablePermitQuestion;
-import com.airmap.airmapsdk.UI.Fragments.PermitQuestionFragment;
+import com.airmap.airmapsdk.models.permits.AirMapAvailablePermitQuestion;
+import com.airmap.airmapsdk.ui.fragments.PermitQuestionFragment;
 import com.nakama.arraypageradapter.ArrayFragmentStatePagerAdapter;
 
 import java.util.List;

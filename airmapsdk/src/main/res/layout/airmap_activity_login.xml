@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        tools:context="com.airmap.airmapsdk.UI.Activities.LoginActivity">
+        tools:context="com.airmap.airmapsdk.ui.activities.LoginActivity">
 
     <android.support.design.widget.AppBarLayout
             android:layout_height="wrap_content"

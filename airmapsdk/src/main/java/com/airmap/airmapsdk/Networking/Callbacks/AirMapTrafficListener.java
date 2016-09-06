@@ -1,6 +1,6 @@
-package com.airmap.airmapsdk.Networking.Callbacks;
+package com.airmap.airmapsdk.networking.callbacks;
 
-import com.airmap.airmapsdk.Models.Traffic.AirMapTraffic;
+import com.airmap.airmapsdk.models.traffic.AirMapTraffic;
 
 import java.util.List;
 

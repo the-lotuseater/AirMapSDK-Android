@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.UI.Fragments;
+package com.airmap.airmapsdk.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,11 +10,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.airmap.airmapsdk.Models.Permits.AirMapAvailablePermit;
-import com.airmap.airmapsdk.Models.Permits.AirMapPilotPermit;
-import com.airmap.airmapsdk.Models.Status.AirMapStatusPermits;
+import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
+import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
+import com.airmap.airmapsdk.models.status.AirMapStatusPermits;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.UI.Adapters.PermitsAdapter;
+import com.airmap.airmapsdk.ui.adapters.PermitsAdapter;
 
 import java.util.ArrayList;
 import java.util.Locale;

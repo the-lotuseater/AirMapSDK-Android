@@ -1,12 +1,12 @@
-package com.airmap.airmapsdk.Networking.Services;
+package com.airmap.airmapsdk.networking.services;
 
-import com.airmap.airmapsdk.Models.Aircraft.AirMapAircraft;
-import com.airmap.airmapsdk.Models.Permits.AirMapPilotPermit;
-import com.airmap.airmapsdk.Models.Pilot.AirMapPilot;
-import com.airmap.airmapsdk.Networking.Callbacks.AirMapCallback;
-import com.airmap.airmapsdk.Networking.Callbacks.GenericListOkHttpCallback;
-import com.airmap.airmapsdk.Networking.Callbacks.GenericOkHttpCallback;
-import com.airmap.airmapsdk.Networking.Callbacks.VoidCallback;
+import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
+import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
+import com.airmap.airmapsdk.models.pilot.AirMapPilot;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.callbacks.GenericListOkHttpCallback;
+import com.airmap.airmapsdk.networking.callbacks.GenericOkHttpCallback;
+import com.airmap.airmapsdk.networking.callbacks.VoidCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;

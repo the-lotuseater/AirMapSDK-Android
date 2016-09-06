@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.UI.Adapters;
+package com.airmap.airmapsdk.ui.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

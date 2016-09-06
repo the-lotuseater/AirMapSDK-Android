@@ -1,6 +1,6 @@
-package com.airmap.airmapsdk.Models.Shapes;
+package com.airmap.airmapsdk.models.shapes;
 
-import com.airmap.airmapsdk.Models.Coordinate;
+import com.airmap.airmapsdk.models.Coordinate;
 
 import java.io.Serializable;
 import java.util.Scanner;

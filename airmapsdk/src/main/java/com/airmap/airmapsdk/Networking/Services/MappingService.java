@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.Networking.Services;
+package com.airmap.airmapsdk.networking.services;
 
 import java.io.Serializable;
 import java.util.List;

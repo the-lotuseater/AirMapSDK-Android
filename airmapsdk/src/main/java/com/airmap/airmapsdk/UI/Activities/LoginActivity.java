@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.UI.Activities;
+package com.airmap.airmapsdk.ui.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,10 +18,10 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.Auth;
-import com.airmap.airmapsdk.Models.Pilot.AirMapPilot;
-import com.airmap.airmapsdk.Networking.Callbacks.AirMapCallback;
-import com.airmap.airmapsdk.Networking.Callbacks.LoginCallback;
-import com.airmap.airmapsdk.Networking.Services.AirMap;
+import com.airmap.airmapsdk.models.pilot.AirMapPilot;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
+import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.Utils;
 

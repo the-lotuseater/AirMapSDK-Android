@@ -3,13 +3,13 @@ package com.airmap.airmapsdk;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 
-import com.airmap.airmapsdk.Models.Coordinate;
-import com.airmap.airmapsdk.Models.Flight.AirMapFlight;
-import com.airmap.airmapsdk.Models.Traffic.AirMapTraffic;
-import com.airmap.airmapsdk.Networking.Callbacks.AirMapCallback;
-import com.airmap.airmapsdk.Networking.Callbacks.AirMapTrafficListener;
-import com.airmap.airmapsdk.Networking.Services.AirMap;
-import com.airmap.airmapsdk.Networking.Services.TelemetryService;
+import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.models.flight.AirMapFlight;
+import com.airmap.airmapsdk.models.traffic.AirMapTraffic;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.callbacks.AirMapTrafficListener;
+import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.networking.services.TelemetryService;
 
 import java.util.Date;
 import java.util.List;

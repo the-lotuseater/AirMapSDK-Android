@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.Models;
+package com.airmap.airmapsdk.models;
 
 import org.json.JSONObject;
 

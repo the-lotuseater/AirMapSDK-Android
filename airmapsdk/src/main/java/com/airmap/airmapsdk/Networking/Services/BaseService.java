@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.Networking.Services;
+package com.airmap.airmapsdk.networking.services;
 
 import com.airmap.airmapsdk.Utils;
 
@@ -11,7 +11,7 @@ class BaseService {
 
     //URLs should end with a /
     //TODO: Change all the debug servers to production upon release
-    protected static final boolean DEBUG = false;
+    protected static final boolean DEBUG = true;
 
     //Base Urls
     protected static final String baseUrl = "https://api.airmap.com/";

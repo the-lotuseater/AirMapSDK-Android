@@ -1,13 +1,13 @@
-package com.airmap.airmapsdk.Models.Flight;
+package com.airmap.airmapsdk.models.flight;
 
-import com.airmap.airmapsdk.Models.AirMapBaseModel;
-import com.airmap.airmapsdk.Models.Aircraft.AirMapAircraft;
-import com.airmap.airmapsdk.Models.Coordinate;
-import com.airmap.airmapsdk.Models.Pilot.AirMapPilot;
-import com.airmap.airmapsdk.Models.Shapes.AirMapGeometry;
-import com.airmap.airmapsdk.Models.Shapes.AirMapPath;
-import com.airmap.airmapsdk.Models.Shapes.AirMapPoint;
-import com.airmap.airmapsdk.Models.Shapes.AirMapPolygon;
+import com.airmap.airmapsdk.models.AirMapBaseModel;
+import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
+import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.models.pilot.AirMapPilot;
+import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
+import com.airmap.airmapsdk.models.shapes.AirMapPath;
+import com.airmap.airmapsdk.models.shapes.AirMapPoint;
+import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 
 import org.json.JSONArray;
 import org.json.JSONException;

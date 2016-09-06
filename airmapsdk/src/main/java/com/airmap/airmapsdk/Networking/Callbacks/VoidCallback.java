@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.Networking.Callbacks;
+package com.airmap.airmapsdk.networking.callbacks;
 
 import com.airmap.airmapsdk.Utils;
 

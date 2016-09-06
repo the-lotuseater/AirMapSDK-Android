@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.UI.Activities;
+package com.airmap.airmapsdk.ui.activities;
 
 
 import android.app.Activity;
@@ -10,13 +10,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.airmap.airmapsdk.Models.Permits.AirMapPermitAnswer;
-import com.airmap.airmapsdk.Models.Permits.AirMapPermitDecisionFlow;
-import com.airmap.airmapsdk.Models.Permits.AirMapAvailablePermitQuestion;
-import com.airmap.airmapsdk.Models.Status.AirMapStatusPermits;
+import com.airmap.airmapsdk.models.permits.AirMapPermitAnswer;
+import com.airmap.airmapsdk.models.permits.AirMapPermitDecisionFlow;
+import com.airmap.airmapsdk.models.permits.AirMapAvailablePermitQuestion;
+import com.airmap.airmapsdk.models.status.AirMapStatusPermits;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.UI.Adapters.QuestionsPagerAdapter;
-import com.airmap.airmapsdk.UI.Fragments.PermitQuestionFragment;
+import com.airmap.airmapsdk.ui.adapters.QuestionsPagerAdapter;
+import com.airmap.airmapsdk.ui.fragments.PermitQuestionFragment;
 
 import java.util.ArrayList;
 

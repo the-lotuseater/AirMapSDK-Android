@@ -2,12 +2,12 @@ package com.airmap.airmapsdk;
 
 import android.test.AndroidTestCase;
 
-import com.airmap.airmapsdk.Models.Comm.AirMapComm;
-import com.airmap.airmapsdk.Models.Coordinate;
-import com.airmap.airmapsdk.Models.Flight.AirMapFlight;
-import com.airmap.airmapsdk.Models.Status.AirMapStatus;
-import com.airmap.airmapsdk.Networking.Callbacks.AirMapCallback;
-import com.airmap.airmapsdk.Networking.Services.AirMap;
+import com.airmap.airmapsdk.models.comm.AirMapComm;
+import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.models.flight.AirMapFlight;
+import com.airmap.airmapsdk.models.status.AirMapStatus;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.services.AirMap;
 
 import org.junit.Before;
 import org.junit.Test;

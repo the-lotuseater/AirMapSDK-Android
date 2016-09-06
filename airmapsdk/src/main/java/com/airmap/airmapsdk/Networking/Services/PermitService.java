@@ -1,13 +1,13 @@
-package com.airmap.airmapsdk.Networking.Services;
+package com.airmap.airmapsdk.networking.services;
 
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.airmap.airmapsdk.Models.Permits.AirMapAvailablePermit;
-import com.airmap.airmapsdk.Models.Permits.AirMapPilotPermit;
-import com.airmap.airmapsdk.Networking.Callbacks.AirMapCallback;
-import com.airmap.airmapsdk.Networking.Callbacks.GenericListOkHttpCallback;
-import com.airmap.airmapsdk.Networking.Callbacks.GenericOkHttpCallback;
+import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
+import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.callbacks.GenericListOkHttpCallback;
+import com.airmap.airmapsdk.networking.callbacks.GenericOkHttpCallback;
 
 import java.util.HashMap;
 import java.util.List;

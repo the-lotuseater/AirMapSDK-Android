@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.UI.Activities;
+package com.airmap.airmapsdk.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,8 +16,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.airmap.airmapsdk.Models.Permits.AirMapAvailablePermit;
-import com.airmap.airmapsdk.Models.Permits.AirMapPilotPermitCustomProperty;
+import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
+import com.airmap.airmapsdk.models.permits.AirMapPilotPermitCustomProperty;
 import com.airmap.airmapsdk.R;
 
 import java.text.SimpleDateFormat;

@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.UI.Fragments;
+package com.airmap.airmapsdk.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,8 +11,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.airmap.airmapsdk.Models.Permits.AirMapPermitAnswer;
-import com.airmap.airmapsdk.Models.Permits.AirMapAvailablePermitQuestion;
+import com.airmap.airmapsdk.models.permits.AirMapPermitAnswer;
+import com.airmap.airmapsdk.models.permits.AirMapAvailablePermitQuestion;
 import com.airmap.airmapsdk.R;
 
 /**

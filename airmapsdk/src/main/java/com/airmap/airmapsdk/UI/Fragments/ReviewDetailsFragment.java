@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.UI.Fragments;
+package com.airmap.airmapsdk.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.airmap.airmapsdk.Models.Flight.AirMapFlight;
+import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.R;
 
 import java.text.SimpleDateFormat;

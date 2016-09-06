@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.UI.Fragments;
+package com.airmap.airmapsdk.ui.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,9 +11,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.airmap.airmapsdk.Models.Permits.AirMapAvailablePermit;
+import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.UI.Activities.CustomPropertiesActivity;
+import com.airmap.airmapsdk.ui.activities.CustomPropertiesActivity;
 
 import java.util.ArrayList;
 

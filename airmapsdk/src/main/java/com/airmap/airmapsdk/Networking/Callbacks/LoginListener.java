@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.Networking.Callbacks;
+package com.airmap.airmapsdk.networking.callbacks;
 
 /**
  * Created by Vansh Gandhi on 8/10/16.

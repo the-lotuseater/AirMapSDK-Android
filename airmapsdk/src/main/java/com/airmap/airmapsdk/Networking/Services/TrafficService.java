@@ -1,15 +1,15 @@
-package com.airmap.airmapsdk.Networking.Services;
+package com.airmap.airmapsdk.networking.services;
 
 import android.content.Context;
 import android.util.Log;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
-import com.airmap.airmapsdk.Models.Coordinate;
-import com.airmap.airmapsdk.Models.Flight.AirMapFlight;
-import com.airmap.airmapsdk.Models.Traffic.AirMapTraffic;
-import com.airmap.airmapsdk.Networking.Callbacks.AirMapCallback;
-import com.airmap.airmapsdk.Networking.Callbacks.AirMapTrafficListener;
+import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.models.flight.AirMapFlight;
+import com.airmap.airmapsdk.models.traffic.AirMapTraffic;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.callbacks.AirMapTrafficListener;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;

@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.UI.Adapters;
+package com.airmap.airmapsdk.ui.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.airmap.airmapsdk.Models.Aircraft.AirMapAircraft;
+import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 
 import java.util.List;
 

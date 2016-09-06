@@ -1,6 +1,6 @@
-package com.airmap.airmapsdk.Models.Status.Properties;
+package com.airmap.airmapsdk.models.status.properties;
 
-import com.airmap.airmapsdk.Models.AirMapBaseModel;
+import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.Utils;
 
 import org.json.JSONObject;

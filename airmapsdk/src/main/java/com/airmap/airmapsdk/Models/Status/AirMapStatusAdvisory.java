@@ -1,17 +1,17 @@
-package com.airmap.airmapsdk.Models.Status;
+package com.airmap.airmapsdk.models.status;
 
-import com.airmap.airmapsdk.Models.AirMapBaseModel;
-import com.airmap.airmapsdk.Models.Coordinate;
-import com.airmap.airmapsdk.Models.Status.Properties.AirMapAirportProperties;
-import com.airmap.airmapsdk.Models.Status.Properties.AirMapControlledAirspaceProperties;
-import com.airmap.airmapsdk.Models.Status.Properties.AirMapHeliportProperties;
-import com.airmap.airmapsdk.Models.Status.Properties.AirMapParkProperties;
-import com.airmap.airmapsdk.Models.Status.Properties.AirMapPowerPlantProperties;
-import com.airmap.airmapsdk.Models.Status.Properties.AirMapSchoolProperties;
-import com.airmap.airmapsdk.Models.Status.Properties.AirMapSpecialUseProperties;
-import com.airmap.airmapsdk.Models.Status.Properties.AirMapTfrProperties;
-import com.airmap.airmapsdk.Models.Status.Properties.AirMapWildfireProperties;
-import com.airmap.airmapsdk.Networking.Services.MappingService;
+import com.airmap.airmapsdk.models.AirMapBaseModel;
+import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.models.status.properties.AirMapAirportProperties;
+import com.airmap.airmapsdk.models.status.properties.AirMapControlledAirspaceProperties;
+import com.airmap.airmapsdk.models.status.properties.AirMapHeliportProperties;
+import com.airmap.airmapsdk.models.status.properties.AirMapParkProperties;
+import com.airmap.airmapsdk.models.status.properties.AirMapPowerPlantProperties;
+import com.airmap.airmapsdk.models.status.properties.AirMapSchoolProperties;
+import com.airmap.airmapsdk.models.status.properties.AirMapSpecialUseProperties;
+import com.airmap.airmapsdk.models.status.properties.AirMapTfrProperties;
+import com.airmap.airmapsdk.models.status.properties.AirMapWildfireProperties;
+import com.airmap.airmapsdk.networking.services.MappingService;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

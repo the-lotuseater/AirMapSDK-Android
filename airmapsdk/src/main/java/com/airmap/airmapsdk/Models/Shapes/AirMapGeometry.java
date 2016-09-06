@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.Models.Shapes;
+package com.airmap.airmapsdk.models.shapes;
 
 import java.io.Serializable;
 

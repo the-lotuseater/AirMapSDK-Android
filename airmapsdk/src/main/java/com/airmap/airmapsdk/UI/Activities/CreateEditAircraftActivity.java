@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.UI.Activities;
+package com.airmap.airmapsdk.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,11 +15,11 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.Models.Aircraft.AirMapAircraft;
-import com.airmap.airmapsdk.Models.Aircraft.AirMapAircraftManufacturer;
-import com.airmap.airmapsdk.Models.Aircraft.AirMapAircraftModel;
-import com.airmap.airmapsdk.Networking.Callbacks.AirMapCallback;
-import com.airmap.airmapsdk.Networking.Services.AirMap;
+import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
+import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
+import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.R;
 
 import java.util.ArrayList;

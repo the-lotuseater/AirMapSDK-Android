@@ -2,7 +2,7 @@ package com.airmap.airmapsdktest;
 
 import android.app.Application;
 
-import com.airmap.airmapsdk.Networking.Services.AirMap;
+import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.Utils;
 import com.mapbox.mapboxsdk.MapboxAccountManager;
 

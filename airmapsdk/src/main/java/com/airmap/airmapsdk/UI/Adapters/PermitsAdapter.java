@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.UI.Adapters;
+package com.airmap.airmapsdk.ui.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,13 +11,13 @@ import android.widget.TextView;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
-import com.airmap.airmapsdk.Models.Permits.AirMapAvailablePermit;
-import com.airmap.airmapsdk.Models.Permits.AirMapPilotPermit;
-import com.airmap.airmapsdk.Models.Status.AirMapStatusPermits;
-import com.airmap.airmapsdk.Networking.Callbacks.AirMapCallback;
-import com.airmap.airmapsdk.Networking.Services.AirMap;
+import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
+import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
+import com.airmap.airmapsdk.models.status.AirMapStatusPermits;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.UI.Fragments.ListPermitsFragment;
+import com.airmap.airmapsdk.ui.fragments.ListPermitsFragment;
 
 import java.util.ArrayList;
 import java.util.List;

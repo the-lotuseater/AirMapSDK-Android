@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.UI.Fragments;
+package com.airmap.airmapsdk.ui.fragments;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,14 +24,14 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
-import com.airmap.airmapsdk.Models.Flight.AirMapFlight;
-import com.airmap.airmapsdk.Models.Permits.AirMapAvailablePermit;
-import com.airmap.airmapsdk.Models.Permits.AirMapPilotPermit;
-import com.airmap.airmapsdk.Models.Pilot.AirMapPilot;
-import com.airmap.airmapsdk.Models.Status.AirMapStatus;
-import com.airmap.airmapsdk.Models.Status.AirMapStatusRequirementNotice;
-import com.airmap.airmapsdk.Networking.Callbacks.AirMapCallback;
-import com.airmap.airmapsdk.Networking.Services.AirMap;
+import com.airmap.airmapsdk.models.flight.AirMapFlight;
+import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
+import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
+import com.airmap.airmapsdk.models.pilot.AirMapPilot;
+import com.airmap.airmapsdk.models.status.AirMapStatus;
+import com.airmap.airmapsdk.models.status.AirMapStatusRequirementNotice;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.Utils;
 import com.mapbox.mapboxsdk.annotations.Icon;

@@ -38,7 +38,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp"
-                    tools:context=".UI.Fragments.EnterPermitDetailsFragment">
+                    tools:context=".ui.fragments.EnterPermitDetailsFragment">
 
                 <TextView
                         android:id="@+id/description_label"

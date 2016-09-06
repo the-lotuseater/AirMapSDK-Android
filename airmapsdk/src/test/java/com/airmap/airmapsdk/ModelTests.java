@@ -1,19 +1,19 @@
 package com.airmap.airmapsdk;
 
-import com.airmap.airmapsdk.Models.Aircraft.AirMapAircraft;
-import com.airmap.airmapsdk.Models.Aircraft.AirMapAircraftManufacturer;
-import com.airmap.airmapsdk.Models.Aircraft.AirMapAircraftModel;
-import com.airmap.airmapsdk.Models.Comm.AirMapComm;
-import com.airmap.airmapsdk.Models.Flight.AirMapFlight;
-import com.airmap.airmapsdk.Models.Flight.AirMapFlightStatus;
-import com.airmap.airmapsdk.Models.Pilot.AirMapPilot;
-import com.airmap.airmapsdk.Models.Status.AirMapStatus;
-import com.airmap.airmapsdk.Models.Status.AirMapStatusAdvisory;
-import com.airmap.airmapsdk.Models.Status.AirMapStatusRequirement;
-import com.airmap.airmapsdk.Models.Status.AirMapStatusWeather;
-import com.airmap.airmapsdk.Models.Status.AirMapStatusWind;
-import com.airmap.airmapsdk.Models.Traffic.AirMapTraffic;
-import com.airmap.airmapsdk.Models.Traffic.AirMapTrafficProperties;
+import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
+import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
+import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
+import com.airmap.airmapsdk.models.comm.AirMapComm;
+import com.airmap.airmapsdk.models.flight.AirMapFlight;
+import com.airmap.airmapsdk.models.flight.AirMapFlightStatus;
+import com.airmap.airmapsdk.models.pilot.AirMapPilot;
+import com.airmap.airmapsdk.models.status.AirMapStatus;
+import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
+import com.airmap.airmapsdk.models.status.AirMapStatusRequirement;
+import com.airmap.airmapsdk.models.status.AirMapStatusWeather;
+import com.airmap.airmapsdk.models.status.AirMapStatusWind;
+import com.airmap.airmapsdk.models.traffic.AirMapTraffic;
+import com.airmap.airmapsdk.models.traffic.AirMapTrafficProperties;
 
 import org.junit.Test;
 

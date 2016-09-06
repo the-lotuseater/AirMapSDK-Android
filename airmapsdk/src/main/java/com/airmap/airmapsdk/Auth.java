@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.airmap.airmapsdk.Networking.Callbacks.LoginCallback;
-import com.airmap.airmapsdk.Networking.Callbacks.RefreshTokenListener;
-import com.airmap.airmapsdk.Networking.Services.AirMap;
+import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
+import com.airmap.airmapsdk.networking.callbacks.RefreshTokenListener;
+import com.airmap.airmapsdk.networking.services.AirMap;
 
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.MalformedClaimException;

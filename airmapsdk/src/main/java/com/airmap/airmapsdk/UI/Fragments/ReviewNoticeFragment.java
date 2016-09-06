@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.UI.Fragments;
+package com.airmap.airmapsdk.ui.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,10 +16,10 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import com.airmap.airmapsdk.Models.Flight.AirMapFlight;
-import com.airmap.airmapsdk.Models.Status.AirMapStatus;
-import com.airmap.airmapsdk.Models.Status.AirMapStatusAdvisory;
-import com.airmap.airmapsdk.Models.Status.AirMapStatusRequirementNotice;
+import com.airmap.airmapsdk.models.flight.AirMapFlight;
+import com.airmap.airmapsdk.models.status.AirMapStatus;
+import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
+import com.airmap.airmapsdk.models.status.AirMapStatusRequirementNotice;
 import com.airmap.airmapsdk.R;
 
 import java.util.ArrayList;

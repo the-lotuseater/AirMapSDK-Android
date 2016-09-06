@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.Networking.Services;
+package com.airmap.airmapsdk.networking.services;
 
 import com.google.protobuf.ByteString;
 
@@ -6,11 +6,11 @@ import android.support.annotation.Nullable;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
-import com.airmap.airmapsdk.Models.Comm.AirMapComm;
-import com.airmap.airmapsdk.Models.Coordinate;
-import com.airmap.airmapsdk.Models.Flight.AirMapFlight;
-import com.airmap.airmapsdk.Models.Telemetry;
-import com.airmap.airmapsdk.Networking.Callbacks.AirMapCallback;
+import com.airmap.airmapsdk.models.comm.AirMapComm;
+import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.models.flight.AirMapFlight;
+import com.airmap.airmapsdk.models.Telemetry;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;

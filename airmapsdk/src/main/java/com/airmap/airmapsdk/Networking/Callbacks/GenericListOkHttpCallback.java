@@ -1,6 +1,6 @@
-package com.airmap.airmapsdk.Networking.Callbacks;
+package com.airmap.airmapsdk.networking.callbacks;
 
-import com.airmap.airmapsdk.Models.AirMapBaseModel;
+import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.Utils;
 
 import org.json.JSONArray;

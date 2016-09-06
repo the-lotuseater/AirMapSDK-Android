@@ -1,8 +1,8 @@
 package com.airmap.airmapsdk;
 
-import com.airmap.airmapsdk.Models.Coordinate;
-import com.airmap.airmapsdk.Networking.Callbacks.AirMapCallback;
-import com.airmap.airmapsdk.Networking.Services.AirMap;
+import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.services.AirMap;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
@@ -18,6 +18,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -50,7 +51,7 @@ public class Utils {
         if (date == null) {
             return null;
         }
-        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
         isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         return isoFormat.format(date);
     }
@@ -64,7 +65,7 @@ public class Utils {
         if (iso8601 == null) {
             return null;
         }
-        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault());
         isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         try {
             return isoFormat.parse(iso8601);

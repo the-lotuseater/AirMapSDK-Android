@@ -1,10 +1,10 @@
-package com.airmap.airmapsdk.Models.Status;
+package com.airmap.airmapsdk.models.status;
 
 import android.support.annotation.Nullable;
 
-import com.airmap.airmapsdk.Models.AirMapBaseModel;
-import com.airmap.airmapsdk.Models.Permits.AirMapAvailablePermit;
-import com.airmap.airmapsdk.Models.Permits.AirMapPermitDecisionFlow;
+import com.airmap.airmapsdk.models.AirMapBaseModel;
+import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
+import com.airmap.airmapsdk.models.permits.AirMapPermitDecisionFlow;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
