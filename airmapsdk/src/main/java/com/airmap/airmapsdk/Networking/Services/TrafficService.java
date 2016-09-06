@@ -51,7 +51,6 @@ public class TrafficService extends BaseService {
     private CurrentFlightAirMapCallback currentFlightCallback;
     private IMqttActionListener actionListener;
     private String flightId;
-    private boolean timerPaused;
     private boolean checkForUpdatedFlight;
 
     /**
@@ -71,17 +70,14 @@ public class TrafficService extends BaseService {
         currentChannels = new ArrayList<>();
         allTraffic = new CopyOnWriteArrayList<>(); //Thread safe list
         listeners = new ArrayList<>();
-        timerPaused = true;
         checkForUpdatedFlight = false;
         currentFlightCallback = new CurrentFlightAirMapCallback();
         actionListener = new MqttActionCallback();
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (!timerPaused) { //Don't clear if the timer is "paused"
-                    clearOldTraffic();
-                    updateTrafficProjections();
-                }
+                clearOldTraffic();
+                updateTrafficProjections();
             }
         }, 0, 1000); //Clear old traffic every second
 
@@ -121,7 +117,6 @@ public class TrafficService extends BaseService {
         }
         connectionState = ConnectionState.Connecting;
         allTraffic.clear();
-        unsubscribeFromAllChannels();
         AirMap.getCurrentFlight(currentFlightCallback);
     }
 
@@ -137,7 +132,6 @@ public class TrafficService extends BaseService {
         try {
             client.disconnect(connectionState, actionListener);
             checkForUpdatedFlight = false;
-            timerPaused = true;
         } catch (MqttException e) {
             AirMapLog.e("TrafficService", "Error disconnecting");
         } finally {
@@ -181,7 +175,6 @@ public class TrafficService extends BaseService {
     private void onConnect() {
         connectionState = ConnectionState.Connected;
         checkForUpdatedFlight = true;
-        startTimer();
         subscribe(String.format(trafficAlertChannel, flightId));
         subscribe(String.format(situationalAwarenessChannel, flightId));
     }
@@ -196,7 +189,6 @@ public class TrafficService extends BaseService {
     private void onDisconnect(boolean retry) {
         connectionState = ConnectionState.Disconnected;
         checkForUpdatedFlight = false;
-        pauseTimer();
         if (retry) {
             connect(); //Reconnect
         }
@@ -303,9 +295,6 @@ public class TrafficService extends BaseService {
             }
         }
         notifyRemoved(oldAllTraffic);
-        if (allTraffic.isEmpty() && connectionState == ConnectionState.Disconnected) {
-            pauseTimer();
-        }
     }
 
     /**
@@ -331,23 +320,6 @@ public class TrafficService extends BaseService {
             currentChannels.add(channel);
         } catch (MqttException e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * Unsubscribe from all channels currently subscribed to
-     */
-    private void unsubscribeFromAllChannels() {
-        try {
-            for (String channel : currentChannels) {
-                if (client != null && channel != null)
-                    client.unsubscribe(channel);
-            }
-        } catch (MqttException e) {
-            e.printStackTrace();
-            Log.e("TrafficService", "Error unsubscribing: " + e.getMessage());
-        } finally {
-            currentChannels.clear();
         }
     }
 
@@ -414,21 +386,6 @@ public class TrafficService extends BaseService {
             listener.onUpdateTraffic(updated);
         }
     }
-
-    /**
-     * Pauses the timer
-     */
-    private void pauseTimer() {
-        timerPaused = true;
-    }
-
-    /**
-     * Starts the timer
-     */
-    private void startTimer() {
-        timerPaused = false;
-    }
-
 
     private class CurrentFlightAirMapCallback implements AirMapCallback<AirMapFlight> {
 
