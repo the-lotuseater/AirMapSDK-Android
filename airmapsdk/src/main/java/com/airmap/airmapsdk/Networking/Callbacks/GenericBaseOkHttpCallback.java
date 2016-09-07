@@ -12,12 +12,12 @@ import okhttp3.Response;
  * Created by Vansh Gandhi on 7/21/16.
  * Copyright © 2016 AirMap, Inc. All rights reserved.
  */
-public abstract class GenericBaseOkHttpCallback implements okhttp3.Callback {
+abstract class GenericBaseOkHttpCallback implements okhttp3.Callback {
 
-    protected final AirMapCallback listener;
-    protected final Class<? extends AirMapBaseModel> classToInstantiate;
+    final AirMapCallback listener;
+    final Class<? extends AirMapBaseModel> classToInstantiate;
 
-    protected GenericBaseOkHttpCallback(AirMapCallback listener, Class<? extends AirMapBaseModel> classToInstantiate) {
+    GenericBaseOkHttpCallback(AirMapCallback listener, Class<? extends AirMapBaseModel> classToInstantiate) {
         this.listener = listener;
         this.classToInstantiate = classToInstantiate;
     }

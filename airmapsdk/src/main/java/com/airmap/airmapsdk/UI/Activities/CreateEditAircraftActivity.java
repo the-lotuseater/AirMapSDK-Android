@@ -42,6 +42,7 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
         setContentView(R.layout.airmap_activity_create_aircraft);
         initializeViews();
         setSupportActionBar(toolbar);
+        //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         int id;
         if (getIntent() != null && getIntent().getSerializableExtra(AIRCRAFT) != null) {

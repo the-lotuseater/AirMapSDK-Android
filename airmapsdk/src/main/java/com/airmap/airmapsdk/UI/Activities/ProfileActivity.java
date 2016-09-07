@@ -66,6 +66,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         getSupportActionBar().setTitle(R.string.airmap_pilot_profile);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if (getIntent().hasExtra(CreateFlightActivity.KEY_VALUE_EXTRAS)) {
+            //noinspection unchecked
             extras = (HashMap<String, String>) getIntent().getSerializableExtra(CreateFlightActivity.KEY_VALUE_EXTRAS);
             editedExtras = new HashMap<>();
         }
@@ -212,6 +213,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void onSubmitPhoneNumber(final TextInputLayout phoneLayout) {
+        //noinspection ConstantConditions
         final String phone = phoneLayout.getEditText().getText().toString();
         AirMap.updatePhoneNumber(phone, new AirMapCallback<Void>() {
             @Override
@@ -288,6 +290,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void onSubmitVerificationToken(TextInputLayout verifyLayout) {
+        //noinspection ConstantConditions
         AirMap.verifyPhoneToken(verifyLayout.getEditText().getText().toString(), new AirMapCallback<Void>() {
             @Override
             public void onSuccess(Void response) {

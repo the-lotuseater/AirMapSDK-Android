@@ -310,6 +310,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     }
 
     private void onSubmitPhoneNumber(final TextInputLayout phoneLayout) {
+        //noinspection ConstantConditions,ConstantConditions
         AirMap.updatePhoneNumber(phoneLayout.getEditText().getText().toString(), new AirMapCallback<Void>() {
             @Override
             public void onSuccess(Void response) {
@@ -400,6 +401,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     }
 
     private void onSubmitVerificationToken(TextInputLayout verifyLayout) {
+        //noinspection ConstantConditions,ConstantConditions
         AirMap.verifyPhoneToken(verifyLayout.getEditText().getText().toString(), new AirMapCallback<Void>() {
             @Override
             public void onSuccess(Void response) {

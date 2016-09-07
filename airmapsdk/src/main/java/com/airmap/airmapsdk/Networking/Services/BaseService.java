@@ -6,12 +6,12 @@ import com.airmap.airmapsdk.Utils;
  * Created by Vansh Gandhi on 6/23/16.
  * Copyright © 2016 AirMap, Inc. All rights reserved.
  */
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings({"ConstantConditions", "WeakerAccess"})
 class BaseService {
 
     //URLs should end with a /
     //TODO: Change all the debug servers to production upon release
-    protected static final boolean DEBUG = true;
+    private static final boolean DEBUG = true;
 
     //Base Urls
     protected static final String baseUrl = "https://api.airmap.com/";

@@ -47,32 +47,32 @@ public class Auth {
      * @param url The url to parse
      * @return AuthCredentials
      */
-    public static AuthCredential authCredentialsFromUrl(String url) {
-        if (!isValidLoginSchema(url)) {
-            return null;
-        }
-        url = url.replace(Utils.getCallbackUrl() + "#", Utils.getCallbackUrl() + "?"); // Auth0 returns a #
-        HttpUrl parsed = HttpUrl.parse(url);
+    private static AuthCredential authCredentialsFromUrl(String url) {
+        if (isValidLoginSchema(url)) {
+            url = url.replace(Utils.getCallbackUrl() + "#", Utils.getCallbackUrl() + "?"); // Auth0 returns a #
+            HttpUrl parsed = HttpUrl.parse(url);
 
-        try {
-            String idToken = parsed.queryParameter("id_token");
-            AuthCredential authCredentials = new AuthCredential();
-            authCredentials.setAccessToken(idToken);
-            authCredentials.setTokenType(parsed.queryParameter("token_type"));
-            authCredentials.setRefreshToken(parsed.queryParameter("refresh_token"));
+            try {
+                String idToken = parsed.queryParameter("id_token");
+                AuthCredential authCredentials = new AuthCredential();
+                authCredentials.setAccessToken(idToken);
+                authCredentials.setTokenType(parsed.queryParameter("token_type"));
+                authCredentials.setRefreshToken(parsed.queryParameter("refresh_token"));
 
-            JwtConsumer consumer = new JwtConsumerBuilder()
-                    .setSkipAllValidators()
-                    .setDisableRequireSignature()
-                    .setSkipSignatureVerification()
-                    .build();
-            JwtClaims claims = consumer.processToClaims(idToken);
-            authCredentials.setUserId(claims.getSubject());
-            authCredentials.setExpiresAt(new Date(claims.getExpirationTime().getValueInMillis()));
-            return authCredentials;
-        } catch (InvalidJwtException | MalformedClaimException e) {
-            return null;
+                JwtConsumer consumer = new JwtConsumerBuilder()
+                        .setSkipAllValidators()
+                        .setDisableRequireSignature()
+                        .setSkipSignatureVerification()
+                        .build();
+                JwtClaims claims = consumer.processToClaims(idToken);
+                authCredentials.setUserId(claims.getSubject());
+                authCredentials.setExpiresAt(new Date(claims.getExpirationTime().getValueInMillis()));
+                return authCredentials;
+            } catch (InvalidJwtException | MalformedClaimException e) {
+                e.printStackTrace();
+            }
         }
+        return null;
     }
 
     /**
@@ -112,7 +112,7 @@ public class Auth {
 
 
     /**
-     * Checks for Auth Errors or AuthCredentails, if Valid, Saves AuthCredentails
+     * Checks for Auth Errors or AuthCredentials, if Valid, Saves AuthCredentials
      */
     public static boolean login(String url, Context context, LoginCallback callback) {
         AuthErrors authError = authErrorsFromUrl(url);
@@ -211,7 +211,6 @@ public class Auth {
     }
 
 
-
     public static class AuthCredential implements Serializable {
 
         private String accessToken;
@@ -291,7 +290,8 @@ public class Auth {
             this.resendLink = resendLink;
         }
     }
-    public static ErrorType getErrorTypeFromString(String type) {
+
+    private static ErrorType getErrorTypeFromString(String type) {
         switch (type) {
             case "domain_blacklist":
                 return ErrorType.DomainBlackList;

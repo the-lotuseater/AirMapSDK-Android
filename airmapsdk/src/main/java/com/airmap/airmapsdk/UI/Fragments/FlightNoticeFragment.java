@@ -37,10 +37,10 @@ public class FlightNoticeFragment extends Fragment {
     private TextView notDigitalLabel;
     private ListView notDigitalNoticeList;
     private Button nextButton;
-    List<AirMapStatusRequirementNotice> digitalNotices;
-    List<String> digitalNoticeNames;
-    List<AirMapStatusRequirementNotice> notDigitalNotices;
-    List<String> notDigitalNoticeNames;
+    private List<AirMapStatusRequirementNotice> digitalNotices;
+    private List<String> digitalNoticeNames;
+    private List<AirMapStatusRequirementNotice> notDigitalNotices;
+    private List<String> notDigitalNoticeNames;
 
     public FlightNoticeFragment() {
         // Required empty public constructor

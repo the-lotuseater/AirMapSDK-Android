@@ -27,7 +27,7 @@ import java.util.Locale;
 
 public class CustomPropertiesActivity extends AppCompatActivity {
 
-    public static String PERMIT = "permit";
+    public static final String PERMIT = "permit";
 
     private LinearLayout customPropertiesLayout;
 
@@ -65,7 +65,7 @@ public class CustomPropertiesActivity extends AppCompatActivity {
             SimpleDateFormat format = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
             validityTextView.setText(format.format(permit.getValidUntil()));
         } else if (permit.isSingleUse()) {
-            validityTextView.setText("Single Use");
+            validityTextView.setText(R.string.single_use);
         }
 
         selectPermitButton.setOnClickListener(new View.OnClickListener() {

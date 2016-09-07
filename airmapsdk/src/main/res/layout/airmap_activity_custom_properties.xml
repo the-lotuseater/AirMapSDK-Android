@@ -46,14 +46,13 @@
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
                         android:paddingBottom="4dp"
-                        android:text="Description"/>
+                        android:text="@string/description"/>
 
                 <TextView
                         android:id="@+id/description_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="16dp"
-                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nisi orci, sodales quis tincidunt nec, fermentum quis tellus."/>
+                        android:paddingBottom="16dp"/>
 
                 <LinearLayout
                         android:layout_width="match_parent"
@@ -70,8 +69,7 @@
                     <TextView
                             android:id="@+id/validity"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1 year"/>
+                            android:layout_height="wrap_content"/>
                 </LinearLayout>
 
                 <!--<LinearLayout-->

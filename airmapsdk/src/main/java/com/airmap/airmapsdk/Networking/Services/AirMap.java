@@ -674,7 +674,7 @@ public class AirMap {
     //Permits
 
     /**
-     * Get permits by permit IDs and/or organization ID. Either permitIds or organziationId must be
+     * Get permits by permit IDs and/or organization ID. Either permitIds or organizationId must be
      * non-null
      *
      * @param permitIds      The list of permits to get

@@ -24,7 +24,7 @@ public class PermitQuestionFragment extends Fragment {
     private static final String ARG_QUESTION = "question";
     private static final String ARG_POSITION = "position";
 
-    public OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener mListener;
 
     private AirMapAvailablePermitQuestion question;
     private int indexOfQuestion;
@@ -90,11 +90,11 @@ public class PermitQuestionFragment extends Fragment {
         }
     }
 
-    public AirMapPermitAnswer getSelectedAnswer(int index) {
+    private AirMapPermitAnswer getSelectedAnswer(int index) {
         return question.getAnswers().get(index);
     }
 
-    public AirMapPermitAnswer getSelectedAnswer() {
+    private AirMapPermitAnswer getSelectedAnswer() {
         int id = radioGroup.getCheckedRadioButtonId();
         View radioButton = radioGroup.findViewById(id);
         int index = radioGroup.indexOfChild(radioButton);

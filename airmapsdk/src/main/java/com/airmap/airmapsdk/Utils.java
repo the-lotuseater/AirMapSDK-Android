@@ -58,8 +58,8 @@ public class Utils {
 
     /**
      * Formats a string into a @link{java.util Date} object
-     * @param iso8601
-     * @return
+     * @param iso8601 The ISO 8601 string to convert to a Date object
+     * @return The converted Date
      */
     public static Date getDateFromIso8601String(String iso8601) {
         if (iso8601 == null) {
@@ -101,7 +101,7 @@ public class Utils {
      */
     public static StringNumberPair[] getDurationPresets() {
         return new StringNumberPair[]{
-                new StringNumberPair("5 min", 5 * 60 * 1000L), //5 mins in millis
+                new StringNumberPair("5 min", 5 * 60 * 1000L), //5 minutes in millis
                 new StringNumberPair("10 min", 10 * 60 * 1000L),
                 new StringNumberPair("15 min", 15 * 60 * 1000L),
                 new StringNumberPair("30 min", 30 * 60 * 1000L),

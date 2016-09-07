@@ -46,7 +46,6 @@ public class TrafficService extends BaseService {
     private MqttConnectOptions options;
     private List<AirMapTrafficListener> listeners;
     private List<AirMapTraffic> allTraffic;
-    private List<String> currentChannels; //Current subscribed channels
     private ConnectionState connectionState;
     private CurrentFlightAirMapCallback currentFlightCallback;
     private IMqttActionListener actionListener;
@@ -67,7 +66,6 @@ public class TrafficService extends BaseService {
         options.setKeepAliveInterval(15);
         options.setPassword(AirMap.getInstance().getAuthToken().toCharArray());
         connectionState = ConnectionState.Disconnected;
-        currentChannels = new ArrayList<>();
         allTraffic = new CopyOnWriteArrayList<>(); //Thread safe list
         listeners = new ArrayList<>();
         checkForUpdatedFlight = false;
@@ -317,7 +315,6 @@ public class TrafficService extends BaseService {
                     exception.printStackTrace();
                 }
             });
-            currentChannels.add(channel);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -411,7 +408,7 @@ public class TrafficService extends BaseService {
         }
 
         /**
-         * Called when there was an error retreiving the current flight
+         * Called when there was an error retrieving the current flight
          *
          * @param e Specifics of the error
          */

@@ -38,4 +38,10 @@
     <string name="airmap_title_activity_login">Login</string>
     <string name="pilot_and_aircraft_header">Pilot and Aircraft</string>
     <string name="flight_header">Flight</string>
+    <string name="description">Description</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email">E-mail</string>
+    <string name="mobile_phone_number">Mobile Phone Number</string>
+    <string name="single_use">Single Use</string>
 </resources>

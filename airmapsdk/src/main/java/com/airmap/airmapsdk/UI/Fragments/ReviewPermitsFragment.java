@@ -55,7 +55,9 @@ public class ReviewPermitsFragment extends Fragment {
     }
 
     private void populateViews() {
+        //noinspection unchecked
         ArrayList<AirMapAvailablePermit> selectedPermits = (ArrayList<AirMapAvailablePermit>) getArguments().getSerializable(PERMITS);
+        selectedPermits = selectedPermits != null ? selectedPermits : new ArrayList<AirMapAvailablePermit>();
         adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, selectedPermits);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

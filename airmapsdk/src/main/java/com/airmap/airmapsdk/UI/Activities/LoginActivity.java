@@ -18,12 +18,12 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.Auth;
+import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.Utils;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
-import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.Utils;
 
 import java.io.IOException;
 
@@ -49,13 +49,13 @@ public class LoginActivity extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         webView = (WebView) findViewById(R.id.web_view);
         setSupportActionBar(toolbar);
+        //noinspection ConstantConditions
         getSupportActionBar().setTitle(R.string.airmap_title_activity_login);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         progressBar.setMax(100);
         webView.setWebViewClient(new WebViewClient() {
-
             @Override
-            public boolean shouldOverrideUrlLoading(final WebView view, final String url) {
+            public boolean shouldOverrideUrlLoading(WebView view, final String url) {
                 final boolean shouldOverrideUrlLoading = Auth.login(url, LoginActivity.this, new LoginCallback() {
                     @Override
                     public void onSuccess(Auth.AuthCredential authCredential) {

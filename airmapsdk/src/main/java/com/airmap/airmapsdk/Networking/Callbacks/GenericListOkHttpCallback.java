@@ -50,6 +50,7 @@ public class GenericListOkHttpCallback extends GenericBaseOkHttpCallback {
         }
         JSONArray jsonArray = result.optJSONArray("data");
         if (jsonArray == null && result.isNull("data")) {
+            //noinspection unchecked
             listener.onSuccess(new ArrayList<>()); //Pretend that there was an array with no items
         } else if (jsonArray == null) {
             Utils.error(listener, response.code(), result); //There was a parsing exception most likely
@@ -66,6 +67,7 @@ public class GenericListOkHttpCallback extends GenericBaseOkHttpCallback {
                     e.printStackTrace();
                 }
             }
+            //noinspection unchecked
             listener.onSuccess(models);
         }
     }

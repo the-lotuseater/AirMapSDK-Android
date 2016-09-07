@@ -553,7 +553,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
     public abstract class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
-        protected PolygonOptions oldPolygon;
+        PolygonOptions oldPolygon;
 
         @Override
         public abstract void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser);

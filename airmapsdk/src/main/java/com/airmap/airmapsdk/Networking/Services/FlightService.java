@@ -83,8 +83,8 @@ class FlightService extends BaseService {
     //listPublicFlights
     public static void getPublicFlights(Integer limit, final Date from, final Date to,
                                         final AirMapCallback<List<AirMapFlight>> listener) {
-        //endafter is fromdate
-        //startsbefore is todate
+        //endAfter is fromDate
+        //startsBefore is toDate
 
         final boolean endAfterNow = from == null;
         final boolean startBeforeNow = to == null;

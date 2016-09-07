@@ -275,7 +275,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
         });
     }
 
-    public void onCustomPropertiesNextButtonClick(AirMapAvailablePermit permit) {
+    private void onCustomPropertiesNextButtonClick(AirMapAvailablePermit permit) {
         permitsToApplyFor.add(permit);
         for (Fragment fragment : adapter.getItems()) {
             if (fragment instanceof ListPermitsFragment) {
@@ -341,7 +341,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
         goToLastPage();
     }
 
-    public void decisionFlowFinished(String permitId) {
+    private void decisionFlowFinished(String permitId) {
         if (permitId != null) {
             AirMap.getPermit(permitId, new AirMapCallback<List<AirMapAvailablePermit>>() {
                 @Override

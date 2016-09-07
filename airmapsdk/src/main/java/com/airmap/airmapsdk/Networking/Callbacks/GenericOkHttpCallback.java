@@ -50,10 +50,12 @@ public class GenericOkHttpCallback extends GenericBaseOkHttpCallback {
         if (jsonObject == null && !result.isNull("data")) {
             Utils.error(listener, response.code(), result); //There was a parsing exception most likely
         } else if (jsonObject == null || result.isNull("data") || jsonObject.length() == 0) {
+            //noinspection unchecked
             listener.onSuccess(null);  //There was no data inside the data object (length 0, or object had value null)
         } else {
             try {
                 AirMapBaseModel model = classToInstantiate.newInstance().constructFromJson(jsonObject);
+                //noinspection unchecked
                 listener.onSuccess(model);
             } catch (InstantiationException e) {
                 e.printStackTrace();

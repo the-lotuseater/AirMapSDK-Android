@@ -25,7 +25,7 @@ public class AirMapStatusRequirementNotice implements Serializable, AirMapBaseMo
     }
 
     /**
-     * Intialize an AirMapStatusRequirementNotice with default values
+     * Initialize an AirMapStatusRequirementNotice with default values
      */
     public AirMapStatusRequirementNotice() {
 

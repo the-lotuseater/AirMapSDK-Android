@@ -41,6 +41,7 @@ public class VoidCallback extends GenericBaseOkHttpCallback {
         if (!response.isSuccessful() || !Utils.statusSuccessful(result)) {
             Utils.error(listener, response.code(), result);
         } else {
+            //noinspection unchecked
             listener.onSuccess(null);
         }
     }
