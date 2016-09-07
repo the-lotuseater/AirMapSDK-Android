@@ -71,10 +71,6 @@ import static com.airmap.airmapsdk.Utils.indexOfMeterPreset;
 public class FlightDetailsFragment extends Fragment implements OnMapReadyCallback {
 
     private static final int REQUEST_CREATE_AIRCRAFT = 1;
-    private static final String addAircraftText = "Add Aircraft";
-    private static final String nicknameKey = "nickname";
-    private static final String modelKey = "model";
-    private static final String aircraftKey = "aircraft";
 
     private OnFragmentInteractionListener mListener;
     private MapboxMap map;
@@ -381,7 +377,6 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             public void onClick(View view) {
                 new AlertDialog.Builder(getContext())
                         .setTitle("Select Aircraft")
-                        .setPositiveButton("Ok", null)
                         .setAdapter(new AircraftAdapter(getContext(), aircraft), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int position) {
