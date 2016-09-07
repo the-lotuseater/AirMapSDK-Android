@@ -59,13 +59,13 @@ public class CustomPropertiesActivity extends AppCompatActivity {
 
         descriptionTextView.setText(permit.getDescription());
 //        priceTextView.setText(permit.getPrice());
-        if (permit.getValidFor() != -1) {
+        if (permit.isSingleUse()) {
+            validityTextView.setText(R.string.single_use);
+        } else if (permit.getValidFor() > 0) {
             validityTextView.setText(String.format(Locale.US, "%d minutes", permit.getValidFor()));
         } else if (permit.getValidUntil() != null) {
             SimpleDateFormat format = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
             validityTextView.setText(format.format(permit.getValidUntil()));
-        } else if (permit.isSingleUse()) {
-            validityTextView.setText(R.string.single_use);
         }
 
         selectPermitButton.setOnClickListener(new View.OnClickListener() {
