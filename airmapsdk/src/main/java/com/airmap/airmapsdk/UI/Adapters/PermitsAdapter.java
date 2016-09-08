@@ -20,6 +20,7 @@ import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.ui.fragments.ListPermitsFragment;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -99,11 +100,13 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
                 RadioButton button = new RadioButton(holder.permitRadioGroup.getContext()); //Make a RadioButton for that enabled permit
                 button.setText(permit.getName());
                 holder.permitRadioGroup.addView(button);
-                if (permit.equals(holder.checkedPermit)) {
+                if (permit.equals(holder.checkedPermit) || selectedPermits.contains(permit)) {
+                    holder.checkedPermit = permit;
                     holder.permitRadioGroup.check(button.getId());
                 }
             }
         }
+
         holder.permitAuthorityTextView.setText(holder.permit.getAuthorityName());
         holder.selectPermitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,6 +139,17 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
             enabledPermits.add(permit);
             notifyDataSetChanged();
         }
+    }
+
+    public void addSelectedPermit(AirMapAvailablePermit permit) {
+        Iterator<AirMapAvailablePermit> iterator = selectedPermits.iterator();
+        while (iterator.hasNext()) {
+            AirMapAvailablePermit selectedPermit = iterator.next();
+            if (selectedPermit.getOrganizationId().equals(permit.getOrganizationId())) {
+                iterator.remove();
+            }
+        }
+        selectedPermits.add(permit);
     }
 
     public void addEnabledPermits(List<AirMapAvailablePermit> permits) {

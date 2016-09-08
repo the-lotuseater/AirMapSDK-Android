@@ -443,7 +443,7 @@ public class TrafficService extends BaseService {
         }
     }
 
-    private class MqttEventCallback implements MqttCallback {
+    private class MqttEventCallback implements MqttCallback { //TODO: Look into MqttCallbackExtended
 
         /**
          * Called when a message is received from the server

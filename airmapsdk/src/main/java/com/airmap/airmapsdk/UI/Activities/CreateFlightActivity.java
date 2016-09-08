@@ -50,7 +50,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
     public static final String MAPBOX_API_KEY = "mapbox_api_key";
     public static final String FLIGHT = "flight";
     private static final int REQUEST_DECISION_FLOW = 1;
-    private static final int REQUEST_CUSTOM_PROPERTIES = 2;
+    public static final int REQUEST_CUSTOM_PROPERTIES = 2;
 
     private Toolbar toolbar;
     private ViewPager viewPager;
@@ -280,6 +280,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
         for (Fragment fragment : adapter.getItems()) {
             if (fragment instanceof ListPermitsFragment) {
                 ((ListPermitsFragment) fragment).onEnabledPermit(permit);
+                ((ListPermitsFragment) fragment).onSelectPermit(permit);
             }
         }
     }
@@ -341,50 +342,10 @@ public class CreateFlightActivity extends AppCompatActivity implements
         goToLastPage();
     }
 
-    private void decisionFlowFinished(String permitId) {
-        if (permitId != null) {
-            AirMap.getPermit(permitId, new AirMapCallback<List<AirMapAvailablePermit>>() {
-                @Override
-                public void onSuccess(List<AirMapAvailablePermit> permits) {
-                    if (!permits.isEmpty()) {
-                        Intent intent = new Intent(CreateFlightActivity.this, CustomPropertiesActivity.class);
-                        intent.putExtra(CustomPropertiesActivity.PERMIT, permits.get(0)); //There should only be one permit
-                        startActivityForResult(intent, REQUEST_CUSTOM_PROPERTIES);
-                    } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(CreateFlightActivity.this, "Error getting permit", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                }
-
-                @Override
-                public void onError(AirMapException e) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(CreateFlightActivity.this, "Error getting permit", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    e.printStackTrace();
-                }
-            });
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_DECISION_FLOW) {
-            if (resultCode == RESULT_OK) {
-                String permitId = data.getStringExtra(DecisionFlowActivity.PERMIT_ID);
-                decisionFlowFinished(permitId);
-            } else if (resultCode == DecisionFlowActivity.RESULT_CANT_FLY) {
-                decisionFlowFinished(null);
-            }
-        } else if (requestCode == REQUEST_CUSTOM_PROPERTIES) {
+        if (requestCode == REQUEST_DECISION_FLOW) { //Decision flow opens up Custom Properties Activity
             if (resultCode == RESULT_OK) {
                 onCustomPropertiesNextButtonClick((AirMapAvailablePermit) data.getSerializableExtra(CustomPropertiesActivity.PERMIT));
             }

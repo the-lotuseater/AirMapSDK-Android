@@ -72,6 +72,12 @@ public class ListPermitsFragment extends Fragment {
         updateNextButton();
     }
 
+    public void onSelectPermit(AirMapAvailablePermit permit) {
+        adapter.addSelectedPermit(permit);
+        updateSummaryText();
+        updateNextButton();
+    }
+
     public void updateNextButton() {
         nextButton.setEnabled(adapter.getSelectedPermits().size() == adapter.getItemCount());
     }
