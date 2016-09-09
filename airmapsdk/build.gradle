@@ -3,7 +3,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'com.airmap.airmapsdk'
-def libVersion = '1.0.2'
+def libVersion = '1.0.3'
 
 android {
     compileSdkVersion 24
@@ -54,8 +54,7 @@ dependencies {
     compile 'org.bitbucket.b_c:jose4j:0.5.1'
     compile 'com.google.protobuf:protobuf-java:2.6.1'
     compile('com.mapbox.mapboxsdk:mapbox-android-sdk:4.1.1@aar') { transitive = true }
-    compile('org.eclipse.paho:org.eclipse.paho.android.service:1.1.0') { exclude module: 'support-v4' }
-    compile('org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0')
+    compile('org.eclipse.paho:org.eclipse.paho.android.service:1.1.1-20160907.104533-5@aar') { exclude module: 'support-v4' }
 }
 
 

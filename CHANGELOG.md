@@ -1,3 +1,9 @@
+##`1.0.3 (9/9/16)`
+* Package names have changed. Classes will need to be re-imported
+* Traffic Alerts are now compatible with Android 7.0
+* Updated Create Flight UI
+* Bug fixes
+
 ##`1.0.2 (9/1/16)`
 * Renamed `getAllPublicAndAuthenticatedPilotFlights` to `getAllPublicFlights`
 * Getting flights now has `startsAfterNow`, `startsBeforeNow`, `endsAfterNow`, and `endsBeforeNow` parameters

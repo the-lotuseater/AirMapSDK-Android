@@ -15,7 +15,7 @@ class BaseService {
 
     //Base Urls
     protected static final String baseUrl = "https://api.airmap.com/";
-    protected static final String mapTilesVersion = "v4/";
+    protected static final String mapTilesVersion = DEBUG ? Utils.getDebugUrl() : "v4/";
     protected static final String mapTilesBaseUrl = baseUrl + "maps/" + mapTilesVersion + "tilejson/";
 
     //Aircraft
