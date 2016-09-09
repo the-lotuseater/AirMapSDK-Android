@@ -29,5 +29,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.0'
     compile 'com.android.support:design:24.2.0'
     compile('com.mapbox.mapboxsdk:mapbox-android-sdk:4.1.1@aar') { transitive = true }
-    compile project(':airmapsdk')
+    compile('com.airmap.airmapsdk:airmapsdk:1.0.3') { exclude module: 'support-v4' }
 }
