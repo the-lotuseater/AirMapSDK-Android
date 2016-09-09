@@ -87,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                         // redirect to login
                         webView.loadUrl(Auth.getLoginUrl());
                         new AlertDialog.Builder(LoginActivity.this).setTitle("Email Verification Required")
-                                .setMessage("Please verify your email and try logging in again")
+                                .setMessage("Please verify your email and log in again")
                                 .setPositiveButton("Resend Email", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
