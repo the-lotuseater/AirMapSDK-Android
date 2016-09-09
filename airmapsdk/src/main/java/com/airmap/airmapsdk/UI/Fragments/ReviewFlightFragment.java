@@ -128,12 +128,12 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                 }
 
                 @Override
-                public void onError(AirMapException e) {
+                public void onError(final AirMapException e) {
                     submitButton.post(new Runnable() {
                         @Override
                         public void run() {
                             progressBarContainer.setVisibility(View.GONE);
-                            Toast.makeText(getContext(), "Error applying for permit", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                             submitButton.setEnabled(true);
                         }
                     });
@@ -170,13 +170,13 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
             }
 
             @Override
-            public void onError(AirMapException e) {
+            public void onError(final AirMapException e) {
                 submitButton.post(new Runnable() {
                     @Override
                     public void run() {
                         progressBarContainer.setVisibility(View.GONE);
                         submitButton.setEnabled(true);
-                        Toast.makeText(getContext(), "Error submitting flight", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
                 AirMapLog.e("AirMapReviewFlight", e.getMessage());
