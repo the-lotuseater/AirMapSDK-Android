@@ -47,6 +47,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.airmap.airmapsdk.Utils.getStatusCircleColor;
+
 /**
  * Created by Vansh Gandhi on 7/25/16.
  * Copyright © 2016 AirMap, Inc. All rights reserved.
@@ -197,7 +199,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
         map.setCameraPosition(new CameraPosition.Builder().target(position).zoom(14).build());
         Icon icon = IconFactory.getInstance(getContext()).fromResource(R.drawable.airmap_flight_marker);
         map.addMarker(new MarkerOptions().position(position).icon(icon));
-        map.addPolygon(Utils.getCirclePolygon(mListener.getFlight().getBuffer(), mListener.getFlight().getCoordinate()));
+        map.addPolygon(Utils.getCirclePolygon(mListener.getFlight().getBuffer(), mListener.getFlight().getCoordinate(), getStatusCircleColor(mListener.getFlightStatus())));
     }
 
     private void setupViewPager() {

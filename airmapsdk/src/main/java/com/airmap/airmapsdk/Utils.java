@@ -1,6 +1,7 @@
 package com.airmap.airmapsdk;
 
 import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
@@ -213,7 +214,7 @@ public class Utils {
      * @param coordinate Coordinate to draw the circle
      * @return A "circle"
      */
-    public static PolygonOptions getCirclePolygon(double radius, Coordinate coordinate) {
+    public static PolygonOptions getCirclePolygon(double radius, Coordinate coordinate, int color) {
         //We'll make a polygon with 45 sides to make a "circle"
         int degreesBetweenPoints = 8; //45 sides
         int numberOfPoints = (int) Math.floor(360 / degreesBetweenPoints);
@@ -232,7 +233,24 @@ public class Utils {
             LatLng point = new LatLng(pointLat, pointLon);
             points.add(point);
         }
-        return new PolygonOptions().addAll(points).strokeColor(0xA81E88E5).fillColor(0xA81E88E5);
+        return new PolygonOptions().addAll(points).strokeColor(color).fillColor(color);
+    }
+
+    public static int getStatusCircleColor(AirMapStatus latestStatus) {
+        int color = 0;
+        if (latestStatus != null) {
+            AirMapStatus.StatusColor statusColor = latestStatus.getAdvisoryColor();
+            if (statusColor == AirMapStatus.StatusColor.Red) {
+                color = 0x88FD4913;
+            } else if (statusColor == AirMapStatus.StatusColor.Yellow) {
+                color = 0x88F9E547;
+            } else if (statusColor == AirMapStatus.StatusColor.Green) {
+                color = 0x886CC24A;
+            }
+        } else {
+            color = 0xA81E88E5;
+        }
+        return color;
     }
 
     public static String readInputStreamAsString(InputStream in) throws IOException {

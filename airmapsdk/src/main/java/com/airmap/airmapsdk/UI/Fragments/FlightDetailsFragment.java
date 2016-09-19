@@ -65,6 +65,7 @@ import static com.airmap.airmapsdk.Utils.getAltitudePresets;
 import static com.airmap.airmapsdk.Utils.getCirclePolygon;
 import static com.airmap.airmapsdk.Utils.getDurationPresets;
 import static com.airmap.airmapsdk.Utils.getRadiusPresets;
+import static com.airmap.airmapsdk.Utils.getStatusCircleColor;
 import static com.airmap.airmapsdk.Utils.indexOfDurationPreset;
 import static com.airmap.airmapsdk.Utils.indexOfMeterPreset;
 
@@ -92,6 +93,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     private Button saveNextButton;
     private FrameLayout progressBarContainer;
     private List<AirMapAircraft> aircraft;
+    private AirMapStatus latestStatus;
 
     public FlightDetailsFragment() {
         // Required empty public constructor
@@ -251,7 +253,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                         if (oldPolygon != null && map != null) {
                             map.removePolygon(oldPolygon.getPolygon());
                         }
-                        oldPolygon = getCirclePolygon(getRadiusPresets()[seekBar.getProgress()].value.doubleValue(), mListener.getFlight().getCoordinate());
+                        int color = getStatusCircleColor(latestStatus);
+                        oldPolygon = getCirclePolygon(getRadiusPresets()[seekBar.getProgress()].value.doubleValue(), mListener.getFlight().getCoordinate(), color);
                         if (map != null) {
                             map.addPolygon(oldPolygon);
                         }
@@ -304,7 +307,6 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 durationSeekBar.setProgress(durationIndex);
             }
         });
-
     }
 
     private void setupFlightDateTimePicker() {
@@ -423,6 +425,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             @Override
             public void onSuccess(AirMapStatus response) {
                 hideProgressBar();
+                latestStatus = response;
                 mListener.flightDetailsNextClicked(response);
             }
 
@@ -444,6 +447,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         AirMap.checkCoordinate(flight.getCoordinate(), flight.getBuffer(), null, null, false, flight.getStartsAt(), new AirMapCallback<AirMapStatus>() {
             @Override
             public void onSuccess(AirMapStatus response) {
+                latestStatus = response;
                 List<AirMapStatusAdvisory> advisories = response.getAdvisories();
                 boolean requiresPermitOrNotice = false;
                 for (AirMapStatusAdvisory advisory : advisories) {
