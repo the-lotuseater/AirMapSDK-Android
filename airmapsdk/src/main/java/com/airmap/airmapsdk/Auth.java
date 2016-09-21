@@ -151,6 +151,14 @@ public class Auth {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String refreshToken = preferences.getString(Utils.REFRESH_TOKEN_KEY, "");
 
+        // return if refresh token is empty
+        if(refreshToken.equals("")){
+            if (listener != null) {
+                listener.onError(new AirMapException("Invalid Refresh Token"));
+            }
+            return;
+        }
+
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse("https://sso.airmap.io/delegation").newBuilder();
         urlBuilder.addQueryParameter("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
