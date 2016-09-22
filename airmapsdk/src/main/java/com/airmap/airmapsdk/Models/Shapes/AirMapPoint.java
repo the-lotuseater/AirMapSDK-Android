@@ -25,7 +25,7 @@ public class AirMapPoint extends AirMapGeometry implements Serializable {
                 setCoordinate(new Coordinate(lat, lng));
             }
         }
-
+        in.close();
     }
 
     public AirMapPoint(Coordinate coordinate) {

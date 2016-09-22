@@ -33,6 +33,7 @@ public class AirMapPath extends AirMapGeometry implements Serializable {
                 coordinates.add(new Coordinate(lat, lng));
             }
         }
+        in.close();
         setCoordinates(coordinates);
     }
 
