@@ -2,8 +2,8 @@ package com.airmap.airmapsdk;
 
 import android.test.AndroidTestCase;
 
-import com.airmap.airmapsdk.models.comm.AirMapComm;
 import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.models.comm.AirMapComm;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
@@ -28,14 +28,10 @@ import java.util.List;
 @Config(constants = BuildConfig.class)
 public class Tests extends AndroidTestCase {
 
-    AirMap airMap;
-
     @Before
     public void init() {
-        String token = "";
-        airMap = AirMap.init(getContext(), token, false);
+        AirMap.init(getContext(), false);
         AirMap.enableLogging(true);
-        AirMapLog.TESTING = true;
     }
 
     @Test

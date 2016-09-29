@@ -167,6 +167,25 @@ public class Utils {
         };
     }
 
+    public static StringNumberPair[] getBufferPresets() {
+        return new StringNumberPair[] {
+                new StringNumberPair("25 ft", feetToMeters(25)),
+                new StringNumberPair("50 ft", feetToMeters(50)),
+                new StringNumberPair("75 ft", feetToMeters(75)),
+                new StringNumberPair("100 ft", feetToMeters(100)),
+                new StringNumberPair("150 ft", feetToMeters(150)),
+                new StringNumberPair("200 ft", feetToMeters(200)),
+                new StringNumberPair("250 ft", feetToMeters(250)),
+                new StringNumberPair("300 ft", feetToMeters(300)),
+                new StringNumberPair("350 ft", feetToMeters(350)),
+                new StringNumberPair("400 ft", feetToMeters(400)),
+                new StringNumberPair("500 ft", feetToMeters(500)),
+                new StringNumberPair("600 ft", feetToMeters(600)),
+                new StringNumberPair("750 ft", feetToMeters(750)),
+                new StringNumberPair("1000 ft", feetToMeters(1000)),
+        };
+    }
+
     public static int indexOfMeterPreset(double meters, StringNumberPair[] pairs) {
         for (int i = 0; i < pairs.length; i++) {
             StringNumberPair pair = pairs[i];

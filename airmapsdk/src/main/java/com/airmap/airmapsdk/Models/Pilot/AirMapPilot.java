@@ -54,12 +54,21 @@ public class AirMapPilot implements Serializable, AirMapBaseModel {
     //Does not submit phone number
     public JSONObject getAsParams() {
         Map<String, Object> params = new HashMap<>();
-        params.put("first_name", getFirstName());
-        params.put("last_name", getLastName());
-        params.put("username", getUsername());
-        params.put("user_metadata", getUserMetaData().getAsParams());
-        params.put("app_metadata", getAppMetaData().getAsParams());
+        put(params, "first_name", getFirstName());
+        put(params, "last_name", getLastName());
+        put(params, "username", getUsername());
+        put(params, "user_metadata", getUserMetaData().getAsParams());
+        put(params, "app_metadata", getAppMetaData().getAsParams());
         return new JSONObject(params);
+    }
+
+    /**
+     * Only adds to the map if object to be added is not null
+     */
+    private static void put(Map<String, Object> map, String key, Object value) {
+        if (value != null) {
+            map.put(key, value);
+        }
     }
 
     public String getEmail() {

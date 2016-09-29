@@ -251,12 +251,12 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         if (oldPolygon != null && map != null) {
-                            map.removePolygon(oldPolygon.getPolygon());
+                            map.removePolygon(oldPolygon.getPolygon()); //TODO: Save the polygon when adding to map, don't keep calling .getPolygon()
                         }
                         int color = getStatusCircleColor(latestStatus);
                         oldPolygon = getCirclePolygon(getRadiusPresets()[seekBar.getProgress()].value.doubleValue(), mListener.getFlight().getCoordinate(), color);
                         if (map != null) {
-                            map.addPolygon(oldPolygon);
+                            map.addPolygon(oldPolygon); //TODO: Save the polygon returned here
                         }
                         radiusValueTextView.setText(getRadiusPresets()[progress].label);
                         mListener.getFlight().setBuffer(getRadiusPresets()[radiusSeekBar.getProgress()].value.doubleValue());

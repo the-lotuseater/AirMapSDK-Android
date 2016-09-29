@@ -16,10 +16,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-
-        buildTypes.each {
-            it.buildConfigField 'String', 'AIRMAP_API_KEY', airmap_api_key
-        }
     }
 }
 

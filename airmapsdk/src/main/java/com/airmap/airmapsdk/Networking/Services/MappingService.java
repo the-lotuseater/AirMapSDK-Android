@@ -1,5 +1,7 @@
 package com.airmap.airmapsdk.networking.services;
 
+import android.support.annotation.Nullable;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -222,8 +224,8 @@ public class MappingService extends BaseService {
         }
     }
 
-    protected String getTileSourceUrl(List<AirMapLayerType> layers, AirMapMapTheme theme) {
-        String tiles = layers.size() == 0 ? "_-_" : android.text.TextUtils.join(",", layers);
+    protected String getTileSourceUrl(@Nullable List<AirMapLayerType> layers, AirMapMapTheme theme) {
+        String tiles = (layers == null || layers.size() == 0) ? "_-_" : android.text.TextUtils.join(",", layers);
         return mapTilesBaseUrl + tiles + "?&theme=" + theme.toString() + "&apikey=" + AirMap.getInstance().getApiKey() + "&token=" + AirMap.getInstance().getApiKey();
     }
 }

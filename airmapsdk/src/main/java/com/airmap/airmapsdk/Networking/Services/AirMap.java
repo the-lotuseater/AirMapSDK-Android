@@ -105,6 +105,19 @@ public class AirMap {
     /**
      * Initializes the SDK. This must be called before any requests can be made
      *
+     * @param context         An Android Context
+     * @param pinCertificates A Boolean value, if true, will use pinned certificates to validate
+     *                        the AirMap server trust
+     * @return An AirMap instance
+     * @see <a href="http://www.airmap.com/makers">http://www.airmap.com/makers</a>
+     */
+    public static AirMap init(Context context, boolean pinCertificates) {
+        return init(context, "", pinCertificates);
+    }
+
+    /**
+     * Initializes the SDK. This must be called before any requests can be made
+     *
      * @param context An Android Context
      * @return An AirMap instance
      * @see <a href="http://www.airmap.com/makers">http://www.airmap.com/makers</a>
@@ -453,10 +466,14 @@ public class AirMap {
      * @param endAfter        Search for flights that end after this time
      * @param endBefore       Search for flights that end before this time
      * @param country         Search for flights within this country (Length: 3, case insensitive)
-     * @param startsAfterNow  Search for flights starting after now (the startsAfter Date will be ignored)
-     * @param startsBeforeNow Search for flights starting before now (the startsBefore Date will be ignored)
-     * @param endsAfterNow    Search for flights ending after now (the endsAfter Date will be ignored)
-     * @param endsBeforeNow   Search for flights ending before now (the endsBefore Date will be ignored)
+     * @param startsAfterNow  Search for flights starting after now (the startsAfter Date will be
+     *                        ignored)
+     * @param startsBeforeNow Search for flights starting before now (the startsBefore Date will be
+     *                        ignored)
+     * @param endsAfterNow    Search for flights ending after now (the endsAfter Date will be
+     *                        ignored)
+     * @param endsBeforeNow   Search for flights ending before now (the endsBefore Date will be
+     *                        ignored)
      * @param city            Search for flights within this city
      * @param state           Search for flights within this state
      * @param enhanced        Returns enhanced flight, pilot, and aircraft information
