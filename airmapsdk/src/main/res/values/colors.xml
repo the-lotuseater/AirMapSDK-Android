@@ -5,4 +5,7 @@
     <color name="colorPrimaryDark">#19202b</color>
     <color name="colorAccent">#13A4FA</color>
     <color name="colorTextAndIcons">#FFFFFF</color>
+    <color name="airmap_red">#FF0000</color>
+    <color name="airmap_yellow">#ffeb3b</color>
+    <color name="airmap_green">#7ED321</color>
 </resources>

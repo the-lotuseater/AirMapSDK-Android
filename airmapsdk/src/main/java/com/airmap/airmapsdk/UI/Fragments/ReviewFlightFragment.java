@@ -199,7 +199,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
         map.setCameraPosition(new CameraPosition.Builder().target(position).zoom(14).build());
         Icon icon = IconFactory.getInstance(getContext()).fromResource(R.drawable.airmap_flight_marker);
         map.addMarker(new MarkerOptions().position(position).icon(icon));
-        map.addPolygon(Utils.getCirclePolygon(mListener.getFlight().getBuffer(), mListener.getFlight().getCoordinate(), getStatusCircleColor(mListener.getFlightStatus())));
+        map.addPolygon(Utils.getCirclePolygon(mListener.getFlight().getBuffer(), mListener.getFlight().getCoordinate(), getStatusCircleColor(mListener.getFlightStatus(), getContext())));
     }
 
     private void setupViewPager() {

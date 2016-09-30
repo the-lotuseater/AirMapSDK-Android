@@ -1,5 +1,8 @@
 package com.airmap.airmapsdk;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
+
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
@@ -252,22 +255,22 @@ public class Utils {
             LatLng point = new LatLng(pointLat, pointLon);
             points.add(point);
         }
-        return new PolygonOptions().addAll(points).strokeColor(color).fillColor(color);
+        return new PolygonOptions().addAll(points).strokeColor(color).alpha(0.5f).fillColor(color);
     }
 
-    public static int getStatusCircleColor(AirMapStatus latestStatus) {
+    public static int getStatusCircleColor(AirMapStatus latestStatus, Context context) {
         int color = 0;
         if (latestStatus != null) {
             AirMapStatus.StatusColor statusColor = latestStatus.getAdvisoryColor();
             if (statusColor == AirMapStatus.StatusColor.Red) {
-                color = 0x88FD4913;
+                color = ContextCompat.getColor(context, R.color.airmap_red);
             } else if (statusColor == AirMapStatus.StatusColor.Yellow) {
-                color = 0x88F9E547;
+                color = ContextCompat.getColor(context, R.color.airmap_yellow);
             } else if (statusColor == AirMapStatus.StatusColor.Green) {
-                color = 0x886CC24A;
+                color = ContextCompat.getColor(context, R.color.airmap_green);
             }
         } else {
-            color = 0xA81E88E5;
+            color = 0x1E88E5;
         }
         return color;
     }

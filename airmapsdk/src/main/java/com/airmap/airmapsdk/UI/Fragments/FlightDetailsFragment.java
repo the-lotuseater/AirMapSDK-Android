@@ -253,7 +253,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                         if (oldPolygon != null && map != null) {
                             map.removePolygon(oldPolygon.getPolygon()); //TODO: Save the polygon when adding to map, don't keep calling .getPolygon()
                         }
-                        int color = getStatusCircleColor(latestStatus);
+                        int color = getStatusCircleColor(latestStatus, getContext());
                         oldPolygon = getCirclePolygon(getRadiusPresets()[seekBar.getProgress()].value.doubleValue(), mListener.getFlight().getCoordinate(), color);
                         if (map != null) {
                             map.addPolygon(oldPolygon); //TODO: Save the polygon returned here
