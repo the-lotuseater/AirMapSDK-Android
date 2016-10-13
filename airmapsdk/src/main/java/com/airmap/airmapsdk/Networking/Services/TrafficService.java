@@ -1,7 +1,6 @@
 package com.airmap.airmapsdk.networking.services;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
@@ -260,7 +259,6 @@ public class TrafficService extends BaseService {
             trafficJsonArray = new JSONObject(json).getJSONArray("traffic");
         } catch (JSONException e) {
             e.printStackTrace();
-            AirMapLog.e("TrafficService", e.getMessage());
             return;
         }
         for (int i = 0; i < trafficJsonArray.length(); i++) {
@@ -305,13 +303,12 @@ public class TrafficService extends BaseService {
             client.subscribe(channel, 1, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.v("TrafficService", "Success subscribing");
-                    Log.v("TrafficService", channel);
+                    AirMapLog.v("TrafficService", "Success subscribing" + channel);
                 }
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.e("TrafficService", exception.getMessage());
+                    AirMapLog.e("TrafficService", exception.getMessage());
                     exception.printStackTrace();
                 }
             });
@@ -396,8 +393,6 @@ public class TrafficService extends BaseService {
             if (response != null) {
                 flightId = response.getFlightId();
                 options.setUserName(flightId);
-                AirMapLog.v("TrafficService", options.toString());
-                AirMapLog.i("TrafficService", "Got flight with id: " + flightId);
                 AirMapLog.i("TrafficService", "Connecting to MQTT server");
                 try {
                     client.connect(options, ConnectionState.Connecting, actionListener);
@@ -438,7 +433,7 @@ public class TrafficService extends BaseService {
         @Override
         public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
             exception.printStackTrace();
-            Log.e("TrafficService", "Error connecting: " + exception.getMessage());
+            AirMapLog.e("TrafficService", "Error connecting: " + exception.getMessage());
             onDisconnect(false);
         }
     }
