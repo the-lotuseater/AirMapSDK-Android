@@ -83,7 +83,9 @@ public class AirMapStatus implements Serializable, AirMapBaseModel {
             }
             setAdvisories(advisories);
             setMaxSafeRadius(json.optInt("max_safe_distance"));
-            setWeather(new AirMapStatusWeather(json.optJSONObject("weather")));
+            if (json.has("weather")) {
+                setWeather(new AirMapStatusWeather(json.optJSONObject("weather")));
+            }
             setAdvisoryColor(StatusColor.fromString(json.optString("advisory_color")));
         }
         return this;
