@@ -57,8 +57,12 @@ public class AirMapPilot implements Serializable, AirMapBaseModel {
         put(params, "first_name", getFirstName());
         put(params, "last_name", getLastName());
         put(params, "username", getUsername());
-        put(params, "user_metadata", getUserMetaData().getAsParams());
-        put(params, "app_metadata", getAppMetaData().getAsParams());
+        if (getUserMetaData() != null) {
+            put(params, "user_metadata", getUserMetaData().getAsParams());
+        }
+        if (getAppMetaData() != null) {
+            put(params, "app_metadata", getAppMetaData().getAsParams());
+        }
         return new JSONObject(params);
     }
 
