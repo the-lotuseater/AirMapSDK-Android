@@ -86,7 +86,7 @@ class PilotService extends BaseService {
         JSONObject params = new JSONObject();
         try {
             params.put("token", Integer.valueOf(token));
-        } catch (JSONException e) {
+        } catch (JSONException | NumberFormatException e) {
             e.printStackTrace();
         }
         AirMap.getClient().postWithJsonBody(url, params, new VoidCallback(listener));
