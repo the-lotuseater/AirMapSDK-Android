@@ -11,11 +11,12 @@ import android.util.Log;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.Auth;
+import com.airmap.airmapsdk.Utils;
+import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
 import com.airmap.airmapsdk.models.comm.AirMapComm;
-import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
@@ -29,7 +30,6 @@ import com.airmap.airmapsdk.ui.activities.CreateEditAircraftActivity;
 import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
 import com.airmap.airmapsdk.ui.activities.LoginActivity;
 import com.airmap.airmapsdk.ui.activities.ProfileActivity;
-import com.airmap.airmapsdk.Utils;
 
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.MalformedClaimException;
@@ -1027,7 +1027,7 @@ public class AirMap {
      * Get a flight status based on a Multi-point based flight
      *
      * @param path         The points on the flight path
-     * @param width        The line width for the flight
+     * @param buffer       The line width for the flight
      * @param takeOffPoint The coordinate of the flight
      * @param types        Airspace types to include in the calculation and response
      * @param ignoredTypes Airspace types to ignore in the calculation and response
@@ -1035,11 +1035,11 @@ public class AirMap {
      * @param date         Date and time for planned flight
      * @param callback     The callback that is invoked on success or error
      */
-    public static void checkFlightPath(List<Coordinate> path, int width, Coordinate takeOffPoint,
+    public static void checkFlightPath(List<Coordinate> path, int buffer, Coordinate takeOffPoint,
                                        List<MappingService.AirMapAirspaceType> types,
                                        List<MappingService.AirMapAirspaceType> ignoredTypes, boolean showWeather,
                                        @Nullable Date date, @Nullable AirMapCallback<AirMapStatus> callback) {
-        StatusService.checkFlightPath(path, width, takeOffPoint, types, ignoredTypes, showWeather, date, callback);
+        StatusService.checkFlightPath(path, buffer, takeOffPoint, types, ignoredTypes, showWeather, date, callback);
     }
 
     /**
