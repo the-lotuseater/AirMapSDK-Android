@@ -64,7 +64,7 @@ import java.util.Locale;
 import static com.airmap.airmapsdk.Utils.getAltitudePresets;
 import static com.airmap.airmapsdk.Utils.getCirclePolygon;
 import static com.airmap.airmapsdk.Utils.getDurationPresets;
-import static com.airmap.airmapsdk.Utils.getRadiusPresets;
+import static com.airmap.airmapsdk.Utils.getBufferPresets;
 import static com.airmap.airmapsdk.Utils.getStatusCircleColor;
 import static com.airmap.airmapsdk.Utils.indexOfDurationPreset;
 import static com.airmap.airmapsdk.Utils.indexOfMeterPreset;
@@ -234,12 +234,12 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void setupSeekBars() {
-        final int radiusIndex = indexOfMeterPreset(mListener.getFlight().getBuffer(), getRadiusPresets());
+        final int radiusIndex = indexOfMeterPreset(mListener.getFlight().getBuffer(), getBufferPresets());
         final int altitudeIndex = indexOfMeterPreset(mListener.getFlight().getMaxAltitude(), getAltitudePresets());
         final int durationIndex = indexOfDurationPreset(mListener.getFlight().getEndsAt().getTime() - mListener.getFlight().getStartsAt().getTime());
         final int animationDuration = 250;
 
-        int radiusAnimateTo = (int) (((float) radiusIndex / getRadiusPresets().length) * 100);
+        int radiusAnimateTo = (int) (((float) radiusIndex / getBufferPresets().length) * 100);
         ObjectAnimator radiusAnimator = ObjectAnimator.ofInt(radiusSeekBar, "progress", radiusAnimateTo);
         radiusAnimator.setDuration(animationDuration);
         radiusAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -254,15 +254,15 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                             map.removePolygon(oldPolygon.getPolygon()); //TODO: Save the polygon when adding to map, don't keep calling .getPolygon()
                         }
                         int color = getStatusCircleColor(latestStatus, getContext());
-                        oldPolygon = getCirclePolygon(getRadiusPresets()[seekBar.getProgress()].value.doubleValue(), mListener.getFlight().getCoordinate(), color);
+                        oldPolygon = getCirclePolygon(getBufferPresets()[seekBar.getProgress()].value.doubleValue(), mListener.getFlight().getCoordinate(), color);
                         if (map != null) {
                             map.addPolygon(oldPolygon); //TODO: Save the polygon returned here
                         }
-                        radiusValueTextView.setText(getRadiusPresets()[progress].label);
-                        mListener.getFlight().setBuffer(getRadiusPresets()[radiusSeekBar.getProgress()].value.doubleValue());
+                        radiusValueTextView.setText(getBufferPresets()[progress].label);
+                        mListener.getFlight().setBuffer(getBufferPresets()[radiusSeekBar.getProgress()].value.doubleValue());
                     }
                 });
-                radiusSeekBar.setMax(getRadiusPresets().length - 1);
+                radiusSeekBar.setMax(getBufferPresets().length - 1);
                 radiusSeekBar.setProgress(radiusIndex);
             }
         });

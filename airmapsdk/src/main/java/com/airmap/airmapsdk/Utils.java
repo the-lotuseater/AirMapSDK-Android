@@ -134,58 +134,35 @@ public class Utils {
     }
 
     /**
-     * @return Default radius presets when creating a flight
+     * @return Default buffer presets when creating a flight
      */
-    public static StringNumberPair[] getRadiusPresets() {
-        return new StringNumberPair[]{
-                new StringNumberPair("25 ft", feetToMeters(25)),
-                new StringNumberPair("50 ft", feetToMeters(50)),
-                new StringNumberPair("100 ft", feetToMeters(100)),
-                new StringNumberPair("150 ft", feetToMeters(150)),
-                new StringNumberPair("200 ft", feetToMeters(200)),
-                new StringNumberPair("300 ft", feetToMeters(300)),
-                new StringNumberPair("400 ft", feetToMeters(400)),
-                new StringNumberPair("500 ft", feetToMeters(500)),
-                new StringNumberPair("750 ft", feetToMeters(750)),
-                new StringNumberPair("1000 ft", feetToMeters(1000)),
-                new StringNumberPair("1200 ft", feetToMeters(1200)),
-                new StringNumberPair("1300 ft", feetToMeters(1300)),
-                new StringNumberPair("1400 ft", feetToMeters(1400)),
-                new StringNumberPair("1500 ft", feetToMeters(1500)),
-                new StringNumberPair("1600 ft", feetToMeters(1600)),
-                new StringNumberPair("1700 ft", feetToMeters(1700)),
-                new StringNumberPair("1800 ft", feetToMeters(1800)),
-                new StringNumberPair("1900 ft", feetToMeters(1900)),
-                new StringNumberPair("2000 ft", feetToMeters(2000)),
-                new StringNumberPair("2100 ft", feetToMeters(2100)),
-                new StringNumberPair("2200 ft", feetToMeters(2200)),
-                new StringNumberPair("2300 ft", feetToMeters(2300)),
-                new StringNumberPair("2400 ft", feetToMeters(2400)),
-                new StringNumberPair("2500 ft", feetToMeters(2500)),
-                new StringNumberPair("2600 ft", feetToMeters(2600)),
-                new StringNumberPair("2700 ft", feetToMeters(2700)),
-                new StringNumberPair("2800 ft", feetToMeters(2800)),
-                new StringNumberPair("2900 ft", feetToMeters(2900)),
-                new StringNumberPair("3000 ft", feetToMeters(3000))
-        };
-    }
-
     public static StringNumberPair[] getBufferPresets() {
-        return new StringNumberPair[] {
+        return new StringNumberPair[]{
                 new StringNumberPair("25 ft", feetToMeters(25)),
                 new StringNumberPair("50 ft", feetToMeters(50)),
                 new StringNumberPair("75 ft", feetToMeters(75)),
                 new StringNumberPair("100 ft", feetToMeters(100)),
+                new StringNumberPair("125 ft", feetToMeters(125)),
                 new StringNumberPair("150 ft", feetToMeters(150)),
+                new StringNumberPair("175 ft", feetToMeters(175)),
                 new StringNumberPair("200 ft", feetToMeters(200)),
                 new StringNumberPair("250 ft", feetToMeters(250)),
                 new StringNumberPair("300 ft", feetToMeters(300)),
                 new StringNumberPair("350 ft", feetToMeters(350)),
                 new StringNumberPair("400 ft", feetToMeters(400)),
+                new StringNumberPair("450 ft", feetToMeters(450)),
                 new StringNumberPair("500 ft", feetToMeters(500)),
                 new StringNumberPair("600 ft", feetToMeters(600)),
-                new StringNumberPair("750 ft", feetToMeters(750)),
+                new StringNumberPair("700 ft", feetToMeters(700)),
+                new StringNumberPair("800 ft", feetToMeters(800)),
+                new StringNumberPair("900 ft", feetToMeters(900)),
                 new StringNumberPair("1000 ft", feetToMeters(1000)),
+                new StringNumberPair("1250 ft", feetToMeters(1250)),
+                new StringNumberPair("1500 ft", feetToMeters(1500)),
+                new StringNumberPair("1750 ft", feetToMeters(1750)),
+                new StringNumberPair("2000 ft", feetToMeters(2000)),
+                new StringNumberPair("2500 ft", feetToMeters(2500)),
+                new StringNumberPair("3000 ft", feetToMeters(3000))
         };
     }
 
