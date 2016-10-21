@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Freehand</string>
+    <string name="access_token">pk.eyJ1IjoiYWlybWFwIiwiYSI6InhIMVMxeHcifQ.-5KWsUSR1cTbqUhTRpGkgQ</string>
+    <string name="next">Next</string>
+    <string name="create_flight">Create Flight</string>
+    <string name="width">Width</string>
+    <string name="radius">Radius</string>
+    <string name="circle_radius">Circle</string>
+    <string name="path_buffer">Path</string>
+    <string name="polygon">Area</string>
+    <string name="freehand_tip">Tap the hand icon to freehand draw any shape.</string>
+    <string name="draw_freehand_path">Draw a freehand path</string>
+    <string name="draw_freehand_shape">Draw a freehand shape</string>
+    <string name="done_drawing_tip">Drag any point to move. Drag any midpoint to add a new point.</string>
+    <string name="error_overlap">Invalid flight area. Adjust flight area so that it does not overlap with itself.</string>
+</resources>

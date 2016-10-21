@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#344052</color>
+    <color name="colorPrimaryDark">#19202b</color>
+    <color name="colorAccent">#13A4FA</color>
+    <color name="colorFill">#B8E1E3</color>
+    <color name="red">#d50000</color>
+    <color name="yellow">#ffea00</color>
+    <color name="tipBackground">#c1212121</color>
+    <color name="errorTipBackground">#c8d50000</color>
+</resources>

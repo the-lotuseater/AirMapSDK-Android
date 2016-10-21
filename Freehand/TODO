@@ -1,0 +1,12 @@
+Freehand:
+
+Draggable Annotations (maybe). Try to figure out when a POINTER_DOWN event is just close to a marker
+	Move circle 
+	Modify polygon
+		Drag corners
+		Add points through midpoints
+		Re-analyze intersections after modifying polygon
+	A view on top to handle circle/polygon/path modification
+Rounded path corners
+Make top left icon more visible
+Detect when a user drags a point over the trash icon and delete that point

@@ -1,0 +1,17 @@
+{
+  "airmap": {
+    "api_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVkZW50aWFsX2lkIjoiY3JlZGVudGlhbHx4bFlCZXh5Y015eDhacWZNNk9MZzJjd1BCMzdaIiwiYXBwbGljYXRpb25faWQiOiJhcHBsaWNhdGlvbnxieU9rUkpEdW0zMGtid2k3cEsyd21ISzhQcE44Iiwib3JnYW5pemF0aW9uX2lkIjoiZGV2ZWxvcGVyfDJ6b2JiN3loeGVZNHFrQzNQUngwWkhLTXoyMzgiLCJpYXQiOjE0NzEwMTkxNzJ9.FAay4dGMby28CQnc7gmMfwq6jtrhk26wWdDpaSP73SU"
+  },
+  "auth0": {
+    "client_id": "izNaxp3fJG1M4PF856TiAEi54AIOq2wG",
+    "callback_url": "https://localhost:8080/login"
+  },
+  "mapbox": {
+    "access_token": "pk.eyJ1IjoiYWlybWFwIiwiYSI6InhIMVMxeHcifQ.-5KWsUSR1cTbqUhTRpGkgQ"
+  },
+  "internal": {
+    "debug_url": "stage/",
+    "mqtt_url": "ssl://mqtt-stage.airmap.io:8883",
+    "telemetry_url": "api-telemetry.stage.airmap.com"
+  }
+}
