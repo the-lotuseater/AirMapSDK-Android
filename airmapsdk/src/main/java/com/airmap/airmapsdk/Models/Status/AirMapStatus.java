@@ -12,6 +12,8 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -81,6 +83,16 @@ public class AirMapStatus implements Serializable, AirMapBaseModel {
             for (int i = 0; advisoriesJson != null && i < advisoriesJson.length(); i++) {
                 advisories.add(new AirMapStatusAdvisory(advisoriesJson.optJSONObject(i)));
             }
+            Collections.sort(advisories, new Comparator<AirMapStatusAdvisory>() {
+                @Override
+                public int compare(AirMapStatusAdvisory a1, AirMapStatusAdvisory a2) {
+                    if (a1 != null && a1.getTfrProperties() != null && a1.getTfrProperties().getStartTime() != null && a2 != null && a2.getTfrProperties() != null) {
+                        return a1.getTfrProperties().getStartTime().compareTo(a2.getTfrProperties().getStartTime());
+                    } else {
+                        return 0;
+                    }
+                }
+            });
             setAdvisories(advisories);
             setMaxSafeRadius(json.optInt("max_safe_distance"));
             if (json.has("weather")) {
