@@ -179,7 +179,7 @@ public class Auth {
                     String json = response.body().string();
                     response.body().close();
                     JSONObject jsonObject = new JSONObject(json);
-                    String idToken = jsonObject.optString("id_token");
+                    String idToken = jsonObject.getString("id_token");
                     AirMap.getInstance().setAuthToken(idToken);
                     if (listener != null) {
                         listener.onSuccess();
