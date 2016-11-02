@@ -195,7 +195,7 @@ public class Auth {
                 } catch (JSONException e) {
                     AirMapLog.e("AuthServices", e.getMessage());
                     if (listener != null) {
-                        listener.onError(new AirMapException(e.getMessage()));
+                        listener.onError(new AirMapException(response.code(), e.getMessage()));
                     }
                 }
             }

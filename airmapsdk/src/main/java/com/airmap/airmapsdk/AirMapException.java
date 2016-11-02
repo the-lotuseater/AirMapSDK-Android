@@ -13,6 +13,7 @@ public class AirMapException extends Exception {
 
     private static final String UNKNOWN_ERROR_MESSAGE = "Unknown error";
 
+    private int errorCode;
     private String errorMessage = "";
     private String detailedMessage = "";
 
@@ -20,7 +21,14 @@ public class AirMapException extends Exception {
         errorMessage = message;
     }
 
+    public AirMapException(int code, String message) {
+        errorCode = code;
+        errorMessage = message;
+    }
+
     public AirMapException(int code, JSONObject json) {
+        errorCode = code;
+
         if (code == 400) {
             detailedMessage = getBadRequestErrorMessage(json); //errorMessage is set in the function
         } else if (code > 400 && code < 500) {
@@ -32,6 +40,10 @@ public class AirMapException extends Exception {
         } else {
             errorMessage = UNKNOWN_ERROR_MESSAGE;
         }
+    }
+
+    public int getErrorCode() {
+        return errorCode;
     }
 
     @Override
