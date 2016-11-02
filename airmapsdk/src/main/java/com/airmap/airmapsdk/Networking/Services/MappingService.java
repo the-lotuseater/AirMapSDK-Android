@@ -31,7 +31,9 @@ public class MappingService extends BaseService {
         ClassC("class_c", "Class C Airspace", "Class C controlled airspace"),
         ClassD("class_d", "Class D Airspace", "Class D controlled airspace"),
         ClassE("class_e0", "Class E Airspace", "Class E controlled airspace to the surface"),
-        EssentialAirspace("class_b,class_c,class_d,class_e0", "Essential Airspace (B, C, D & E)", "Essential airspace (B, C, D & E)");
+        EssentialAirspace("class_b,class_c,class_d,class_e0", "Essential Airspace (B, C, D & E)", "Essential airspace (B, C, D & E)"),
+        HazardAreas("hazard_areas", "Hazard Areas", "Hazard areas"),
+        AerialRecreationalAreas("aerial_recreational_areas", "Aerial Recreational Areas", "Aerial recreational areas");
 
         private final String text;
         private final String title;
@@ -96,6 +98,10 @@ public class MappingService extends BaseService {
                     return ClassE;
                 case "class_b,class_c,class_d,class_e0":
                     return EssentialAirspace;
+                case "hazard_areas":
+                    return HazardAreas;
+                case "aerial_recreational_areas":
+                    return AerialRecreationalAreas;
                 default:
                     return null;
             }
@@ -131,6 +137,10 @@ public class MappingService extends BaseService {
                 case ClassE:
                 case EssentialAirspace:
                     return AirMapAirspaceType.ControlledAirspace;
+                case HazardAreas:
+                    return AirMapAirspaceType.HazardArea;
+                case AerialRecreationalAreas:
+                    return AirMapAirspaceType.RecreationalArea;
             }
             return null;
         }
@@ -146,7 +156,9 @@ public class MappingService extends BaseService {
         SpecialUse("special_use_airspace", "Special Use Airspace"),
         TFR("tfr", "TFR"),
         Wildfires("wildfire", "Wildfire"),
-        Hospitals("hospital", "Hospital");
+        Hospitals("hospital", "Hospital"),
+        HazardArea("hazard_area", "Hazard Area"),
+        RecreationalArea("recreational_area", "Aerial Recreational Area");
 
         private final String text;
         private final String title;
@@ -187,6 +199,10 @@ public class MappingService extends BaseService {
                     return Wildfires;
                 case "hospital":
                     return Hospitals;
+                case "hazard_area":
+                    return HazardArea;
+                case "recreational_area":
+                    return RecreationalArea;
             }
             return null;
         }
