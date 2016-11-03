@@ -44,4 +44,14 @@
     <string name="email">E-mail</string>
     <string name="mobile_phone_number">Mobile Phone Number</string>
     <string name="single_use">Single Use</string>
+    <string name="airmap_create_flight">Create Flight</string>
+    <string name="airmap_width">Width</string>
+    <string name="airmap_circle_radius">Circle</string>
+    <string name="airmap_path_buffer">Path</string>
+    <string name="airmap_polygon">Area</string>
+    <string name="airmap_freehand_tip">Tap the hand icon to freehand draw any shape.</string>
+    <string name="airmap_draw_freehand_path">Draw a freehand path</string>
+    <string name="airmap_draw_freehand_shape">Draw a freehand shape</string>
+    <string name="airmap_done_drawing_tip">Drag any point to move. Drag any midpoint to add a new point.</string>
+    <string name="airmap_error_overlap">Invalid flight area. Adjust flight area so that it does not overlap with itself.</string>
 </resources>
