@@ -1,7 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
-apply plugin: 'android-apt'
 
 group = 'com.airmap.airmapsdk'
 def libVersion = '1.0.3'
@@ -53,8 +52,6 @@ dependencies {
     compile 'com.google.protobuf:protobuf-java:2.6.1'
     compile ('com.mapbox.mapboxsdk:mapbox-android-sdk:4.2.0-beta.4@aar') { transitive=true }
     compile('org.eclipse.paho:org.eclipse.paho.android.service:1.1.1-20160907.104533-5@aar') { exclude module: 'support-v4' }
-    compile 'com.jakewharton:butterknife:8.4.0'
-    apt 'com.jakewharton:butterknife-compiler:8.4.0'
 }
 
 //TODO: Uncomment below at some release. This will make it so developers no longer have to add `{ exclude module: 'support-v4' }` to the sdk dependency (including our app), and we can remove that line from the paho dependency
