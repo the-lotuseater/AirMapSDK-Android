@@ -62,8 +62,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import butterknife.ButterKnife;
-
 import static com.airmap.airmapsdk.Utils.getBufferPresets;
 
 /**
@@ -116,7 +114,6 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
         AirMap.init(this);
         setContentView(R.layout.airmap_activity_freehand);
         initializeViews();
-        ButterKnife.bind(this);
         setupToolbar();
         setupSwitch();
         setupMap(savedInstanceState);
