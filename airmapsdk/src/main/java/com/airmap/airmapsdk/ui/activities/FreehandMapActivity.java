@@ -78,8 +78,8 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
     private static final String MIDPOINT_TAG = "midpoint";
     private static final String CORNER_TAG = "corner";
 
-    private static Icon draggerIcon;
-    private static Icon addCircleIcon;
+    private static Icon cornerIcon;
+    private static Icon midpointIcon;
     private static Icon intersectionIcon;
 
     private Toolbar toolbar;
@@ -127,8 +127,8 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
         corners = new ArrayList<>();
         midpoints = new ArrayList<>();
         intersections = new ArrayList<>();
-        draggerIcon = IconFactory.getInstance(this).fromResource(R.drawable.white_circle);
-        addCircleIcon = IconFactory.getInstance(this).fromResource(R.drawable.gray_circle);
+        cornerIcon = IconFactory.getInstance(this).fromResource(R.drawable.white_circle);
+        midpointIcon = IconFactory.getInstance(this).fromResource(R.drawable.gray_circle);
         intersectionIcon = IconFactory.getInstance(this).fromResource(R.drawable.intersection_circle);
 
         screenDensity = getResources().getDisplayMetrics().density;
@@ -781,7 +781,7 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
     private static MarkerViewOptions getDefaultMarkerOptions(LatLng latLng) {
         MarkerViewOptions options = new MarkerViewOptions();
         options.position(latLng);
-        options.icon(draggerIcon);
+        options.icon(cornerIcon);
         options.title(CORNER_TAG);
         options.anchor(0.5f, 0.5f);
         return options;
@@ -790,7 +790,7 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
     private static MarkerViewOptions getDefaultMidpointMarker(LatLng latLng) {
         MarkerViewOptions options = new MarkerViewOptions();
         options.position(latLng);
-        options.icon(addCircleIcon);
+        options.icon(midpointIcon);
         options.title(MIDPOINT_TAG);
         options.anchor(0.5f, 0.5f);
         return options;
