@@ -187,7 +187,7 @@ public class Auth {
                     String json = response.body().string();
                     response.body().close();
                     JSONObject jsonObject = new JSONObject(json);
-                    String idToken = jsonObject.optString("id_token");
+                    String idToken = jsonObject.getString("id_token");
                     AirMap.getInstance().setAuthToken(idToken);
                     if (listener != null) {
                         listener.onSuccess();
@@ -195,7 +195,7 @@ public class Auth {
                 } catch (JSONException e) {
                     AirMapLog.e("AuthServices", e.getMessage());
                     if (listener != null) {
-                        listener.onError(new AirMapException(e.getMessage()));
+                        listener.onError(new AirMapException(response.code(), e.getMessage()));
                     }
                 }
             }

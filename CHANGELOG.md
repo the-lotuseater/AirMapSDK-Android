@@ -1,3 +1,9 @@
+##`1.0.4 (11/1/16)`
+* Fixed refreshAccessToken bug
+* Fixed memory leak
+* Updated tests
+* Bug fixes
+
 ##`1.0.3 (9/9/16)`
 * Package names have changed. Classes will need to be re-imported
 * Traffic Alerts are now compatible with Android 7.0
