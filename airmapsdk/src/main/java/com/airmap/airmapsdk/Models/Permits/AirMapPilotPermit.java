@@ -51,7 +51,7 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
 
     private String id;
     private String permitId;
-    private String issuerId;
+    private AirMapPermitIssuer issuer;
     private PermitStatus status;
     private String pilotId;
     private Date createdAt;
@@ -71,10 +71,10 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
     public AirMapPilotPermit constructFromJson(JSONObject json) {
         setId(json.optString("id"));
         setPermitId(json.optString("permit_id"));
-        setIssuerId(json.optString("issuer_id"));
+        setIssuer(new AirMapPermitIssuer(json.optJSONObject("issuer")));
         setPilotId(json.optString("pilot_id"));
         setCreatedAt(getDateFromIso8601String(json.optString("created_at")));
-        setExpiresAt(getDateFromIso8601String(json.optString("expires_at")));
+        setExpiresAt(getDateFromIso8601String(json.optString("expiration")));
         setUpdatedAt(getDateFromIso8601String(json.optString("updated_at")));
         setStatus(PermitStatus.fromString(json.optString("status")));
         JSONArray properties = json.optJSONArray("custom_properties");
@@ -186,12 +186,12 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
         return this;
     }
 
-    public String getIssuerId() {
-        return issuerId;
+    public AirMapPermitIssuer getIssuer() {
+        return issuer;
     }
 
-    public AirMapPilotPermit setIssuerId(String issuerId) {
-        this.issuerId = issuerId;
+    public AirMapPilotPermit setIssuer(AirMapPermitIssuer issuer) {
+        this.issuer = issuer;
         return this;
     }
 

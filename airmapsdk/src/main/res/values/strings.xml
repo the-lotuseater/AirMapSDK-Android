@@ -44,4 +44,9 @@
     <string name="email">E-mail</string>
     <string name="mobile_phone_number">Mobile Phone Number</string>
     <string name="single_use">Single Use</string>
+    <string name="permit_status">Status: %1$s</string>
+    <string name="permit_expiration">Expires: %1$s</string>
+    <string name="select_a_permit_title">Select a Permit</string>
+    <string name="select_a_permit_description">The following permits meet the requirements for the flight\'s operating area</string>
+    <string name="permit_details">Permit Details</string>
 </resources>

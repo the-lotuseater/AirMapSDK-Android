@@ -9,6 +9,7 @@ import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermitCustomProperty;
 import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.util.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,8 +28,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class CustomPropertiesActivity extends AppCompatActivity {
-
-    public static final String PERMIT = "permit";
 
     private LinearLayout customPropertiesLayout;
 
@@ -39,7 +39,7 @@ public class CustomPropertiesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.airmap_activity_custom_properties);
-        permit = (AirMapAvailablePermit) getIntent().getSerializableExtra(PERMIT);
+        permit = (AirMapAvailablePermit) getIntent().getSerializableExtra(Constants.AVAILABLE_PERMIT_EXTRA);
         customProperties = permit.getCustomProperties();
         initializeViews();
         initializeCustomProperties();
@@ -64,7 +64,7 @@ public class CustomPropertiesActivity extends AppCompatActivity {
         } else if (permit.getValidFor() > 0) {
             validityTextView.setText(String.format(Locale.US, "%d minutes", permit.getValidFor()));
         } else if (permit.getValidUntil() != null) {
-            SimpleDateFormat format = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
+            SimpleDateFormat format = new SimpleDateFormat("M/d/yy h:mm a", Locale.US);
             validityTextView.setText(format.format(permit.getValidUntil()));
         }
 
@@ -74,7 +74,7 @@ public class CustomPropertiesActivity extends AppCompatActivity {
                 if (allRequiredFieldsFilled()) {
                     permit.setCustomProperties(getUpdatedCustomProperties());
                     Intent data = new Intent();
-                    data.putExtra(PERMIT, permit);
+                    data.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, permit);
                     setResult(Activity.RESULT_OK, data);
                     finish();
                 }
@@ -102,20 +102,13 @@ public class CustomPropertiesActivity extends AppCompatActivity {
         for (AirMapPilotPermitCustomProperty property : customProperties) {
             switch (property.getType()) {
                 case Text:
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                    TextInputEditText editText = new TextInputEditText(this);
-                    editText.setHint(property.getLabel());
-                    editText.setMaxLines(1);
-                    editText.setInputType(InputType.TYPE_CLASS_TEXT);
-                    editText.setLayoutParams(layoutParams);
-
-                    TextInputLayout textInputLayout = new TextInputLayout(this);
-                    textInputLayout.setLayoutParams(layoutParams);
-                    textInputLayout.addView(editText);
+                    TextInputLayout textInputLayout = (TextInputLayout) LayoutInflater.from(this).inflate(R.layout.custom_property_edit_text, customPropertiesLayout, false);
+                    TextInputEditText editText = (TextInputEditText) textInputLayout.findViewById(R.id.edit_text);
+                    textInputLayout.setHint(property.getLabel());
                     if (property.getValue() != null) { //Will populate with data if it exists
                         editText.setText(property.getValue());
                     }
+
                     customPropertiesLayout.addView(textInputLayout);
 
                     pairs.add(new Pair<>(property, editText));
@@ -134,14 +127,5 @@ public class CustomPropertiesActivity extends AppCompatActivity {
             }
         }
         return toggle;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

@@ -1,7 +1,10 @@
 package com.airmap.airmapsdk;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
+import android.util.TypedValue;
 
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
@@ -32,6 +35,18 @@ import java.util.TimeZone;
 @SuppressWarnings("unused")
 public class Utils {
     public static final String REFRESH_TOKEN_KEY = "AIRMAP_SDK_REFRESH_TOKEN";
+
+    public static Float dpToPixels(Context context, int dp) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+    }
+
+    public static String titleCase(String s) {
+        if (TextUtils.isEmpty(s)) {
+            return s;
+        }
+
+        return s.substring(0,1).toUpperCase() + s.substring(1);
+    }
 
     /**
      * Converts pressure in millimeters of mercury (Hg) to hectoPascals (hPa)

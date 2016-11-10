@@ -118,6 +118,8 @@ public class ListPermitsFragment extends Fragment {
 
         void showDecisionFlow(AirMapStatusPermits permit);
 
+        void selectPermit(AirMapStatusPermits permit);
+
         void onListPermitsNextClicked(ArrayList<AirMapAvailablePermit> selectedPermits);
     }
 }

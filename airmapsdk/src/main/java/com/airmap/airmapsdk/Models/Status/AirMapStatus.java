@@ -4,6 +4,8 @@ import android.text.TextUtils;
 
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
+import com.airmap.airmapsdk.models.permits.AirMapPermitIssuer;
 import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.Utils;
 
@@ -12,8 +14,6 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +58,8 @@ public class AirMapStatus implements Serializable, AirMapBaseModel {
     private int maxSafeRadius;
     private List<AirMapStatusAdvisory> advisories;
     private AirMapStatusWeather weather;
+    private List<AirMapAvailablePermit> applicablePermits;
+    private List<AirMapPermitIssuer> organizations;
 
     /**
      * Initialize an AirMapStatus from JSON
@@ -89,6 +91,22 @@ public class AirMapStatus implements Serializable, AirMapBaseModel {
                 setWeather(new AirMapStatusWeather(json.optJSONObject("weather")));
             }
             setAdvisoryColor(StatusColor.fromString(json.optString("advisory_color")));
+
+            // applicable permits
+            List<AirMapAvailablePermit> applicablePermits = new ArrayList<>();
+            JSONArray applicablePermitsJson = json.optJSONArray("applicable_permits");
+            for (int k = 0; applicablePermitsJson != null && k < applicablePermitsJson.length(); k++) {
+                applicablePermits.add(new AirMapAvailablePermit(applicablePermitsJson.optJSONObject(k)));
+            }
+            setApplicablePermits(applicablePermits);
+
+            // organizations (issuers)
+            List<AirMapPermitIssuer> organizations = new ArrayList<>();
+            JSONArray organizationsJSON = json.optJSONArray("organizations");
+            for (int j = 0; organizationsJSON != null && j < organizationsJSON.length(); j++) {
+                organizations.add(new AirMapPermitIssuer(organizationsJSON.optJSONObject(j)));
+            }
+            setOrganizations(organizations);
         }
         return this;
     }
@@ -159,6 +177,24 @@ public class AirMapStatus implements Serializable, AirMapBaseModel {
 
     public AirMapStatus setWeather(AirMapStatusWeather weather) {
         this.weather = weather;
+        return this;
+    }
+
+    public List<AirMapAvailablePermit> getApplicablePermits() {
+        return applicablePermits;
+    }
+
+    public AirMapStatus setApplicablePermits(List<AirMapAvailablePermit> permits) {
+        this.applicablePermits = permits;
+        return this;
+    }
+
+    public List<AirMapPermitIssuer> getOrganizations() {
+        return organizations;
+    }
+
+    public AirMapStatus setOrganizations(List<AirMapPermitIssuer> organizations) {
+        this.organizations = organizations;
         return this;
     }
 }

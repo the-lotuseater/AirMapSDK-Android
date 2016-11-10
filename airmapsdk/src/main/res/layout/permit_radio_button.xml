@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:paddingLeft="12dp"
+    android:paddingRight="6dp"
+    android:background="?selectableItemBackground"
+    android:clickable="true" >
+
+    <RadioButton android:id="@+id/radio_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:duplicateParentState="true" />
+
+    <LinearLayout android:id="@+id/title_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@id/radio_button"
+        android:orientation="horizontal"
+        android:gravity="center_vertical" >
+
+        <ImageView
+            android:id="@+id/icon_image_view"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:scaleType="centerInside"
+            android:background="@null"
+            android:src="@drawable/airmap_flight_marker" />
+
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/icon_image_view"
+            android:layout_marginLeft="2dp"
+            android:text="Student Recreational Permit"
+            android:textSize="16sp"
+            android:textColor="@color/font_title" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/description_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/title_container"
+        android:layout_toLeftOf="@id/radio_button"
+        android:textColor="@color/font_description"
+        android:text="Fly recreationally within your flight operating area" />
+
+</RelativeLayout>

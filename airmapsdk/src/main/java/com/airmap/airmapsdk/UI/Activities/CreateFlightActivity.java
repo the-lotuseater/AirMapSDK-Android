@@ -13,6 +13,7 @@ import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
+import com.airmap.airmapsdk.models.permits.AirMapPermitIssuer;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
@@ -30,11 +31,14 @@ import com.airmap.airmapsdk.ui.fragments.ListPermitsFragment;
 import com.airmap.airmapsdk.ui.fragments.ReviewFlightFragment;
 import com.airmap.airmapsdk.ui.fragments.ReviewNoticeFragment;
 import com.airmap.airmapsdk.Utils;
+import com.airmap.airmapsdk.util.Constants;
 import com.mapbox.mapboxsdk.MapboxAccountManager;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.airmap.airmapsdk.Utils.feetToMeters;
 
@@ -61,8 +65,8 @@ public class CreateFlightActivity extends AppCompatActivity implements
     private AirMapStatus flightStatus; //The status for the flight
     private AirMapPilot pilot;
     private ArrayList<AirMapStatusRequirementNotice> notices;
+    private ArrayList<AirMapStatusPermits> statusPermitsList;
 
-    private ArrayList<AirMapStatusPermits> statusPermits; //List of all permits that might be required
     private ArrayList<AirMapPilotPermit> permitsFromWallet; //Permits the user has in their wallet that pertains to this flight
 
     private ArrayList<AirMapPilotPermit> selectedPermits; //Permits that do not need to be applied for and can be attached to flight
@@ -80,7 +84,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
         setupViewPager();
 
         notices = new ArrayList<>();
-        statusPermits = new ArrayList<>();
+        statusPermitsList = new ArrayList<>();
         permitsFromWallet = new ArrayList<>();
         selectedPermits = new ArrayList<>();
         permitsToApplyFor = new ArrayList<>();
@@ -180,6 +184,14 @@ public class CreateFlightActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void selectPermit(AirMapStatusPermits permit) {
+        Intent intent = new Intent(this, PermitSelectionActivity.class);
+        intent.putExtra(Constants.STATUS_PERMIT_EXTRA, permit);
+        intent.putExtra(Constants.PERMIT_WALLET_EXTRA, permitsFromWallet);
+        startActivityForResult(intent, REQUEST_DECISION_FLOW);
+    }
+
+    @Override
     public void flightDetailsSaveClicked(AirMapFlight response) {
         Intent data = new Intent();
         data.putExtra(FLIGHT, response);
@@ -196,23 +208,43 @@ public class CreateFlightActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void flightDetailsNextClicked(AirMapStatus flightStatus) {
+    public void flightDetailsNextClicked(final AirMapStatus flightStatus) {
         this.flightStatus = flightStatus;
-        statusPermits.clear();
         notices.clear();
+
         List<AirMapStatusAdvisory> advisories = flightStatus.getAdvisories();
         for (AirMapStatusAdvisory advisory : advisories) {
             AirMapStatusRequirement requirement = advisory.getRequirements();
-            if (requirement.getPermit() != null && requirement.getPermit().getTypes() != null && !requirement.getPermit().getTypes().isEmpty()) {
-                AirMapStatusPermits permit = requirement.getPermit();
-                permit.setAuthorityName(advisory.getName()); //Manually set authority name
-                statusPermits.add(permit);
-            } else if (requirement.getNotice() != null && !requirement.getNotice().getPhoneNumber().isEmpty()) {
+            if (requirement.getNotice() != null && !requirement.getNotice().getPhoneNumber().isEmpty()) {
                 notices.add(requirement.getNotice());
             }
         }
+
+        // map applicable permits to organization (issuer)
+        Map<String, AirMapStatusPermits> statusPermitMap = new HashMap<>();
+        Map<String, AirMapPermitIssuer> organizationMap = new HashMap<>();
+        for (AirMapPermitIssuer issuer : flightStatus.getOrganizations()) {
+            organizationMap.put(issuer.getId(), issuer);
+        }
+        for (AirMapAvailablePermit applicablePermit : flightStatus.getApplicablePermits()) {
+            if (organizationMap.containsKey(applicablePermit.getOrganizationId())) {
+                AirMapPermitIssuer organization = organizationMap.get(applicablePermit.getOrganizationId());
+
+                AirMapStatusPermits statusPermits = statusPermitMap.get(organization.getId());
+                if (statusPermits == null) {
+                    statusPermits = new AirMapStatusPermits();
+                    statusPermits.setAuthorityName(organization.getName());
+                    statusPermits.setTypes(new ArrayList<AirMapAvailablePermit>());
+                }
+                statusPermits.getTypes().add(applicablePermit);
+                statusPermitMap.put(organization.getId(), statusPermits);
+            }
+        }
+
+        statusPermitsList = new ArrayList<>(statusPermitMap.values());
+
         invalidateFurtherFragments(0); //To prevent creating multiple instances of the next fragment
-        if (!statusPermits.isEmpty()) {
+        if (!flightStatus.getApplicablePermits().isEmpty()) {
             AirMap.getAuthenticatedPilotPermits(new AirMapCallback<List<AirMapPilotPermit>>() {
                 @Override
                 public void onSuccess(List<AirMapPilotPermit> response) {
@@ -220,11 +252,10 @@ public class CreateFlightActivity extends AppCompatActivity implements
                         if (pilotPermit.getShortDetails().isSingleUse()) {
                             continue;
                         }
-                        for (AirMapStatusPermits statusPermit : statusPermits) {
-                            for (AirMapAvailablePermit availablePermit : statusPermit.getTypes()) {
-                                if (availablePermit.getId().equals(pilotPermit.getPermitId())) {
-                                    permitsFromWallet.add(pilotPermit); //Only add permits that would pertain to this flight
-                                }
+
+                        for (AirMapAvailablePermit availablePermit : flightStatus.getApplicablePermits()) {
+                            if (availablePermit.getId().equals(pilotPermit.getPermitId())) {
+                                permitsFromWallet.add(pilotPermit); //Only add permits that would pertain to this flight
                             }
                         }
                     }
@@ -347,7 +378,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_DECISION_FLOW) { //Decision flow opens up Custom Properties Activity
             if (resultCode == RESULT_OK) {
-                onCustomPropertiesNextButtonClick((AirMapAvailablePermit) data.getSerializableExtra(CustomPropertiesActivity.PERMIT));
+                onCustomPropertiesNextButtonClick((AirMapAvailablePermit) data.getSerializableExtra(Constants.AVAILABLE_PERMIT_EXTRA));
             }
         }
     }
@@ -357,8 +388,8 @@ public class CreateFlightActivity extends AppCompatActivity implements
         invalidateFurtherFragments(0);
         flightStatus = null;
         notices.clear();
+        statusPermitsList.clear();
         permitsFromWallet.clear();
-        statusPermits.clear();
         selectedPermits.clear();
         permitsToApplyFor.clear();
         permitsToShowInReview.clear();
@@ -366,7 +397,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
 
     @Override
     public ArrayList<AirMapStatusPermits> getStatusPermits() {
-        return statusPermits;
+        return statusPermitsList;
     }
 
     @Override
