@@ -9,16 +9,19 @@ import com.mapbox.mapboxsdk.annotations.Polyline;
 
 public class LineContainer implements Container {
     public Polyline line;
-    public Polyline width;
+    public Polyline widthPolyline;
+    public int width;
+
 
     @Override
     public void clear() {
         line = null;
-        width = null;
+        widthPolyline = null;
+        width = -1;
     }
 
     @Override
     public boolean isValid() {
-        return line != null && width != null;
+        return line != null && widthPolyline != null && width > 0;
     }
 }
