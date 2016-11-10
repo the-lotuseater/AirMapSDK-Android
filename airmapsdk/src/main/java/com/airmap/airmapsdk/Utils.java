@@ -81,7 +81,7 @@ public class Utils {
      * @return The converted Date
      */
     public static Date getDateFromIso8601String(String iso8601) {
-        if (iso8601 == null) {
+        if (TextUtils.isEmpty(iso8601)) {
             return null;
         }
         SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault());
