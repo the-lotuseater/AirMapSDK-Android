@@ -16,6 +16,7 @@ import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
+import com.airmap.airmapsdk.models.airspace.AirMapAirspace;
 import com.airmap.airmapsdk.models.comm.AirMapComm;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
@@ -1035,17 +1036,16 @@ public class AirMap {
      * @param date         Date and time for planned flight
      * @param callback     The callback that is invoked on success or error
      */
-    public static void checkFlightPath(List<Coordinate> path, int buffer, Coordinate takeOffPoint,
+    public static Call checkFlightPath(List<Coordinate> path, int buffer, Coordinate takeOffPoint,
                                        List<MappingService.AirMapAirspaceType> types,
                                        List<MappingService.AirMapAirspaceType> ignoredTypes, boolean showWeather,
                                        @Nullable Date date, @Nullable AirMapCallback<AirMapStatus> callback) {
-        StatusService.checkFlightPath(path, buffer, takeOffPoint, types, ignoredTypes, showWeather, date, callback);
+        return StatusService.checkFlightPath(path, buffer, takeOffPoint, types, ignoredTypes, showWeather, date, callback);
     }
 
     /**
      * Get a flight status based on a flight within a polygon
-     *
-     * @param geometry     The polygon the flight will be in
+     *  @param geometry     The polygon the flight will be in
      * @param takeOffPoint The take off point of the flight
      * @param types        Airspace types to include in the calculation and response
      * @param ignoredTypes Airspace types to ignore in the calculation and response
@@ -1053,12 +1053,33 @@ public class AirMap {
      * @param date         Date and time for planned flight
      * @param callback     The callback that is invoked on success or error
      */
-    public static void checkPolygon(List<Coordinate> geometry, Coordinate takeOffPoint,
+    public static Call checkPolygon(List<Coordinate> geometry, Coordinate takeOffPoint,
                                     List<MappingService.AirMapAirspaceType> types,
                                     List<MappingService.AirMapAirspaceType> ignoredTypes,
                                     boolean showWeather, @Nullable Date date,
                                     @Nullable AirMapCallback<AirMapStatus> callback) {
-        StatusService.checkPolygon(geometry, takeOffPoint, types, ignoredTypes, showWeather, date, callback);
+        return StatusService.checkPolygon(geometry, takeOffPoint, types, ignoredTypes, showWeather, date, callback);
+    }
+
+    /**
+     * Get an airspace by its ID
+     *  @param airspaceId The ID of the airspace to get
+     * @param listener   The callback that is invoked on success or error
+     */
+    public static Call getAirspace(@NonNull String airspaceId,
+                                   @Nullable AirMapCallback<AirMapAirspace> listener) {
+        return AirspaceService.getAirspace(airspaceId, listener);
+    }
+
+    /**
+     * Get airspaces by a list of their IDs
+     *
+     * @param airspaceIds The IDs of the airspaces to get
+     * @param listener    The callback that is invoked on success or error
+     */
+    public static Call getAirspace(@NonNull List<String> airspaceIds,
+                                   @Nullable AirMapCallback<List<AirMapAirspace>> listener) {
+        return AirspaceService.getAirspace(airspaceIds, listener);
     }
 
     /**
