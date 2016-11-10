@@ -13,8 +13,8 @@ import java.util.List;
  */
 
 public class PointMath {
-    //TODO: Just use PolylineUtils instead
-    public static List<PointF> simplify(List<PointF> vertices, double distanceThreshold) {
+    //TODO: test PolylineUtils simplify
+    static List<PointF> simplify(List<PointF> vertices, double distanceThreshold) {
         return vertices != null ? simplificationOf(vertices, distanceThreshold) : null;
     }
 
@@ -67,10 +67,8 @@ public class PointMath {
 
     public static List<LatLng> findIntersections(List<LatLng> polygon) {
         List<LatLng> intersections = new ArrayList<>();
-        if (polygon.size() < 4) {
-            return intersections;
-        }
         List<Line> lineSegments = new ArrayList<>();
+
         for (int i = 0; i < polygon.size() - 1; i++) {
             LatLng a = polygon.get(i);
             LatLng b = polygon.get(i + 1);
@@ -83,6 +81,9 @@ public class PointMath {
                     intersections.add(intersection);
                 }
             }
+        }
+        for (LatLng polygonPoint : polygon) {
+            intersections.remove(polygonPoint); //Remove points that are in the actual polygon cuz those aren't actually intersections
         }
         return intersections;
     }
@@ -100,11 +101,11 @@ public class PointMath {
         if (denom == 0.0) { // Lines are parallel.
             return null;
         }
-        double ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3))/denom;
-        double ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3))/denom;
+        double ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
+        double ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denom;
         if (ua >= 0.0f && ua <= 1.0f && ub >= 0.0f && ub <= 1.0f) {
             // Get the intersection point.
-            return new LatLng((x1 + ua*(x2 - x1)), (y1 + ua*(y2 - y1)));
+            return new LatLng((x1 + ua * (x2 - x1)), (y1 + ua * (y2 - y1)));
         }
         return null;
     }
