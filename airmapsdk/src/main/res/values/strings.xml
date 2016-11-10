@@ -54,4 +54,7 @@
     <string name="airmap_draw_freehand_shape">Draw a freehand shape</string>
     <string name="airmap_done_drawing_tip">Drag any point to move. Drag any midpoint to add a new point.</string>
     <string name="airmap_error_overlap">Invalid flight area. Adjust flight area so that it does not overlap with itself.</string>
+    <string name="airmap_flight_strictly_regulated">Flight Strictly Regulated</string>
+    <string name="airmap_advisories">Advisories</string>
+    <string name="airmap_informational">Informational</string>
 </resources>
