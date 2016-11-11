@@ -116,6 +116,11 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
             }
         }
 
+        // if only one permit available already in wallet, preselect that permit
+        if (holder.permitRadioGroup.getChildCount() == 1) {
+            holder.permitRadioGroup.check(holder.permitRadioGroup.getChildAt(0).getId());
+        }
+
         holder.permitAuthorityTextView.setText(holder.permit.getAuthorityName());
         holder.selectPermitButton.setOnClickListener(new View.OnClickListener() {
             @Override
