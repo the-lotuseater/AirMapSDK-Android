@@ -20,36 +20,43 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class AirMapStatusPermits implements Serializable, AirMapBaseModel {
     private String authorityName; //This has to be manually set (it is not from JSON)
-    private List<AirMapAvailablePermit> types;
+    private List<AirMapAvailablePermit> applicablePermits;
+    private List<AirMapAvailablePermit> availablePermits;
     private AirMapPermitDecisionFlow decisionFlow;
 
-    public AirMapStatusPermits(JSONObject permitsJson) {
-        constructFromJson(permitsJson);
-    }
-
     public AirMapStatusPermits() {
-
+        applicablePermits = new ArrayList<>();
+        availablePermits = new ArrayList<>();
     }
 
     @Override
     public AirMapStatusPermits constructFromJson(JSONObject json) {
         if (json != null) {
             setDecisionFlow(new AirMapPermitDecisionFlow(json.optJSONObject("permit_decision_flow")));
-            JSONArray typesArray = json.optJSONArray("types");
-            types = new ArrayList<>();
+            JSONArray typesArray = json.optJSONArray("applicablePermits");
+            applicablePermits = new ArrayList<>();
             for (int i = 0; i < typesArray.length(); i++) {
-                types.add(new AirMapAvailablePermit(typesArray.optJSONObject(i)));
+                applicablePermits.add(new AirMapAvailablePermit(typesArray.optJSONObject(i)));
             }
         }
         return this;
     }
 
-    public List<AirMapAvailablePermit> getTypes() {
-        return types;
+    public List<AirMapAvailablePermit> getApplicablePermits() {
+        return applicablePermits;
     }
 
-    public AirMapStatusPermits setTypes(List<AirMapAvailablePermit> types) {
-        this.types = types;
+    public AirMapStatusPermits setApplicablePermits(List<AirMapAvailablePermit> applicablePermits) {
+        this.applicablePermits = applicablePermits;
+        return this;
+    }
+
+    public List<AirMapAvailablePermit> getAvailablePermits() {
+        return availablePermits;
+    }
+
+    public AirMapStatusPermits setAvailablePermits(List<AirMapAvailablePermit> availablePermits) {
+        this.availablePermits = availablePermits;
         return this;
     }
 

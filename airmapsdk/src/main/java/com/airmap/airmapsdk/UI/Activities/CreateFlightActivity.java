@@ -212,14 +212,6 @@ public class CreateFlightActivity extends AppCompatActivity implements
         this.flightStatus = flightStatus;
         notices.clear();
 
-        List<AirMapStatusAdvisory> advisories = flightStatus.getAdvisories();
-        for (AirMapStatusAdvisory advisory : advisories) {
-            AirMapStatusRequirement requirement = advisory.getRequirements();
-            if (requirement.getNotice() != null && !requirement.getNotice().getPhoneNumber().isEmpty()) {
-                notices.add(requirement.getNotice());
-            }
-        }
-
         // map applicable permits to organization (issuer)
         Map<String, AirMapStatusPermits> statusPermitMap = new HashMap<>();
         Map<String, AirMapPermitIssuer> organizationMap = new HashMap<>();
@@ -234,17 +226,45 @@ public class CreateFlightActivity extends AppCompatActivity implements
                 if (statusPermits == null) {
                     statusPermits = new AirMapStatusPermits();
                     statusPermits.setAuthorityName(organization.getName());
-                    statusPermits.setTypes(new ArrayList<AirMapAvailablePermit>());
                 }
-                statusPermits.getTypes().add(applicablePermit);
+                statusPermits.getApplicablePermits().add(applicablePermit);
                 statusPermitMap.put(organization.getId(), statusPermits);
+            }
+        }
+
+        // check if advisories have required permits
+        boolean isPermitRequired = false;
+
+        List<AirMapStatusAdvisory> advisories = flightStatus.getAdvisories();
+        for (AirMapStatusAdvisory advisory : advisories) {
+            isPermitRequired = isPermitRequired || !advisory.getAvailablePermits().isEmpty();
+
+            AirMapStatusRequirement requirement = advisory.getRequirements();
+            if (requirement.getNotice() != null && !requirement.getNotice().getPhoneNumber().isEmpty()) {
+                notices.add(requirement.getNotice());
+            }
+
+            // map available permits to organization (issuer)
+            for (AirMapAvailablePermit availablePermit : advisory.getAvailablePermits()) {
+                if (organizationMap.containsKey(advisory.getOrganizationId())) {
+                    AirMapPermitIssuer organization = organizationMap.get(advisory.getOrganizationId());
+
+                    AirMapStatusPermits statusPermits = statusPermitMap.get(organization.getId());
+                    if (statusPermits == null) {
+                        statusPermits = new AirMapStatusPermits();
+                        statusPermits.setAuthorityName(organization.getName());
+                    }
+                    statusPermits.getAvailablePermits().add(availablePermit);
+                    statusPermitMap.put(organization.getId(), statusPermits);
+                }
             }
         }
 
         statusPermitsList = new ArrayList<>(statusPermitMap.values());
 
         invalidateFurtherFragments(0); //To prevent creating multiple instances of the next fragment
-        if (!flightStatus.getApplicablePermits().isEmpty()) {
+
+        if (isPermitRequired) {
             AirMap.getAuthenticatedPilotPermits(new AirMapCallback<List<AirMapPilotPermit>>() {
                 @Override
                 public void onSuccess(List<AirMapPilotPermit> response) {

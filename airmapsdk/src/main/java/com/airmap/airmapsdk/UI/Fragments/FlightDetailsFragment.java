@@ -451,15 +451,13 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 List<AirMapStatusAdvisory> advisories = response.getAdvisories();
                 boolean requiresPermitOrNotice = false;
                 for (AirMapStatusAdvisory advisory : advisories) {
-                    if (advisory.getRequirements() != null) {
-                        if (advisory.getRequirements().getPermit() != null &&
-                                advisory.getRequirements().getPermit().getTypes() != null &&
-                                !advisory.getRequirements().getPermit().getTypes().isEmpty()) {
-                            requiresPermitOrNotice = true;
-                        } else if (advisory.getRequirements().getNotice() != null &&
+                    if (advisory.getAvailablePermits() != null && !advisory.getAvailablePermits().isEmpty()) {
+                        requiresPermitOrNotice = true;
+                        break;
+                    } else if (advisory.getRequirements() != null && advisory.getRequirements().getNotice() != null &&
                                 !advisory.getRequirements().getNotice().getPhoneNumber().isEmpty()) {
                             requiresPermitOrNotice = true;
-                        }
+                        break;
                     }
                 }
 

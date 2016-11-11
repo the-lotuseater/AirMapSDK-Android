@@ -22,8 +22,10 @@ import com.airmap.airmapsdk.util.Constants;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Vansh Gandhi on 7/19/16.
@@ -37,6 +39,7 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private Activity activity;
     private List permitsAndHeadersList;
+    private Set<String> applicablePermitIds;
     private Map<String, AirMapPilotPermit> walletPermitsMap;
     private SimpleDateFormat dateFormat;
 
@@ -46,6 +49,7 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         dateFormat = new SimpleDateFormat("M/d/YYYY");
 
         permitsAndHeadersList = new ArrayList<>();
+        applicablePermitIds = new HashSet<>();
 
         walletPermitsMap = new HashMap<>();
         if (permitsFromWallet != null && !permitsFromWallet.isEmpty()) {
@@ -58,16 +62,18 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         List<AirMapAvailablePermit> otherAvailablePermits = new ArrayList<>();
         List<AirMapAvailablePermit> nonAvailablePermits = new ArrayList<>();
 
-        for (AirMapAvailablePermit availablePermit : statusPermits.getTypes()) {
-//            if (availablePermit.isApplicable()) {
-                if (walletPermitsMap.containsKey(availablePermit.getId())) {
-                    existingPermits.add(availablePermit);
-                } else {
-                    otherAvailablePermits.add(availablePermit);
-                }
-//            } else {
-//                nonAvailablePermits.add(availablePermit);
-//            }
+        for (AirMapAvailablePermit applicablePermit : statusPermits.getApplicablePermits()) {
+            applicablePermitIds.add(applicablePermit.getId());
+
+            if (walletPermitsMap.containsKey(applicablePermit.getId())) {
+                existingPermits.add(applicablePermit);
+            } else {
+                otherAvailablePermits.add(applicablePermit);
+            }
+        }
+
+        for (AirMapAvailablePermit availablePermit : statusPermits.getAvailablePermits()) {
+            nonAvailablePermits.add(availablePermit);
         }
 
         // add Existing Permits header and section
@@ -140,7 +146,9 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
                 holder.expirationTextView.setVisibility(View.GONE);
             }
 
-//            if (permit.isApplicable()) {
+            boolean isApplicable = applicablePermitIds.contains(permit.getId());
+
+            if (isApplicable) {
                 //enable view/text
                 holder.permitNameTextView.setEnabled(true);
                 holder.permitDescriptionTextView.setEnabled(true);
@@ -155,15 +163,15 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
                 holder.cardView.setClickable(true);
 
                 setElevation(holder.itemView, true);
-//            } else {
-//                //disable view/text
-//                holder.permitNameTextView.setEnabled(false);
-//                holder.permitDescriptionTextView.setEnabled(false);
-//                holder.cardView.setOnClickListener(null);
-//                holder.cardView.setClickable(false);
-//
-//                setElevation(holder.itemView, false);
-//            }
+            } else {
+                //disable view/text
+                holder.permitNameTextView.setEnabled(false);
+                holder.permitDescriptionTextView.setEnabled(false);
+                holder.cardView.setOnClickListener(null);
+                holder.cardView.setClickable(false);
+
+                setElevation(holder.itemView, false);
+            }
         }
     }
 

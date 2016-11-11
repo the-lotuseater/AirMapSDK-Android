@@ -5,9 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.airmap.airmapsdk.AirMapException;
@@ -97,7 +94,7 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
                 fragment.updateNextButton();
             }
         });
-        for (AirMapAvailablePermit permit : holder.permit.getTypes()) { //For each possible permit type that this authority has for this flight
+        for (AirMapAvailablePermit permit : holder.permit.getApplicablePermits()) { //For each possible permit type that this authority has for this flight
             if (enabledPermits.contains(permit)) { //Check if that permit has been enabled (either through decision flow or from user's wallet)
                 holder.enabledPermits.add(enabledPermits.get(enabledPermits.indexOf(permit)));
                 final PermitRadioButton button = new PermitRadioButton(holder.permitRadioGroup.getContext()); //Make a RadioButton for that enabled permit
