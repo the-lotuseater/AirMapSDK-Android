@@ -54,7 +54,7 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         walletPermitsMap = new HashMap<>();
         if (permitsFromWallet != null && !permitsFromWallet.isEmpty()) {
             for (AirMapPilotPermit permit : permitsFromWallet) {
-                walletPermitsMap.put(permit.getPermitId(), permit);
+                walletPermitsMap.put(permit.getShortDetails().getPermitId(), permit);
             }
         }
 
@@ -73,7 +73,9 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
 
         for (AirMapAvailablePermit availablePermit : statusPermits.getAvailablePermits()) {
-            nonAvailablePermits.add(availablePermit);
+            if (!applicablePermitIds.contains(availablePermit.getId())) {
+                nonAvailablePermits.add(availablePermit);
+            }
         }
 
         // add Existing Permits header and section
@@ -155,9 +157,16 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
                 holder.cardView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(activity, CustomPropertiesActivity.class);
-                        intent.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, permit);
-                        activity.startActivityForResult(intent, Constants.CUSTOM_PROPERTIES_REQUEST_CODE);
+                        if (walletPermitsMap.containsKey(permit.getId())) {
+                            Intent data = new Intent();
+                            data.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, permit);
+                            activity.setResult(Activity.RESULT_OK, data);
+                            activity.finish();
+                        } else {
+                            Intent intent = new Intent(activity, CustomPropertiesActivity.class);
+                            intent.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, permit);
+                            activity.startActivityForResult(intent, Constants.CUSTOM_PROPERTIES_REQUEST_CODE);
+                        }
                     }
                 });
                 holder.cardView.setClickable(true);

@@ -49,8 +49,7 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
 
     }
 
-    private String id;
-    private String permitId;
+    private String applicationId;
     private AirMapPermitIssuer issuer;
     private PermitStatus status;
     private String pilotId;
@@ -69,9 +68,12 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
 
     @Override
     public AirMapPilotPermit constructFromJson(JSONObject json) {
-        setId(json.optString("id"));
-        setPermitId(json.optString("permit_id"));
-        setIssuer(new AirMapPermitIssuer(json.optJSONObject("issuer")));
+        setApplicationId(json.optString("applicationId"));
+
+        JSONObject issuerJSON = json.optJSONObject("organization");
+        if (issuerJSON != null) {
+            setIssuer(new AirMapPermitIssuer(json.optJSONObject("organization")));
+        }
         setPilotId(json.optString("pilot_id"));
         setCreatedAt(getDateFromIso8601String(json.optString("created_at")));
         setExpiresAt(getDateFromIso8601String(json.optString("expiration")));
@@ -92,7 +94,7 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
 
     public JSONObject getAsParams() {
         Map<String, String> params = new HashMap<>();
-        params.put("id", getId());
+        params.put("applicationId", getApplicationId());
         JSONObject object = new JSONObject(params);
         try {
             object.put("custom_properties", getCustomPropertiesJson());
@@ -114,21 +116,12 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
         return propertiesJsonArray;
     }
 
-    public String getId() {
-        return id;
+    public String getApplicationId() {
+        return applicationId;
     }
 
-    public AirMapPilotPermit setId(String id) {
-        this.id = id;
-        return this;
-    }
-
-    public String getPermitId() {
-        return permitId;
-    }
-
-    public AirMapPilotPermit setPermitId(String permitId) {
-        this.permitId = permitId;
+    public AirMapPilotPermit setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
         return this;
     }
 
@@ -209,6 +202,6 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
      */
     @Override
     public boolean equals(Object o) {
-        return o instanceof AirMapPilotPermit && getId().equals(((AirMapPilotPermit) o).getId());
+        return o instanceof AirMapPilotPermit && getApplicationId().equals(((AirMapPilotPermit) o).getApplicationId());
     }
 }

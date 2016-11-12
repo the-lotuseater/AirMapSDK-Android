@@ -44,7 +44,7 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
 
         List<String> permitIds = new ArrayList<>();
         for (AirMapPilotPermit permit : permitsFromWallet) {
-            permitIds.add(permit.getPermitId());
+            permitIds.add(permit.getShortDetails().getPermitId());
         }
         if (!permitIds.isEmpty()) {
             AirMap.getPermits(permitIds, null, new AirMapCallback<List<AirMapAvailablePermit>>() { //So that we can get other information about the permit, such as its name
@@ -94,6 +94,7 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
                 fragment.updateNextButton();
             }
         });
+
         for (AirMapAvailablePermit permit : holder.permit.getApplicablePermits()) { //For each possible permit type that this authority has for this flight
             if (enabledPermits.contains(permit)) { //Check if that permit has been enabled (either through decision flow or from user's wallet)
                 holder.enabledPermits.add(enabledPermits.get(enabledPermits.indexOf(permit)));

@@ -14,12 +14,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.airmap.airmapsdk.AirMapException;
+import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermitCustomProperty;
 import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.util.Constants;
 
 import java.text.SimpleDateFormat;
@@ -30,6 +35,7 @@ import java.util.Locale;
 public class CustomPropertiesActivity extends AppCompatActivity {
 
     private LinearLayout customPropertiesLayout;
+    private FrameLayout progressBarContainer;
 
     private List<AirMapPilotPermitCustomProperty> customProperties;
     private AirMapAvailablePermit permit;
@@ -42,6 +48,31 @@ public class CustomPropertiesActivity extends AppCompatActivity {
         permit = (AirMapAvailablePermit) getIntent().getSerializableExtra(Constants.AVAILABLE_PERMIT_EXTRA);
         customProperties = permit.getCustomProperties();
         initializeViews();
+
+        AirMap.getPermit(permit.getId(), new AirMapCallback<List<AirMapAvailablePermit>>() { //So that we can get other information about the permit, such as its name
+            @Override
+            public void onSuccess(final List<AirMapAvailablePermit> response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (response != null && !response.isEmpty()) {
+                            permit = response.get(0);
+                            customProperties = permit.getCustomProperties();
+                            initializeCustomProperties();
+                        }
+                        hideProgressBar();
+                    }
+                });
+            }
+
+            @Override
+            public void onError(AirMapException e) {
+                e.printStackTrace();
+                AirMapLog.e("PermitsAdapter", e.getMessage());
+                hideProgressBar();
+            }
+        });
+
         initializeCustomProperties();
     }
 
@@ -56,6 +87,8 @@ public class CustomPropertiesActivity extends AppCompatActivity {
 //        TextView priceTextView = (TextView) findViewById(R.id.price);
         customPropertiesLayout = (LinearLayout) findViewById(R.id.custom_properties_container);
         Button selectPermitButton = (Button) findViewById(R.id.select_permit_button);
+
+        progressBarContainer = (FrameLayout) findViewById(R.id.progress_bar_container);
 
         descriptionTextView.setText(permit.getDescription());
 //        priceTextView.setText(permit.getPrice());
@@ -127,5 +160,14 @@ public class CustomPropertiesActivity extends AppCompatActivity {
             }
         }
         return toggle;
+    }
+
+    private void hideProgressBar() {
+        progressBarContainer.post(new Runnable() {
+            @Override
+            public void run() {
+                progressBarContainer.setVisibility(View.GONE);
+            }
+        });
     }
 }

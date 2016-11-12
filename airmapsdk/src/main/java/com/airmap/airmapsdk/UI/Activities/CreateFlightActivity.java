@@ -274,7 +274,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
                         }
 
                         for (AirMapAvailablePermit availablePermit : flightStatus.getApplicablePermits()) {
-                            if (availablePermit.getId().equals(pilotPermit.getPermitId())) {
+                            if (availablePermit.getId().equals(pilotPermit.getShortDetails().getPermitId())) {
                                 permitsFromWallet.add(pilotPermit); //Only add permits that would pertain to this flight
                             }
                         }
@@ -327,7 +327,6 @@ public class CreateFlightActivity extends AppCompatActivity implements
     }
 
     private void onCustomPropertiesNextButtonClick(AirMapAvailablePermit permit) {
-        permitsToApplyFor.add(permit);
         for (Fragment fragment : adapter.getItems()) {
             if (fragment instanceof ListPermitsFragment) {
                 ((ListPermitsFragment) fragment).onEnabledPermit(permit);
@@ -373,7 +372,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
 
     private AirMapPilotPermit isFromWallet(AirMapAvailablePermit availablePermit) {
         for (AirMapPilotPermit pilotPermit : permitsFromWallet) {
-            if (pilotPermit.getPermitId().equals(availablePermit.getId())) {
+            if (pilotPermit.getShortDetails().getPermitId().equals(availablePermit.getId())) {
                 return pilotPermit;
             }
         }

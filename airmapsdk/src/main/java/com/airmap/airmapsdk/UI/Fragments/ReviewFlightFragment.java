@@ -121,7 +121,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
             AirMap.applyForPermit(permitToApplyFor, new AirMapCallback<AirMapPilotPermit>() {
                 @Override
                 public void onSuccess(AirMapPilotPermit response) {
-                    mListener.getFlight().addPermitId(response.getId());
+                    mListener.getFlight().addPermitId(response.getApplicationId());
                     mListener.getPermitsToApplyFor().remove(permitToApplyFor);
                     totalPermitsObtained++;
                     if (totalPermitsObtained == totalNumberOfPermits) {

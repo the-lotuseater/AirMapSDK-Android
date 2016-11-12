@@ -14,6 +14,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -455,7 +456,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                         requiresPermitOrNotice = true;
                         break;
                     } else if (advisory.getRequirements() != null && advisory.getRequirements().getNotice() != null &&
-                                !advisory.getRequirements().getNotice().getPhoneNumber().isEmpty()) {
+                                !TextUtils.isEmpty(advisory.getRequirements().getNotice().getPhoneNumber())) {
                             requiresPermitOrNotice = true;
                         break;
                     }

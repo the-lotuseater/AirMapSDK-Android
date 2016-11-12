@@ -28,11 +28,12 @@
                 <ImageView
                     android:id="@+id/icon_image_view"
                     android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_height="24dp"
                     android:layout_marginRight="2dp"
+                    android:padding="4dp"
                     android:scaleType="centerInside"
                     android:background="@null"
-                    android:src="@drawable/airmap_flight_marker" />
+                    android:src="@drawable/ic_permit_wallet" />
 
                 <TextView
                     android:id="@+id/permit_name_text_view"
