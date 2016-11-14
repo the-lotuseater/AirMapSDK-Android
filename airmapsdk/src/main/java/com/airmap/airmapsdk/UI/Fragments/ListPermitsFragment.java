@@ -83,6 +83,14 @@ public class ListPermitsFragment extends Fragment {
     }
 
     public void updateSummaryText() {
+        // if there is no available permits for an organization of this flight tell the user
+        for (AirMapStatusPermits statusPermit : mListener.getStatusPermits()) {
+            if (statusPermit.getApplicablePermits().isEmpty()) {
+                summaryTextView.setText(R.string.no_available_permits_for_flight);
+                return;
+            }
+        }
+
         String template = "You have selected %d of %d permits required for this flight";
         String summary = String.format(Locale.US, template, adapter.getSelectedPermits().size(), adapter.getItemCount());
         summaryTextView.setText(summary);
