@@ -44,7 +44,9 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
 
         List<String> permitIds = new ArrayList<>();
         for (AirMapPilotPermit permit : permitsFromWallet) {
-            permitIds.add(permit.getShortDetails().getPermitId());
+            if (permit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || permit.getStatus() == AirMapPilotPermit.PermitStatus.Pending) {
+                permitIds.add(permit.getShortDetails().getPermitId());
+            }
         }
         if (!permitIds.isEmpty()) {
             AirMap.getPermits(permitIds, null, new AirMapCallback<List<AirMapAvailablePermit>>() { //So that we can get other information about the permit, such as its name
@@ -84,23 +86,31 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
             @Override
             public void onCheckedChanged(PermitRadioGroup group, int checkedId) {
                 PermitRadioButton radioButton = (PermitRadioButton) holder.permitRadioGroup.findViewById(checkedId);
-                if (radioButton.isChecked()) {
-                    int index = holder.permitRadioGroup.indexOfChild(radioButton);
-                    if (holder.checkedPermit != null) {
-                        selectedPermits.remove(holder.checkedPermit);
+                int index = holder.permitRadioGroup.indexOfChild(radioButton);
+                AirMapAvailablePermit permit = holder.enabledPermits.get(index);
+
+                // remove old selected permit
+                for (int i = 0; i < holder.permit.getApplicablePermits().size(); i++) {
+                    if (i != index) {
+                        AirMapAvailablePermit p = holder.permit.getApplicablePermits().get(i);
+                        selectedPermits.remove(p);
                     }
-                    holder.checkedPermit = holder.enabledPermits.get(index);
-                    if (!selectedPermits.contains(holder.checkedPermit)) {
-                        selectedPermits.add(holder.checkedPermit);
-                        fragment.updateSummaryText();
-                        fragment.updateNextButton();
-                    }
+                }
+
+
+                if (!selectedPermits.contains(permit)) {
+                    selectedPermits.add(permit);
+                    fragment.updateSummaryText();
+                    fragment.updateNextButton();
                 }
             }
         });
 
-        for (AirMapAvailablePermit permit : holder.permit.getApplicablePermits()) { //For each possible permit type that this authority has for this flight
-            if (enabledPermits.contains(permit)) { //Check if that permit has been enabled (either through decision flow or from user's wallet)
+        //For each possible permit type that this authority has for this flight
+        for (AirMapAvailablePermit permit : holder.permit.getApplicablePermits()) {
+
+            //Check if that permit has been enabled (either through decision flow or from user's wallet)
+            if (enabledPermits.contains(permit)) {
                 holder.enabledPermits.add(enabledPermits.get(enabledPermits.indexOf(permit)));
                 final PermitRadioButton button = new PermitRadioButton(holder.permitRadioGroup.getContext()); //Make a RadioButton for that enabled permit
                 button.setTitle(permit.getName());

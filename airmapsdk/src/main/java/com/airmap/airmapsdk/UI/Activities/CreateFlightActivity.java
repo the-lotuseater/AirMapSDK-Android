@@ -373,7 +373,9 @@ public class CreateFlightActivity extends AppCompatActivity implements
     private AirMapPilotPermit isFromWallet(AirMapAvailablePermit availablePermit) {
         for (AirMapPilotPermit pilotPermit : permitsFromWallet) {
             if (pilotPermit.getShortDetails().getPermitId().equals(availablePermit.getId())) {
-                return pilotPermit;
+                if (pilotPermit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || pilotPermit.getStatus() == AirMapPilotPermit.PermitStatus.Pending) {
+                    return pilotPermit;
+                }
             }
         }
         return null;

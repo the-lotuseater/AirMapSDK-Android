@@ -65,7 +65,8 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         for (AirMapAvailablePermit applicablePermit : statusPermits.getApplicablePermits()) {
             applicablePermitIds.add(applicablePermit.getId());
 
-            if (walletPermitsMap.containsKey(applicablePermit.getId())) {
+            AirMapPilotPermit pilotPermit = walletPermitsMap.get(applicablePermit.getId());
+            if (pilotPermit != null && (pilotPermit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || pilotPermit.getStatus() == AirMapPilotPermit.PermitStatus.Pending)) {
                 existingPermits.add(applicablePermit);
             } else {
                 otherAvailablePermits.add(applicablePermit);
@@ -133,9 +134,8 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
             holder.permitNameTextView.setText(permit.getName());
             holder.permitDescriptionTextView.setText(permit.getDescription());
 
-            if (walletPermitsMap.containsKey(permit.getId())) {
-                AirMapPilotPermit walletPermit = walletPermitsMap.get(permit.getId());
-
+            AirMapPilotPermit walletPermit = walletPermitsMap.get(permit.getId());
+            if (walletPermit != null && (walletPermit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || walletPermit.getStatus() == AirMapPilotPermit.PermitStatus.Pending)) {
                 holder.iconImageView.setVisibility(View.VISIBLE);
                 holder.statusTextView.setText(activity.getString(R.string.permit_status, Utils.titleCase(walletPermit.getStatus().toString())));
                 holder.statusTextView.setVisibility(View.VISIBLE);
@@ -157,7 +157,8 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
                 holder.cardView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (walletPermitsMap.containsKey(permit.getId())) {
+                        AirMapPilotPermit pilotPermit = walletPermitsMap.get(permit.getId());
+                        if (pilotPermit != null && (pilotPermit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || pilotPermit.getStatus() == AirMapPilotPermit.PermitStatus.Pending)) {
                             Intent data = new Intent();
                             data.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, permit);
                             activity.setResult(Activity.RESULT_OK, data);
