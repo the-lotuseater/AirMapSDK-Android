@@ -30,26 +30,29 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
+import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
+import com.airmap.airmapsdk.models.shapes.AirMapPath;
+import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
-import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.ui.activities.CreateEditAircraftActivity;
 import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
 import com.airmap.airmapsdk.ui.activities.ProfileActivity;
 import com.airmap.airmapsdk.ui.adapters.AircraftAdapter;
-import com.mapbox.mapboxsdk.annotations.Icon;
-import com.mapbox.mapboxsdk.annotations.IconFactory;
-import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.annotations.MultiPoint;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
-import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.annotations.PolylineOptions;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -62,14 +65,14 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.airmap.airmapsdk.Utils.getAltitudePresets;
-import static com.airmap.airmapsdk.Utils.getCirclePolygon;
 import static com.airmap.airmapsdk.Utils.getDurationPresets;
-import static com.airmap.airmapsdk.Utils.getBufferPresets;
-import static com.airmap.airmapsdk.Utils.getStatusCircleColor;
 import static com.airmap.airmapsdk.Utils.indexOfDurationPreset;
 import static com.airmap.airmapsdk.Utils.indexOfMeterPreset;
+import static com.airmap.airmapsdk.ui.fragments.FreehandMapFragment.getDefaultPolygonOptions;
+import static com.airmap.airmapsdk.ui.fragments.FreehandMapFragment.getDefaultPolylineOptions;
+import static com.airmap.airmapsdk.ui.fragments.FreehandMapFragment.polygonCircleForCoordinate;
 
-public class FlightDetailsFragment extends Fragment implements OnMapReadyCallback {
+public class FlightDetailsFragment extends Fragment implements OnMapReadyCallback{
 
     private static final int REQUEST_CREATE_AIRCRAFT = 1;
 
@@ -78,8 +81,6 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
     //Views
     private MapView mapView;
-    private TextView radiusValueTextView;
-    private SeekBar radiusSeekBar;
     private TextView altitudeValueTextView;
     private SeekBar altitudeSeekBar;
     private RelativeLayout startsAtTouchTarget;
@@ -103,9 +104,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         return new FlightDetailsFragment();
     }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.airmap_fragment_flight_details, container, false);
         aircraft = new ArrayList<>();
         initializeViews(view);
@@ -154,8 +155,6 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
     private void initializeViews(View view) {
         mapView = (MapView) view.findViewById(R.id.airmap_map);
-        radiusValueTextView = (TextView) view.findViewById(R.id.radius_value);
-        radiusSeekBar = (SeekBar) view.findViewById(R.id.radius_seekbar);
         altitudeValueTextView = (TextView) view.findViewById(R.id.altitude_value);
         altitudeSeekBar = (SeekBar) view.findViewById(R.id.altitude_seekbar);
         startsAtTouchTarget = (RelativeLayout) view.findViewById(R.id.date_time_picker_touch_target);
@@ -178,10 +177,34 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     @Override
     public void onMapReady(MapboxMap mapboxMap) {
         map = mapboxMap;
-        LatLng position = new LatLng(mListener.getFlight().getCoordinate().getLatitude(), mListener.getFlight().getCoordinate().getLongitude());
-        map.setCameraPosition(new CameraPosition.Builder().target(position).zoom(14).build());
-        Icon icon = IconFactory.getInstance(getContext()).fromResource(R.drawable.airmap_flight_marker);
-        map.addMarker(new MarkerOptions().position(position).icon(icon));
+
+        if (mListener != null) {
+            AirMapFlight flight = mListener.getFlight();
+            MultiPoint multiPoint;
+            if (flight.getGeometry() instanceof AirMapPolygon) {
+                PolygonOptions polygonOptions = getDefaultPolygonOptions(getContext());
+                PolylineOptions polylineOptions = getDefaultPolylineOptions(getContext());
+                for (Coordinate coordinate : ((AirMapPolygon) flight.getGeometry()).getCoordinates()) {
+                    polygonOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
+                    polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
+                }
+                map.addPolygon(polygonOptions);
+                multiPoint = map.addPolyline(polylineOptions.add(polylineOptions.getPoints().get(0)));
+            } else if (flight.getGeometry() instanceof AirMapPath) {
+                PolylineOptions polylineOptions = getDefaultPolylineOptions(getContext());
+                for (Coordinate coordinate : ((AirMapPath) flight.getGeometry()).getCoordinates()) {
+                    polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
+                }
+                multiPoint = map.addPolyline(polylineOptions);
+            } else {
+                List<LatLng> circlePoints = polygonCircleForCoordinate(new LatLng(flight.getCoordinate().getLatitude(), flight.getCoordinate().getLongitude()), flight.getBuffer());
+                map.addPolygon(getDefaultPolygonOptions(getContext()).addAll(circlePoints));
+                multiPoint = map.addPolyline(getDefaultPolylineOptions(getContext()).addAll(circlePoints).add(circlePoints.get(0)));
+            }
+            LatLngBounds bounds = new LatLngBounds.Builder().includes(multiPoint.getPoints()).build();
+            map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+        }
+
         mapView.post(new Runnable() {
             @Override
             public void run() {
@@ -234,38 +257,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void setupSeekBars() {
-        final int radiusIndex = indexOfMeterPreset(mListener.getFlight().getBuffer(), getBufferPresets());
         final int altitudeIndex = indexOfMeterPreset(mListener.getFlight().getMaxAltitude(), getAltitudePresets());
         final int durationIndex = indexOfDurationPreset(mListener.getFlight().getEndsAt().getTime() - mListener.getFlight().getStartsAt().getTime());
         final int animationDuration = 250;
-
-        int radiusAnimateTo = (int) (((float) radiusIndex / getBufferPresets().length) * 100);
-        ObjectAnimator radiusAnimator = ObjectAnimator.ofInt(radiusSeekBar, "progress", radiusAnimateTo);
-        radiusAnimator.setDuration(animationDuration);
-        radiusAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-        radiusAnimator.start();
-        radiusAnimator.addListener(new AnimationListener() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                radiusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        if (oldPolygon != null && map != null) {
-                            map.removePolygon(oldPolygon.getPolygon()); //TODO: Save the polygon when adding to map, don't keep calling .getPolygon()
-                        }
-                        int color = getStatusCircleColor(latestStatus, getContext());
-                        oldPolygon = getCirclePolygon(getBufferPresets()[seekBar.getProgress()].value.doubleValue(), mListener.getFlight().getCoordinate(), color);
-                        if (map != null) {
-                            map.addPolygon(oldPolygon); //TODO: Save the polygon returned here
-                        }
-                        radiusValueTextView.setText(getBufferPresets()[progress].label);
-                        mListener.getFlight().setBuffer(getBufferPresets()[radiusSeekBar.getProgress()].value.doubleValue());
-                    }
-                });
-                radiusSeekBar.setMax(getBufferPresets().length - 1);
-                radiusSeekBar.setProgress(radiusIndex);
-            }
-        });
 
         int altitudeAnimateTo = (int) (((float) altitudeIndex / getAltitudePresets().length) * 100);
         ObjectAnimator altitudeAnimator = ObjectAnimator.ofInt(altitudeSeekBar, "progress", altitudeAnimateTo);
@@ -421,7 +415,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
     private void onNextButton() {
         AirMapFlight flight = mListener.getFlight();
-        AirMap.checkCoordinate(flight.getCoordinate(), flight.getBuffer(), null, null, true, flight.getStartsAt(), new AirMapCallback<AirMapStatus>() {
+
+        AirMapCallback<AirMapStatus> callback = new AirMapCallback<AirMapStatus>() {
             @Override
             public void onSuccess(AirMapStatus response) {
                 hideProgressBar();
@@ -439,12 +434,20 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                     }
                 });
             }
-        });
+        };
+
+        if (flight.getGeometry() instanceof AirMapPolygon) {
+            AirMap.checkPolygon(((AirMapPolygon) flight.getGeometry()).getCoordinates(), ((AirMapPolygon) flight.getGeometry()).getCoordinates().get(0), null, null, false, flight.getStartsAt(), callback);
+        } else if (flight.getGeometry() instanceof AirMapPath) {
+            AirMap.checkFlightPath(((AirMapPath) flight.getGeometry()).getCoordinates(), (int) flight.getBuffer(), ((AirMapPath) flight.getGeometry()).getCoordinates().get(0), null, null, false, flight.getStartsAt(), callback);
+        } else {
+            AirMap.checkCoordinate(flight.getCoordinate(), flight.getBuffer(), null, null, false, flight.getStartsAt(), callback);
+        }
     }
 
     private void updateSaveNextButtonText() {
         AirMapFlight flight = mListener.getFlight();
-        AirMap.checkCoordinate(flight.getCoordinate(), flight.getBuffer(), null, null, false, flight.getStartsAt(), new AirMapCallback<AirMapStatus>() {
+        AirMapCallback<AirMapStatus> callback = new AirMapCallback<AirMapStatus>() {
             @Override
             public void onSuccess(AirMapStatus response) {
                 latestStatus = response;
@@ -470,7 +473,14 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             public void onError(AirMapException e) {
                 updateButtonText(R.string.airmap_save);
             }
-        });
+        };
+        if (flight.getGeometry() instanceof AirMapPolygon) {
+            AirMap.checkPolygon(((AirMapPolygon) flight.getGeometry()).getCoordinates(), ((AirMapPolygon) flight.getGeometry()).getCoordinates().get(0), null, null, false, flight.getStartsAt(), callback);
+        } else if (flight.getGeometry() instanceof AirMapPath) {
+            AirMap.checkFlightPath(((AirMapPath) flight.getGeometry()).getCoordinates(), (int) flight.getBuffer(), ((AirMapPath) flight.getGeometry()).getCoordinates().get(0), null, null, false, flight.getStartsAt(), callback);
+        } else {
+            AirMap.checkCoordinate(flight.getCoordinate(), flight.getBuffer(), null, null, false, flight.getStartsAt(), callback);
+        }
     }
 
     private void updateButtonText(@StringRes final int id) {

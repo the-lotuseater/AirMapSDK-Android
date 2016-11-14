@@ -232,7 +232,7 @@ public class Utils {
             LatLng point = new LatLng(pointLat, pointLon);
             points.add(point);
         }
-        return new PolygonOptions().addAll(points).strokeColor(color).alpha(0.5f).fillColor(color);
+        return new PolygonOptions().addAll(points).strokeColor(color).alpha(0.66f).fillColor(color);
     }
 
     public static int getStatusCircleColor(AirMapStatus latestStatus, Context context) {

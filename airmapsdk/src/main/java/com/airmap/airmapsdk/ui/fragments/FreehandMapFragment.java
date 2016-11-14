@@ -52,6 +52,7 @@ import com.airmap.airmapsdk.ui.CustomButton;
 import com.airmap.airmapsdk.ui.DrawingBoard;
 import com.airmap.airmapsdk.ui.ImageViewSwitch;
 import com.airmap.airmapsdk.ui.Scratchpad;
+import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.Marker;
@@ -140,13 +141,17 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         //Required empty constructor
     }
 
-    public static FreehandMapFragment newInstance() {
-        return new FreehandMapFragment();
+    public static FreehandMapFragment newInstance(Coordinate coordinate) {
+        Bundle args = new Bundle();
+        args.putSerializable(CreateFlightActivity.COORDINATE, coordinate);
+        FreehandMapFragment fragment = new FreehandMapFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.airmap_activity_freehand, container, false);
+        View view = inflater.inflate(R.layout.airmap_fragment_freehand, container, false);
         initializeViews(view);
         setupSwitch();
         setupMap(savedInstanceState);
@@ -384,8 +389,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     private void drawCircle(LatLng center, double radius) {
         clear();
         List<LatLng> circlePoints = polygonCircleForCoordinate(center, radius);
-        PolylineOptions polylineOptions = getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0));
-        circleContainer.circle = map.addPolygon(getDefaultPolygonOptions().addAll(circlePoints));
+        PolylineOptions polylineOptions = getDefaultPolylineOptions(getContext()).addAll(circlePoints).add(circlePoints.get(0));
+        circleContainer.circle = map.addPolygon(getDefaultPolygonOptions(getContext()).addAll(circlePoints));
         circleContainer.outline = map.addPolyline(polylineOptions);
         circleContainer.radius = radius;
         circleContainer.center = center;
@@ -402,7 +407,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     public void drawPath(List<PointF> line) {
         clear();
         PolylineOptions thickLine = new PolylineOptions();
-        PolylineOptions thinLine = getDefaultPolylineOptions();
+        PolylineOptions thinLine = getDefaultPolylineOptions(getContext());
         thickLine.color(ContextCompat.getColor(getContext(), R.color.airmap_colorFill));
         thickLine.alpha(0.66f);
         int width = getPathWidth(seekBar.getProgress());
@@ -438,8 +443,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         } else {
             pointsDrawn.add(first);
         }
-        PolygonOptions polygonOptions = getDefaultPolygonOptions();
-        PolylineOptions polylineOptions = getDefaultPolylineOptions();
+        PolygonOptions polygonOptions = getDefaultPolygonOptions(getContext());
+        PolylineOptions polylineOptions = getDefaultPolylineOptions(getContext());
         List<LatLng> midPoints = getMidpointsFromLatLngs(getLatLngsFromPointFs(pointsDrawn));
         List<LatLng> points = getLatLngsFromPointFs(pointsDrawn);
         //At this point, until MapBox fixes their fromScreenLocation bug, pointsDrawn has been tainted and is unusable
@@ -515,6 +520,10 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 return true; //This is simply to prevent opening the info window when selecting the marker from onTouch
             }
         });
+        if (getArguments() != null && getArguments().getSerializable(CreateFlightActivity.COORDINATE) != null) {
+            Coordinate coordinate = (Coordinate) getArguments().getSerializable(CreateFlightActivity.COORDINATE);
+            map.setCameraPosition(new CameraPosition.Builder().target(new LatLng(coordinate.getLatitude(),coordinate.getLongitude())).build());
+        }
         setupTabs();
         mapView.setOnTouchListener(new View.OnTouchListener() {
             //This onTouch code is a copy of the MapView#onSingleTapConfirmed code, except
@@ -643,8 +652,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         corners.get(indexOfAnnotationToDrag).setPosition(newLocation); //Move the center point
         double radius = getBufferPresets()[seekBar.getProgress()].value.doubleValue(); //Move the circle polygon
         List<LatLng> circlePoints = polygonCircleForCoordinate(newLocation, radius);
-        PolylineOptions polylineOptions = getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0));
-        circleContainer.circle = map.addPolygon(getDefaultPolygonOptions().addAll(circlePoints));
+        PolylineOptions polylineOptions = getDefaultPolylineOptions(getContext()).addAll(circlePoints).add(circlePoints.get(0));
+        circleContainer.circle = map.addPolygon(getDefaultPolygonOptions(getContext()).addAll(circlePoints));
         circleContainer.outline = map.addPolyline(polylineOptions);
         circleContainer.radius = radius;
         circleContainer.center = newLocation;
@@ -1057,9 +1066,9 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
-    private PolygonOptions getDefaultPolygonOptions() {
+    public static PolygonOptions getDefaultPolygonOptions(Context context) {
         PolygonOptions options = new PolygonOptions();
-        options.fillColor(ContextCompat.getColor(getContext(), R.color.airmap_colorFill));
+        options.fillColor(ContextCompat.getColor(context, R.color.airmap_colorFill));
         options.alpha(0.66f);
         return options;
     }
@@ -1071,9 +1080,9 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         return options;
     }
 
-    private PolylineOptions getDefaultPolylineOptions() {
+    public static PolylineOptions getDefaultPolylineOptions(Context context) {
         PolylineOptions options = new PolylineOptions();
-        options.color(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+        options.color(ContextCompat.getColor(context, R.color.colorPrimary));
         options.width(2);
         return options;
     }
@@ -1106,7 +1115,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     //Emulate a circle as a polygon with a bunch of sides
-    private static ArrayList<LatLng> polygonCircleForCoordinate(LatLng location, double radius) {
+    public static ArrayList<LatLng> polygonCircleForCoordinate(LatLng location, double radius) {
         int degreesBetweenPoints = 2;
         int numberOfPoints = (int) Math.floor(360 / degreesBetweenPoints);
         double distRadians = radius / 6371000.0; // earth radius in meters

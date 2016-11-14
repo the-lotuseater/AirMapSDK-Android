@@ -140,7 +140,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
             case 1:
                 fragments.add(0, FlightDetailsFragment.newInstance());
             case 0:
-                fragments.add(0, FreehandMapFragment.newInstance());
+                fragments.add(0, FreehandMapFragment.newInstance((Coordinate) getIntent().getSerializableExtra(COORDINATE)));
         }
         adapter = new SectionsPagerAdapter(getSupportFragmentManager(), fragments);
         viewPager.setOffscreenPageLimit(5);
@@ -154,6 +154,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
                 if (fragment instanceof FreehandMapFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_title_activity_create_flight);
                     getTabLayout().setVisibility(View.VISIBLE);
+                    invalidateFurtherFragments(0);
                 } else if (fragment instanceof FlightDetailsFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_flight_details);
                 } else if (fragment instanceof ListPermitsFragment) {

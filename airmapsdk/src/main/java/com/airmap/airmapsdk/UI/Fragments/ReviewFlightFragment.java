@@ -24,21 +24,24 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
+import com.airmap.airmapsdk.models.shapes.AirMapPath;
+import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusRequirementNotice;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
-import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.Utils;
-import com.mapbox.mapboxsdk.annotations.Icon;
-import com.mapbox.mapboxsdk.annotations.IconFactory;
-import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.annotations.MultiPoint;
+import com.mapbox.mapboxsdk.annotations.PolygonOptions;
+import com.mapbox.mapboxsdk.annotations.PolylineOptions;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -47,7 +50,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.airmap.airmapsdk.Utils.getStatusCircleColor;
+import static com.airmap.airmapsdk.ui.fragments.FreehandMapFragment.getDefaultPolygonOptions;
+import static com.airmap.airmapsdk.ui.fragments.FreehandMapFragment.getDefaultPolylineOptions;
+import static com.airmap.airmapsdk.ui.fragments.FreehandMapFragment.polygonCircleForCoordinate;
 
 /**
  * Created by Vansh Gandhi on 7/25/16.
@@ -195,11 +200,38 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     @Override
     public void onMapReady(MapboxMap mapboxMap) {
         map = mapboxMap;
-        LatLng position = new LatLng(mListener.getFlight().getCoordinate().getLatitude(), mListener.getFlight().getCoordinate().getLongitude());
-        map.setCameraPosition(new CameraPosition.Builder().target(position).zoom(14).build());
-        Icon icon = IconFactory.getInstance(getContext()).fromResource(R.drawable.airmap_flight_marker);
-        map.addMarker(new MarkerOptions().position(position).icon(icon));
-        map.addPolygon(Utils.getCirclePolygon(mListener.getFlight().getBuffer(), mListener.getFlight().getCoordinate(), getStatusCircleColor(mListener.getFlightStatus(), getContext())));
+//        LatLng position = new LatLng(mListener.getFlight().getCoordinate().getLatitude(), mListener.getFlight().getCoordinate().getLongitude());
+//        map.setCameraPosition(new CameraPosition.Builder().target(position).zoom(14).build());
+//        Icon icon = IconFactory.getInstance(getContext()).fromResource(R.drawable.airmap_flight_marker);
+//        map.addMarker(new MarkerOptions().position(position).icon(icon));
+//        map.addPolygon(Utils.getCirclePolygon(mListener.getFlight().getBuffer(), mListener.getFlight().getCoordinate(), getStatusCircleColor(mListener.getFlightStatus(), getContext())));
+
+        if (mListener != null) {
+            AirMapFlight flight = mListener.getFlight();
+            MultiPoint multiPoint;
+            if (flight.getGeometry() instanceof AirMapPolygon) {
+                PolygonOptions polygonOptions = getDefaultPolygonOptions(getContext());
+                PolylineOptions polylineOptions = getDefaultPolylineOptions(getContext());
+                for (Coordinate coordinate : ((AirMapPolygon) flight.getGeometry()).getCoordinates()) {
+                    polygonOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
+                    polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
+                }
+                map.addPolygon(polygonOptions);
+                multiPoint = map.addPolyline(polylineOptions.add(polylineOptions.getPoints().get(0)));
+            } else if (flight.getGeometry() instanceof AirMapPath) {
+                PolylineOptions polylineOptions = getDefaultPolylineOptions(getContext());
+                for (Coordinate coordinate : ((AirMapPath) flight.getGeometry()).getCoordinates()) {
+                    polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
+                }
+                multiPoint = map.addPolyline(polylineOptions);
+            } else {
+                List<LatLng> circlePoints = polygonCircleForCoordinate(new LatLng(flight.getCoordinate().getLatitude(), flight.getCoordinate().getLongitude()), flight.getBuffer());
+                map.addPolygon(getDefaultPolygonOptions(getContext()).addAll(circlePoints));
+                multiPoint = map.addPolyline(getDefaultPolylineOptions(getContext()).addAll(circlePoints).add(circlePoints.get(0)));
+            }
+            LatLngBounds bounds = new LatLngBounds.Builder().includes(multiPoint.getPoints()).build();
+            map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+        }
     }
 
     private void setupViewPager() {

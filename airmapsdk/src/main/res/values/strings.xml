@@ -59,4 +59,5 @@
     <string name="airmap_advisories">Advisories</string>
     <string name="airmap_informational">Informational</string>
     <string name="R.string.airmap_airspace_advisories">Airspace Advisories</string>
+    <string name="date_and_time">Date &amp; Time</string>
 </resources>

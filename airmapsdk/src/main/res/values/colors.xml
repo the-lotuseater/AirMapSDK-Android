@@ -9,6 +9,6 @@
     <color name="airmap_yellow">#ffeb3b</color>
     <color name="airmap_green">#7ED321</color>
     <color name="airmap_colorFill">#B8E1E3</color>
-    <color name="airmap_tipBackground">#c1212121</color>
+    <color name="airmap_tipBackground">#d519202b</color>
     <color name="airmap_errorTipBackground">#c8d50000</color>
 </resources>

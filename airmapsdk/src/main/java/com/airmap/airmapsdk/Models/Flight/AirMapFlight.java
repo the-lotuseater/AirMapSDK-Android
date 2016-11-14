@@ -141,8 +141,22 @@ public class AirMapFlight implements Serializable, AirMapBaseModel {
      */
     public JSONObject getAsParams() {
         Map<String, Object> params = new HashMap<>();
-        params.put("latitude", coordinate.getLatitude());
-        params.put("longitude", coordinate.getLongitude());
+
+        if (getGeometry() instanceof AirMapPolygon) {
+            params.put("geometry", getGeometry().toString());
+            params.put("latitude", ((AirMapPolygon) getGeometry()).getCoordinates().get(0).getLatitude());
+            params.put("longitude", ((AirMapPolygon) getGeometry()).getCoordinates().get(0).getLongitude());
+        } else if (getGeometry() instanceof AirMapPath) {
+            params.put("geometry", getGeometry().toString());
+            params.put("latitude", ((AirMapPath) getGeometry()).getCoordinates().get(0).getLatitude());
+            params.put("longitude", ((AirMapPath) getGeometry()).getCoordinates().get(0).getLongitude());
+            params.put("buffer", Math.round(getBuffer()));
+        } else {
+            params.put("latitude", coordinate.getLatitude());
+            params.put("longitude", coordinate.getLongitude());
+            params.put("buffer", Math.round(getBuffer()));
+        }
+
         params.put("max_altitude", getMaxAltitude());
         if (getAircraftId() != null && !getAircraftId().isEmpty()) {
             params.put("aircraft_id", getAircraftId());
@@ -155,11 +169,6 @@ public class AirMapFlight implements Serializable, AirMapBaseModel {
         params.put("end_time", getIso8601StringFromDate(getEndsAt()));
         params.put("public", isPublic());
         params.put("notify", shouldNotify());
-        if (getGeometryType() != AirMapFlightGeometryType.Point) { //Don't include geometry for flights submitted as point
-            params.put("geometry", getGeometry().toString());
-        } else {
-            params.put("buffer", Math.round(getBuffer()));
-        }
         Iterator<Map.Entry<String, Object>> iterator = params.entrySet().iterator();
         while (iterator.hasNext()) { //Remove any null values
             Map.Entry<String, Object> entry = iterator.next();

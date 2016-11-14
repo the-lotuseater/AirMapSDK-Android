@@ -5,7 +5,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.airmap.airmapsdk.ui.activities.FreehandMapActivity">
+        tools:context="com.airmap.airmapsdk.ui.fragments.FreehandMapFragment">
 
     <RelativeLayout
             android:id="@+id/activity_main"
@@ -18,8 +18,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/next_button"
-                app:center_latitude="34.071873"
-                app:center_longitude="-118.450664"
                 app:zoom="14"
                 app:zoom_min="8"
                 app:zoom_max="22"
