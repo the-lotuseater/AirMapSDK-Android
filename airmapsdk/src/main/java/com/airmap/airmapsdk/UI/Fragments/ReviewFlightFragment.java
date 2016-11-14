@@ -145,6 +145,10 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     }
 
     private void submitFlight() {
+        for (AirMapPilotPermit selectedPermit : mListener.getSelectedPermits()) {
+            mListener.getFlight().addPermitId(selectedPermit.getApplicationId());
+        }
+
         if (mListener.getFlight().shouldNotify()) {
             String phone = mListener.getPilot().getPhone();
             if (phone == null || phone.isEmpty() || !mListener.getPilot().getVerificationStatus().isPhone()) {
