@@ -83,15 +83,19 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
         holder.permitRadioGroup.setOnCheckedChangeListener(new PermitRadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(PermitRadioGroup group, int checkedId) {
-                View radioButton = holder.permitRadioGroup.findViewById(checkedId);
-                int index = holder.permitRadioGroup.indexOfChild(radioButton);
-                if (holder.checkedPermit != null) {
-                    selectedPermits.remove(holder.checkedPermit);
+                PermitRadioButton radioButton = (PermitRadioButton) holder.permitRadioGroup.findViewById(checkedId);
+                if (radioButton.isChecked()) {
+                    int index = holder.permitRadioGroup.indexOfChild(radioButton);
+                    if (holder.checkedPermit != null) {
+                        selectedPermits.remove(holder.checkedPermit);
+                    }
+                    holder.checkedPermit = holder.enabledPermits.get(index);
+                    if (!selectedPermits.contains(holder.checkedPermit)) {
+                        selectedPermits.add(holder.checkedPermit);
+                        fragment.updateSummaryText();
+                        fragment.updateNextButton();
+                    }
                 }
-                holder.checkedPermit = holder.enabledPermits.get(index);
-                selectedPermits.add(holder.checkedPermit);
-                fragment.updateSummaryText();
-                fragment.updateNextButton();
             }
         });
 
@@ -101,13 +105,6 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
                 final PermitRadioButton button = new PermitRadioButton(holder.permitRadioGroup.getContext()); //Make a RadioButton for that enabled permit
                 button.setTitle(permit.getName());
                 button.setDescription(permit.getDescription());
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        button.setSelected(true);
-                        button.setChecked(true);
-                    }
-                });
 
                 holder.permitRadioGroup.addView(button);
                 if (permit.equals(holder.checkedPermit) || selectedPermits.contains(permit)) {
