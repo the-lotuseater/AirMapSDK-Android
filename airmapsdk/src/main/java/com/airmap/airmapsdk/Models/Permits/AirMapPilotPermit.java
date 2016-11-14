@@ -22,7 +22,7 @@ import static com.airmap.airmapsdk.Utils.getDateFromIso8601String;
 @SuppressWarnings("unused")
 public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
     public enum PermitStatus {
-        Accepted("accepted"), Rejected("rejected"), Pending("pending"), Detached("detached");
+        Accepted("accepted"), Rejected("rejected"), Pending("pending"), Detached("detached"), Expired("expired");
 
         private String text;
 
@@ -38,6 +38,8 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
                     return Rejected;
                 case "detached":
                     return Detached;
+                case "expired":
+                    return Expired;
                 default:
                     return Pending;
             }
@@ -68,7 +70,7 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
 
     @Override
     public AirMapPilotPermit constructFromJson(JSONObject json) {
-        setApplicationId(json.optString("applicationId"));
+        setApplicationId(json.optString("id"));
 
         JSONObject issuerJSON = json.optJSONObject("organization");
         if (issuerJSON != null) {
@@ -94,7 +96,7 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
 
     public JSONObject getAsParams() {
         Map<String, String> params = new HashMap<>();
-        params.put("applicationId", getApplicationId());
+        params.put("id", getApplicationId());
         JSONObject object = new JSONObject(params);
         try {
             object.put("custom_properties", getCustomPropertiesJson());
