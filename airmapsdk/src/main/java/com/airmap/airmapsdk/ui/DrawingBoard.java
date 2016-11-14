@@ -45,10 +45,6 @@ public class DrawingBoard extends View {
         super(context, attrs, defStyleAttr);
     }
 
-    public DrawingBoard(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
     {
         drawPath = new Path();
         drawPaint = new Paint();

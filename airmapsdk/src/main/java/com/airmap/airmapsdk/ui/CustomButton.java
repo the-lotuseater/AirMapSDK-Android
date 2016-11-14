@@ -19,7 +19,6 @@ public class CustomButton extends Button {
     private Drawable drawableLeft;
     private Drawable drawableTop;
     private Drawable drawableBottom;
-    private Rect rBounds;
     DrawableClickListener drawableClickListener;
 
     public CustomButton(Context context, AttributeSet attrs, int defStyle) {
@@ -171,7 +170,7 @@ public class CustomButton extends Button {
         return super.onTouchEvent(event);
     }
 
-    interface DrawableClickListener {
+    public interface DrawableClickListener {
         void onDrawableClick();
     }
 }

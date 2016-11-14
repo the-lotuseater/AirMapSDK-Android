@@ -34,10 +34,6 @@ public class Scratchpad extends View {
         super(context, attrs, defStyleAttr);
     }
 
-    public Scratchpad(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
     {
         paint = new Paint();
         paint.setColor(0xFF000000);

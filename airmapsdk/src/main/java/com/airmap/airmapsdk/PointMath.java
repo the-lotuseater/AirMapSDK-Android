@@ -14,7 +14,7 @@ import java.util.List;
 
 public class PointMath {
     //TODO: test PolylineUtils simplify
-    static List<PointF> simplify(List<PointF> vertices, double distanceThreshold) {
+    public static List<PointF> simplify(List<PointF> vertices, double distanceThreshold) {
         return vertices != null ? simplificationOf(vertices, distanceThreshold) : null;
     }
 

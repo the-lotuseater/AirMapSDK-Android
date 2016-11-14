@@ -1,5 +1,6 @@
-package com.airmap.airmapsdk.ui.activities;
+package com.airmap.airmapsdk.ui.fragments;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
@@ -12,16 +13,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.annotation.UiThread;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -78,11 +79,11 @@ import static com.airmap.airmapsdk.PointMath.distanceBetween;
 import static com.airmap.airmapsdk.Utils.getBufferPresets;
 
 /**
- * Created by Vansh Gandhi on 11/3/16.
+ * Created by Vansh Gandhi on 11/13/16.
  * Copyright © 2016 AirMap, Inc. All rights reserved.
  */
 
-public class FreehandMapActivity extends AppCompatActivity implements OnMapReadyCallback,
+public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         DrawingCallback, MapboxMap.OnCameraChangeListener, AirMapCallback<AirMapStatus> {
 
     private static final String CIRCLE_TAG = "circle";
@@ -97,8 +98,8 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
     private static Icon intersectionIcon;
 
     //Main layout views
-    private AppBarLayout appBarLayout;
-    private Toolbar toolbar;
+//    private AppBarLayout appBarLayout;
+//    private Toolbar toolbar;
     private TabLayout tabLayout;
     private RelativeLayout seekBarContainer;
     private SeekBar seekBar;
@@ -114,7 +115,6 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
 
     //Bottom sheet layout views
     private CoordinatorLayout bottomSheetLayout;
-    private Toolbar advisoriesToolbar;
     private RecyclerView recyclerView;
 
     private BottomSheetBehavior bottomSheetBehavior;
@@ -134,16 +134,25 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
     private Call airspaceCall;
     private Call statusCall;
 
+    private OnFragmentInteractionListener mListener;
+
+    public FreehandMapFragment() {
+        //Required empty constructor
+    }
+
+    public static FreehandMapFragment newInstance() {
+        return new FreehandMapFragment();
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.airmap_activity_freehand);
-        initializeViews();
-        setupToolbar();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.airmap_activity_freehand, container, false);
+        initializeViews(view);
         setupSwitch();
         setupMap(savedInstanceState);
         setupButtons();
         setupBottomSheet();
+        //TODO: Check flight from CreateFlightActivity
         drawingBoard.setDoneDrawingCallback(this);
 
         circleContainer = new CircleContainer();
@@ -154,36 +163,30 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
         midpoints = new ArrayList<>();
         intersections = new ArrayList<>();
         redPolygons = new ArrayList<>();
-        cornerIcon = IconFactory.getInstance(this).fromResource(R.drawable.white_circle);
-        midpointIcon = IconFactory.getInstance(this).fromResource(R.drawable.gray_circle);
-        intersectionIcon = IconFactory.getInstance(this).fromResource(R.drawable.intersection_circle);
+        cornerIcon = IconFactory.getInstance(getContext()).fromResource(R.drawable.white_circle);
+        midpointIcon = IconFactory.getInstance(getContext()).fromResource(R.drawable.gray_circle);
+        intersectionIcon = IconFactory.getInstance(getContext()).fromResource(R.drawable.intersection_circle);
 
         screenDensity = getResources().getDisplayMetrics().density;
+
+        return view;
     }
 
-    private void initializeViews() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        seekBarContainer = (RelativeLayout) findViewById(R.id.seekbar_container);
-        seekBar = (SeekBar) findViewById(R.id.seekbar);
-        seekBarLabelTextView = (TextView) findViewById(R.id.label);
-        seekBarValueTextView = (TextView) findViewById(R.id.seekbar_value);
-        enableDrawingSwitch = (ImageViewSwitch) findViewById(R.id.action_button);
-        deleteButton = (ImageView) findViewById(R.id.delete_button);
-        tipTextView = (TextView) findViewById(R.id.tip_text);
-        mapView = (MapView) findViewById(R.id.map);
-        drawingBoard = (DrawingBoard) findViewById(R.id.drawFrame);
-        scratchpad = (Scratchpad) findViewById(R.id.scratchpad);
-        nextButton = (CustomButton) findViewById(R.id.next_button);
+    private void initializeViews(View view) {
+        seekBarContainer = (RelativeLayout) view.findViewById(R.id.seekbar_container);
+        seekBar = (SeekBar) view.findViewById(R.id.seekbar);
+        seekBarLabelTextView = (TextView) view.findViewById(R.id.label);
+        seekBarValueTextView = (TextView) view.findViewById(R.id.seekbar_value);
+        enableDrawingSwitch = (ImageViewSwitch) view.findViewById(R.id.action_button);
+        deleteButton = (ImageView) view.findViewById(R.id.delete_button);
+        tipTextView = (TextView) view.findViewById(R.id.tip_text);
+        mapView = (MapView) view.findViewById(R.id.map);
+        drawingBoard = (DrawingBoard) view.findViewById(R.id.drawFrame);
+        scratchpad = (Scratchpad) view.findViewById(R.id.scratchpad);
+        nextButton = (CustomButton) view.findViewById(R.id.next_button);
 
-        bottomSheetLayout = (CoordinatorLayout) findViewById(R.id.bottom_sheet);
-//        advisoriesToolbar = (Toolbar) findViewById(R.id.advisories_toolbar);
-        recyclerView = (RecyclerView) findViewById(R.id.advisories_list);
-    }
-
-    private void setupToolbar() {
-        toolbar.setTitle(R.string.airmap_title_activity_create_flight);
-        setSupportActionBar(toolbar);
+        bottomSheetLayout = (CoordinatorLayout) view.findViewById(R.id.bottom_sheet);
+        recyclerView = (RecyclerView) view.findViewById(R.id.advisories_list);
     }
 
     private void setupMap(Bundle savedInstanceState) {
@@ -192,6 +195,10 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
     }
 
     private void setupTabs() {
+        tabLayout = mListener.getTabLayout();
+        tabLayout.clearOnTabSelectedListeners();
+        tabLayout.removeAllTabs();
+        tabLayout.setVisibility(View.VISIBLE);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -280,27 +287,38 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AirMapFlight flight = new AirMapFlight();
                 if (tabLayout.getSelectedTabPosition() == 0 && circleContainer.isValid()) { //Circle
-                    flight.setCoordinate(new Coordinate(circleContainer.center));
-                    flight.setBuffer(circleContainer.radius);
+                    if (mListener != null) {
+                        mListener.getFlight().setCoordinate(new Coordinate(circleContainer.center));
+                        mListener.getFlight().setBuffer(circleContainer.radius);
+                        tabLayout.setVisibility(View.GONE);
+                        mListener.freehandNextClicked();
+                    }
                 } else if (tabLayout.getSelectedTabPosition() == 1 && lineContainer.isValid()) { //Path
                     List<Coordinate> coordinates = new ArrayList<>();
                     for (LatLng latLng : lineContainer.line.getPoints()) {
                         coordinates.add(new Coordinate(latLng));
                     }
-                    flight.setGeometry(new AirMapPath(coordinates));
-                    flight.setBuffer(lineContainer.width);
+                    if (mListener != null) {
+                        mListener.getFlight().setGeometry(new AirMapPath(coordinates));
+                        mListener.getFlight().setBuffer(lineContainer.width);
+                        tabLayout.setVisibility(View.GONE);
+                        mListener.freehandNextClicked();
+                    }
                 } else if (tabLayout.getSelectedTabPosition() == 2 && polygonContainer.isValid()) { //Polygon
                     if (!PointMath.findIntersections(polygonContainer.polygon.getPoints()).isEmpty()) {
-                        Toast.makeText(FreehandMapActivity.this, R.string.airmap_error_overlap, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.airmap_error_overlap, Toast.LENGTH_SHORT).show();
                         return;
                     }
                     List<Coordinate> coordinates = new ArrayList<>();
                     for (LatLng latLng : polygonContainer.polygon.getPoints()) {
                         coordinates.add(new Coordinate(latLng));
                     }
-                    flight.setGeometry(new AirMapPolygon(coordinates));
+                    if (mListener != null) {
+                        mListener.getFlight().setGeometry(new AirMapPolygon(coordinates));
+                        tabLayout.setVisibility(View.GONE);
+                        mListener.freehandNextClicked();
+                    }
                 }
 
             }
@@ -312,29 +330,21 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-                    appBarLayout.setVisibility(View.GONE);
-                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    appBarLayout.setVisibility(View.VISIBLE);
-                } else if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    appBarLayout.setVisibility(View.VISIBLE);
-                } else if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    appBarLayout.setVisibility(View.VISIBLE);
+                if (mListener != null) {
+                    if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                        mListener.bottomSheetOpened();
+                    } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                        mListener.bottomSheetClosed();
+                    } else if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                        mListener.bottomSheetClosed();
+                    } else if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                        mListener.bottomSheetClosed();
+                    }
                 }
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-            }
-        });
-        advisoriesToolbar.setTitle("Airspace Advisories");
-        advisoriesToolbar.setNavigationIcon(R.drawable.ic_back);
-        advisoriesToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                appBarLayout.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -393,7 +403,7 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
         clear();
         PolylineOptions thickLine = new PolylineOptions();
         PolylineOptions thinLine = getDefaultPolylineOptions();
-        thickLine.color(ContextCompat.getColor(this, R.color.airmap_colorFill));
+        thickLine.color(ContextCompat.getColor(getContext(), R.color.airmap_colorFill));
         thickLine.alpha(0.66f);
         int width = getPathWidth(seekBar.getProgress());
         thickLine.width(width);
@@ -505,7 +515,7 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
                 return true; //This is simply to prevent opening the info window when selecting the marker from onTouch
             }
         });
-
+        setupTabs();
         mapView.setOnTouchListener(new View.OnTouchListener() {
             //This onTouch code is a copy of the MapView#onSingleTapConfirmed code, except
             //I'm dragging instead of clicking, and it's being called for every touch event rather than just a tap
@@ -594,8 +604,6 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
                 return false;
             }
         });
-
-        setupTabs();
     }
 
     private void drag(int indexOfAnnotationToDrag, LatLng newLocation, boolean isMidpoint, boolean doneDragging, boolean deletePoint) {
@@ -806,7 +814,7 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
         map.removeAnnotations(redPolygons);
         redPolygons.clear();
         cancelStatusCall();
-        statusCall = AirMap.checkCoordinate(coordinate, circleContainer.radius, null, null, false, null, FreehandMapActivity.this);
+        statusCall = AirMap.checkCoordinate(coordinate, circleContainer.radius, null, null, false, null, this);
     }
 
     private void checkPathStatus() {
@@ -817,7 +825,7 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
         map.removeAnnotations(redPolygons);
         redPolygons.clear();
         cancelStatusCall();
-        statusCall = AirMap.checkFlightPath(coordinates, lineContainer.width, coordinates.get(0), null, null, false, null, FreehandMapActivity.this);
+        statusCall = AirMap.checkFlightPath(coordinates, lineContainer.width, coordinates.get(0), null, null, false, null, this);
     }
 
     private void checkPolygonStatus() {
@@ -828,7 +836,7 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
         map.removeAnnotations(redPolygons);
         redPolygons.clear();
         cancelStatusCall();
-        statusCall = AirMap.checkPolygon(coordinates, getPolygonCentroid(coordinates), null, null, false, null, FreehandMapActivity.this);
+        statusCall = AirMap.checkPolygon(coordinates, getPolygonCentroid(coordinates), null, null, false, null, this);
     }
 
     Coordinate getPolygonCentroid(List<Coordinate> vertices) {
@@ -891,7 +899,7 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
     public PolygonOptions getPathBuffer(List<LatLng> linePoints, double width) {
         PolygonOptions options = new PolygonOptions();
         options.alpha(0.66f);
-        options.fillColor(ContextCompat.getColor(this, R.color.airmap_colorFill));
+        options.fillColor(ContextCompat.getColor(getContext(), R.color.airmap_colorFill));
         options.addAll(linePoints);
         //TODO
         return options;
@@ -964,12 +972,14 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
     @Override
     public void onSuccess(final AirMapStatus response) {
         latestStatus = response;
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                updateButtonColor(response != null ? response.getAdvisoryColor() : null);
-            }
-        });
+        if (nextButton != null) {
+            nextButton.post(new Runnable() {
+                @Override
+                public void run() {
+                    updateButtonColor(response != null ? response.getAdvisoryColor() : null);
+                }
+            });
+        }
         List<String> redIds = new ArrayList<>();
         for (AirMapStatusAdvisory advisory : response.getAdvisories()) {
             if (advisory.getColor() == AirMapStatus.StatusColor.Red) {
@@ -989,29 +999,31 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
                         for (Coordinate coordinate : coordinates) {
                             options.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                         }
-                        if (map != null && !isFinishing()) {
+                        if (map != null && redPolygons != null) {
                             redPolygons.add(map.addPolygon(options));
                         }
                     }
                 }
-                //TODO: Proper z-ordering
             }
 
             @Override
             public void onError(AirMapException e) {
-
+                e.printStackTrace();
             }
         });
     }
 
     @Override
     public void onError(AirMapException e) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                updateButtonColor(null);
-            }
-        });
+        e.printStackTrace();
+        if (nextButton != null) {
+            nextButton.post(new Runnable() {
+                @Override
+                public void run() {
+                    updateButtonColor(null);
+                }
+            });
+        }
     }
 
     @UiThread
@@ -1034,7 +1046,7 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
                     }
                 }
             } else {
-                nextButton.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+                nextButton.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
                 nextButton.setTextColor(Color.WHITE);
                 for (Drawable drawable : nextButton.getCompoundDrawables()) {
                     if (drawable != null) {
@@ -1047,21 +1059,21 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
 
     private PolygonOptions getDefaultPolygonOptions() {
         PolygonOptions options = new PolygonOptions();
-        options.fillColor(ContextCompat.getColor(this, R.color.airmap_colorFill));
+        options.fillColor(ContextCompat.getColor(getContext(), R.color.airmap_colorFill));
         options.alpha(0.66f);
         return options;
     }
 
     private PolygonOptions getDefaultRedPolygonOptions() {
         PolygonOptions options = new PolygonOptions();
-        options.fillColor(ContextCompat.getColor(this, R.color.airmap_red));
+        options.fillColor(ContextCompat.getColor(getContext(), R.color.airmap_red));
         options.alpha(0.66f);
         return options;
     }
 
     private PolylineOptions getDefaultPolylineOptions() {
         PolylineOptions options = new PolylineOptions();
-        options.color(ContextCompat.getColor(this, R.color.colorPrimary));
+        options.color(ContextCompat.getColor(getContext(), R.color.colorPrimary));
         options.width(2);
         return options;
     }
@@ -1123,14 +1135,14 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
         return tab;
     }
 
-    @Override
-    public void onBackPressed() {
-        if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        } else {
-            super.onBackPressed();
-        }
-    }
+//    @Override
+//    public void onBackPressed() {
+//        if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
+//            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+//        } else {
+//            super.onBackPressed();
+//        }
+//    }
 
     @Override
     public void onResume() {
@@ -1151,14 +1163,33 @@ public class FreehandMapActivity extends AppCompatActivity implements OnMapReady
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof FlightDetailsFragment.OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    public interface OnFragmentInteractionListener {
+        AirMapFlight getFlight();
+        void freehandNextClicked();
+        void bottomSheetOpened();
+        void bottomSheetClosed();
+        TabLayout getTabLayout();
     }
 }

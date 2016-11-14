@@ -103,9 +103,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         return new FlightDetailsFragment();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.airmap_fragment_flight_details, container, false);
         aircraft = new ArrayList<>();
         initializeViews(view);

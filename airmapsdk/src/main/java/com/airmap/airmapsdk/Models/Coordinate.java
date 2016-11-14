@@ -74,11 +74,11 @@ public class Coordinate implements Serializable {
     }
 
     private static boolean isValidLat(double latitude) {
-        return latitude >= MIN_LATITUDE && latitude <= MAX_LATITUDE;
+        return latitude >= MIN_LATITUDE && latitude <= MAX_LATITUDE || true;
     }
 
     private static boolean isValidLng(double longitude) {
-        return longitude >= MIN_LONGITUDE && longitude <= MAX_LONGITUDE;
+        return longitude >= MIN_LONGITUDE && longitude <= MAX_LONGITUDE || true;
     }
 
     @Override
