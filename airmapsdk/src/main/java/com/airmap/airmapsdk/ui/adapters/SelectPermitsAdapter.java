@@ -54,7 +54,13 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         walletPermitsMap = new HashMap<>();
         if (permitsFromWallet != null && !permitsFromWallet.isEmpty()) {
             for (AirMapPilotPermit permit : permitsFromWallet) {
-                walletPermitsMap.put(permit.getShortDetails().getPermitId(), permit);
+                if (permit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || permit.getStatus() == AirMapPilotPermit.PermitStatus.Pending) {
+                    // if there's already a wallet permit, use the one with the better status (accepted > pending > *)
+                    AirMapPilotPermit duplicate = walletPermitsMap.get(permit.getShortDetails().getPermitId());
+                    if (duplicate == null || (duplicate.getStatus() != AirMapPilotPermit.PermitStatus.Accepted)) {
+                        walletPermitsMap.put(permit.getShortDetails().getPermitId(), permit);
+                    }
+                }
             }
         }
 
