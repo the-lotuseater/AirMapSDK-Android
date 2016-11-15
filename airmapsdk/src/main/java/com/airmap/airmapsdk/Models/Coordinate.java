@@ -92,6 +92,6 @@ public class Coordinate implements Serializable {
      */
     @Override
     public String toString() {
-        return getLatitude() + " " + getLongitude();
+        return getLongitude() + " " + getLatitude();
     }
 }
