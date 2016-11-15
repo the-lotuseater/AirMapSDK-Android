@@ -103,13 +103,7 @@ public class AirMapFlight implements Serializable, AirMapBaseModel {
             setAircraft(new AirMapAircraft(json.optJSONObject("aircraft")));
             setPublic(json.optBoolean("public"));
             setBuffer(json.optDouble("buffer"));
-            String geo = json.optString("geometry");
-            AirMapFlightGeometryType geoType = AirMapFlightGeometryType.fromString(geo);
-            if (geoType == AirMapFlightGeometryType.Path) {
-                setGeometry(new AirMapPath(geo));
-            } else if (geoType == AirMapFlightGeometryType.Polygon) {
-                setGeometry(new AirMapPolygon(geo));
-            } //else if (geoType == AirMapFlightGeometryType.Point) { //Don't do anything, because coordinate has already been set}
+            setGeometry(AirMapGeometry.getGeometryFromGeoJSON(json.optJSONObject("geometry")));
             statuses = new ArrayList<>();
             permitIds = new ArrayList<>();
             JSONArray statusesJson = json.optJSONArray("statuses");
