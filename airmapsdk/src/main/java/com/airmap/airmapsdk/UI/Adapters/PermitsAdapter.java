@@ -20,8 +20,10 @@ import com.airmap.airmapsdk.ui.views.PermitRadioButton;
 import com.airmap.airmapsdk.ui.views.PermitRadioGroup;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Vansh Gandhi on 7/19/16.
@@ -32,6 +34,7 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
     private ArrayList<AirMapStatusPermits> statusPermits;
     private ArrayList<AirMapAvailablePermit> enabledPermits;
     private ArrayList<AirMapAvailablePermit> selectedPermits;
+    private Set<String> walletPermitIds;
     private ListPermitsFragment.OnFragmentInteractionListener mListener;
     private ListPermitsFragment fragment;
 
@@ -42,14 +45,15 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
         enabledPermits = new ArrayList<>();
         selectedPermits = new ArrayList<>();
 
-        List<String> permitIds = new ArrayList<>();
+        walletPermitIds = new HashSet<>();
+
         for (AirMapPilotPermit permit : permitsFromWallet) {
             if (permit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || permit.getStatus() == AirMapPilotPermit.PermitStatus.Pending) {
-                permitIds.add(permit.getShortDetails().getPermitId());
+                walletPermitIds.add(permit.getShortDetails().getPermitId());
             }
         }
-        if (!permitIds.isEmpty()) {
-            AirMap.getPermits(permitIds, null, new AirMapCallback<List<AirMapAvailablePermit>>() { //So that we can get other information about the permit, such as its name
+        if (!walletPermitIds.isEmpty()) {
+            AirMap.getPermits(new ArrayList<>(walletPermitIds), null, new AirMapCallback<List<AirMapAvailablePermit>>() { //So that we can get other information about the permit, such as its name
                 @Override
                 public void onSuccess(final List<AirMapAvailablePermit> response) {
                     if (fragment != null && fragment.getActivity() != null) {
@@ -115,6 +119,8 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
                 final PermitRadioButton button = new PermitRadioButton(holder.permitRadioGroup.getContext()); //Make a RadioButton for that enabled permit
                 button.setTitle(permit.getName());
                 button.setDescription(permit.getDescription());
+                boolean visible = walletPermitIds.contains(permit.getId());
+                button.setIconVisibility(visible ? View.VISIBLE : View.GONE);
 
                 holder.permitRadioGroup.addView(button);
                 if (permit.equals(holder.checkedPermit) || selectedPermits.contains(permit)) {

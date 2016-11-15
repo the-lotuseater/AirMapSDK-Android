@@ -152,8 +152,13 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
         if (mListener.getFlight().shouldNotify()) {
             String phone = mListener.getPilot().getPhone();
             if (phone == null || phone.isEmpty() || !mListener.getPilot().getVerificationStatus().isPhone()) {
-                showPhoneDialog();
-                //the phone dialog will submit flight once verified
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //the phone dialog will submit flight once verified
+                        showPhoneDialog();
+                    }
+                });
             } else {
                 doSubmitFlight();
             }

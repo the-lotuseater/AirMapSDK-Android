@@ -63,6 +63,10 @@ public class PermitRadioButton extends FrameLayout {
         radioButton = (RadioButton) view.findViewById(R.id.radio_button);
     }
 
+    public void setIconVisibility(int visibility) {
+        iconImageView.setVisibility(visibility);
+    }
+
     public void setImageResource(@DrawableRes int resId) {
         iconImageView.setImageResource(resId);
     }
