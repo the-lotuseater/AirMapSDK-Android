@@ -299,7 +299,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                viewPager.setCurrentItem(1, true);
+                viewPager.setCurrentItem(2, true);
             }
         });
     }
