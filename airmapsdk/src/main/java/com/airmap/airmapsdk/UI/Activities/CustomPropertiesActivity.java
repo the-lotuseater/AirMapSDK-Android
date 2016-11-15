@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -140,6 +141,10 @@ public class CustomPropertiesActivity extends AppCompatActivity {
                     textInputLayout.setHint(property.getLabel());
                     if (property.getValue() != null) { //Will populate with data if it exists
                         editText.setText(property.getValue());
+                    }
+
+                    if (property.getLabel() != null && (property.getLabel().toLowerCase().contains("email") || property.getLabel().toLowerCase().contains("e-mail"))) {
+                        editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                     }
 
                     customPropertiesLayout.addView(textInputLayout);
