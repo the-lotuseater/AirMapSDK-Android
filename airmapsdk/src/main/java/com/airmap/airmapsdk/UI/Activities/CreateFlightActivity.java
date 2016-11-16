@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -239,8 +241,9 @@ public class CreateFlightActivity extends AppCompatActivity implements
         for (AirMapStatusAdvisory advisory : advisories) {
             isPermitRequired = isPermitRequired || !advisory.getAvailablePermits().isEmpty();
 
+            // show digital notice even if advisory has required permit
             AirMapStatusRequirement requirement = advisory.getRequirements();
-            if (requirement.getNotice() != null && !requirement.getNotice().getPhoneNumber().isEmpty()) {
+            if (requirement.getNotice() != null) {
                 notices.add(requirement.getNotice());
             }
 
@@ -305,16 +308,17 @@ public class CreateFlightActivity extends AppCompatActivity implements
                 @Override
                 public void run() {
                     adapter.add(FlightNoticeFragment.newInstance());
+                    viewPager.setCurrentItem(1, true);
+                }
+            });
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    viewPager.setCurrentItem(1, true);
                 }
             });
         }
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                viewPager.setCurrentItem(1, true);
-            }
-        });
     }
 
     private void goToLastPage() {

@@ -48,7 +48,7 @@ public class AirMapStatusRequirementNotice implements Serializable, AirMapBaseMo
      * @return If submitting notice by phone number is required
      */
     public boolean isNoticeRequired() {
-        return !isDigital() && getPhoneNumber() != null && !getPhoneNumber().isEmpty();
+        return !isDigital();
     }
 
     public AirMapStatusRequirementNotice setDigital(boolean digital) {
