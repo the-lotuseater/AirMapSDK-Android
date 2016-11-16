@@ -107,7 +107,7 @@ public class FlightNoticeFragment extends Fragment {
                     boolean useAdvisoryName = true;
                     if (!TextUtils.isEmpty(advisory.getOrganizationId())) {
                         for (AirMapPermitIssuer issuer : status.getOrganizations()) {
-                            if (issuer.getId().equals(advisory.getOrganizationId())) {
+                            if (advisory.getOrganizationId().equals(issuer.getId())) {
                                 digitalNoticeNames.add(issuer.getName());
                                 useAdvisoryName = false;
                             }
