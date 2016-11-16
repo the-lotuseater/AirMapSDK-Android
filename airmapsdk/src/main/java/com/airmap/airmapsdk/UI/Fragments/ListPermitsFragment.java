@@ -1,10 +1,14 @@
 package com.airmap.airmapsdk.ui.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -14,7 +18,9 @@ import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.status.AirMapStatusPermits;
 import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.ui.activities.WebActivity;
 import com.airmap.airmapsdk.ui.adapters.PermitsAdapter;
+import com.airmap.airmapsdk.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -29,11 +35,16 @@ public class ListPermitsFragment extends Fragment {
     private Button nextButton;
 
     public ListPermitsFragment() {
-        // Required empty public constructor
     }
 
     public static ListPermitsFragment newInstance() {
         return new ListPermitsFragment();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -117,6 +128,25 @@ public class ListPermitsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         setupRecyclerView();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        super.onCreateOptionsMenu(menu, menuInflater);
+        menuInflater.inflate(R.menu.menu_permits, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == R.id.permit_faq) {
+            Intent intent = new Intent(getActivity(), WebActivity.class);
+            intent.putExtra(Intent.EXTRA_TITLE, getString(R.string.faq));
+            intent.putExtra(Constants.URL_EXTRA, Constants.FAQ_PERMITS_URL);
+            startActivity(intent);
+            return true;
+        } else {
+            return super.onOptionsItemSelected(menuItem);
+        }
     }
 
     public interface OnFragmentInteractionListener {

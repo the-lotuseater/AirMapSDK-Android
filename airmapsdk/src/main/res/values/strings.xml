@@ -50,4 +50,5 @@
     <string name="select_a_permit_description">The following permits meet the requirements for the flight\'s operating area</string>
     <string name="permit_details">Permit Details</string>
     <string name="no_available_permits_for_flight">No single permit satisfies this flight\'s operating area. </string>
+    <string name="faq">FAQ</string>
 </resources>

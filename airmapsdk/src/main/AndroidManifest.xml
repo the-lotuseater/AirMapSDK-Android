@@ -73,5 +73,12 @@
                 android:label="@string/airmap_title_activity_login"
                 android:launchMode="singleTop"
                 android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
+                android:name=".ui.activities.WebActivity"
+                android:screenOrientation="portrait"
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.NoActionBar" />
+
     </application>
 </manifest>
