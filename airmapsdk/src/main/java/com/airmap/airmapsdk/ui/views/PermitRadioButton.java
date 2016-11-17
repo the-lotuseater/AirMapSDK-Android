@@ -29,6 +29,7 @@ public class PermitRadioButton extends FrameLayout {
     private TextView titleTextView;
     private TextView descriptionTextView;
     private RadioButton radioButton;
+    private View container;
 
     public PermitRadioButton(Context context) {
         super(context);
@@ -61,6 +62,7 @@ public class PermitRadioButton extends FrameLayout {
         titleTextView = (TextView) view.findViewById(R.id.title_text_view);
         descriptionTextView = (TextView) view.findViewById(R.id.description_text_view);
         radioButton = (RadioButton) view.findViewById(R.id.radio_button);
+        container = view.findViewById(R.id.container);
     }
 
     public void setIconVisibility(int visibility) {
@@ -93,5 +95,10 @@ public class PermitRadioButton extends FrameLayout {
 
     public void setOnCheckedChangeWidgetListener(CompoundButton.OnCheckedChangeListener listener) {
         radioButton.setOnCheckedChangeListener(listener);
+    }
+
+    @Override
+    public void setOnClickListener(OnClickListener listener) {
+        container.setOnClickListener(listener);
     }
 }

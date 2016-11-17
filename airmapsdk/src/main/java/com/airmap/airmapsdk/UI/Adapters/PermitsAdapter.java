@@ -121,6 +121,12 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
                 button.setDescription(permit.getDescription());
                 boolean visible = walletPermitIds.contains(permit.getId());
                 button.setIconVisibility(visible ? View.VISIBLE : View.GONE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        button.setChecked(true);
+                    }
+                });
 
                 holder.permitRadioGroup.addView(button);
                 if (permit.equals(holder.checkedPermit) || selectedPermits.contains(permit)) {
