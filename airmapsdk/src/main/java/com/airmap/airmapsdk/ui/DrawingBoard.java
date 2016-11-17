@@ -50,7 +50,7 @@ public class DrawingBoard extends View {
         drawPaint = new Paint();
         drawPaint.setColor(0xFF000000);
         drawPaint.setAntiAlias(true);
-        drawPaint.setStrokeWidth(10);
+        drawPaint.setStrokeWidth(7);
         drawPaint.setStyle(Paint.Style.STROKE);
         drawPaint.setPathEffect(new DashPathEffect(new float[]{25, 30}, 0));
         drawPaint.setStrokeJoin(Paint.Join.ROUND);

@@ -38,7 +38,7 @@ public class Scratchpad extends View {
         paint = new Paint();
         paint.setColor(0xFF000000);
         paint.setAntiAlias(true);
-        paint.setStrokeWidth(10);
+        paint.setStrokeWidth(7);
         paint.setStyle(Paint.Style.STROKE);
         paint.setPathEffect(new DashPathEffect(new float[]{25, 30}, 0));
         paint.setStrokeJoin(Paint.Join.ROUND);
