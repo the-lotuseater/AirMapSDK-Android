@@ -62,6 +62,12 @@ class BaseService {
     protected static final String statusPathUrl = statusBaseUrl + "path/";
     protected static final String statusPolygonUrl = statusBaseUrl + "polygon/";
 
+    //Airspace
+    protected static final String airspaceVersion = DEBUG ? Utils.getDebugUrl() : "v2/";
+    protected static final String airspaceBaseUrl = baseUrl + "airspace/" + airspaceVersion;
+    protected static final String airspaceByIdUrl = airspaceBaseUrl + "%s/"; //Replace %s with id using String.format
+    protected static final String airspaceByIdsUrl = airspaceBaseUrl + "list/";
+
     //Traffic Alerts
     protected static final String mqttBaseUrl = DEBUG ? Utils.getMqttDebugUrl() : "ssl://mqtt-prod.airmap.io:8883";
     protected static final String trafficAlertChannel = "uav/traffic/alert/%s"; //Replace %s with id using String.format. *Don't* end this url with a /
