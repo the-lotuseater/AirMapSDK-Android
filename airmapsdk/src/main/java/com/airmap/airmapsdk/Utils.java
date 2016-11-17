@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 
 import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
@@ -328,5 +329,15 @@ public class Utils {
         } catch (JSONException e) {
             return "v2/";
         }
+    }
+
+
+    public static PolygonOptions getMapboxPolygon(AirMapPolygon airMapPolygon) {
+        PolygonOptions polygonOptions = new PolygonOptions();
+        for (Coordinate coordinate : airMapPolygon.getCoordinates()) {
+            polygonOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
+        }
+
+        return polygonOptions;
     }
 }

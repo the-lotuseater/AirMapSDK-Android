@@ -10,11 +10,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,16 +32,23 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
+import com.airmap.airmapsdk.Utils;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
+import com.airmap.airmapsdk.models.airspace.AirMapAirspace;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
+import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
+import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
+import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
+import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.networking.services.AirspaceService;
 import com.airmap.airmapsdk.ui.activities.CreateEditAircraftActivity;
 import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
 import com.airmap.airmapsdk.ui.activities.ProfileActivity;
@@ -48,6 +56,7 @@ import com.airmap.airmapsdk.ui.adapters.AircraftAdapter;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.annotations.Polygon;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -59,8 +68,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import static com.airmap.airmapsdk.Utils.getAltitudePresets;
 import static com.airmap.airmapsdk.Utils.getCirclePolygon;
@@ -71,6 +84,8 @@ import static com.airmap.airmapsdk.Utils.indexOfDurationPreset;
 import static com.airmap.airmapsdk.Utils.indexOfMeterPreset;
 
 public class FlightDetailsFragment extends Fragment implements OnMapReadyCallback {
+
+    private static final String TAG = "FlightDetailsFragment";
 
     private static final int REQUEST_CREATE_AIRCRAFT = 1;
 
@@ -95,6 +110,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     private FrameLayout progressBarContainer;
     private List<AirMapAircraft> aircraft;
     private AirMapStatus latestStatus;
+    private Map<String, AirMapStatusAdvisory> permitAdvisories;
+    private Map<String, Polygon> polygonMap;
+    private PolygonOptions radiusPolygon;
 
     public FlightDetailsFragment() {
         // Required empty public constructor
@@ -109,6 +127,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.airmap_fragment_flight_details, container, false);
         aircraft = new ArrayList<>();
+        permitAdvisories = new HashMap<>();
+        polygonMap = new HashMap<>();
         initializeViews(view);
         setupAircraftDialog();
         updateStartsAtTextView();
@@ -189,6 +209,23 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 setupSeekBars();
             }
         });
+
+        // draw polygons for advisories with permits (green if user has permit, yellow otherwise)
+        if (latestStatus != null && latestStatus.getAdvisories() != null && !latestStatus.getAdvisories().isEmpty()) {
+            Map<String, AirMapStatusAdvisory> advisoryMap = new HashMap<>();
+            for (AirMapStatusAdvisory advisory : latestStatus.getAdvisories()) {
+                if (advisory.getAvailablePermits() != null && !advisory.getAvailablePermits().isEmpty()) {
+                    advisoryMap.put(advisory.getId(), advisory);
+                }
+            }
+
+            // check if advisories have changed
+            if (!permitAdvisories.keySet().equals(advisoryMap.keySet())) {
+                if (!permitAdvisories.keySet().containsAll(advisoryMap.keySet())) {
+                    updatePermitPolygons(advisoryMap);
+                }
+            }
+        }
     }
 
     private void setupSwitches() {
@@ -251,13 +288,13 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 radiusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener() {
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        if (oldPolygon != null && map != null) {
-                            map.removePolygon(oldPolygon.getPolygon()); //TODO: Save the polygon when adding to map, don't keep calling .getPolygon()
+                        if (radiusPolygon != null && map != null) {
+                            map.removePolygon(radiusPolygon.getPolygon()); //TODO: Save the polygon when adding to map, don't keep calling .getPolygon()
                         }
                         int color = getStatusCircleColor(latestStatus, getContext());
-                        oldPolygon = getCirclePolygon(getBufferPresets()[seekBar.getProgress()].value.doubleValue(), mListener.getFlight().getCoordinate(), color);
+                        radiusPolygon = getCirclePolygon(getBufferPresets()[seekBar.getProgress()].value.doubleValue(), mListener.getFlight().getCoordinate(), color);
                         if (map != null) {
-                            map.addPolygon(oldPolygon); //TODO: Save the polygon returned here
+                            map.addPolygon(radiusPolygon); //TODO: Save the polygon returned here
                         }
                         radiusValueTextView.setText(getBufferPresets()[progress].label);
                         mListener.getFlight().setBuffer(getBufferPresets()[radiusSeekBar.getProgress()].value.doubleValue());
@@ -353,7 +390,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         if (mListener.getFlight().getStartsAt() == null) {
             mListener.getFlight().setStartsAt(new Date());
         }
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
+        SimpleDateFormat format = new SimpleDateFormat("M/d/yy h:mm a", Locale.US);
         Date date = mListener.getFlight().getStartsAt();
         startsAtTextView.setText(format.format(date));
     }
@@ -447,9 +484,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         AirMapFlight flight = mListener.getFlight();
         AirMap.checkCoordinate(flight.getCoordinate(), flight.getBuffer(), null, null, false, flight.getStartsAt(), new AirMapCallback<AirMapStatus>() {
             @Override
-            public void onSuccess(AirMapStatus response) {
-                latestStatus = response;
-                List<AirMapStatusAdvisory> advisories = response.getAdvisories();
+            public void onSuccess(AirMapStatus airMapStatus) {
+                latestStatus = airMapStatus;
+                List<AirMapStatusAdvisory> advisories = airMapStatus.getAdvisories();
                 boolean requiresPermitOrNotice = false;
                 for (AirMapStatusAdvisory advisory : advisories) {
                     if (advisory.getAvailablePermits() != null && !advisory.getAvailablePermits().isEmpty()) {
@@ -462,6 +499,35 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 }
 
                 updateButtonText(requiresPermitOrNotice ? R.string.airmap_next : R.string.airmap_save);
+
+
+                // draw polygons for advisories with permits (green if user has permit, yellow otherwise)
+                if (map != null && airMapStatus.getAdvisories() != null && !airMapStatus.getAdvisories().isEmpty()) {
+                    Map<String, AirMapStatusAdvisory> advisoryMap = new HashMap<>();
+                    for (AirMapStatusAdvisory advisory : airMapStatus.getAdvisories()) {
+                        if (advisory.getAvailablePermits() != null && !advisory.getAvailablePermits().isEmpty()) {
+                            advisoryMap.put(advisory.getId(), advisory);
+                        }
+                    }
+
+                    // check if advisories have changed
+                    if (permitAdvisories.keySet().equals(advisoryMap.keySet())) {
+                        return;
+                    }
+
+                    if (!permitAdvisories.keySet().containsAll(advisoryMap.keySet())) {
+                        updatePermitPolygons(advisoryMap);
+                    } else {
+                        List<String> keySet = new ArrayList<>(permitAdvisories.keySet());
+                        for (String key : keySet) {
+                            if (!advisoryMap.containsKey(key)) {
+                                permitAdvisories.remove(key);
+                                Polygon polygon = polygonMap.remove(key);
+                                map.removePolygon(polygon);
+                            }
+                        }
+                    }
+                }
             }
 
             @Override
@@ -487,6 +553,117 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 progressBarContainer.setVisibility(View.GONE);
             }
         });
+    }
+
+
+    private void updatePermitPolygons(final Map<String, AirMapStatusAdvisory> advisoryMap) {
+        AirspaceService.getAirspace(new ArrayList<>(advisoryMap.keySet()), new AirMapCallback<List<AirMapAirspace>>() {
+            @Override
+            public void onSuccess(final List<AirMapAirspace> airspacesResponse) {
+                // use pilot permits to show green or yellow
+                if (AirMap.hasValidAuthenticatedUser()) {
+                    AirMap.getAuthenticatedPilotPermits(new AirMapCallback<List<AirMapPilotPermit>>() {
+                        @Override
+                        public void onSuccess(List<AirMapPilotPermit> pilotPermitsResponse) {
+                            Set<String> pilotPermitIds = new HashSet<>();
+                            if (pilotPermitsResponse != null) {
+                                for (AirMapPilotPermit pilotPermit : pilotPermitsResponse) {
+                                    pilotPermitIds.add(pilotPermit.getShortDetails().getPermitId());
+                                }
+                            }
+
+                            drawPolygons(airspacesResponse, advisoryMap, pilotPermitIds);
+                        }
+
+                        @Override
+                        public void onError(AirMapException e) {
+                            Log.e(TAG, "getPilotPermits failed", e);
+                        }
+                    });
+                } else {
+                    drawPolygons(airspacesResponse, advisoryMap, null);
+                }
+            }
+
+            @Override
+            public void onError(AirMapException e) {
+                Log.e(TAG, "getAirspaces failed", e);
+            }
+        });
+    }
+
+    private void drawPolygons(final List<AirMapAirspace> airspaces, final Map<String,AirMapStatusAdvisory> advisoryMap, Set<String> pilotPermitIds) {
+        Map<String,AirMapStatusAdvisory> updatedMap = new HashMap<>();
+        Map<String,Polygon> polygonsToRemove = new HashMap<>(polygonMap);
+
+        for (AirMapAirspace airspace : airspaces) {
+            if (!advisoryMap.containsKey(airspace.getAirspaceId())) {
+                continue;
+            }
+
+            AirMapStatusAdvisory advisory = advisoryMap.get(airspace.getAirspaceId());
+            updatedMap.put(advisory.getId(), advisory);
+
+            boolean hasPermit = false;
+            if (pilotPermitIds != null) {
+                for (AirMapAvailablePermit availablePermit : advisory.getAvailablePermits()) {
+                    if (pilotPermitIds.contains(availablePermit.getId())) {
+                        hasPermit = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!polygonMap.containsKey(airspace.getAirspaceId())) {
+                Polygon polygon = drawPermitPolygon(airspace, hasPermit);
+                if (polygon != null) {
+                    polygonMap.put(airspace.getAirspaceId(), polygon);
+                }
+            }
+            polygonsToRemove.remove(airspace.getAirspaceId());
+            advisoryMap.remove(airspace.getAirspaceId());
+        }
+
+        // remove polygons no longer valid
+        for (String key : polygonsToRemove.keySet()) {
+            Polygon polygon = polygonsToRemove.get(key);
+            map.removePolygon(polygon);
+            polygonMap.remove(key);
+        }
+
+        // redraw flight radius so its highest in z-index
+        drawRadiusPolygon();
+
+        permitAdvisories = updatedMap;
+    }
+
+    private Polygon drawPermitPolygon(AirMapAirspace airspace, boolean hasPermit) {
+        AirMapGeometry geometry = airspace.getGeometry();
+        if (geometry instanceof AirMapPolygon) {
+            PolygonOptions polygonOptions = Utils.getMapboxPolygon((AirMapPolygon) geometry);
+            polygonOptions.fillColor(hasPermit ? getResources().getColor(R.color.airmap_green) : getResources().getColor(R.color.airmap_yellow));
+            polygonOptions.alpha(0.6f);
+            return map.addPolygon(polygonOptions);
+        }
+
+        //TODO: handle airspaces that are advisories that aren't polygons?
+        return null;
+    }
+
+    private void drawRadiusPolygon() {
+        if (radiusPolygon == null) {
+            return;
+        }
+
+        //FIXME: this is a hack to change the z-index of the radius polygon
+        //FIXME: if its not delayed on UI thread it doesn't work :(
+        new Handler(getActivity().getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                map.removePolygon(radiusPolygon.getPolygon());
+                map.addPolygon(radiusPolygon);
+            }
+        }, 10);
     }
 
     @Override
@@ -549,8 +726,6 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     public abstract class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
-
-        PolygonOptions oldPolygon;
 
         @Override
         public abstract void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser);
