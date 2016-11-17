@@ -3,7 +3,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'com.airmap.airmapsdk'
-def libVersion = '1.0.4'
+def libVersion = '1.1.0'
 
 android {
     compileSdkVersion 24
@@ -54,11 +54,10 @@ dependencies {
     compile('org.eclipse.paho:org.eclipse.paho.android.service:1.1.1-20160907.104533-5@aar') { exclude module: 'support-v4' }
 }
 
-//TODO: Uncomment below at some release. This will make it so developers no longer have to add `{ exclude module: 'support-v4' }` to the sdk dependency (including our app), and we can remove that line from the paho dependency
-//configurations {
-//    // to avoid double inclusion of support libraries
-//    all*.exclude group: 'com.android.support', module: 'support-v4'
-//}
+configurations {
+    // to avoid double inclusion of support libraries
+    all*.exclude group: 'com.android.support', module: 'support-v4'
+}
 
 def siteUrl = 'http://www.airmap.com'
 def projectName = 'com.airmap.airmapsdk'
