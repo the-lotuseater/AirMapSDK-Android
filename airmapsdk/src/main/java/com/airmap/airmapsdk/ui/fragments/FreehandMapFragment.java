@@ -282,9 +282,9 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         nextButton.setDrawableClickListener(new CustomButton.DrawableClickListener() {
             @Override
             public void onDrawableClick() {
-                if (latestStatus != null) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                if (latestStatus != null && !latestStatus.getAdvisories().isEmpty()) {
                     recyclerView.setAdapter(new AdvisoriesAdapter(latestStatus.getAdvisories()));
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 }
             }
         });
@@ -1055,6 +1055,14 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 for (Drawable drawable : nextButton.getCompoundDrawables()) {
                     if (drawable != null) {
                         drawable.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+                    }
+                }
+            } else if (color == AirMapStatus.StatusColor.Green) {
+                nextButton.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.airmap_green), PorterDuff.Mode.MULTIPLY);
+                nextButton.setTextColor(Color.WHITE);
+                for (Drawable drawable : nextButton.getCompoundDrawables()) {
+                    if (drawable != null) {
+                        drawable.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
                     }
                 }
             } else {
