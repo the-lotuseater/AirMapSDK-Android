@@ -520,9 +520,12 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 return true; //This is simply to prevent opening the info window when selecting the marker from onTouch
             }
         });
-        if (getArguments() != null && getArguments().getSerializable(CreateFlightActivity.COORDINATE) != null) {
+        if (getArguments() != null) {
             Coordinate coordinate = (Coordinate) getArguments().getSerializable(CreateFlightActivity.COORDINATE);
-            map.setCameraPosition(new CameraPosition.Builder().target(new LatLng(coordinate.getLatitude(),coordinate.getLongitude())).build());
+            if (coordinate != null) {
+                map.setCameraPosition(new CameraPosition.Builder().target(new LatLng(coordinate.getLatitude(),coordinate.getLongitude())).build());
+            }
+
         }
         setupTabs();
         mapView.setOnTouchListener(new View.OnTouchListener() {
@@ -1196,9 +1199,13 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
     public interface OnFragmentInteractionListener {
         AirMapFlight getFlight();
+
         void freehandNextClicked();
+
         void bottomSheetOpened();
+
         void bottomSheetClosed();
+
         TabLayout getTabLayout();
     }
 }

@@ -460,6 +460,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                                 !advisory.getRequirements().getPermit().getTypes().isEmpty()) {
                             requiresPermitOrNotice = true;
                         } else if (advisory.getRequirements().getNotice() != null &&
+                                advisory.getRequirements().getNotice().getPhoneNumber() != null &&
                                 !advisory.getRequirements().getNotice().getPhoneNumber().isEmpty()) {
                             requiresPermitOrNotice = true;
                         }

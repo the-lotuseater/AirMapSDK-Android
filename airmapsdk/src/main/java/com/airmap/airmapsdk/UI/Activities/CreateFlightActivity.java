@@ -26,6 +26,7 @@ import com.airmap.airmapsdk.models.status.AirMapStatusRequirement;
 import com.airmap.airmapsdk.models.status.AirMapStatusRequirementNotice;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.ui.CustomViewPager;
 import com.airmap.airmapsdk.ui.adapters.SectionsPagerAdapter;
 import com.airmap.airmapsdk.ui.fragments.FlightDetailsFragment;
 import com.airmap.airmapsdk.ui.fragments.FlightNoticeFragment;
@@ -56,7 +57,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
     public static final int REQUEST_CUSTOM_PROPERTIES = 2;
 
     private Toolbar toolbar;
-    private ViewPager viewPager;
+    private CustomViewPager viewPager;
     private SectionsPagerAdapter adapter;
 
     private int currentPage;
@@ -118,7 +119,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
 
     private void initializeViews() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        viewPager = (ViewPager) findViewById(R.id.container);
+        viewPager = (CustomViewPager) findViewById(R.id.container);
     }
 
     private void setupToolbar() {
@@ -155,14 +156,19 @@ public class CreateFlightActivity extends AppCompatActivity implements
                     getSupportActionBar().setTitle(R.string.airmap_title_activity_create_flight);
                     getTabLayout().setVisibility(View.VISIBLE);
                     invalidateFurtherFragments(0);
+                    viewPager.setPagingEnabled(false);
                 } else if (fragment instanceof FlightDetailsFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_flight_details);
+                    viewPager.setPagingEnabled(true);
                 } else if (fragment instanceof ListPermitsFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_permits);
+                    viewPager.setPagingEnabled(true);
                 } else if (fragment instanceof FlightNoticeFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_flight_notice);
+                    viewPager.setPagingEnabled(true);
                 } else if (fragment instanceof ReviewFlightFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_review);
+                    viewPager.setPagingEnabled(true);
                 }
             }
         });
