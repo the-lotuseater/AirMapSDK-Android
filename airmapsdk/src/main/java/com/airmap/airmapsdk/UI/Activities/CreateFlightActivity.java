@@ -126,7 +126,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(R.string.airmap_flight_details);
+//        getSupportActionBar().setTitle(R.string.airmap_flight_details);
     }
 
     private void setupViewPager() {
