@@ -101,7 +101,7 @@ public class FlightNoticeFragment extends Fragment {
         for (AirMapStatusAdvisory advisory : status.getAdvisories()) {
             if (advisory.getRequirements() != null && advisory.getRequirements().getNotice() != null) {
                 AirMapStatusRequirementNotice notice = advisory.getRequirements().getNotice();
-                if (notice.isDigital()) {
+                if (notice.isDigital() || !TextUtils.isEmpty(advisory.getOrganizationId())) {
                     digitalNotices.add(notice);
 
                     boolean useAdvisoryName = true;

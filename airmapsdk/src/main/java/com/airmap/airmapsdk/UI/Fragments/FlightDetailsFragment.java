@@ -493,26 +493,22 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                         requiresPermitOrNotice = true;
                         break;
                     } else if (advisory.getRequirements() != null && advisory.getRequirements().getNotice() != null) {
-                            requiresPermitOrNotice = true;
+                        requiresPermitOrNotice = true;
                         break;
                     }
                 }
 
                 updateButtonText(requiresPermitOrNotice ? R.string.airmap_next : R.string.airmap_save);
 
-
                 // draw polygons for advisories with permits (green if user has permit, yellow otherwise)
-                if (map != null && airMapStatus.getAdvisories() != null && !airMapStatus.getAdvisories().isEmpty()) {
+                if (map != null && (airMapStatus.getAdvisories() != null && !airMapStatus.getAdvisories().isEmpty()) || airMapStatus.getAdvisoryColor() == AirMapStatus.StatusColor.Red)  {
                     Map<String, AirMapStatusAdvisory> advisoryMap = new HashMap<>();
                     for (AirMapStatusAdvisory advisory : airMapStatus.getAdvisories()) {
                         if (advisory.getAvailablePermits() != null && !advisory.getAvailablePermits().isEmpty()) {
                             advisoryMap.put(advisory.getId(), advisory);
+                        } else if (advisory.getColor() == AirMapStatus.StatusColor.Red) {
+                            advisoryMap.put(advisory.getId(), advisory);
                         }
-                    }
-
-                    // check if advisories have changed
-                    if (permitAdvisories.keySet().equals(advisoryMap.keySet())) {
-                        return;
                     }
 
                     if (!permitAdvisories.keySet().containsAll(advisoryMap.keySet())) {
@@ -560,7 +556,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         AirspaceService.getAirspace(new ArrayList<>(advisoryMap.keySet()), new AirMapCallback<List<AirMapAirspace>>() {
             @Override
             public void onSuccess(final List<AirMapAirspace> airspacesResponse) {
-                // use pilot permits to show green or yellow
+                // use pilot permits to show green, yellow or red
                 if (AirMap.hasValidAuthenticatedUser()) {
                     AirMap.getAuthenticatedPilotPermits(new AirMapCallback<List<AirMapPilotPermit>>() {
                         @Override
@@ -604,18 +600,23 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             AirMapStatusAdvisory advisory = advisoryMap.get(airspace.getAirspaceId());
             updatedMap.put(advisory.getId(), advisory);
 
-            boolean hasPermit = false;
+            AirMapStatus.StatusColor statusColor = AirMapStatus.StatusColor.Yellow;
             if (pilotPermitIds != null) {
                 for (AirMapAvailablePermit availablePermit : advisory.getAvailablePermits()) {
                     if (pilotPermitIds.contains(availablePermit.getId())) {
-                        hasPermit = true;
+                        statusColor = AirMapStatus.StatusColor.Green;
                         break;
                     }
                 }
             }
 
+            if (advisory.getColor() == AirMapStatus.StatusColor.Red) {
+                statusColor = AirMapStatus.StatusColor.Red;
+            }
+
+
             if (!polygonMap.containsKey(airspace.getAirspaceId())) {
-                Polygon polygon = drawPermitPolygon(airspace, hasPermit);
+                Polygon polygon = drawPermitPolygon(airspace, statusColor);
                 if (polygon != null) {
                     polygonMap.put(airspace.getAirspaceId(), polygon);
                 }
@@ -637,12 +638,31 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         permitAdvisories = updatedMap;
     }
 
-    private Polygon drawPermitPolygon(AirMapAirspace airspace, boolean hasPermit) {
+    private Polygon drawPermitPolygon(AirMapAirspace airspace, AirMapStatus.StatusColor statusColor) {
         AirMapGeometry geometry = airspace.getGeometry();
         if (geometry instanceof AirMapPolygon) {
             PolygonOptions polygonOptions = Utils.getMapboxPolygon((AirMapPolygon) geometry);
-            polygonOptions.fillColor(hasPermit ? getResources().getColor(R.color.airmap_green) : getResources().getColor(R.color.airmap_yellow));
-            polygonOptions.alpha(0.6f);
+
+            int color;
+            switch (statusColor) {
+                case Red: {
+                    color = getResources().getColor(R.color.airmap_red);
+                    polygonOptions.alpha(0.9f);
+                    break;
+                }
+                case Yellow: {
+                    color = getResources().getColor(R.color.airmap_yellow);
+                    polygonOptions.alpha(0.9f);
+                    break;
+                }
+                default:
+                case Green: {
+                    color = getResources().getColor(R.color.airmap_green);
+                    polygonOptions.alpha(0.6f);
+                    break;
+                }
+            }
+            polygonOptions.fillColor(color);
             return map.addPolygon(polygonOptions);
         }
 
