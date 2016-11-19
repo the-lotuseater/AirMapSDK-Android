@@ -216,6 +216,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             for (AirMapStatusAdvisory advisory : latestStatus.getAdvisories()) {
                 if (advisory.getAvailablePermits() != null && !advisory.getAvailablePermits().isEmpty()) {
                     advisoryMap.put(advisory.getId(), advisory);
+                } else if (advisory.getColor() == AirMapStatus.StatusColor.Red) {
+                    advisoryMap.put(advisory.getId(), advisory);
                 }
             }
 
@@ -499,6 +501,13 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 }
 
                 updateButtonText(requiresPermitOrNotice ? R.string.airmap_next : R.string.airmap_save);
+                // disable next if status is red
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        saveNextButton.setEnabled(latestStatus.getAdvisoryColor() != AirMapStatus.StatusColor.Red);
+                    }
+                });
 
                 // draw polygons for advisories with permits (green if user has permit, yellow otherwise)
                 if (map != null && (airMapStatus.getAdvisories() != null && !airMapStatus.getAdvisories().isEmpty()) || airMapStatus.getAdvisoryColor() == AirMapStatus.StatusColor.Red)  {
@@ -647,12 +656,12 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             switch (statusColor) {
                 case Red: {
                     color = getResources().getColor(R.color.airmap_red);
-                    polygonOptions.alpha(0.9f);
+                    polygonOptions.alpha(0.8f);
                     break;
                 }
                 case Yellow: {
                     color = getResources().getColor(R.color.airmap_yellow);
-                    polygonOptions.alpha(0.9f);
+                    polygonOptions.alpha(0.8f);
                     break;
                 }
                 default:
