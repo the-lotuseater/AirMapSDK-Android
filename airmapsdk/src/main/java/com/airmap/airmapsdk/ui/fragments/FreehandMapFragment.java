@@ -157,7 +157,6 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         setupMap(savedInstanceState);
         setupButtons();
         setupBottomSheet();
-        //TODO: Check flight from CreateFlightActivity
         drawingBoard.setDoneDrawingCallback(this);
 
         circleContainer = new CircleContainer();
@@ -520,13 +519,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 return true; //This is simply to prevent opening the info window when selecting the marker from onTouch
             }
         });
-        if (getArguments() != null) {
-            Coordinate coordinate = (Coordinate) getArguments().getSerializable(CreateFlightActivity.COORDINATE);
-            if (coordinate != null) {
-                map.setCameraPosition(new CameraPosition.Builder().target(new LatLng(coordinate.getLatitude(),coordinate.getLongitude())).build());
-            }
 
-        }
         setupTabs();
         mapView.setOnTouchListener(new View.OnTouchListener() {
             //This onTouch code is a copy of the MapView#onSingleTapConfirmed code, except
@@ -616,6 +609,14 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 return false;
             }
         });
+
+        if (getArguments() != null) {
+            Coordinate coordinate = (Coordinate) getArguments().getSerializable(CreateFlightActivity.COORDINATE);
+            if (coordinate != null) {
+                map.setCameraPosition(new CameraPosition.Builder().target(new LatLng(coordinate.getLatitude(),coordinate.getLongitude())).build());
+            }
+
+        }
     }
 
     private void drag(int indexOfAnnotationToDrag, LatLng newLocation, boolean isMidpoint, boolean doneDragging, boolean deletePoint) {
@@ -923,7 +924,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void setMidpointVisibilities() {
-        for (MarkerView midpoint1 : midpoints) { //TODO: can probably make this more efficient
+        for (MarkerView midpoint1 : midpoints) {
             boolean continueOuterLoop = false;
             for (MarkerView corner : corners) {
                 PointF screenLoc1 = map.getProjection().toScreenLocation(midpoint1.getPosition());
