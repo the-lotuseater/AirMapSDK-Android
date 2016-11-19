@@ -46,7 +46,7 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
     public SelectPermitsAdapter(Activity activity, AirMapStatusPermits statusPermits, List<AirMapPilotPermit> permitsFromWallet) {
         this.activity = activity;
 
-        dateFormat = new SimpleDateFormat("M/d/YYYY");
+        dateFormat = new SimpleDateFormat("M/d/yyyy");
 
         permitsAndHeadersList = new ArrayList<>();
         applicablePermitIds = new HashSet<>();
