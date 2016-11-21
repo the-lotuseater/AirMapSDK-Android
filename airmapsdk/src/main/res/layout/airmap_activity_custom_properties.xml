@@ -47,7 +47,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
                         android:textColor="@color/font_title"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:text="@string/description"/>
 
                 <TextView
@@ -67,14 +67,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/font_title"
-                            android:textSize="20sp"
+                            android:textSize="18sp"
                             android:text="Validity: "/>
 
                     <TextView
                             android:id="@+id/validity"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="20sp"
+                            android:textSize="18sp"
                             android:textColor="@color/font_title" />
 
                 </LinearLayout>
@@ -90,7 +90,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/font_title"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:text="Price: "/>
 
                     <TextView
@@ -98,10 +98,19 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/font_title"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:text="Free"/>
 
                 </LinearLayout>
+
+                <!--<TextView-->
+                    <!--android:id="@+id/fields_label"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginTop="8dp"-->
+                    <!--android:textColor="@color/font_title"-->
+                    <!--android:textSize="18sp"-->
+                    <!--android:text="Fields (* required)"/>-->
 
                 <LinearLayout
                         android:id="@+id/custom_properties_container"

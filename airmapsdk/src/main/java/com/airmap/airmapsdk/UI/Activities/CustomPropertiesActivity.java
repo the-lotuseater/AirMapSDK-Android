@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
@@ -116,6 +117,8 @@ public class CustomPropertiesActivity extends AppCompatActivity {
                     data.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, permit);
                     setResult(Activity.RESULT_OK, data);
                     finish();
+                } else {
+                    Toast.makeText(CustomPropertiesActivity.this, "All required fields must be completed to proceed.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -143,7 +146,7 @@ public class CustomPropertiesActivity extends AppCompatActivity {
                 case Text:
                     TextInputLayout textInputLayout = (TextInputLayout) LayoutInflater.from(this).inflate(R.layout.custom_property_edit_text, customPropertiesLayout, false);
                     TextInputEditText editText = (TextInputEditText) textInputLayout.findViewById(R.id.edit_text);
-                    textInputLayout.setHint(property.getLabel());
+                    textInputLayout.setHint(property.getLabel() + (property.isRequired() && property.getLabel() != null && !property.getLabel().toLowerCase().contains("require") ? "*" : ""));
                     if (property.getValue() != null) { //Will populate with data if it exists
                         editText.setText(property.getValue());
                     }
