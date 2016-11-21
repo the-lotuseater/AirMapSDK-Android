@@ -28,6 +28,7 @@ public class AirMapAvailablePermit implements Serializable, AirMapBaseModel {
     private boolean singleUse;
     private int validFor; //A permit either has validUntil or validFor, but NOT both
     private Date validUntil;
+    private double price;
     private List<AirMapPilotPermitCustomProperty> customProperties;
 
     public AirMapAvailablePermit(JSONObject permitJson) {
@@ -45,6 +46,7 @@ public class AirMapAvailablePermit implements Serializable, AirMapBaseModel {
             setName(json.optString("name"));
             setDescription(json.optString("description"));
             setSingleUse(json.optBoolean("single_use"));
+            setPrice(json.optDouble("price", 0));
             //Either validFor or validUntil will be set, but not both
             if (json.has("valid_until")) {
                 setValidUntil(Utils.getDateFromIso8601String(json.optString("valid_until")));
@@ -169,6 +171,15 @@ public class AirMapAvailablePermit implements Serializable, AirMapBaseModel {
     public AirMapAvailablePermit setCustomProperties(List<AirMapPilotPermitCustomProperty> customProperties) {
         this.customProperties = customProperties;
         return this;
+    }
+
+    public AirMapAvailablePermit setPrice(double price) {
+        this.price = price;
+        return this;
+    }
+
+    public double getPrice() {
+        return price;
     }
 
     @Override

@@ -60,6 +60,7 @@ public class CustomPropertiesActivity extends AppCompatActivity {
                             permit = response.get(0);
                             customProperties = permit.getCustomProperties();
                             initializeCustomProperties();
+                            initializeViews();
                         }
                         hideProgressBar();
                     }
@@ -85,18 +86,22 @@ public class CustomPropertiesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TextView descriptionTextView = (TextView) findViewById(R.id.description_text);
         TextView validityTextView = (TextView) findViewById(R.id.validity);
-//        TextView priceTextView = (TextView) findViewById(R.id.price);
+        TextView priceTextView = (TextView) findViewById(R.id.price);
         customPropertiesLayout = (LinearLayout) findViewById(R.id.custom_properties_container);
         Button selectPermitButton = (Button) findViewById(R.id.select_permit_button);
 
         progressBarContainer = (FrameLayout) findViewById(R.id.progress_bar_container);
 
         descriptionTextView.setText(permit.getDescription());
-//        priceTextView.setText(permit.getPrice());
+        priceTextView.setText(permit.getPrice() == 0 ? getString(R.string.free) : getString(R.string.price, String.format("%.2f", permit.getPrice())));
         if (permit.isSingleUse()) {
             validityTextView.setText(R.string.single_use);
         } else if (permit.getValidFor() > 0) {
-            validityTextView.setText(String.format(Locale.US, "%d minutes", permit.getValidFor()));
+            if (permit.getValidFor() >= 60) {
+                validityTextView.setText(String.format(Locale.US, "%d hours", permit.getValidFor() / 60));
+            } else {
+                validityTextView.setText(String.format(Locale.US, "%d minutes", permit.getValidFor()));
+            }
         } else if (permit.getValidUntil() != null) {
             SimpleDateFormat format = new SimpleDateFormat("M/d/yy h:mm a", Locale.US);
             validityTextView.setText(format.format(permit.getValidUntil()));
