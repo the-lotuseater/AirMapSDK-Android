@@ -93,13 +93,13 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         // add Other Available Permits
         if (!otherAvailablePermits.isEmpty()) {
-            permitsAndHeadersList.add(new Header("Other Available Permits"));
+            permitsAndHeadersList.add(new Header("Available Permits"));
             permitsAndHeadersList.addAll(otherAvailablePermits);
         }
 
         // add Non-Available Permits header and section
         if (!nonAvailablePermits.isEmpty()) {
-            permitsAndHeadersList.add(new Header("Non-Available Permits"));
+            permitsAndHeadersList.add(new Header("Unavailable Permits"));
             permitsAndHeadersList.addAll(nonAvailablePermits);
         }
     }
@@ -129,7 +129,7 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (viewHolder instanceof InstructionsViewHolder) {
             final InstructionsViewHolder holder = (InstructionsViewHolder) viewHolder;
             holder.titleTextView.setText(R.string.select_a_permit_title);
-            holder.descriptionTextView.setText(R.string.select_a_permit_description);
+            holder.descriptionTextView.setText(applicablePermitIds.size() == 1 ? R.string.select_a_permit_description : R.string.select_a_permit_description_multiple);
         } else if (viewHolder instanceof HeaderViewHolder) {
             final HeaderViewHolder holder = (HeaderViewHolder) viewHolder;
             holder.titleTextView.setText(((Header) getItem(position)).name);

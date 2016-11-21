@@ -47,8 +47,11 @@
     <string name="permit_status">Status: %1$s</string>
     <string name="permit_expiration">Expires: %1$s</string>
     <string name="select_a_permit_title">Select a Permit</string>
-    <string name="select_a_permit_description">The following permits meet the requirements for the flight\'s operating area</string>
+    <string name="select_a_permit_description">The following permit meets the requirements for the flight\'s operating area</string>
+    <string name="select_a_permit_description_multiple">The following permits meet the requirements for the flight\'s operating area</string>
     <string name="permit_details">Permit Details</string>
     <string name="no_available_permits_for_flight">No single permit satisfies this flight\'s operating area. </string>
     <string name="faq">FAQ</string>
+    <string name="free">Free</string>
+    <string name="price">$%1$s</string>
 </resources>

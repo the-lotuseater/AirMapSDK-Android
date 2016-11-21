@@ -10,7 +10,7 @@
         android:id="@+id/title_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:textColor="@color/font_title"
         android:textStyle="bold" />
 
@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:paddingLeft="12dp"
         android:paddingRight="12dp" />
 
