@@ -20,7 +20,7 @@
             <com.mapbox.mapboxsdk.maps.MapView
                     android:id="@+id/airmap_map"
                     android:layout_width="match_parent"
-                    android:layout_height="175dp"
+                    android:layout_height="176dp"
                     android:layout_marginBottom="8dp"
                     app:rotate_enabled="false"
                     app:tilt_enabled="false"

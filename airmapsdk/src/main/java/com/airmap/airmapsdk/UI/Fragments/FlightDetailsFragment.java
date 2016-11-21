@@ -59,6 +59,7 @@ import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.Polygon;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -300,6 +301,15 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                         }
                         radiusValueTextView.setText(getBufferPresets()[progress].label);
                         mListener.getFlight().setBuffer(getBufferPresets()[radiusSeekBar.getProgress()].value.doubleValue());
+
+                        // zoom in/out as radius changes
+                        if (getBufferPresets()[progress].value.doubleValue() > 750) {
+                            map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(map.getCameraPosition().target).zoom(12.5).build()));
+                        } else if (getBufferPresets()[progress].value.doubleValue() > 380) {
+                            map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(map.getCameraPosition().target).zoom(13).build()));
+                        } else {
+                            map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(map.getCameraPosition().target).zoom(14).build()));
+                        }
                     }
                 });
                 radiusSeekBar.setMax(getBufferPresets().length - 1);
@@ -488,30 +498,27 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             @Override
             public void onSuccess(AirMapStatus airMapStatus) {
                 latestStatus = airMapStatus;
+                drawRadiusPolygon();
+
                 List<AirMapStatusAdvisory> advisories = airMapStatus.getAdvisories();
-                boolean requiresPermitOrNotice = false;
+                boolean requiresNotice = false;
+                boolean requiresPermit = false;
                 for (AirMapStatusAdvisory advisory : advisories) {
                     if (advisory.getAvailablePermits() != null && !advisory.getAvailablePermits().isEmpty()) {
-                        requiresPermitOrNotice = true;
+                        requiresPermit = true;
                         break;
                     } else if (advisory.getRequirements() != null && advisory.getRequirements().getNotice() != null) {
-                        requiresPermitOrNotice = true;
+                        requiresNotice = true;
                         break;
                     }
                 }
 
-                updateButtonText(requiresPermitOrNotice ? R.string.airmap_next : R.string.airmap_save);
-                // disable next if status is red
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        saveNextButton.setEnabled(latestStatus.getAdvisoryColor() != AirMapStatus.StatusColor.Red);
-                    }
-                });
+                updateButtonText(requiresPermit || requiresNotice ? R.string.airmap_next : R.string.airmap_save);
 
                 // draw polygons for advisories with permits (green if user has permit, yellow otherwise)
                 if (map != null && (airMapStatus.getAdvisories() != null && !airMapStatus.getAdvisories().isEmpty()) || airMapStatus.getAdvisoryColor() == AirMapStatus.StatusColor.Red)  {
-                    Map<String, AirMapStatusAdvisory> advisoryMap = new HashMap<>();
+                    final Map<String, AirMapStatusAdvisory> advisoryMap = new HashMap<>();
+
                     for (AirMapStatusAdvisory advisory : airMapStatus.getAdvisories()) {
                         if (advisory.getAvailablePermits() != null && !advisory.getAvailablePermits().isEmpty()) {
                             advisoryMap.put(advisory.getId(), advisory);
@@ -523,15 +530,30 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                     if (!permitAdvisories.keySet().containsAll(advisoryMap.keySet())) {
                         updatePermitPolygons(advisoryMap);
                     } else {
-                        List<String> keySet = new ArrayList<>(permitAdvisories.keySet());
-                        for (String key : keySet) {
-                            if (!advisoryMap.containsKey(key)) {
-                                permitAdvisories.remove(key);
-                                Polygon polygon = polygonMap.remove(key);
-                                map.removePolygon(polygon);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                List<String> keySet = new ArrayList<>(permitAdvisories.keySet());
+                                for (String key : keySet) {
+                                    if (!advisoryMap.containsKey(key)) {
+                                        permitAdvisories.remove(key);
+                                        Polygon polygon = polygonMap.remove(key);
+                                        map.removePolygon(polygon);
+                                    }
+                                }
                             }
-                        }
+                        });
                     }
+                }
+
+                // tell the user if conflicting permits
+                if (requiresPermit && (latestStatus.getApplicablePermits() == null || latestStatus.getApplicablePermits().isEmpty())) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), "Flight area cannot overlap with conflicting permit requirements", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
 
@@ -570,14 +592,19 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                     AirMap.getAuthenticatedPilotPermits(new AirMapCallback<List<AirMapPilotPermit>>() {
                         @Override
                         public void onSuccess(List<AirMapPilotPermit> pilotPermitsResponse) {
-                            Set<String> pilotPermitIds = new HashSet<>();
+                            final Map<String,AirMapPilotPermit> pilotPermitIds = new HashMap<>();
                             if (pilotPermitsResponse != null) {
                                 for (AirMapPilotPermit pilotPermit : pilotPermitsResponse) {
-                                    pilotPermitIds.add(pilotPermit.getShortDetails().getPermitId());
+                                    pilotPermitIds.put(pilotPermit.getShortDetails().getPermitId(), pilotPermit);
                                 }
                             }
 
-                            drawPolygons(airspacesResponse, advisoryMap, pilotPermitIds);
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    drawPolygons(airspacesResponse, advisoryMap, pilotPermitIds);
+                                }
+                            });
                         }
 
                         @Override
@@ -586,7 +613,12 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                         }
                     });
                 } else {
-                    drawPolygons(airspacesResponse, advisoryMap, null);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            drawPolygons(airspacesResponse, advisoryMap, null);
+                        }
+                    });
                 }
             }
 
@@ -597,7 +629,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         });
     }
 
-    private void drawPolygons(final List<AirMapAirspace> airspaces, final Map<String,AirMapStatusAdvisory> advisoryMap, Set<String> pilotPermitIds) {
+    private void drawPolygons(final List<AirMapAirspace> airspaces, final Map<String,AirMapStatusAdvisory> advisoryMap, Map<String, AirMapPilotPermit> pilotPermitIds) {
         Map<String,AirMapStatusAdvisory> updatedMap = new HashMap<>();
         Map<String,Polygon> polygonsToRemove = new HashMap<>(polygonMap);
 
@@ -612,7 +644,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             AirMapStatus.StatusColor statusColor = AirMapStatus.StatusColor.Yellow;
             if (pilotPermitIds != null) {
                 for (AirMapAvailablePermit availablePermit : advisory.getAvailablePermits()) {
-                    if (pilotPermitIds.contains(availablePermit.getId())) {
+                    AirMapPilotPermit pilotPermit = pilotPermitIds.get(availablePermit.getId());
+                    if (pilotPermit != null && (pilotPermit.getExpiresAt() == null || pilotPermit.getExpiresAt().after(new Date()))) {
                         statusColor = AirMapStatus.StatusColor.Green;
                         break;
                     }
@@ -656,12 +689,12 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             switch (statusColor) {
                 case Red: {
                     color = getResources().getColor(R.color.airmap_red);
-                    polygonOptions.alpha(0.8f);
+                    polygonOptions.alpha(0.75f);
                     break;
                 }
                 case Yellow: {
                     color = getResources().getColor(R.color.airmap_yellow);
-                    polygonOptions.alpha(0.8f);
+                    polygonOptions.alpha(0.6f);
                     break;
                 }
                 default:
@@ -680,16 +713,17 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void drawRadiusPolygon() {
-        if (radiusPolygon == null) {
-            return;
-        }
-
         //FIXME: this is a hack to change the z-index of the radius polygon
         //FIXME: if its not delayed on UI thread it doesn't work :(
         new Handler(getActivity().getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                map.removePolygon(radiusPolygon.getPolygon());
+                if (radiusPolygon != null) {
+                    map.removePolygon(radiusPolygon.getPolygon());
+                }
+
+                int color = getStatusCircleColor(latestStatus, getContext());
+                radiusPolygon = getCirclePolygon(getBufferPresets()[radiusSeekBar.getProgress()].value.doubleValue(), mListener.getFlight().getCoordinate(), color);
                 map.addPolygon(radiusPolygon);
             }
         }, 10);
