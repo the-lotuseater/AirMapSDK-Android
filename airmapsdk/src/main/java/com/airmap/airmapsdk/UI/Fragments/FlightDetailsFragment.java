@@ -506,10 +506,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 for (AirMapStatusAdvisory advisory : advisories) {
                     if (advisory.getAvailablePermits() != null && !advisory.getAvailablePermits().isEmpty()) {
                         requiresPermit = true;
-                        break;
                     } else if (advisory.getRequirements() != null && advisory.getRequirements().getNotice() != null) {
                         requiresNotice = true;
-                        break;
                     }
                 }
 
