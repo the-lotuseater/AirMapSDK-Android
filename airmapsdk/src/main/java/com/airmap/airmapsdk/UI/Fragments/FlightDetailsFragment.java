@@ -723,7 +723,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 }
 
                 int color = getStatusCircleColor(latestStatus, getContext());
-                radiusPolygon = getCirclePolygon(getBufferPresets()[radiusSeekBar.getProgress()].value.doubleValue(), mListener.getFlight().getCoordinate(), color);
+                radiusPolygon = getCirclePolygon(getBufferPresets()[Math.min(radiusSeekBar.getProgress(), getBufferPresets().length - 1)].value.doubleValue(), mListener.getFlight().getCoordinate(), color);
                 map.addPolygon(radiusPolygon);
             }
         }, 10);
