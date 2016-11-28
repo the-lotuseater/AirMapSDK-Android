@@ -142,6 +142,10 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         AirMap.getPilot(new AirMapCallback<AirMapPilot>() {
             @Override
             public void onSuccess(final AirMapPilot response) {
+                if (!isFragmentActive()) {
+                    return;
+                }
+
                 if (mListener != null) { //Since in a callback, mListener might have been destroy
                     mListener.setPilot(response);
                 }
@@ -411,6 +415,10 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         AirMap.getAircraft(new AirMapCallback<List<AirMapAircraft>>() {
             @Override
             public void onSuccess(List<AirMapAircraft> response) {
+                if (!isFragmentActive()) {
+                    return;
+                }
+
                 if (response == null) {
                     response = new ArrayList<>();
                 }
@@ -451,12 +459,21 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         AirMap.createFlight(mListener.getFlight(), new AirMapCallback<AirMapFlight>() {
             @Override
             public void onSuccess(AirMapFlight response) {
+                if (!isFragmentActive()) {
+                    return;
+                }
+
                 hideProgressBar();
                 mListener.flightDetailsSaveClicked(response);
             }
 
             @Override
             public void onError(AirMapException e) {
+                if (!isFragmentActive()) {
+                    return;
+                }
+
+
                 hideProgressBar();
                 saveNextButton.post(new Runnable() {
                     @Override
@@ -474,6 +491,10 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         AirMap.checkCoordinate(flight.getCoordinate(), flight.getBuffer(), null, null, true, flight.getStartsAt(), new AirMapCallback<AirMapStatus>() {
             @Override
             public void onSuccess(AirMapStatus response) {
+                if (!isFragmentActive()) {
+                    return;
+                }
+
                 hideProgressBar();
                 latestStatus = response;
                 mListener.flightDetailsNextClicked(response);
@@ -481,6 +502,10 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
             @Override
             public void onError(final AirMapException e) {
+                if (!isFragmentActive()) {
+                    return;
+                }
+
                 hideProgressBar();
                 saveNextButton.post(new Runnable() {
                     @Override
@@ -497,6 +522,10 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         AirMap.checkCoordinate(flight.getCoordinate(), flight.getBuffer(), null, null, false, flight.getStartsAt(), new AirMapCallback<AirMapStatus>() {
             @Override
             public void onSuccess(AirMapStatus airMapStatus) {
+                if (!isFragmentActive()) {
+                    return;
+                }
+
                 latestStatus = airMapStatus;
                 drawRadiusPolygon();
 
@@ -557,6 +586,10 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
             @Override
             public void onError(AirMapException e) {
+                if (!isFragmentActive()) {
+                    return;
+                }
+
                 updateButtonText(R.string.airmap_save);
             }
         });
@@ -590,6 +623,10 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                     AirMap.getAuthenticatedPilotPermits(new AirMapCallback<List<AirMapPilotPermit>>() {
                         @Override
                         public void onSuccess(List<AirMapPilotPermit> pilotPermitsResponse) {
+                            if (!isFragmentActive()) {
+                                return;
+                            }
+
                             final Map<String,AirMapPilotPermit> pilotPermitIds = new HashMap<>();
                             if (pilotPermitsResponse != null) {
                                 for (AirMapPilotPermit pilotPermit : pilotPermitsResponse) {
@@ -611,6 +648,10 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                         }
                     });
                 } else {
+                    if (!isFragmentActive()) {
+                        return;
+                    }
+
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -628,6 +669,10 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void drawPolygons(final List<AirMapAirspace> airspaces, final Map<String,AirMapStatusAdvisory> advisoryMap, Map<String, AirMapPilotPermit> pilotPermitIds) {
+        if (map == null) {
+            return;
+        }
+
         Map<String,AirMapStatusAdvisory> updatedMap = new HashMap<>();
         Map<String,Polygon> polygonsToRemove = new HashMap<>(polygonMap);
 
@@ -748,6 +793,10 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+    }
+
+    protected boolean isFragmentActive() {
+        return getActivity() != null && !getActivity().isFinishing() && isResumed();
     }
 
     @Override
