@@ -50,6 +50,7 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'org.bitbucket.b_c:jose4j:0.5.1'
     compile 'com.google.protobuf:protobuf-java:2.6.1'
+    compile 'joda-time:joda-time:2.9.4'
     compile('com.mapbox.mapboxsdk:mapbox-android-sdk:4.1.1@aar') { transitive = true }
     compile('org.eclipse.paho:org.eclipse.paho.android.service:1.1.1-20160907.104533-5@aar') { exclude module: 'support-v4' }
 }

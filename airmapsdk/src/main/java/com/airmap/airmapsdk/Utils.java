@@ -14,6 +14,10 @@ import com.airmap.airmapsdk.networking.services.AirMap;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -71,9 +75,9 @@ public class Utils {
         if (date == null) {
             return null;
         }
-        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return isoFormat.format(date);
+
+        DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
+        return dateTimeFormatter.print(new DateTime(date));
     }
 
     /**
@@ -85,11 +89,12 @@ public class Utils {
         if (TextUtils.isEmpty(iso8601)) {
             return null;
         }
-        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault());
-        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
         try {
-            return isoFormat.parse(iso8601);
-        } catch (ParseException e) {
+            DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
+            DateTime dateTime = dateTimeFormatter.parseDateTime(iso8601);
+            return dateTime.toDate();
+        } catch (UnsupportedOperationException | IllegalArgumentException e) {
             AirMapLog.e("AirMap Utils", "Error parsing date: " + e.getMessage());
             e.printStackTrace();
         }
