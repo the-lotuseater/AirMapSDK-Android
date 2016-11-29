@@ -54,7 +54,17 @@ public class CreateFlightActivity extends AppCompatActivity implements
     public static final String COORDINATE = "coordinate";
     public static final String KEY_VALUE_EXTRAS = "keyValueExtras";
     public static final String MAPBOX_API_KEY = "mapbox_api_key";
+
     public static final String FLIGHT = "flight";
+    public static final String FLIGHT_STATUS = "flight_status";
+    public static final String PILOT = "pilot";
+    public static final String NOTICES = "notices";
+    public static final String STATUS_PERMITS_LIST = "status_permits_list";
+    public static final String PERMITS_FROM_WALLET = "permits_from_wallet";
+    public static final String SELECTED_PERMITS = "selected_permits";
+    public static final String PERMITS_TO_APPLY_FOR = "permits_to_apply_for";
+    public static final String PERMITS_TO_REVIEW = "permits_to_review";
+
     private static final int REQUEST_DECISION_FLOW = 1;
     public static final int REQUEST_CUSTOM_PROPERTIES = 2;
 
@@ -78,12 +88,6 @@ public class CreateFlightActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupFlight(savedInstanceState);
-        MapboxAccountManager.start(this, Utils.getMapboxApiKey());
-        setContentView(R.layout.airmap_activity_create_flight);
-        initializeViews();
-        setupToolbar();
-        setupViewPager();
 
         notices = new ArrayList<>();
         statusPermitsList = new ArrayList<>();
@@ -91,12 +95,51 @@ public class CreateFlightActivity extends AppCompatActivity implements
         selectedPermits = new ArrayList<>();
         permitsToApplyFor = new ArrayList<>();
         permitsToShowInReview = new ArrayList<>();
+
+        setupFlight(savedInstanceState);
+        MapboxAccountManager.start(this, Utils.getMapboxApiKey());
+        setContentView(R.layout.airmap_activity_create_flight);
+        initializeViews();
+        setupToolbar();
+        setupViewPager();
     }
 
     private void setupFlight(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             flight = (AirMapFlight) savedInstanceState.getSerializable(FLIGHT);
             currentPage = savedInstanceState.getInt("index");
+
+            if (savedInstanceState.containsKey(FLIGHT_STATUS)) {
+                flightStatus = (AirMapStatus) savedInstanceState.getSerializable(FLIGHT_STATUS);
+            }
+
+            if (savedInstanceState.containsKey(PILOT)) {
+                pilot = (AirMapPilot) savedInstanceState.getSerializable(PILOT);
+            }
+
+            if (savedInstanceState.containsKey(NOTICES)) {
+                notices = (ArrayList<AirMapStatusRequirementNotice>) savedInstanceState.getSerializable(NOTICES);
+            }
+
+            if (savedInstanceState.containsKey(STATUS_PERMITS_LIST)) {
+                statusPermitsList = (ArrayList<AirMapStatusPermits>) savedInstanceState.getSerializable(STATUS_PERMITS_LIST);
+            }
+
+            if (savedInstanceState.containsKey(PERMITS_FROM_WALLET)) {
+                permitsFromWallet = (ArrayList<AirMapPilotPermit>) savedInstanceState.getSerializable(PERMITS_FROM_WALLET);
+            }
+
+            if (savedInstanceState.containsKey(SELECTED_PERMITS)) {
+                selectedPermits = (ArrayList<AirMapPilotPermit>) savedInstanceState.getSerializable(SELECTED_PERMITS);
+            }
+
+            if (savedInstanceState.containsKey(PERMITS_TO_APPLY_FOR)) {
+                permitsToApplyFor = (ArrayList<AirMapAvailablePermit>) savedInstanceState.getSerializable(PERMITS_TO_APPLY_FOR);
+            }
+
+            if (savedInstanceState.containsKey(PERMITS_TO_REVIEW)) {
+                permitsToShowInReview = (ArrayList<AirMapAvailablePermit>) savedInstanceState.getSerializable(PERMITS_TO_REVIEW);
+            }
         } else {
             //Initialize Flight with default values
             Coordinate coordinate = (Coordinate) getIntent().getSerializableExtra(COORDINATE);
@@ -471,6 +514,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         flight = (AirMapFlight) savedInstanceState.getSerializable(FLIGHT);
+        flightStatus = (AirMapStatus) savedInstanceState.getSerializable(FLIGHT_STATUS);
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -479,6 +523,40 @@ public class CreateFlightActivity extends AppCompatActivity implements
         outState.putSerializable(FLIGHT, flight);
         outState.putInt("index", currentPage);
         getIntent().putExtra(FLIGHT, flight);
+
+        if (flightStatus != null) {
+            getIntent().putExtra(FLIGHT_STATUS, flightStatus);
+            outState.putSerializable(FLIGHT_STATUS, flightStatus);
+        }
+
+        if (pilot != null) {
+            outState.putSerializable(PILOT, pilot);
+        }
+
+        if (notices != null) {
+            outState.putSerializable(NOTICES, notices);
+        }
+
+        if (statusPermitsList != null) {
+            outState.putSerializable(STATUS_PERMITS_LIST, statusPermitsList);
+        }
+
+        if (permitsFromWallet != null) {
+            outState.putSerializable(PERMITS_FROM_WALLET, permitsFromWallet);
+        }
+
+        if (selectedPermits != null) {
+            outState.putSerializable(SELECTED_PERMITS, selectedPermits);
+        }
+
+        if (permitsToApplyFor != null) {
+            outState.putSerializable(PERMITS_TO_APPLY_FOR, permitsToApplyFor);
+        }
+
+        if (permitsToShowInReview != null) {
+            outState.putSerializable(PERMITS_TO_REVIEW, permitsToShowInReview);
+        }
+
         super.onSaveInstanceState(outState);
     }
 

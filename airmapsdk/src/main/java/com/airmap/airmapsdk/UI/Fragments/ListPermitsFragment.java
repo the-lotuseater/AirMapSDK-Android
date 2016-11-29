@@ -73,6 +73,14 @@ public class ListPermitsFragment extends Fragment {
     private void setupRecyclerView() {
         if (adapter == null) {
             adapter = new PermitsAdapter(mListener.getStatusPermits(), mListener.getPermitsFromWallet(), this, mListener);
+
+            if (!mListener.getPermitsToShowInReview().isEmpty()) {
+                for (AirMapAvailablePermit selectedPermit : mListener.getPermitsToShowInReview()) {
+                    adapter.addEnabledPermit(selectedPermit);
+                    adapter.addSelectedPermit(selectedPermit);
+                }
+            }
+
             recyclerView.setAdapter(adapter);
         }
     }
@@ -152,7 +160,11 @@ public class ListPermitsFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         ArrayList<AirMapStatusPermits> getStatusPermits();
 
+        ArrayList<AirMapPilotPermit> getSelectedPermits();
+
         ArrayList<AirMapPilotPermit> getPermitsFromWallet();
+
+        ArrayList<AirMapAvailablePermit> getPermitsToShowInReview();
 
         void showDecisionFlow(AirMapStatusPermits permit);
 
