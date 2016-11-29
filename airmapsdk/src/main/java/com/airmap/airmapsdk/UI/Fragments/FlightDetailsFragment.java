@@ -527,6 +527,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 }
 
                 latestStatus = airMapStatus;
+                hideProgressBar();
+
                 drawRadiusPolygon();
 
                 List<AirMapStatusAdvisory> advisories = airMapStatus.getAdvisories();
@@ -756,6 +758,10 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void drawRadiusPolygon() {
+        if (map == null) {
+            return;
+        }
+
         //FIXME: this is a hack to change the z-index of the radius polygon
         //FIXME: if its not delayed on UI thread it doesn't work :(
         new Handler(getActivity().getMainLooper()).postDelayed(new Runnable() {
