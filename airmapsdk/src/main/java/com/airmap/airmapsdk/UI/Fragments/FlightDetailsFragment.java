@@ -581,7 +581,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                                     if (!advisoryMap.containsKey(key)) {
                                         permitAdvisories.remove(key);
                                         Polygon polygon = polygonMap.remove(key);
-                                        map.removePolygon(polygon);
+                                        if (polygon != null) {
+                                            map.removePolygon(polygon);
+                                        }
                                     }
                                 }
                             }
