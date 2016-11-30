@@ -390,6 +390,13 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                 flightDate.set(year, monthOfYear, dayOfMonth, hourOfDay, minute);
+
+                                // don't allow the user to pick a time in the past
+                                if (flightDate.getTime().before(new Date())) {
+                                    Toast.makeText(getActivity(), "You can only schedule flights for the present or future", Toast.LENGTH_SHORT).show();
+                                    flightDate.setTime(new Date());
+                                }
+
                                 mListener.getFlight().setStartsAt(flightDate.getTime());
                                 Date correctedEndTime = new Date(flightDate.getTime().getTime() + getDurationPresets()[durationSeekBar.getProgress()].value.longValue());
                                 mListener.getFlight().setEndsAt(correctedEndTime);
