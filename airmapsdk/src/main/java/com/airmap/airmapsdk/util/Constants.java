@@ -13,6 +13,10 @@ public class Constants {
 
     public static final String FAQ_PERMITS_URL = "https://cdn.airmap.io/static/webviews/faq.html#permit-what";
 
+    public static final String MEASUREMENT_SYSTEM = "measurement_system";
+    public static final String IMPERIAL_SYSTEM = "imperial_system";
+    public static final String METRIC_SYSTEM = "metric_system";
+
     public static final int CUSTOM_PROPERTIES_REQUEST_CODE = 112;
 
 }

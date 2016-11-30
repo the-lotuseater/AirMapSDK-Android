@@ -2,6 +2,7 @@ package com.airmap.airmapsdk;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -11,6 +12,7 @@ import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.util.Constants;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
@@ -43,6 +45,10 @@ public class Utils {
 
     public static Float dpToPixels(Context context, int dp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+    }
+
+    public static boolean useMetric(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.MEASUREMENT_SYSTEM, Constants.IMPERIAL_SYSTEM).equals(Constants.METRIC_SYSTEM);
     }
 
     public static String titleCase(String s) {
@@ -155,6 +161,19 @@ public class Utils {
     }
 
     /**
+     * @return Default altitude presets when creating a flight
+     */
+    public static StringNumberPair[] getAltitudePresetsMetric() {
+        return new StringNumberPair[]{
+                new StringNumberPair("15m", 20),
+                new StringNumberPair("30m", 30),
+                new StringNumberPair("60m", 60),
+                new StringNumberPair("90m", 90),
+                new StringNumberPair("120m", 120)
+        };
+    }
+
+    /**
      * @return Default buffer presets when creating a flight
      */
     public static StringNumberPair[] getBufferPresets() {
@@ -184,6 +203,37 @@ public class Utils {
                 new StringNumberPair("2000 ft", feetToMeters(2000)),
                 new StringNumberPair("2500 ft", feetToMeters(2500)),
                 new StringNumberPair("3000 ft", feetToMeters(3000))
+        };
+    }
+
+    /**
+     * @return Default buffer presets when creating a flight
+     */
+    public static StringNumberPair[] getBufferPresetsMetric() {
+        return new StringNumberPair[]{
+                new StringNumberPair("10m", 10),
+                new StringNumberPair("15m", 15),
+                new StringNumberPair("20m", 20),
+                new StringNumberPair("25m", 25),
+                new StringNumberPair("30m", 30),
+                new StringNumberPair("50m", 50),
+                new StringNumberPair("60m", 60),
+                new StringNumberPair("75m", 75),
+                new StringNumberPair("100m", 100),
+                new StringNumberPair("125m", 125),
+                new StringNumberPair("150m", 150),
+                new StringNumberPair("175m", 175),
+                new StringNumberPair("200m", 200),
+                new StringNumberPair("225m", 225),
+                new StringNumberPair("250m", 250),
+                new StringNumberPair("275m", 275),
+                new StringNumberPair("300m", 300),
+                new StringNumberPair("350m", 350),
+                new StringNumberPair("400m", 400),
+                new StringNumberPair("500m", 500),
+                new StringNumberPair("600m", 600),
+                new StringNumberPair("750m", 750),
+                new StringNumberPair("1000m", 1000)
         };
     }
 

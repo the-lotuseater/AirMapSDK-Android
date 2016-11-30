@@ -1,6 +1,8 @@
 package com.airmap.airmapsdk.ui.fragments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -8,8 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.airmap.airmapsdk.Utils;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.util.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,6 +29,8 @@ public class ReviewDetailsFragment extends Fragment {
     private static final String ARG_FLIGHT = "flight";
 
     private AirMapFlight flight;
+    private boolean useMetric;
+
     private TextView radiusTextView;
     private TextView altitudeTextView;
     private TextView startsAtTextView;
@@ -47,9 +53,11 @@ public class ReviewDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        flight = (AirMapFlight) getArguments().getSerializable(ARG_FLIGHT);
+        useMetric = Utils.useMetric(getActivity());
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_review_details, container, false);
-        this.flight = (AirMapFlight) getArguments().getSerializable(ARG_FLIGHT);
         initializeViews(view);
         populateViews();
         return view;
@@ -66,8 +74,16 @@ public class ReviewDetailsFragment extends Fragment {
 
     private void populateViews() {
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
-        radiusTextView.setText(String.format(Locale.US, "%d ft", Math.round(metersToFeet(flight.getBuffer()))));
-        altitudeTextView.setText(String.format(Locale.US, "%d ft", Math.round(metersToFeet(flight.getMaxAltitude()))));
+
+        String radius = useMetric ? String.format(Locale.US, "%d m", Math.round(flight.getBuffer())) :
+                String.format(Locale.US, "%d ft", Math.round(metersToFeet(flight.getBuffer())));
+
+        radiusTextView.setText(radius);
+
+        String altitude = useMetric ? String.format(Locale.US, "%d m", Math.round(flight.getMaxAltitude())) :
+                String.format(Locale.US, "%d ft", Math.round(metersToFeet(flight.getMaxAltitude())));
+
+        altitudeTextView.setText(altitude);
         if (flight.getStartsAt() != null) {
             startsAtTextView.setText(format.format(flight.getStartsAt()));
         } else {
