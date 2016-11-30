@@ -38,6 +38,7 @@ import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -205,7 +206,18 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     public void onMapReady(MapboxMap mapboxMap) {
         map = mapboxMap;
         LatLng position = new LatLng(mListener.getFlight().getCoordinate().getLatitude(), mListener.getFlight().getCoordinate().getLongitude());
-        map.setCameraPosition(new CameraPosition.Builder().target(position).zoom(14).build());
+
+        // zoom in/out as radius changes
+        if (mListener.getFlight().getBuffer() > 750) {
+            map.setCameraPosition(new CameraPosition.Builder().target(position).zoom(12.5).build());
+        } else if (mListener.getFlight().getBuffer() > 380) {
+            map.setCameraPosition(new CameraPosition.Builder().target(position).zoom(13).build());
+        } else if (mListener.getFlight().getBuffer() > 100) {
+            map.setCameraPosition(new CameraPosition.Builder().target(position).zoom(14).build());
+        } else {
+            map.setCameraPosition(new CameraPosition.Builder().target(position).zoom(15).build());
+        }
+
         Icon icon = IconFactory.getInstance(getContext()).fromResource(R.drawable.airmap_flight_marker);
         map.addMarker(new MarkerOptions().position(position).icon(icon));
         map.addPolygon(Utils.getCirclePolygon(mListener.getFlight().getBuffer(), mListener.getFlight().getCoordinate(), getStatusCircleColor(mListener.getFlightStatus(), getContext())));
