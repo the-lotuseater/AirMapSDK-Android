@@ -56,7 +56,7 @@ class BaseService {
     protected static final String pilotVerifyUrl = pilotByIdUrl + "phone/verify_token/"; //Replace %s with id using String.format
 
     //Status
-    protected static final String statusVersion = DEBUG ? Utils.getDebugUrl() : "v2/";
+    protected static final String statusVersion = DEBUG ? "stage/" : "alpha/";
     protected static final String statusBaseUrl = baseUrl + "status/" + statusVersion;
     protected static final String statusPointUrl = statusBaseUrl + "point/";
     protected static final String statusPathUrl = statusBaseUrl + "path/";

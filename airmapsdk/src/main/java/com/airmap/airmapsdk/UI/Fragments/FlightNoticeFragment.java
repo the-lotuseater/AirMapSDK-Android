@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
+import com.airmap.airmapsdk.models.permits.AirMapPermitIssuer;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapStatusRequirementNotice;
@@ -25,20 +28,23 @@ import com.airmap.airmapsdk.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class FlightNoticeFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
     private SwitchCompat submitNoticeSwitch;
-    private ListView digitalNoticeList;
-    private TextView notDigitalLabel;
-    private ListView notDigitalNoticeList;
+    private ListView digitalNoticeListView;
+    private TextView notDigitalLabelTextView;
+    private ListView notDigitalNoticeListView;
     private Button nextButton;
+
     private List<AirMapStatusRequirementNotice> digitalNotices;
-    private List<String> digitalNoticeNames;
+    private Set<String> digitalNoticeNames;
     private List<AirMapStatusRequirementNotice> notDigitalNotices;
     private List<String> notDigitalNoticeNames;
 
@@ -80,24 +86,37 @@ public class FlightNoticeFragment extends Fragment {
 
     private void initializeViews(View view) {
         submitNoticeSwitch = (SwitchCompat) view.findViewById(R.id.submit_notice_switch);
-        digitalNoticeList = (ListView) view.findViewById(R.id.digital_notice_list);
-        notDigitalLabel = (TextView) view.findViewById(R.id.not_digital_label);
-        notDigitalNoticeList = (ListView) view.findViewById(R.id.not_digital_list);
+        digitalNoticeListView = (ListView) view.findViewById(R.id.digital_notice_list);
+        notDigitalLabelTextView = (TextView) view.findViewById(R.id.not_digital_label);
+        notDigitalNoticeListView = (ListView) view.findViewById(R.id.not_digital_list);
         nextButton = (Button) view.findViewById(R.id.next_button);
     }
 
     private void getNotices() {
         digitalNotices = new ArrayList<>();
-        digitalNoticeNames = new ArrayList<>();
+        digitalNoticeNames = new HashSet<>();
         notDigitalNotices = new ArrayList<>();
         notDigitalNoticeNames = new ArrayList<>();
         AirMapStatus status = mListener.getFlightStatus();
         for (AirMapStatusAdvisory advisory : status.getAdvisories()) {
             if (advisory.getRequirements() != null && advisory.getRequirements().getNotice() != null) {
                 AirMapStatusRequirementNotice notice = advisory.getRequirements().getNotice();
-                if (notice.isDigital()) {
+                if (notice.isDigital() || !TextUtils.isEmpty(advisory.getOrganizationId())) {
                     digitalNotices.add(notice);
-                    digitalNoticeNames.add(advisory.getName());
+
+                    boolean useAdvisoryName = true;
+                    if (!TextUtils.isEmpty(advisory.getOrganizationId())) {
+                        for (AirMapPermitIssuer issuer : status.getOrganizations()) {
+                            if (advisory.getOrganizationId().equals(issuer.getId())) {
+                                digitalNoticeNames.add(issuer.getName());
+                                useAdvisoryName = false;
+                            }
+                        }
+                    }
+
+                    if (useAdvisoryName) {
+                        digitalNoticeNames.add(advisory.getName());
+                    }
                 } else if (notice.isNoticeRequired()) {
                     notDigitalNotices.add(notice);
                     notDigitalNoticeNames.add(advisory.getName());
@@ -107,21 +126,25 @@ public class FlightNoticeFragment extends Fragment {
 
         // If there aren't any advisories that accept digital notice, then set notify to false
         if (digitalNotices.size() == 0) {
+            submitNoticeSwitch.setVisibility(View.GONE);
             mListener.getFlight().setNotify(false);
         }
     }
 
     private void setupDigitalNoticeList() {
-        if (digitalNoticeNames.isEmpty()) {
+        AirMapStatus status = mListener.getFlightStatus();
+        if (digitalNoticeNames.isEmpty() || !status.getApplicablePermits().isEmpty()) {
             submitNoticeSwitch.setVisibility(View.GONE);
-        } else {
-            digitalNoticeList.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, digitalNoticeNames));
+        }
+
+        if (!digitalNoticeNames.isEmpty()) {
+            digitalNoticeListView.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, new ArrayList<>(digitalNoticeNames)));
         }
     }
 
     private void setupNotDigitalNoticeList() {
         if (notDigitalNoticeNames.isEmpty()) {
-            notDigitalLabel.setVisibility(View.GONE);
+            notDigitalLabelTextView.setVisibility(View.GONE);
         } else {
             List<Map<String, String>> list = new ArrayList<>();
             for (int i = 0; i < notDigitalNotices.size(); i++) {
@@ -134,7 +157,7 @@ public class FlightNoticeFragment extends Fragment {
                 map.put("phone", number);
                 list.add(map);
             }
-            notDigitalNoticeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            notDigitalNoticeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String number = notDigitalNotices.get(position).getPhoneNumber();
@@ -144,13 +167,13 @@ public class FlightNoticeFragment extends Fragment {
                     }
                 }
             });
-            notDigitalNoticeList.setAdapter(new SimpleAdapter(getContext(), list, android.R.layout.simple_list_item_2, new String[]{"name", "phone"}, new int[]{android.R.id.text1, android.R.id.text2}));
+            notDigitalNoticeListView.setAdapter(new SimpleAdapter(getContext(), list, android.R.layout.simple_list_item_2, new String[]{"name", "phone"}, new int[]{android.R.id.text1, android.R.id.text2}));
         }
     }
 
     //If there are no digital notices or non-digital airports that need notice, go to next fragment
     private void continueToNextFragmentIfNecessary() {
-        if (notDigitalLabel.getVisibility() == View.GONE && submitNoticeSwitch.getVisibility() == View.GONE) {
+        if (notDigitalLabelTextView.getVisibility() == View.GONE && submitNoticeSwitch.getVisibility() == View.GONE) {
             onNextButton();
         }
     }

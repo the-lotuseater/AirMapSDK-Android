@@ -36,9 +36,15 @@ import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusRequirementNotice;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.Utils;
+import com.mapbox.mapboxsdk.annotations.Icon;
+import com.mapbox.mapboxsdk.annotations.IconFactory;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.MultiPoint;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
@@ -126,7 +132,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
             AirMap.applyForPermit(permitToApplyFor, new AirMapCallback<AirMapPilotPermit>() {
                 @Override
                 public void onSuccess(AirMapPilotPermit response) {
-                    mListener.getFlight().addPermitId(response.getId());
+                    mListener.getFlight().addPermitId(response.getApplicationId());
                     mListener.getPermitsToApplyFor().remove(permitToApplyFor);
                     totalPermitsObtained++;
                     if (totalPermitsObtained == totalNumberOfPermits) {
@@ -150,11 +156,20 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     }
 
     private void submitFlight() {
+        for (AirMapPilotPermit selectedPermit : mListener.getSelectedPermits()) {
+            mListener.getFlight().addPermitId(selectedPermit.getApplicationId());
+        }
+
         if (mListener.getFlight().shouldNotify()) {
             String phone = mListener.getPilot().getPhone();
             if (phone == null || phone.isEmpty() || !mListener.getPilot().getVerificationStatus().isPhone()) {
-                showPhoneDialog();
-                //the phone dialog will submit flight once verified
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //the phone dialog will submit flight once verified
+                        showPhoneDialog();
+                    }
+                });
             } else {
                 doSubmitFlight();
             }
@@ -167,7 +182,10 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     void doSubmitFlight() {
         if (mListener.getFlight().getStartsAt() != null) {
             if (mListener.getFlight().getStartsAt().before(new Date())) { //If the startsAt date is in past
-                mListener.getFlight().setStartsAt(null); //Default to current time
+                long duration = mListener.getFlight().getEndsAt().getTime() - mListener.getFlight().getStartsAt().getTime();
+                Date currentTime = new Date();
+                mListener.getFlight().setStartsAt(currentTime);
+                mListener.getFlight().setEndsAt(new Date(currentTime.getTime() + duration));
             }
         }
         AirMap.createFlight(mListener.getFlight(), new AirMapCallback<AirMapFlight>() {

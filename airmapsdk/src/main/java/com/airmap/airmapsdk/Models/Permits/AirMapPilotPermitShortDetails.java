@@ -13,7 +13,9 @@ import java.io.Serializable;
 @SuppressWarnings("unused")
 public class AirMapPilotPermitShortDetails implements Serializable, AirMapBaseModel {
 
+    private String permitId;
     private String name;
+    private String description;
     private boolean singleUse;
 
     public AirMapPilotPermitShortDetails(JSONObject detailsJson) {
@@ -26,9 +28,30 @@ public class AirMapPilotPermitShortDetails implements Serializable, AirMapBaseMo
     @Override
     public AirMapPilotPermitShortDetails constructFromJson(JSONObject json) {
         if (json != null) {
+            setPermitId(json.optString("id"));
             setName(json.optString("name"));
+            setDescription(json.optString("description"));
             setSingleUse(json.optBoolean("single_use"));
         }
+        return this;
+    }
+
+    public String getPermitId() {
+        return permitId;
+    }
+
+    public AirMapPilotPermitShortDetails setPermitId(String permitId) {
+        this.permitId = permitId;
+        return this;
+    }
+
+
+    public String getDescription() {
+        return description;
+    }
+
+    public AirMapPilotPermitShortDetails setDescription(String description) {
+        this.description = description;
         return this;
     }
 

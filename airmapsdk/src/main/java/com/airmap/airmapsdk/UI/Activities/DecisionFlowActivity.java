@@ -21,6 +21,7 @@ import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.ui.adapters.QuestionsPagerAdapter;
 import com.airmap.airmapsdk.ui.fragments.PermitQuestionFragment;
+import com.airmap.airmapsdk.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +98,7 @@ public class DecisionFlowActivity extends AppCompatActivity implements PermitQue
             public void onSuccess(List<AirMapAvailablePermit> permits) {
                 if (!permits.isEmpty()) {
                     Intent intent = new Intent(DecisionFlowActivity.this, CustomPropertiesActivity.class);
-                    intent.putExtra(CustomPropertiesActivity.PERMIT, permits.get(0)); //There should only be one permit
+                    intent.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, permits.get(0)); //There should only be one permit
                     startActivityForResult(intent, CreateFlightActivity.REQUEST_CUSTOM_PROPERTIES);
                 } else {
                     runOnUiThread(new Runnable() {
@@ -127,7 +128,7 @@ public class DecisionFlowActivity extends AppCompatActivity implements PermitQue
         if (requestCode == CreateFlightActivity.REQUEST_CUSTOM_PROPERTIES) {
             if (resultCode == RESULT_OK) {
                 Intent data = new Intent();
-                data.putExtra(CustomPropertiesActivity.PERMIT, dataFromCustomProperties.getSerializableExtra(CustomPropertiesActivity.PERMIT));
+                data.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, dataFromCustomProperties.getSerializableExtra(Constants.AVAILABLE_PERMIT_EXTRA));
                 setResult(RESULT_OK, data);
                 finish();
             }
