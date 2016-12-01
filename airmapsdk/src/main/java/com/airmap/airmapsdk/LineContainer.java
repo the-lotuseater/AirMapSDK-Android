@@ -1,5 +1,6 @@
 package com.airmap.airmapsdk;
 
+import com.mapbox.mapboxsdk.annotations.Polygon;
 import com.mapbox.mapboxsdk.annotations.Polyline;
 
 /**
@@ -9,19 +10,19 @@ import com.mapbox.mapboxsdk.annotations.Polyline;
 
 public class LineContainer implements Container {
     public Polyline line;
-    public Polyline widthPolyline;
-    public int width;
+    public Polygon buffer;
+    public double width;
 
 
     @Override
     public void clear() {
         line = null;
-        widthPolyline = null;
+        buffer = null;
         width = -1;
     }
 
     @Override
     public boolean isValid() {
-        return line != null && widthPolyline != null && width > 0;
+        return line != null && buffer != null && width > 0;
     }
 }
