@@ -182,7 +182,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
         webView = new BridgeWebView(getContext());
         webView.setWillNotDraw(true);
-        webView.loadUrl("file:///android_asset/test.html");
+        webView.loadUrl("file:///android_asset/turf.html");
 
         return view;
     }
@@ -547,10 +547,10 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     float toleranceTopBottom = 10 * screenDensity;
                     float averageIconWidth = 42;
                     float averageIconHeight = 42;
-                    RectF tapRect = new RectF((tapPoint.x - averageIconWidth / 2 - toleranceSides) / screenDensity,
-                            (tapPoint.y - averageIconHeight / 2 - toleranceTopBottom) / screenDensity,
-                            (tapPoint.x + averageIconWidth / 2 + toleranceSides) / screenDensity,
-                            (tapPoint.y + averageIconHeight / 2 + toleranceTopBottom) / screenDensity);
+                    RectF tapRect = new RectF(tapPoint.x - averageIconWidth / 2 - toleranceSides,
+                            tapPoint.y - averageIconHeight / 2 - toleranceTopBottom,
+                            tapPoint.x + averageIconWidth / 2 + toleranceSides,
+                            tapPoint.y + averageIconHeight / 2 + toleranceTopBottom);
                     try {
                         Method method = mapView.getClass().getDeclaredMethod("getMarkersInRect", RectF.class); //Using reflection to access a Mapbox Package Private method
                         method.setAccessible(true);
@@ -622,9 +622,18 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         if (getArguments() != null) {
             Coordinate coordinate = (Coordinate) getArguments().getSerializable(CreateFlightActivity.COORDINATE);
             if (coordinate != null) {
-                map.setCameraPosition(new CameraPosition.Builder().target(new LatLng(coordinate.getLatitude(),coordinate.getLongitude())).build());
-            }
+                map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(coordinate.getLatitude(), coordinate.getLongitude())), new MapboxMap.CancelableCallback() {
+                    @Override
+                    public void onCancel() {
 
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        showSeekBarForCircle(); //Now circle will show at right place initially
+                    }
+                });
+            }
         }
     }
 
