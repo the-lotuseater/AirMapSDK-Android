@@ -1330,6 +1330,16 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
+    public boolean onActivityBackPressed() {
+        if (bottomSheetBehavior != null) {
+            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public interface OnFragmentInteractionListener {
         AirMapFlight getFlight();
 

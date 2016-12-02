@@ -485,7 +485,9 @@ public class CreateFlightActivity extends AppCompatActivity implements
         if (viewPager.getCurrentItem() > 0) {
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1, true);
         } else {
-            super.onBackPressed();
+            if (!((FreehandMapFragment) adapter.getItem(0)).onActivityBackPressed()) { //If this was true, the method call will close the status bottom sheet in the first fragment
+                super.onBackPressed();
+            }
         }
     }
 }
