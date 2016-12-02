@@ -53,6 +53,8 @@ import com.airmap.airmapsdk.ui.DrawingBoard;
 import com.airmap.airmapsdk.ui.ImageViewSwitch;
 import com.airmap.airmapsdk.ui.Scratchpad;
 import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
+import com.github.lzyzsd.jsbridge.BridgeWebView;
+import com.github.lzyzsd.jsbridge.CallBackFunction;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.Marker;
@@ -68,6 +70,9 @@ import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -137,6 +142,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
     private OnFragmentInteractionListener mListener;
 
+    private BridgeWebView webView;
+
     public FreehandMapFragment() {
         //Required empty constructor
     }
@@ -172,6 +179,10 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         intersectionIcon = IconFactory.getInstance(getContext()).fromResource(R.drawable.intersection_circle);
 
         screenDensity = getResources().getDisplayMetrics().density;
+
+        webView = new BridgeWebView(getContext());
+        webView.setWillNotDraw(true);
+        webView.loadUrl("file:///android_asset/turf.html");
 
         return view;
     }
@@ -424,13 +435,11 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             }
         }
 
-        lineContainer.widthPolyline = map.addPolyline(thickLine);
-        lineContainer.line = map.addPolyline(thinLine);
         lineContainer.width = width;
+        calculatePathBufferAndDisplayLineAndBuffer(thinLine.getPoints(), lineContainer.width);
 
-        LatLngBounds bounds = new LatLngBounds.Builder().includes(thickLine.getPoints()).build();
+        LatLngBounds bounds = new LatLngBounds.Builder().includes(thinLine.getPoints()).build();
         map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
-        checkPathStatus();
     }
 
     public void drawPolygon(List<PointF> pointsDrawn) {
@@ -538,10 +547,10 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     float toleranceTopBottom = 10 * screenDensity;
                     float averageIconWidth = 42;
                     float averageIconHeight = 42;
-                    RectF tapRect = new RectF((tapPoint.x - averageIconWidth / 2 - toleranceSides) / screenDensity,
-                            (tapPoint.y - averageIconHeight / 2 - toleranceTopBottom) / screenDensity,
-                            (tapPoint.x + averageIconWidth / 2 + toleranceSides) / screenDensity,
-                            (tapPoint.y + averageIconHeight / 2 + toleranceTopBottom) / screenDensity);
+                    RectF tapRect = new RectF(tapPoint.x - averageIconWidth / 2 - toleranceSides,
+                            tapPoint.y - averageIconHeight / 2 - toleranceTopBottom,
+                            tapPoint.x + averageIconWidth / 2 + toleranceSides,
+                            tapPoint.y + averageIconHeight / 2 + toleranceTopBottom);
                     try {
                         Method method = mapView.getClass().getDeclaredMethod("getMarkersInRect", RectF.class); //Using reflection to access a Mapbox Package Private method
                         method.setAccessible(true);
@@ -613,9 +622,18 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         if (getArguments() != null) {
             Coordinate coordinate = (Coordinate) getArguments().getSerializable(CreateFlightActivity.COORDINATE);
             if (coordinate != null) {
-                map.setCameraPosition(new CameraPosition.Builder().target(new LatLng(coordinate.getLatitude(),coordinate.getLongitude())).build());
-            }
+                map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(coordinate.getLatitude(), coordinate.getLongitude())), new MapboxMap.CancelableCallback() {
+                    @Override
+                    public void onCancel() {
 
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        showSeekBarForCircle(); //Now circle will show at right place initially
+                    }
+                });
+            }
         }
     }
 
@@ -693,14 +711,12 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 points.set(indexOfAnnotationToDrag, newLocation); //If not midpoint, then the index of the point to change on the line is the same as the index of the corner annotation
             }
             //Update the polyline (both the line and widthPolyline)
-            lineContainer.line.setPoints(points);
-            lineContainer.widthPolyline.setPoints(points);
+            calculatePathBufferAndDisplayLineAndBuffer(points, lineContainer.width);
             //Update the Midpoints
             clearMidpoints();
             for (LatLng latLng : getMidpointsFromLatLngs(points)) {
                 midpoints.add(map.addMarker(getDefaultMidpointMarker(latLng)));
             }
-            checkPathStatus();
         } else {
             int indexOfPreviousAnnotation;
             int indexOfNextAnnotation;
@@ -838,7 +854,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         map.removeAnnotations(redPolygons);
         redPolygons.clear();
         cancelStatusCall();
-        statusCall = AirMap.checkFlightPath(coordinates, lineContainer.width, coordinates.get(0), null, null, false, null, this);
+        statusCall = AirMap.checkFlightPath(coordinates, (int) lineContainer.width, coordinates.get(0), null, null, false, null, this);
     }
 
     private void checkPolygonStatus() {
@@ -888,10 +904,9 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 seekBarValueTextView.setText(getBufferPresets()[progress].label);
-                if (lineContainer.widthPolyline != null) {
-                    int width = getPathWidth(progress);
-                    lineContainer.width = width;
-                    lineContainer.widthPolyline.setWidth(width);
+                lineContainer.width = getPathWidth(progress);
+                if (lineContainer.line != null) {
+                    calculatePathBufferAndDisplayLineAndBuffer(lineContainer.line.getPoints(), lineContainer.width);
                 }
             }
 
@@ -908,14 +923,123 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         seekBar.setProgress(1); //50 ft
     }
 
-    //Width is in feet
-    public PolygonOptions getPathBuffer(List<LatLng> linePoints, double width) {
-        PolygonOptions options = new PolygonOptions();
-        options.alpha(0.66f);
-        options.fillColor(ContextCompat.getColor(getContext(), R.color.airmap_colorFill));
-        options.addAll(linePoints);
-        //TODO
-        return options;
+    //Width is in meters
+    public void calculatePathBufferAndDisplayLineAndBuffer(final List<LatLng> linePoints, double width) {
+
+        try {
+//            InputStream is = getAssets().open("turf.min.js");
+//            byte[] bytes = new byte[is.available()];
+//            is.read(bytes);
+//            String js = new String(bytes);
+
+
+//            String coordArray = "";
+//            for (LatLng latLng : linePoints) {
+//                coordArray += String.format(Locale.US, "[%f, %f],", latLng.getLatitude(), latLng.getLongitude());
+//            }
+
+            JSONArray coordinatesArray = new JSONArray();
+            for (LatLng latLng : linePoints) {
+                JSONArray point = new JSONArray();
+                point.put(latLng.getLatitude());
+                point.put(latLng.getLongitude());
+                coordinatesArray.put(point);
+            }
+
+            JSONObject json = new JSONObject();
+            json.put("points", coordinatesArray);
+            json.put("buffer", width); // width/100000
+            System.out.println(json.toString());
+            final PolygonOptions options = getDefaultPolygonOptions(getContext());
+            webView.send(json.toString(), new CallBackFunction() {
+                @Override
+                public void onCallBack(String data) {
+                    System.out.println(data);
+                    String[] split = data.split(",");
+                    for (int i = 0; i < split.length; i += 2) {
+                        options.add(new LatLng(Double.valueOf(split[i]), Double.valueOf(split[i+1])));
+                    }
+                    if (map != null) {
+                        if (lineContainer.buffer != null) {
+                            map.removeAnnotation(lineContainer.buffer);
+                        }
+                        if (lineContainer.line != null) {
+                            map.removeAnnotation(lineContainer.line);
+                        }
+                        lineContainer.buffer = map.addPolygon(options); //Need to add buffer first for proper z ordering
+                        lineContainer.line = map.addPolyline(getDefaultPolylineOptions(getContext()).addAll(linePoints));
+                        checkPathStatus();
+                        LatLngBounds bounds = new LatLngBounds.Builder().includes(lineContainer.buffer.getPoints()).build();
+                        map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
+                    }
+                }
+            });
+//            latch.await();
+//            latch.await(10, TimeUnit.SECONDS);
+//            System.out.println("point size: " + options.getPoints().size());
+//            while (true) {
+//                if (options.getPoints().size() != 0)
+//                    break;
+//            }
+//            return options;
+
+
+
+
+
+
+
+//            String jsBufferCall = ";var line1=turf.linestring([%s]); var buffered = turf.buffer(line1, %f, 'feet'); out.print(buffered);";
+//            String call = String.format(Locale.US, jsBufferCall, coordArray, width);
+
+
+//            org.mozilla.javascript.Context rhino = org.mozilla.javascript.Context.enter();
+//            rhino.setOptimizationLevel(-1);
+//            Scriptable scope = rhino.initStandardObjects();
+//            InputStreamReader reader = new InputStreamReader(is);
+//            rhino.evaluateReader(scope, reader, "turf.min.js", 0, null);
+//            Object wrappedOut = org.mozilla.javascript.Context.javaToJS(System.out, scope);
+//            ScriptableObject.putProperty(scope, "out", wrappedOut);
+//            rhino.evaluateString(scope, call, null, 0, null);
+//            Object obj = scope.get("turf.buffer", scope);
+//            if (obj instanceof Function) {
+//                Function jsFunction = (Function) obj;
+//                Object[] params = new Object[] { "line1", width, "'feet'" };
+//                // Call the function with params
+//                Object jsResult = jsFunction.call(rhino, scope, scope, params);
+//                // Parse the jsResult object to a String
+//                String result = org.mozilla.javascript.Context.toString(jsResult);
+//                System.out.println(result);
+//            }
+
+
+//            JsEvaluator jsEvaluator = new JsEvaluator(this);
+//            jsEvaluator.setWebViewWrapper(new WebViewWrapper(this, jsEvaluator));
+//            jsEvaluator.getWebViewWrapper().loadJavaScript(js);
+//            jsEvaluator.evaluate(call, new JsCallback() {
+//                @Override
+//                public void onResult(String s) {
+//                    System.out.println(s);
+//                }
+//            });
+
+//            JSContext context = new JSContext();
+//            JSObject value = (JSObject) context.evaluateScript(js);
+//            System.out.println(value);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        finally {
+//            org.mozilla.javascript.Context.exit();
+//        }
+
+
+//        PolygonOptions options = new PolygonOptions();
+//        options.alpha(0.66f);
+//        options.fillColor(ContextCompat.getColor(this, R.color.colorFill));
+//        options.addAll(linePoints);
+//        return options;
     }
 
     @Override
@@ -1204,6 +1328,16 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+    }
+
+    public boolean onActivityBackPressed() {
+        if (bottomSheetBehavior != null) {
+            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                return true;
+            }
+        }
+        return false;
     }
 
     public interface OnFragmentInteractionListener {

@@ -283,13 +283,13 @@ public class CreateFlightActivity extends AppCompatActivity implements
     @Override
     public void bottomSheetOpened() {
         getSupportActionBar().setTitle(R.string.R_string_airmap_airspace_advisories);
-//        findViewById(R.id.app_bar).setVisibility(View.GONE);
+//        getTabLayout().setVisibility(Vgit iew.GONE); //This causes wonky behavior
     }
 
     @Override
     public void bottomSheetClosed() {
         getSupportActionBar().setTitle(R.string.airmap_title_activity_create_flight);
-//        findViewById(R.id.app_bar).setVisibility(View.VISIBLE);
+//        getTabLayout().setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -620,7 +620,9 @@ public class CreateFlightActivity extends AppCompatActivity implements
         if (viewPager.getCurrentItem() > 0) {
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1, true);
         } else {
-            super.onBackPressed();
+            if (!((FreehandMapFragment) adapter.getItem(0)).onActivityBackPressed()) { //If this was true, the method call will close the status bottom sheet in the first fragment
+                super.onBackPressed();
+            }
         }
     }
 }

@@ -52,6 +52,7 @@ dependencies {
     compile 'com.google.protobuf:protobuf-java:2.6.1'
     compile 'joda-time:joda-time:2.9.4'
     compile('com.mapbox.mapboxsdk:mapbox-android-sdk:4.2.0-beta.5@aar') { transitive = true }
+    compile 'com.github.lzyzsd:jsbridge:1.0.4'
     compile('org.eclipse.paho:org.eclipse.paho.android.service:1.1.1-20160907.104533-5@aar') { exclude module: 'support-v4' }
 }
 
