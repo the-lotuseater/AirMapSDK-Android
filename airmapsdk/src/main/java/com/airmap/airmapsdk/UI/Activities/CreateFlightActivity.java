@@ -7,8 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -37,7 +35,6 @@ import com.airmap.airmapsdk.ui.fragments.FreehandMapFragment;
 import com.airmap.airmapsdk.ui.fragments.ListPermitsFragment;
 import com.airmap.airmapsdk.ui.fragments.ReviewFlightFragment;
 import com.airmap.airmapsdk.ui.fragments.ReviewNoticeFragment;
-import com.airmap.airmapsdk.Utils;
 import com.airmap.airmapsdk.util.Constants;
 import com.mapbox.mapboxsdk.MapboxAccountManager;
 
@@ -209,15 +206,19 @@ public class CreateFlightActivity extends AppCompatActivity implements
                     viewPager.setPagingEnabled(false);
                 } else if (fragment instanceof FlightDetailsFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_flight_details);
+                    getTabLayout().setVisibility(View.GONE);
                     viewPager.setPagingEnabled(true);
                 } else if (fragment instanceof ListPermitsFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_permits);
+                    getTabLayout().setVisibility(View.GONE);
                     viewPager.setPagingEnabled(true);
                 } else if (fragment instanceof FlightNoticeFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_flight_notice);
+                    getTabLayout().setVisibility(View.GONE);
                     viewPager.setPagingEnabled(true);
                 } else if (fragment instanceof ReviewFlightFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_review);
+                    getTabLayout().setVisibility(View.GONE);
                     viewPager.setPagingEnabled(true);
                 }
             }
@@ -283,7 +284,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
     @Override
     public void bottomSheetOpened() {
         getSupportActionBar().setTitle(R.string.R_string_airmap_airspace_advisories);
-//        getTabLayout().setVisibility(Vgit iew.GONE); //This causes wonky behavior
+//        getTabLayout().setVisibility(View.GONE); //This causes wonky behavior
     }
 
     @Override
@@ -353,7 +354,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
 
         statusPermitsList = new ArrayList<>(statusPermitMap.values());
 
-        invalidateFurtherFragments(0); //To prevent creating multiple instances of the next fragment
+        invalidateFurtherFragments(1); //To prevent creating multiple instances of the next fragment
 
         if (isPermitRequired) {
             AirMap.getAuthenticatedPilotPermits(new AirMapCallback<List<AirMapPilotPermit>>() {
@@ -374,7 +375,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
                         @Override
                         public void run() {
                             adapter.add(ListPermitsFragment.newInstance());
-                            viewPager.setCurrentItem(1, true);
+                            viewPager.setCurrentItem(2, true);
                         }
                     });
                 }
@@ -396,7 +397,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
                 @Override
                 public void run() {
                     adapter.add(FlightNoticeFragment.newInstance());
-                    viewPager.setCurrentItem(1, true);
+                    viewPager.setCurrentItem(2, true);
                 }
             });
         }
