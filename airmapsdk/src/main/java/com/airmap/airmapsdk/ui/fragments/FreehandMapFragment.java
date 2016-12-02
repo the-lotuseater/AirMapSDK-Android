@@ -526,6 +526,13 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             //This onTouch code is a copy of the MapView#onSingleTapConfirmed code, except
             //I'm dragging instead of clicking, and it's being called for every touch event rather than just a tap
             //It also simplifies some of the selection logic
+
+            //If dragging ever stops working, this is the first place to look
+            //The onTouch is based on MapView#onSingleTapConfirmed
+            //Look for any changes in that function, and make those changes here too
+            //Also need to look at MapView#getMarkersInRect, which is how I'm getting closeby markers right now
+            //It might end up getting renamed, something about it may change, which won't be apparent since right now it uses reflection to be invoked
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event != null) {
