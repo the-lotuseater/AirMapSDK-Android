@@ -416,17 +416,12 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
     public void drawPath(List<PointF> line) {
         clear();
-        PolylineOptions thickLine = new PolylineOptions();
         PolylineOptions thinLine = getDefaultPolylineOptions(getContext());
-        thickLine.color(ContextCompat.getColor(getContext(), R.color.airmap_colorFill));
-        thickLine.alpha(0.66f);
-        int width = getPathWidth(seekBar.getProgress());
-        thickLine.width(width);
+        double width = getPathWidthFromSeekBar(seekBar.getProgress());
         List<LatLng> midPoints = getMidpointsFromLatLngs(getLatLngsFromPointFs(line));
         List<LatLng> points = getLatLngsFromPointFs(line);
         for (int i = 0; i < points.size(); i++) {
             LatLng point = points.get(i);
-            thickLine.add(point);
             thinLine.add(point);
             corners.add(map.addMarker(getDefaultMarkerOptions(point)));
             if (i < midPoints.size()) {
@@ -501,11 +496,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         return latLngs;
     }
 
-    private static int getPathWidth(int progress) {
-        //TODO: Path buffer
-        double feet = Utils.getBufferPresets()[progress].value.doubleValue();
-        //Convert feet to width on screen
-        return 3 * progress; //This is just returning a dummy value
+    private static double getPathWidthFromSeekBar(int progress) {
+        return Utils.getBufferPresets()[progress].value.doubleValue();
     }
 
     private static List<LatLng> getMidpointsFromLatLngs(List<LatLng> shape) {
@@ -904,7 +896,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 seekBarValueTextView.setText(getBufferPresets()[progress].label);
-                lineContainer.width = getPathWidth(progress);
+                lineContainer.width = getPathWidthFromSeekBar(progress);
                 if (lineContainer.line != null) {
                     calculatePathBufferAndDisplayLineAndBuffer(lineContainer.line.getPoints(), lineContainer.width);
                 }
