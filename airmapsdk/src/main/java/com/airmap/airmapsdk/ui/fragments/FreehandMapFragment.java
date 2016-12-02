@@ -19,6 +19,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,12 +43,16 @@ import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.PolygonContainer;
 import com.airmap.airmapsdk.models.airspace.AirMapAirspace;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
+import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
+import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
+import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
 import com.airmap.airmapsdk.models.shapes.AirMapPath;
 import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.networking.services.AirspaceService;
 import com.airmap.airmapsdk.ui.CustomButton;
 import com.airmap.airmapsdk.ui.DrawingBoard;
 import com.airmap.airmapsdk.ui.ImageViewSwitch;
@@ -77,7 +82,10 @@ import org.json.JSONObject;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 
@@ -91,6 +99,8 @@ import static com.airmap.airmapsdk.Utils.getBufferPresets;
 
 public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         DrawingCallback, MapboxMap.OnCameraChangeListener, AirMapCallback<AirMapStatus> {
+
+    private static final String TAG = "FreehandMapFragment";
 
     private static final String CIRCLE_TAG = "circle";
     private static final String PATH_TAG = "path";
@@ -127,6 +137,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
     private MapboxMap map;
 
+    private Map<String, AirMapStatusAdvisory> permitAdvisories;
+    private Map<String, Polygon> polygonMap;
     private CircleContainer circleContainer;
     private PolygonContainer polygonContainer;
     private LineContainer lineContainer;
@@ -166,6 +178,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         setupBottomSheet();
         drawingBoard.setDoneDrawingCallback(this);
 
+        permitAdvisories = new HashMap<>();
+        polygonMap = new HashMap<>();
         circleContainer = new CircleContainer();
         lineContainer = new LineContainer();
         polygonContainer = new PolygonContainer();
@@ -1110,37 +1124,84 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 }
             });
         }
-        List<String> redIds = new ArrayList<>();
-        for (AirMapStatusAdvisory advisory : response.getAdvisories()) {
-            if (advisory.getColor() == AirMapStatus.StatusColor.Red) {
-                redIds.add(advisory.getId());
-            }
-        }
 
-        airspaceCall = AirMap.getAirspace(redIds, new AirMapCallback<List<AirMapAirspace>>() {
-            @Override
-            public void onSuccess(List<AirMapAirspace> response) {
-                System.out.println(response);
-                for (AirMapAirspace airMapAirspace : response) {
-                    AirMapPolygon geometry = ((AirMapPolygon) airMapAirspace.getPropertyBoundary());
-                    if (geometry != null && geometry.getCoordinates() != null) {
-                        List<Coordinate> coordinates = geometry.getCoordinates();
-                        PolygonOptions options = getDefaultRedPolygonOptions();
-                        for (Coordinate coordinate : coordinates) {
-                            options.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
-                        }
-                        if (map != null && redPolygons != null) {
-                            redPolygons.add(map.addPolygon(options));
-                        }
-                    }
+        boolean requiresPermit = false;
+        if (latestStatus.getAdvisories() != null && !latestStatus.getAdvisories().isEmpty()) {
+            Map<String, AirMapStatusAdvisory> advisoryMap = new HashMap<>();
+            for (AirMapStatusAdvisory advisory : latestStatus.getAdvisories()) {
+                if (advisory.getAvailablePermits() != null && !advisory.getAvailablePermits().isEmpty()) {
+                    advisoryMap.put(advisory.getId(), advisory);
+                    requiresPermit = true;
+                } else if (advisory.getColor() == AirMapStatus.StatusColor.Red) {
+                    advisoryMap.put(advisory.getId(), advisory);
                 }
             }
 
-            @Override
-            public void onError(AirMapException e) {
-                e.printStackTrace();
+            // check if advisories have changed
+            if (!permitAdvisories.keySet().equals(advisoryMap.keySet())) {
+                // new polygons
+                if (!permitAdvisories.keySet().containsAll(advisoryMap.keySet())) {
+                    updatePermitPolygons(advisoryMap);
+
+                // invalid polygons that should be removed
+                } else {
+                    for (String key : permitAdvisories.keySet()) {
+                        if (!advisoryMap.containsKey(key)) {
+                            Polygon polygon = polygonMap.remove(key);
+                            if (polygon != null) {
+                                map.removePolygon(polygon);
+                            }
+                        }
+                    }
+
+                    permitAdvisories = advisoryMap;
+                }
             }
-        });
+        }
+        drawFlightPolygon();
+
+        // tell the user if conflicting permits
+        if (requiresPermit && (latestStatus.getApplicablePermits() == null || latestStatus.getApplicablePermits().isEmpty())) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getActivity(), "Flight area cannot overlap with conflicting permit requirements", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+//        List<String> redIds = new ArrayList<>();
+//        for (AirMapStatusAdvisory advisory : response.getAdvisories()) {
+//            if (advisory.getColor() == AirMapStatus.StatusColor.Red) {
+//                redIds.add(advisory.getId());
+//            }
+//        }
+//        airspaceCall = AirMap.getAirspace(redIds, new AirMapCallback<List<AirMapAirspace>>() {
+//            @Override
+//            public void onSuccess(List<AirMapAirspace> response) {
+//                for (AirMapAirspace airMapAirspace : response) {
+//                    AirMapPolygon geometry = ((AirMapPolygon) airMapAirspace.getPropertyBoundary());
+//                    if (geometry != null && geometry.getCoordinates() != null) {
+//                        List<Coordinate> coordinates = geometry.getCoordinates();
+//                        PolygonOptions options = getDefaultRedPolygonOptions();
+//                        for (Coordinate coordinate : coordinates) {
+//                            options.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
+//                        }
+//                        if (map != null && redPolygons != null) {
+//                            redPolygons.add(map.addPolygon(options));
+//                        }
+//
+//
+//
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onError(AirMapException e) {
+//                e.printStackTrace();
+//            }
+//        });
     }
 
     @Override
@@ -1154,6 +1215,171 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 }
             });
         }
+    }
+
+    private void updatePermitPolygons(final Map<String, AirMapStatusAdvisory> advisoryMap) {
+        AirspaceService.getAirspace(new ArrayList<>(advisoryMap.keySet()), new AirMapCallback<List<AirMapAirspace>>() {
+            @Override
+            public void onSuccess(final List<AirMapAirspace> airspacesResponse) {
+                // use pilot permits to show green, yellow or red
+                if (AirMap.hasValidAuthenticatedUser()) {
+                    AirMap.getAuthenticatedPilotPermits(new AirMapCallback<List<AirMapPilotPermit>>() {
+                        @Override
+                        public void onSuccess(List<AirMapPilotPermit> pilotPermitsResponse) {
+                            if (!isFragmentActive()) {
+                                return;
+                            }
+
+                            final Map<String, AirMapPilotPermit> pilotPermitIds = new HashMap<>();
+                            if (pilotPermitsResponse != null) {
+                                for (AirMapPilotPermit pilotPermit : pilotPermitsResponse) {
+                                    pilotPermitIds.put(pilotPermit.getShortDetails().getPermitId(), pilotPermit);
+                                }
+                            }
+
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    drawPolygons(airspacesResponse, advisoryMap, pilotPermitIds);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onError(AirMapException e) {
+                            Log.e(TAG, "getPilotPermits failed", e);
+
+                            drawFlightPolygon();
+                        }
+                    });
+                } else {
+                    if (!isFragmentActive()) {
+                        return;
+                    }
+
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            drawPolygons(airspacesResponse, advisoryMap, null);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onError(AirMapException e) {
+                Log.e(TAG, "getAirspaces failed", e);
+
+                drawFlightPolygon();
+            }
+        });
+    }
+
+    private void drawPolygons(final List<AirMapAirspace> airspaces, final Map<String, AirMapStatusAdvisory> advisoryMap, Map<String, AirMapPilotPermit> pilotPermitIds) {
+        if (map == null) {
+            return;
+        }
+
+        Map<String, AirMapStatusAdvisory> updatedMap = new HashMap<>();
+        Map<String, Polygon> polygonsToRemove = new HashMap<>(polygonMap);
+
+        for (AirMapAirspace airspace : airspaces) {
+            if (!advisoryMap.containsKey(airspace.getAirspaceId())) {
+                continue;
+            }
+
+            AirMapStatusAdvisory advisory = advisoryMap.get(airspace.getAirspaceId());
+            updatedMap.put(advisory.getId(), advisory);
+
+            AirMapStatus.StatusColor statusColor = AirMapStatus.StatusColor.Yellow;
+            if (pilotPermitIds != null) {
+                for (AirMapAvailablePermit availablePermit : advisory.getAvailablePermits()) {
+                    AirMapPilotPermit pilotPermit = pilotPermitIds.get(availablePermit.getId());
+                    if (pilotPermit != null && (pilotPermit.getExpiresAt() == null || pilotPermit.getExpiresAt().after(new Date()))) {
+                        statusColor = AirMapStatus.StatusColor.Green;
+                        break;
+                    }
+                }
+            }
+
+            if (advisory.getColor() == AirMapStatus.StatusColor.Red) {
+                statusColor = AirMapStatus.StatusColor.Red;
+            }
+
+
+            if (!polygonMap.containsKey(airspace.getAirspaceId())) {
+                Polygon polygon = drawPermitPolygon(airspace, statusColor);
+                if (polygon != null) {
+                    polygonMap.put(airspace.getAirspaceId(), polygon);
+                }
+            }
+            polygonsToRemove.remove(airspace.getAirspaceId());
+            advisoryMap.remove(airspace.getAirspaceId());
+        }
+
+        // remove polygons no longer valid
+        for (String key : polygonsToRemove.keySet()) {
+            Polygon polygon = polygonsToRemove.get(key);
+            map.removePolygon(polygon);
+            polygonMap.remove(key);
+        }
+
+        // draw flight radius/path/polygon so its highest in z-index
+        drawFlightPolygon();
+
+        permitAdvisories = updatedMap;
+    }
+
+    private Polygon drawPermitPolygon(AirMapAirspace airspace, AirMapStatus.StatusColor statusColor) {
+        AirMapGeometry geometry = airspace.getGeometry();
+        if (geometry instanceof AirMapPolygon) {
+            PolygonOptions polygonOptions = Utils.getMapboxPolygon((AirMapPolygon) geometry);
+
+            int color;
+            switch (statusColor) {
+                case Red: {
+                    color = getResources().getColor(R.color.airmap_red);
+                    polygonOptions.alpha(0.6f);
+                    break;
+                }
+                case Yellow: {
+                    color = getResources().getColor(R.color.airmap_yellow);
+                    polygonOptions.alpha(0.6f);
+                    break;
+                }
+                default:
+                case Green: {
+                    color = getResources().getColor(R.color.airmap_green);
+                    polygonOptions.alpha(0.6f);
+                    break;
+                }
+            }
+            polygonOptions.fillColor(color);
+            return map.addPolygon(polygonOptions);
+        }
+
+        //TODO: handle airspaces that are advisories that aren't polygons?
+        return null;
+    }
+
+    private void drawFlightPolygon() {
+        if (mListener != null) {
+            //FIXME: a better way to determine which type of flight annotation to redraw
+            if (tabLayout.getSelectedTabPosition() == 2) {
+                map.updatePolygon(polygonContainer.polygon);
+                map.updatePolyline(polygonContainer.outline);
+            } else if (tabLayout.getSelectedTabPosition() == 1) {
+                map.updatePolygon(lineContainer.buffer);
+                map.updatePolyline(lineContainer.line);
+            } else {
+                map.updatePolygon(circleContainer.circle);
+                map.updatePolyline(circleContainer.outline);
+            }
+        }
+    }
+
+    protected boolean isFragmentActive() {
+        return getActivity() != null && !getActivity().isFinishing() && isResumed();
     }
 
     @UiThread
