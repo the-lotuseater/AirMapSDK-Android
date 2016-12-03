@@ -229,7 +229,9 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                 for (Coordinate coordinate : ((AirMapPath) flight.getGeometry()).getCoordinates()) {
                     polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                 }
-                multiPoint = map.addPolyline(polylineOptions);
+                PolygonOptions polygonOptions = getDefaultPolygonOptions(getContext()).addAll(mListener.getPathBuffer());
+                multiPoint = map.addPolygon(polygonOptions); //Add polygon first, then line for proper z ordering
+                map.addPolyline(polylineOptions);
             } else {
                 List<LatLng> circlePoints = polygonCircleForCoordinate(new LatLng(flight.getCoordinate().getLatitude(), flight.getCoordinate().getLongitude()), flight.getBuffer());
                 map.addPolygon(getDefaultPolygonOptions(getContext()).addAll(circlePoints));
@@ -491,6 +493,8 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
         void onFlightSubmitted(AirMapFlight response);
 
         AirMapPilot getPilot();
+
+        List<LatLng> getPathBuffer();
     }
 
     private class SectionsPagerAdapter extends FragmentStatePagerAdapter {
