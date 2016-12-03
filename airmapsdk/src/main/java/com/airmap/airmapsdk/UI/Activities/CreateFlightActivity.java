@@ -58,6 +58,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
     public static final String COORDINATE = "coordinate";
     public static final String KEY_VALUE_EXTRAS = "keyValueExtras";
     public static final String MAPBOX_API_KEY = "mapbox_api_key";
+
     public static final String FLIGHT = "flight";
     public static final String FLIGHT_STATUS = "flight_status";
     public static final String PILOT = "pilot";

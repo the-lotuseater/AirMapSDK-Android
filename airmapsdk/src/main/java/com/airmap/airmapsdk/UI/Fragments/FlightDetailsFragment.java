@@ -81,6 +81,7 @@ import static com.airmap.airmapsdk.ui.fragments.FreehandMapFragment.getDefaultPo
 import static com.airmap.airmapsdk.ui.fragments.FreehandMapFragment.getDefaultPolylineOptions;
 import static com.airmap.airmapsdk.ui.fragments.FreehandMapFragment.polygonCircleForCoordinate;
 
+
 public class FlightDetailsFragment extends Fragment implements OnMapReadyCallback {
 
     private static final String TAG = "FlightDetailsFragment";
@@ -257,7 +258,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                     polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                 }
                 flightPolygon = map.addPolygon(polygonOptions);
-                flightPolyline =  map.addPolyline(polylineOptions.add(polylineOptions.getPoints().get(0)));
+                flightPolyline = map.addPolyline(polylineOptions.add(polylineOptions.getPoints().get(0)));
             } else if (flight.getGeometry() instanceof AirMapPath) {
                 PolylineOptions polylineOptions = getDefaultPolylineOptions(getContext());
                 for (Coordinate coordinate : ((AirMapPath) flight.getGeometry()).getCoordinates()) {
@@ -321,7 +322,6 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         final int altitudeIndex = indexOfMeterPreset(mListener.getFlight().getMaxAltitude(), getAltitudePresets());
         final int durationIndex = indexOfDurationPreset(mListener.getFlight().getEndsAt().getTime() - mListener.getFlight().getStartsAt().getTime());
         final int animationDuration = 250;
-
         int altitudeAnimateTo = (int) (((float) altitudeIndex / getAltitudePresets().length) * 100);
         ObjectAnimator altitudeAnimator = ObjectAnimator.ofInt(altitudeSeekBar, "progress", altitudeAnimateTo);
         altitudeAnimator.setDuration(animationDuration);
@@ -747,7 +747,6 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
         // redraw flight radius so its highest in z-index
         drawFlightPolygonDelayed();
-
         permitAdvisories = updatedMap;
     }
 
@@ -807,7 +806,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         if (useMetric) {
             return Utils.getAltitudePresetsMetric();
         }
-        return Utils.getAltitudePresets();
+        return getAltitudePresets();
     }
 
     @Override
