@@ -302,34 +302,33 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (tabLayout.getSelectedTabPosition() == 0 && circleContainer.isValid()) { //Circle
-                    if (mListener != null) {
+                if (mListener != null) {
+                    mListener.setPathBufferPoints(null); //reset buffer polygon
+                    if (tabLayout.getSelectedTabPosition() == 0 && circleContainer.isValid()) { //Circle
+
                         mListener.getFlight().setCoordinate(new Coordinate(circleContainer.center));
                         mListener.getFlight().setBuffer(circleContainer.radius);
                         tabLayout.setVisibility(View.GONE);
                         mListener.freehandNextClicked();
-                    }
-                } else if (tabLayout.getSelectedTabPosition() == 1 && lineContainer.isValid()) { //Path
-                    List<Coordinate> coordinates = new ArrayList<>();
-                    for (LatLng latLng : lineContainer.line.getPoints()) {
-                        coordinates.add(new Coordinate(latLng));
-                    }
-                    if (mListener != null) {
+                    } else if (tabLayout.getSelectedTabPosition() == 1 && lineContainer.isValid()) { //Path
+                        List<Coordinate> coordinates = new ArrayList<>();
+                        for (LatLng latLng : lineContainer.line.getPoints()) {
+                            coordinates.add(new Coordinate(latLng));
+                        }
                         mListener.getFlight().setGeometry(new AirMapPath(coordinates));
                         mListener.getFlight().setBuffer(lineContainer.width);
+                        mListener.setPathBufferPoints(lineContainer.buffer.getPoints());
                         tabLayout.setVisibility(View.GONE);
                         mListener.freehandNextClicked();
-                    }
-                } else if (tabLayout.getSelectedTabPosition() == 2 && polygonContainer.isValid()) { //Polygon
-                    if (!PointMath.findIntersections(polygonContainer.polygon.getPoints()).isEmpty()) {
-                        Toast.makeText(getContext(), R.string.airmap_error_overlap, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    List<Coordinate> coordinates = new ArrayList<>();
-                    for (LatLng latLng : polygonContainer.polygon.getPoints()) {
-                        coordinates.add(new Coordinate(latLng));
-                    }
-                    if (mListener != null) {
+                    } else if (tabLayout.getSelectedTabPosition() == 2 && polygonContainer.isValid()) { //Polygon
+                        if (!PointMath.findIntersections(polygonContainer.polygon.getPoints()).isEmpty()) {
+                            Toast.makeText(getContext(), R.string.airmap_error_overlap, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        List<Coordinate> coordinates = new ArrayList<>();
+                        for (LatLng latLng : polygonContainer.polygon.getPoints()) {
+                            coordinates.add(new Coordinate(latLng));
+                        }
                         mListener.getFlight().setGeometry(new AirMapPolygon(coordinates));
                         tabLayout.setVisibility(View.GONE);
                         mListener.freehandNextClicked();
@@ -956,7 +955,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     System.out.println(data);
                     String[] split = data.split(",");
                     for (int i = 0; i < split.length; i += 2) {
-                        options.add(new LatLng(Double.valueOf(split[i]), Double.valueOf(split[i+1])));
+                        options.add(new LatLng(Double.valueOf(split[i]), Double.valueOf(split[i + 1])));
                     }
                     if (map != null) {
                         if (lineContainer.buffer != null) {
@@ -981,11 +980,6 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 //                    break;
 //            }
 //            return options;
-
-
-
-
-
 
 
 //            String jsBufferCall = ";var line1=turf.linestring([%s]); var buffered = turf.buffer(line1, %f, 'feet'); out.print(buffered);";
@@ -1279,15 +1273,6 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         return tab;
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
-//            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-//        } else {
-//            super.onBackPressed();
-//        }
-//    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -1347,6 +1332,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         void bottomSheetOpened();
 
         void bottomSheetClosed();
+
+        void setPathBufferPoints(List<LatLng> buffer);
 
         TabLayout getTabLayout();
     }

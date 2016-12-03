@@ -263,6 +263,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 for (Coordinate coordinate : ((AirMapPath) flight.getGeometry()).getCoordinates()) {
                     polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                 }
+                PolygonOptions polygonOptions = getDefaultPolygonOptions(getContext()).addAll(mListener.getPathBuffer());
+                flightPolygon = map.addPolygon(polygonOptions); //Add polygon first, then line for proper z ordering
                 flightPolyline = map.addPolyline(polylineOptions);
             } else {
                 List<LatLng> circlePoints = polygonCircleForCoordinate(new LatLng(flight.getCoordinate().getLatitude(), flight.getCoordinate().getLongitude()), flight.getBuffer());
@@ -917,5 +919,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         void flightChanged();
 
         void setPilot(AirMapPilot response);
+
+        List<LatLng> getPathBuffer();
     }
 }

@@ -37,6 +37,7 @@ import com.airmap.airmapsdk.ui.fragments.ReviewFlightFragment;
 import com.airmap.airmapsdk.ui.fragments.ReviewNoticeFragment;
 import com.airmap.airmapsdk.util.Constants;
 import com.mapbox.mapboxsdk.MapboxAccountManager;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -86,6 +87,8 @@ public class CreateFlightActivity extends AppCompatActivity implements
     private ArrayList<AirMapPilotPermit> selectedPermits; //Permits that do not need to be applied for and can be attached to flight
     private ArrayList<AirMapAvailablePermit> permitsToApplyFor; //Permits that need to be applied for before attaching to flight
     private ArrayList<AirMapAvailablePermit> permitsToShowInReview; //selectedPermits + permitsToApplyFor temporarily transformed into AvailablePermit
+
+    private List<LatLng> pathBuffer; //So that we don't need to recalculate the buffer polygon using turf on flight details screen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -279,6 +282,11 @@ public class CreateFlightActivity extends AppCompatActivity implements
                 viewPager.setCurrentItem(1, true);
             }
         });
+    }
+
+    @Override
+    public void setPathBufferPoints(List<LatLng> buffer) {
+        pathBuffer = buffer;
     }
 
     @Override
@@ -555,6 +563,11 @@ public class CreateFlightActivity extends AppCompatActivity implements
 
     public void setPilot(AirMapPilot pilot) {
         this.pilot = pilot;
+    }
+
+    @Override
+    public List<LatLng> getPathBuffer() {
+        return pathBuffer;
     }
 
     @Override
