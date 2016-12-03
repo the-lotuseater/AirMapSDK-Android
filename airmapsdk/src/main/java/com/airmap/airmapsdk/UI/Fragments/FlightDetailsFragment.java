@@ -795,18 +795,11 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         }, 10);
     }
 
-    private Utils.StringNumberPair[] getRadiusPresets() {
-        if (useMetric) {
-            return Utils.getBufferPresetsMetric();
-        }
-        return Utils.getBufferPresets();
-    }
-
     private Utils.StringNumberPair[] getAltitudePresets() {
         if (useMetric) {
             return Utils.getAltitudePresetsMetric();
         }
-        return getAltitudePresets();
+        return Utils.getAltitudePresets();
     }
 
     @Override
