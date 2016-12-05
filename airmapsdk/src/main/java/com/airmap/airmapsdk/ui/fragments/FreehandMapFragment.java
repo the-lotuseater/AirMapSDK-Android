@@ -1127,7 +1127,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
         boolean requiresPermit = false;
         if (latestStatus.getAdvisories() != null && !latestStatus.getAdvisories().isEmpty()) {
-            Map<String, AirMapStatusAdvisory> advisoryMap = new HashMap<>();
+            final Map<String, AirMapStatusAdvisory> advisoryMap = new HashMap<>();
             for (AirMapStatusAdvisory advisory : latestStatus.getAdvisories()) {
                 if (advisory.getAvailablePermits() != null && !advisory.getAvailablePermits().isEmpty()) {
                     advisoryMap.put(advisory.getId(), advisory);
@@ -1145,16 +1145,24 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
                 // invalid polygons that should be removed
                 } else {
-                    for (String key : permitAdvisories.keySet()) {
-                        if (!advisoryMap.containsKey(key)) {
-                            Polygon polygon = polygonMap.remove(key);
-                            if (polygon != null) {
-                                map.removePolygon(polygon);
-                            }
-                        }
-                    }
+                    Log.e(TAG, "polygons need to be removed");
 
-                    permitAdvisories = advisoryMap;
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (String key : permitAdvisories.keySet()) {
+                                if (!advisoryMap.containsKey(key)) {
+                                    Polygon polygon = polygonMap.remove(key);
+                                    if (polygon != null) {
+                                        map.removePolygon(polygon);
+                                        polygonMap.remove(key);
+                                    }
+                                }
+                            }
+
+                            permitAdvisories = advisoryMap;
+                        }
+                    });
                 }
             }
         }
@@ -1169,39 +1177,6 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 }
             });
         }
-
-//        List<String> redIds = new ArrayList<>();
-//        for (AirMapStatusAdvisory advisory : response.getAdvisories()) {
-//            if (advisory.getColor() == AirMapStatus.StatusColor.Red) {
-//                redIds.add(advisory.getId());
-//            }
-//        }
-//        airspaceCall = AirMap.getAirspace(redIds, new AirMapCallback<List<AirMapAirspace>>() {
-//            @Override
-//            public void onSuccess(List<AirMapAirspace> response) {
-//                for (AirMapAirspace airMapAirspace : response) {
-//                    AirMapPolygon geometry = ((AirMapPolygon) airMapAirspace.getPropertyBoundary());
-//                    if (geometry != null && geometry.getCoordinates() != null) {
-//                        List<Coordinate> coordinates = geometry.getCoordinates();
-//                        PolygonOptions options = getDefaultRedPolygonOptions();
-//                        for (Coordinate coordinate : coordinates) {
-//                            options.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
-//                        }
-//                        if (map != null && redPolygons != null) {
-//                            redPolygons.add(map.addPolygon(options));
-//                        }
-//
-//
-//
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onError(AirMapException e) {
-//                e.printStackTrace();
-//            }
-//        });
     }
 
     @Override
@@ -1363,19 +1338,24 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void drawFlightPolygon() {
-        if (mListener != null) {
-            //FIXME: a better way to determine which type of flight annotation to redraw
-            if (tabLayout.getSelectedTabPosition() == 2) {
-                map.updatePolygon(polygonContainer.polygon);
-                map.updatePolyline(polygonContainer.outline);
-            } else if (tabLayout.getSelectedTabPosition() == 1) {
-                map.updatePolygon(lineContainer.buffer);
-                map.updatePolyline(lineContainer.line);
-            } else {
-                map.updatePolygon(circleContainer.circle);
-                map.updatePolyline(circleContainer.outline);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mListener != null) {
+                    //FIXME: a better way to determine which type of flight annotation to redraw
+                    if (tabLayout.getSelectedTabPosition() == 2) {
+                        map.updatePolygon(polygonContainer.polygon);
+                        map.updatePolyline(polygonContainer.outline);
+                    } else if (tabLayout.getSelectedTabPosition() == 1) {
+                        map.updatePolygon(lineContainer.buffer);
+                        map.updatePolyline(lineContainer.line);
+                    } else {
+                        map.updatePolygon(circleContainer.circle);
+                        map.updatePolyline(circleContainer.outline);
+                    }
+                }
             }
-        }
+        });
     }
 
     protected boolean isFragmentActive() {
