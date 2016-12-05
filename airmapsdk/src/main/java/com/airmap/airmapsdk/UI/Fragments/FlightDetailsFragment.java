@@ -86,6 +86,7 @@ import static com.airmap.airmapsdk.ui.fragments.FreehandMapFragment.getDefaultPo
 import static com.airmap.airmapsdk.ui.fragments.FreehandMapFragment.getDefaultPolylineOptions;
 import static com.airmap.airmapsdk.ui.fragments.FreehandMapFragment.polygonCircleForCoordinate;
 
+
 public class FlightDetailsFragment extends Fragment implements OnMapReadyCallback {
 
     private static final String TAG = "FlightDetailsFragment";
@@ -294,7 +295,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                     polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                 }
                 flightPolygon = map.addPolygon(polygonOptions);
-                flightPolyline =  map.addPolyline(polylineOptions.add(polylineOptions.getPoints().get(0)));
+                flightPolyline = map.addPolyline(polylineOptions.add(polylineOptions.getPoints().get(0)));
             } else if (flight.getGeometry() instanceof AirMapPath) {
                 PolylineOptions polylineOptions = getDefaultPolylineOptions(getContext());
                 for (Coordinate coordinate : ((AirMapPath) flight.getGeometry()).getCoordinates()) {
@@ -358,7 +359,6 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         final int altitudeIndex = indexOfMeterPreset(mListener.getFlight().getMaxAltitude(), getAltitudePresets());
         final int durationIndex = indexOfDurationPreset(mListener.getFlight().getEndsAt().getTime() - mListener.getFlight().getStartsAt().getTime());
         final int animationDuration = 250;
-
         int altitudeAnimateTo = (int) (((float) altitudeIndex / getAltitudePresets().length) * 100);
         ObjectAnimator altitudeAnimator = ObjectAnimator.ofInt(altitudeSeekBar, "progress", altitudeAnimateTo);
         altitudeAnimator.setDuration(animationDuration);
@@ -776,8 +776,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             polygonMap.remove(key);
         }
 
-        // draw flight radius/path/polygon so its highest in z-index
-        drawFlightPolygon();
+        // redraw flight radius so its highest in z-index
+        drawFlightPolygonDelayed();
 
         permitAdvisories = updatedMap;
     }
@@ -814,11 +814,17 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         return null;
     }
 
-    private Utils.StringNumberPair[] getRadiusPresets() {
-        if (useMetric) {
-            return Utils.getBufferPresetsMetric();
-        }
-        return Utils.getBufferPresets();
+    private void drawFlightPolygonDelayed() {
+        //FIXME: this is a hack to change the z-index of the flight polygon
+        //FIXME: if its not delayed on UI thread it doesn't work :(
+        mapView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (map != null) {
+                    drawFlightPolygon();
+                }
+            }
+        }, 10);
     }
 
     private Utils.StringNumberPair[] getAltitudePresets() {
