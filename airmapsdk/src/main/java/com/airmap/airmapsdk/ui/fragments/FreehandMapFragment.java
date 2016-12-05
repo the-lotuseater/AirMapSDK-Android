@@ -31,7 +31,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.airmap.airmapsdk.AdvisoriesAdapter;
+import com.airmap.airmapsdk.AdvisoriesBottomSheetAdapter;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.CircleContainer;
 import com.airmap.airmapsdk.DrawingCallback;
@@ -44,6 +44,7 @@ import com.airmap.airmapsdk.models.PolygonContainer;
 import com.airmap.airmapsdk.models.airspace.AirMapAirspace;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
+import com.airmap.airmapsdk.models.permits.AirMapPermitIssuer;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
 import com.airmap.airmapsdk.models.shapes.AirMapPath;
@@ -307,7 +308,38 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             @Override
             public void onDrawableClick() {
                 if (latestStatus != null && !latestStatus.getAdvisories().isEmpty()) {
-                    recyclerView.setAdapter(new AdvisoriesAdapter(latestStatus.getAdvisories()));
+                    Map<String, List<AirMapStatusAdvisory>> sections = new HashMap<>();
+                    for (AirMapStatusAdvisory advisory : latestStatus.getAdvisories()) {
+                        if (advisory.getType() != null) {
+                            String key;
+                            AirMapStatus.StatusColor statusColor = advisory.getColor();
+                            switch (statusColor) {
+                                case Red:
+                                    key = getResources().getString(R.string.flight_strictly_regulated);
+                                    break;
+                                case Yellow:
+                                    key = getResources().getString(R.string.advisories);
+                                    break;
+                                case Green:
+                                default:
+                                    key = getResources().getString(R.string.informational);
+                                    break;
+                            }
+                            if (sections.get(key) == null) {
+                                sections.put(key, new ArrayList<AirMapStatusAdvisory>());
+                            }
+                            sections.get(key).add(advisory);
+                        }
+                    }
+
+                    Map<String, String> organizationMap = new HashMap<>();
+                    if (latestStatus.getOrganizations() != null) {
+                        for (AirMapPermitIssuer issuer : latestStatus.getOrganizations()) {
+                            organizationMap.put(issuer.getId(), issuer.getName());
+                        }
+                    }
+
+                    recyclerView.setAdapter(new AdvisoriesBottomSheetAdapter(getActivity(), sections, organizationMap));
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 }
             }

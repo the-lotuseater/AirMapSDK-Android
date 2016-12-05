@@ -11,4 +11,14 @@
     <color name="airmap_colorFill">#B8E1E3</color>
     <color name="airmap_tipBackground">#d519202b</color>
     <color name="airmap_errorTipBackground">#c8d50000</color>
+    <color name="colorLightGray">#fcfcfc</color>
+    <color name="colorLinkBlue">@color/colorAccent</color>
+    <color name="colorSecondaryText">#727272</color>
+    <color name="grey">#757575</color>
+    <color name="greenDark">#589417</color>
+    <color name="green">#7ED321</color>
+    <color name="yellowDark">#FFD600</color>
+    <color name="yellow">#ffeb3b</color>
+    <color name="redDark">#D32F2F</color>
+    <color name="red">#FF0000</color>
 </resources>

@@ -70,4 +70,9 @@
     <string name="faq">FAQ</string>
     <string name="free">Free</string>
     <string name="price">$%1$s</string>
+    <string name="flight_strictly_regulated">Flight Strictly Regulated</string>
+    <string name="advisories">Advisories</string>
+    <string name="informational">Informational</string>
+    <string name="call">Call</string>
+    <string name="unknown_size">Unknown Size</string>
 </resources>
