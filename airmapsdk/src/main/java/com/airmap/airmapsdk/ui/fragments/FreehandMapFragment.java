@@ -418,6 +418,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         corners.clear();
         midpoints.clear();
         redPolygons.clear();
+        permitAdvisories.clear();
+        polygonMap.clear();
         updateButtonColor(null);
         latestStatus = null;
     }
@@ -1376,14 +1378,56 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 if (mListener != null) {
                     //FIXME: a better way to determine which type of flight annotation to redraw
                     if (tabLayout.getSelectedTabPosition() == 2) {
+                        //redraw circle
+                        PolygonOptions polygonOptions = getDefaultPolygonOptions(getActivity());
+                        for (LatLng point : polygonContainer.polygon.getPoints()) {
+                            polygonOptions.add(point);
+                        }
+                        map.removePolygon(polygonContainer.polygon);
+                        polygonContainer.polygon = map.addPolygon(polygonOptions);
                         map.updatePolygon(polygonContainer.polygon);
-                        map.updatePolyline(polygonContainer.outline);
+
+                        //redraw outline
+                        PolylineOptions lineOptions = getDefaultPolylineOptions(getActivity());
+                        for (LatLng point : polygonContainer.outline.getPoints()) {
+                            lineOptions.add(point);
+                        }
+                        map.removePolyline(polygonContainer.outline);
+                        polygonContainer.outline = map.addPolyline(lineOptions);
                     } else if (tabLayout.getSelectedTabPosition() == 1) {
-                        map.updatePolygon(lineContainer.buffer);
-                        map.updatePolyline(lineContainer.line);
+                        //FIXME: one day mapbox will allow you to change the z-index without this hack :(
+                        //redraw buffer
+                        PolygonOptions bufferOptions = getDefaultPolygonOptions(getActivity());
+                        for (LatLng point : lineContainer.buffer.getPoints()) {
+                            bufferOptions.add(point);
+                        }
+                        map.removePolygon(lineContainer.buffer);
+                        lineContainer.buffer = map.addPolygon(bufferOptions);
+
+                        //redraw line
+                        PolylineOptions lineOptions = getDefaultPolylineOptions(getActivity());
+                        for (LatLng point : lineContainer.line.getPoints()) {
+                            lineOptions.add(point);
+                        }
+                        map.removePolyline(lineContainer.line);
+                        lineContainer.line = map.addPolyline(lineOptions);
                     } else {
+                        //redraw circle
+                        PolygonOptions circleOptions = getDefaultPolygonOptions(getActivity());
+                        for (LatLng point : circleContainer.circle.getPoints()) {
+                            circleOptions.add(point);
+                        }
+                        map.removePolygon(circleContainer.circle);
+                        circleContainer.circle = map.addPolygon(circleOptions);
                         map.updatePolygon(circleContainer.circle);
-                        map.updatePolyline(circleContainer.outline);
+
+                        //redraw outline
+                        PolylineOptions lineOptions = getDefaultPolylineOptions(getActivity());
+                        for (LatLng point : circleContainer.outline.getPoints()) {
+                            lineOptions.add(point);
+                        }
+                        map.removePolyline(circleContainer.outline);
+                        circleContainer.outline = map.addPolyline(lineOptions);
                     }
                 }
             }
