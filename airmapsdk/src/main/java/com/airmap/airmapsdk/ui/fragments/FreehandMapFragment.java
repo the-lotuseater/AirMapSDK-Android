@@ -457,7 +457,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     private void zoomToCircle() {
         if (circleContainer.circle != null) {
             LatLngBounds bounds = new LatLngBounds.Builder().includes(circleContainer.circle.getPoints()).build();
-            map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, 200));
+            map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, Utils.dpToPixels(getActivity(), 50).intValue()));
         }
     }
 
@@ -481,7 +481,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         calculatePathBufferAndDisplayLineAndBuffer(thinLine.getPoints(), lineContainer.width);
 
         LatLngBounds bounds = new LatLngBounds.Builder().includes(thinLine.getPoints()).build();
-        map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
+        map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, Utils.dpToPixels(getActivity(), 80).intValue()));
     }
 
     public void drawPolygon(List<PointF> pointsDrawn) {
@@ -515,7 +515,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         polygonContainer.outline = map.addPolyline(polylineOptions);
 
         LatLngBounds bounds = new LatLngBounds.Builder().includes(polylineOptions.getPoints()).build();
-        map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
+        map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, Utils.dpToPixels(getActivity(), 80).intValue()));
         checkForIntersections(points); //Don't include the last point when checking for intersection, otherwise it will always say there is one
         checkPolygonStatus();
     }
@@ -1016,7 +1016,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                         lineContainer.line = map.addPolyline(getDefaultPolylineOptions(getContext()).addAll(linePoints));
                         checkPathStatus();
                         LatLngBounds bounds = new LatLngBounds.Builder().includes(lineContainer.buffer.getPoints()).build();
-                        map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
+                        map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, Utils.dpToPixels(getActivity(), 80).intValue()));
                     }
                 }
             });
@@ -1179,8 +1179,6 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
                 // invalid polygons that should be removed
                 } else {
-                    Log.e(TAG, "polygons need to be removed");
-
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
