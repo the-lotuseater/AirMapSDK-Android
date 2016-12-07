@@ -44,6 +44,7 @@ public class ImageViewSwitch extends ImageView {
     }
 
     public void setChecked(boolean checked) {
+        setSelected(checked);
         isChecked = checked;
         if (onCheckedChangeListener != null) {
             onCheckedChangeListener.onCheckedChanged(null, isChecked);

@@ -242,22 +242,21 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     drawingBoard.setVisibility(View.GONE);
                     enableDrawingSwitch.setVisibility(View.GONE);
                     deleteButton.setVisibility(View.GONE);
-                    enableDrawingSwitch.setVisibility(View.GONE);
                 } else if (PATH_TAG.equals(tag)) {
                     showSeekBarForPath();
                     updateTip(R.string.airmap_freehand_tip_path);
                     drawingBoard.setPolygonMode(false); //Doesn't close the drawn path
                     drawingBoard.setVisibility(View.VISIBLE);
                     enableDrawingSwitch.setVisibility(View.VISIBLE);
-                    enableDrawingSwitch.setChecked(false);
+                    enableDrawingSwitch.setChecked(true);
                     showDeleteButton(false);
                 } else if (POLYGON_TAG.equals(tag)) {
                     hideSeekBar();
                     updateTip(R.string.airmap_freehand_tip_area);
                     drawingBoard.setPolygonMode(true);
                     drawingBoard.setVisibility(View.VISIBLE);
-                    enableDrawingSwitch.setChecked(false);
                     enableDrawingSwitch.setVisibility(View.VISIBLE);
+                    enableDrawingSwitch.setChecked(true);
                     showDeleteButton(false);
                 }
             }
@@ -273,9 +272,9 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             }
         });
         //Add tabs after listener so that the callback is invoked
-        tabLayout.addTab(getTab(tabLayout, R.string.airmap_circle_radius, R.drawable.ic_circle, CIRCLE_TAG));
-        tabLayout.addTab(getTab(tabLayout, R.string.airmap_path_buffer, R.drawable.ic_path, PATH_TAG));
-        tabLayout.addTab(getTab(tabLayout, R.string.airmap_polygon, R.drawable.ic_polygon, POLYGON_TAG));
+        tabLayout.addTab(getTab(tabLayout, R.string.airmap_circle_radius, R.drawable.ic_point_tab, CIRCLE_TAG));
+        tabLayout.addTab(getTab(tabLayout, R.string.airmap_path_buffer, R.drawable.ic_path_tab, PATH_TAG));
+        tabLayout.addTab(getTab(tabLayout, R.string.airmap_polygon, R.drawable.ic_polygon_tab, POLYGON_TAG));
     }
 
     private void setupSwitch() {
@@ -627,14 +626,14 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                             deleteCoordinates.top *= 2;
                             deleteCoordinates.bottom *= 2;
                             if (deleteCoordinates.contains((int) tapPoint.x, (int) tapPoint.y)) {
-                                deleteButton.setImageResource(R.drawable.ic_delete_active);
+                                deleteButton.setSelected(true);
                                 if (doneDragging) {
-                                    deleteButton.setImageResource(R.drawable.ic_delete);
+                                    deleteButton.setSelected(false);
                                     updateTip(tabLayout.getSelectedTabPosition() == 2 ? R.string.airmap_freehand_tip_area : R.string.airmap_freehand_tip_path);
                                     deletePoint = true;
                                 }
                             } else {
-                                deleteButton.setImageResource(R.drawable.ic_delete);
+                                deleteButton.setSelected(false);
                             }
                             if (tabLayout.getSelectedTabPosition() != 0) { //We're not showing a tip for circle
                                 if (doneDragging) {
