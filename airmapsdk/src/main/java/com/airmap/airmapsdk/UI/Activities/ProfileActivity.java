@@ -84,26 +84,36 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         AirMap.getPilot(pilotId, new AirMapCallback<AirMapPilot>() {
             @Override
             public void onSuccess(AirMapPilot response) {
-                profile = response;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        populateViews();
-                    }
-                });
+                if (!isFinishing()) {
+                    profile = response;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            populateViews();
+                        }
+                    });
+                }
             }
 
             @Override
             public void onError(final AirMapException e) {
-                Snackbar.make(toolbar, "Error getting profile", Snackbar.LENGTH_LONG)
-                        .setAction("Retry", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {getPilot(pilotId);
-                    }
-                })
-                        .show();
-                Log.e("ProfileFragment", e.getMessage());
-                e.printStackTrace();
+                if (!isFinishing()) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Snackbar.make(toolbar, "Error getting profile", Snackbar.LENGTH_LONG)
+                                    .setAction("Retry", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            getPilot(pilotId);
+                                        }
+                                    })
+                                    .show();
+                        }
+                    });
+                    Log.e("ProfileFragment", e.getMessage());
+                    e.printStackTrace();
+                }
             }
         });
     }
