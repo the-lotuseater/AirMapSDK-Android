@@ -75,4 +75,5 @@
     <string name="informational">Informational</string>
     <string name="call">Call</string>
     <string name="unknown_size">Unknown Size</string>
+    <string name="accepts_digital_notice">Accepts Digital Notice</string>
 </resources>

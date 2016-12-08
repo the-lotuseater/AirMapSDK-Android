@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,9 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -124,24 +129,30 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
 
     private void onBindItemViewHolder(final VHItem holder, final AirMapStatusAdvisory advisory) {
         holder.nameTextView.setText(advisory.getName());
-        holder.phoneTextView.setText(advisory.getType().getTitle());
-        holder.phoneTextView.setVisibility(View.VISIBLE);
+        holder.description1TextView.setText(advisory.getType().getTitle());
+        holder.description1TextView.setVisibility(View.VISIBLE);
+        holder.description2TextView.setVisibility(View.GONE);
 
         try {
-            boolean showOrgName = false;
             if (!TextUtils.isEmpty(advisory.getOrganizationId())) {
                 String orgName = organizationsMap.get(advisory.getOrganizationId());
 
                 if (!TextUtils.isEmpty(orgName) && !orgName.equals(advisory.getName())) {
-                    showOrgName = true;
                     holder.nameTextView.setText(orgName);
-                    holder.organizationTextView.setText(advisory.getName());
+                    holder.description1TextView.setText(advisory.getName());
+                    holder.description2TextView.setText(advisory.getType().getTitle());
+                    holder.description2TextView.setVisibility(View.VISIBLE);
+                    holder.description2TextView.setTextColor(ContextCompat.getColor(context, R.color.colorSecondaryText));
                 }
             }
-            holder.organizationTextView.setVisibility(showOrgName ? View.VISIBLE : View.GONE);
 
-            final String number = advisory.getAirportProperties().getPhone();
+            final String number = advisory.getRequirements() != null && advisory.getRequirements().getNotice() != null ?
+                    advisory.getRequirements().getNotice().getPhoneNumber() : advisory.getAirportProperties().getPhone();
+
             if (number != null && number.length() >= 10) {
+                holder.description2TextView.setText(formatPhoneNumber(number));
+                holder.description2TextView.setVisibility(View.VISIBLE);
+                holder.description2TextView.setTextColor(ContextCompat.getColor(context, R.color.colorLinkBlue));
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -152,11 +163,11 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
                                         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number));
-                                        final Context context = holder.phoneTextView.getContext();
+                                        final Context context = holder.description2TextView.getContext();
                                         if (intent.resolveActivity(context.getPackageManager()) != null) {
                                             context.startActivity(intent); //Only start activity if the device has a phone (e.g. A tablet might not)
                                         } else {
-                                            holder.phoneTextView.post(new Runnable() {
+                                            holder.description2TextView.post(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     Toast.makeText(context, "No dialer found on device", Toast.LENGTH_SHORT).show();
@@ -171,6 +182,12 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
                 });
             } else {
                 holder.itemView.setOnClickListener(null);
+            }
+
+            if (advisory.getRequirements() != null && advisory.getRequirements().getNotice() != null && advisory.getRequirements().getNotice().isDigital()) {
+                holder.description2TextView.setText(R.string.accepts_digital_notice);
+                holder.description2TextView.setVisibility(View.VISIBLE);
+                holder.description2TextView.setTextColor(ContextCompat.getColor(context, R.color.colorLinkBlue));
             }
         } catch (NullPointerException e) {
             holder.itemView.setOnClickListener(null);
@@ -219,6 +236,21 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
         holder.nameTextView.setText(advisory.getName());
         String unknownSize = holder.itemView.getContext().getString(R.string.unknown_size);
         holder.sizeTextView.setText(advisory.getType().getTitle() + " - " + (size == -1 ? unknownSize : String.format(Locale.US, "%d acres", size)));
+    }
+
+    private String formatPhoneNumber(String number) {
+        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+        Locale locale = Locale.getDefault();
+        String country = locale != null && locale.getCountry() != null && !TextUtils.isEmpty(locale.getCountry()) ? locale.getCountry() : "US";
+        try {
+            Phonenumber.PhoneNumber phoneNumber = phoneUtil.parse(number, country);
+            return phoneUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
+        } catch (NumberParseException e) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                return PhoneNumberUtils.formatNumber(number, country);
+            }
+            return PhoneNumberUtils.formatNumber(number);
+        }
     }
 
     private AirMapStatusAdvisory getItem(int position) {
@@ -271,16 +303,16 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     public class VHItem extends RecyclerView.ViewHolder {
         View colorView;
         TextView nameTextView;
-        TextView organizationTextView;
-        TextView phoneTextView;
+        TextView description1TextView;
+        TextView description2TextView;
 
         public VHItem(View itemView) {
             super(itemView);
 
             colorView = itemView.findViewById(R.id.color_bar);
             nameTextView = (TextView) itemView.findViewById(R.id.name);
-            organizationTextView = (TextView) itemView.findViewById(R.id.organization);
-            phoneTextView = (TextView) itemView.findViewById(R.id.phone);
+            description1TextView = (TextView) itemView.findViewById(R.id.organization);
+            description2TextView = (TextView) itemView.findViewById(R.id.phone);
         }
 
     }
