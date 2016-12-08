@@ -637,7 +637,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                             }
                             if (tabLayout.getSelectedTabPosition() != 0) { //We're not showing a tip for circle
                                 if (doneDragging) {
-                                    updateTip(tabLayout.getSelectedTabPosition() == 2 ? R.string.airmap_freehand_tip_area : R.string.airmap_freehand_tip_path);
+                                    updateTip(R.string.airmap_done_drawing_tip);
                                 } else {
                                     updateTip(R.string.airmap_delete_tip);
                                 }
