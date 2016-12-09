@@ -410,7 +410,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
     public void clear() {
         cancelStatusCall();
-        map.removeAnnotations();
+        map.clear();
         circleContainer.clear();
         lineContainer.clear();
         polygonContainer.clear();
@@ -683,7 +683,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void drag(int indexOfAnnotationToDrag, LatLng newLocation, boolean isMidpoint, boolean doneDragging, boolean deletePoint) {
-        //Don't show midpoints and corners when dragging
+        //Don't show midpoints, corners, and intersections when dragging
         for (MarkerView midpoint : midpoints) {
             midpoint.setVisible(doneDragging);
         }
@@ -710,6 +710,13 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             scratchpad.reset();
             scratchpad.invalidate();
             setMidpointVisibilities();
+//            map.removeMarker(map.addMarker(new MarkerOptions()));
+//            mapView.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    setMidpointVisibilities();
+//                }
+//            }, 2000);
         }
     }
 
@@ -1149,7 +1156,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onSuccess(final AirMapStatus response) {
         latestStatus = response;
-        if (nextButton != null) {
+        if (nextButton != null) { //Fragment may have been destroyed
             nextButton.post(new Runnable() {
                 @Override
                 public void run() {
@@ -1178,22 +1185,24 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
                 // invalid polygons that should be removed
                 } else {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (String key : permitAdvisories.keySet()) {
-                                if (!advisoryMap.containsKey(key)) {
-                                    Polygon polygon = polygonMap.remove(key);
-                                    if (polygon != null) {
-                                        map.removePolygon(polygon);
-                                        polygonMap.remove(key);
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (String key : permitAdvisories.keySet()) {
+                                    if (!advisoryMap.containsKey(key)) {
+                                        Polygon polygon = polygonMap.remove(key);
+                                        if (polygon != null) {
+                                            map.removePolygon(polygon);
+                                            polygonMap.remove(key);
+                                        }
                                     }
                                 }
-                            }
 
-                            permitAdvisories = advisoryMap;
-                        }
-                    });
+                                permitAdvisories = advisoryMap;
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -1201,12 +1210,14 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
         // tell the user if conflicting permits
         if (requiresPermit && (latestStatus.getApplicablePermits() == null || latestStatus.getApplicablePermits().isEmpty())) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getActivity(), "Flight area cannot overlap with conflicting permit requirements", Toast.LENGTH_SHORT).show();
-                }
-            });
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getActivity(), "Flight area cannot overlap with conflicting permit requirements", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }
     }
 
