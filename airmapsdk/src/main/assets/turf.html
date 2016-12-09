@@ -1,5 +1,26 @@
 <html>
 	<head>
-		<script src='turf.min.js'> </script>
+		<script src='turf.js'> </script>
+		<script type="text/javascript">
+			function init() {
+				WebViewJavascriptBridge.init(function(message, responseCallback) {
+					 var json = JSON.parse(message);
+					 var buffered = buffer(json.line, json.buffer, 'meters');
+	    			 responseCallback(buffered.geometry.coordinates[0].toString());
+				});
+			}
+
+			if (window.WebViewJavascriptBridge) {
+				init()
+			} else {
+				document.addEventListener(
+					'WebViewJavascriptBridgeReady'
+					, function() {
+						init()
+					},
+					false
+				);
+			}
+		</script>
 	</head>
 </html>
