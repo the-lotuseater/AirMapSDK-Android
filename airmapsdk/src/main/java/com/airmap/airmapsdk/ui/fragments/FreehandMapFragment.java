@@ -993,23 +993,30 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             JSONArray coordinatesArray = new JSONArray();
             for (LatLng latLng : linePoints) {
                 JSONArray point = new JSONArray();
-                point.put(latLng.getLatitude());
                 point.put(latLng.getLongitude());
+                point.put(latLng.getLatitude());
                 coordinatesArray.put(point);
             }
 
+            JSONObject geometryJSON = new JSONObject();
+            geometryJSON.put("type", "LineString");
+            geometryJSON.put("coordinates", coordinatesArray);
+
+            JSONObject linestringJSON = new JSONObject();
+            linestringJSON.put("type", "Feature");
+            linestringJSON.put("properties", new JSONObject());
+            linestringJSON.put("geometry", geometryJSON);
+
             JSONObject json = new JSONObject();
-            json.put("points", coordinatesArray);
+            json.put("line", linestringJSON);
             json.put("buffer", width); // width/100000
-            System.out.println(json.toString());
             final PolygonOptions options = getDefaultPolygonOptions(getContext());
             webView.send(json.toString(), new CallBackFunction() {
                 @Override
                 public void onCallBack(String data) {
-                    System.out.println(data);
                     String[] split = data.split(",");
                     for (int i = 0; i < split.length; i += 2) {
-                        options.add(new LatLng(Double.valueOf(split[i]), Double.valueOf(split[i + 1])));
+                        options.add(new LatLng(Double.valueOf(split[i + 1]), Double.valueOf(split[i])));
                     }
                     if (map != null) {
                         if (lineContainer.buffer != null) {
