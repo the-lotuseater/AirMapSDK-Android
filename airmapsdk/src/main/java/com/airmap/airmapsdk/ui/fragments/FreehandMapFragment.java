@@ -961,7 +961,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     /**
-     * This will calculate the buffer around a path, invoke the necessary javascript, will also add
+     * This will calculate the buffer around a path, invoke the necessary javascript (turf.js), will also add
      * the buffer annotation to the map. The javascript buffer result is returned in a callback, so
      * it may be a little delayed
      *
@@ -991,6 +991,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             JSONObject json = new JSONObject();
             json.put("line", linestringJSON);
             json.put("buffer", width);
+            json.put("tunnel", !dashed);
 
             webView.send(json.toString(), new CallBackFunction() {
                 @Override
@@ -1017,11 +1018,30 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                                     bufferScreenLoc.add(map.getProjection().toScreenLocation(latLng));
                                 }
                                 scratchpad.drawShape(bufferScreenLoc);
+
+                                // if coordinates[] > 1, there's inner polygons aka holes
+                                // we don't need to tunnel the holes in dashed mode, just add them to scratchpad
+                                if (coordinates.length() > 1) {
+                                    for (int k = 1; k < coordinates.length(); k++) {
+                                        JSONArray innerPolygon = coordinates.getJSONArray(k);
+
+                                        List<PointF> innerBufferScreenLoc = new ArrayList<>();
+                                        for (int j = 0; j < innerPolygon.length(); j++) {
+                                            JSONArray coords = innerPolygon.getJSONArray(j);
+                                            LatLng latLng = new LatLng(coords.getDouble(1), (coords.getDouble(0)));
+                                            innerBufferScreenLoc.add(map.getProjection().toScreenLocation(latLng));
+                                        }
+
+                                        scratchpad.drawShapeDisconnected(innerBufferScreenLoc);
+                                    }
+                                }
                             } else {
                                 PolygonOptions options = mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(bufferPoints);
                                 optionsList.add(options);
                             }
 
+                        // multi-polygon comes back when we're tunneling the polygon holes and they slice the buffer into multiple polygons
+                        // this is fine, the json is just a little different and we have to add all the polygons
                         } else if ("MultiPolygon".equals(geometryType)) {
                             scratchpad.reset();
                             for (int k = 0; k < coordinates.length(); k++) {
@@ -1047,6 +1067,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                             }
                         }
 
+                        // add polygon(s) to map
                         if (map != null && !dashed) {
                             if (lineContainer.buffers != null && !lineContainer.buffers.isEmpty()) {
                                 map.removeAnnotations(lineContainer.buffers);
@@ -1054,6 +1075,10 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                             if (lineContainer.line != null) {
                                 map.removeAnnotation(lineContainer.line);
                             }
+
+                            scratchpad.reset();
+                            scratchpad.invalidate();
+
                             lineContainer.buffers = map.addPolygons(optionsList); //Need to add buffer first for proper z ordering
                             lineContainer.line = map.addPolyline(mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(linePoints));
 
