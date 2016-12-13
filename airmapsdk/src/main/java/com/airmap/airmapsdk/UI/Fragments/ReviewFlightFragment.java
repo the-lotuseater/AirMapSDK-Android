@@ -51,6 +51,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.airmap.airmapsdk.util.Utils.dpToPixels;
+
 /**
  * Created by Vansh Gandhi on 7/25/16.
  * Copyright © 2016 AirMap, Inc. All rights reserved.
@@ -226,16 +228,19 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                 for (Coordinate coordinate : ((AirMapPath) flight.getGeometry()).getCoordinates()) {
                     polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                 }
-                PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(mListener.getPathBuffer());
-                multiPoint = map.addPolygon(polygonOptions); //Add polygon first, then line for proper z ordering
-                map.addPolyline(polylineOptions);
+
+                for (List<LatLng> polygonPoints : mListener.getPathBuffers()) {
+                    PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(polygonPoints);
+                    map.addPolygon(polygonOptions); //Add polygon first, then line for proper z ordering
+                }
+                multiPoint = map.addPolyline(polylineOptions);
             } else {
                 List<LatLng> circlePoints = mListener.getAnnotationsFactory().polygonCircleForCoordinate(new LatLng(flight.getCoordinate().getLatitude(), flight.getCoordinate().getLongitude()), flight.getBuffer());
                 map.addPolygon(mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(circlePoints));
                 multiPoint = map.addPolyline(mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0)));
             }
             LatLngBounds bounds = new LatLngBounds.Builder().includes(multiPoint.getPoints()).build();
-            map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+            map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, dpToPixels(getActivity(), 20).intValue()));
         }
     }
 
@@ -491,9 +496,9 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
 
         AirMapPilot getPilot();
 
-        List<LatLng> getPathBuffer();
-
         AnnotationsFactory getAnnotationsFactory();
+
+        List<LatLng>[] getPathBuffers();
     }
 
     private class SectionsPagerAdapter extends FragmentStatePagerAdapter {

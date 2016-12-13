@@ -3,6 +3,9 @@ package com.airmap.airmapsdk.models;
 import com.mapbox.mapboxsdk.annotations.Polygon;
 import com.mapbox.mapboxsdk.annotations.Polyline;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Vansh Gandhi on 10/30/16.
  * Copyright © 2016 AirMap, Inc. All rights reserved.
@@ -10,19 +13,19 @@ import com.mapbox.mapboxsdk.annotations.Polyline;
 
 public class LineContainer implements Container {
     public Polyline line;
-    public Polygon buffer;
+    public List<Polygon> buffers;
     public double width;
 
 
     @Override
     public void clear() {
         line = null;
-        buffer = null;
+        buffers = new ArrayList<>();
         width = -1;
     }
 
     @Override
     public boolean isValid() {
-        return line != null && buffer != null && width > 0;
+        return line != null && buffers != null && !buffers.isEmpty() && width > 0;
     }
 }

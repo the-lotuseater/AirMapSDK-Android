@@ -32,8 +32,6 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.util.AnnotationsFactory;
-import com.airmap.airmapsdk.util.Utils;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
@@ -55,6 +53,8 @@ import com.airmap.airmapsdk.ui.activities.CreateEditAircraftActivity;
 import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
 import com.airmap.airmapsdk.ui.activities.ProfileActivity;
 import com.airmap.airmapsdk.ui.adapters.AircraftAdapter;
+import com.airmap.airmapsdk.util.AnnotationsFactory;
+import com.airmap.airmapsdk.util.Utils;
 import com.mapbox.mapboxsdk.annotations.MultiPoint;
 import com.mapbox.mapboxsdk.annotations.Polygon;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
@@ -810,8 +810,10 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 for (Coordinate coordinate : ((AirMapPath) flight.getGeometry()).getCoordinates()) {
                     polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                 }
-                PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(mListener.getPathBuffer());
-                flightPolygon = map.addPolygon(polygonOptions); //Add polygon first, then line for proper z ordering
+                for (List<LatLng> polygonPoints : mListener.getPathBuffers()) {
+                    PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(polygonPoints);
+                    flightPolygon = map.addPolygon(polygonOptions); //Add polygon first, then line for proper z ordering
+                }
                 flightPolyline = map.addPolyline(polylineOptions);
             } else {
                 List<LatLng> circlePoints = mListener.getAnnotationsFactory().polygonCircleForCoordinate(new LatLng(flight.getCoordinate().getLatitude(), flight.getCoordinate().getLongitude()), flight.getBuffer());
@@ -940,6 +942,6 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
         AnnotationsFactory getAnnotationsFactory();
 
-        List<LatLng> getPathBuffer();
+        List<LatLng>[] getPathBuffers();
     }
 }

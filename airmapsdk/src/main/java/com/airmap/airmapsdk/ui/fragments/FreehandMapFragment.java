@@ -87,6 +87,7 @@ import java.util.List;
 import java.util.Map;
 
 import okhttp3.Call;
+import retrofit2.http.HEAD;
 
 import static com.airmap.airmapsdk.models.status.AirMapStatus.StatusColor.Green;
 import static com.airmap.airmapsdk.models.status.AirMapStatus.StatusColor.Yellow;
@@ -331,6 +332,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         if (mListener != null) {
             mListener.setPathBufferPoints(null); //reset buffer polygon
             if (tabLayout.getSelectedTabPosition() == INDEX_OF_CIRCLE_TAB && circleContainer.isValid()) { //Circle
+
                 mListener.getFlight().setCoordinate(new Coordinate(circleContainer.center));
                 mListener.getFlight().setBuffer(circleContainer.radius);
             } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_PATH_TAB && lineContainer.isValid()) { //Path
@@ -340,7 +342,12 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 }
                 mListener.getFlight().setGeometry(new AirMapPath(coordinates));
                 mListener.getFlight().setBuffer(lineContainer.width);
-                mListener.setPathBufferPoints(lineContainer.buffer.getPoints());
+                //FIXME: these buffer points need to be separated by polygon
+                List<LatLng>[] bufferPoints = new ArrayList[lineContainer.buffers.size()];
+                for (int i = 0; i < lineContainer.buffers.size(); i++) {
+                    bufferPoints[i] = lineContainer.buffers.get(i).getPoints();
+                }
+                mListener.setPathBufferPoints(bufferPoints);
             } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_POLYGON_TAB && polygonContainer.isValid()) { //Polygon
                 if (!PointMath.findIntersections(polygonContainer.polygon.getPoints()).isEmpty()) {
                     Toast.makeText(getContext(), R.string.airmap_error_overlap, Toast.LENGTH_SHORT).show();
@@ -953,8 +960,6 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         seekBar.setProgress(1); //50 ft
     }
 
-    //Width is in meters
-
     /**
      * This will calculate the buffer around a path, invoke the necessary javascript, will also add
      * the buffer annotation to the map. The javascript buffer result is returned in a callback, so
@@ -986,35 +991,82 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             JSONObject json = new JSONObject();
             json.put("line", linestringJSON);
             json.put("buffer", width);
-            final PolygonOptions options = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
+
             webView.send(json.toString(), new CallBackFunction() {
                 @Override
                 public void onCallBack(String data) {
-                    if (map == null) return; //Null check, since we're in a callback
-                    String[] split = data.split(","); //Buffer points will be comma separated Lng,Lat,Lng,Lat,... etc
-                    List<LatLng> bufferPoints = new ArrayList<>();
-                    for (int i = 0; i < split.length; i += 2) {
-                        bufferPoints.add(new LatLng(Double.valueOf(split[i + 1]), Double.valueOf(split[i])));  //Lat comes after lng in the string
-                    }
-                    if (dashed) {
-                        List<PointF> bufferScreenLoc = new ArrayList<>();
-                        for (LatLng latLng : bufferPoints) {
-                            bufferScreenLoc.add(map.getProjection().toScreenLocation(latLng));
+                    try {
+                        JSONObject json = new JSONObject(data);
+                        JSONObject geometry = json.getJSONObject("geometry");
+                        String geometryType = geometry.getString("type");
+                        JSONArray coordinates = geometry.getJSONArray("coordinates");
+
+                        List<PolygonOptions> optionsList = new ArrayList<>();
+                        if ("Polygon".equals(geometryType)) {
+                            JSONArray outerPolygon = coordinates.getJSONArray(0);
+
+                            List<LatLng> bufferPoints = new ArrayList<>();
+                            for (int i = 0; i < outerPolygon.length(); i++) {
+                                JSONArray coords = outerPolygon.getJSONArray(i);
+                                bufferPoints.add(new LatLng(coords.getDouble(1), (coords.getDouble(0))));
+                            }
+
+                            if (dashed) {
+                                List<PointF> bufferScreenLoc = new ArrayList<>();
+                                for (LatLng latLng : bufferPoints) {
+                                    bufferScreenLoc.add(map.getProjection().toScreenLocation(latLng));
+                                }
+                                scratchpad.drawShape(bufferScreenLoc);
+                            } else {
+                                PolygonOptions options = mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(bufferPoints);
+                                optionsList.add(options);
+                            }
+
+                        } else if ("MultiPolygon".equals(geometryType)) {
+                            scratchpad.reset();
+                            for (int k = 0; k < coordinates.length(); k++) {
+                                JSONArray polygon = coordinates.getJSONArray(k);
+                                for (int i = 0; i < polygon.length(); i++) {
+                                    JSONArray coords = polygon.getJSONArray(i);
+                                    List<LatLng> bufferPoints = new ArrayList<>();
+                                    for (int j = 0; j < coords.length(); j++) {
+                                        bufferPoints.add(new LatLng(coords.getJSONArray(j).getDouble(1), (coords.getJSONArray(j).getDouble(0))));
+                                    }
+
+                                    if (dashed) {
+                                        List<PointF> bufferScreenLoc = new ArrayList<>();
+                                        for (LatLng latLng : bufferPoints) {
+                                            bufferScreenLoc.add(map.getProjection().toScreenLocation(latLng));
+                                        }
+                                        scratchpad.drawShapeDisconnected(bufferScreenLoc);
+                                    } else {
+                                        PolygonOptions options = mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(bufferPoints);
+                                        optionsList.add(options);
+                                    }
+                                }
+                            }
                         }
-                        scratchpad.drawShape(bufferScreenLoc);
-                    } else {
-                        options.addAll(bufferPoints);
-                        if (lineContainer.buffer != null) {
-                            map.removeAnnotation(lineContainer.buffer);
+
+                        if (map != null && !dashed) {
+                            if (lineContainer.buffers != null && !lineContainer.buffers.isEmpty()) {
+                                map.removeAnnotations(lineContainer.buffers);
+                            }
+                            if (lineContainer.line != null) {
+                                map.removeAnnotation(lineContainer.line);
+                            }
+                            lineContainer.buffers = map.addPolygons(optionsList); //Need to add buffer first for proper z ordering
+                            lineContainer.line = map.addPolyline(mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(linePoints));
+
+                            checkPathStatus();
+
+                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                            for (Polygon polygon : lineContainer.buffers) {
+                                builder.includes(polygon.getPoints());
+                            }
+                            map.easeCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), Utils.dpToPixels(getActivity(), 80).intValue()));
                         }
-                        if (lineContainer.line != null) {
-                            map.removeAnnotation(lineContainer.line);
-                        }
-                        lineContainer.buffer = map.addPolygon(options); //Need to add buffer first for proper z ordering
-                        lineContainer.line = map.addPolyline(mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(linePoints));
-                        checkPathStatus();
-                        LatLngBounds bounds = new LatLngBounds.Builder().includes(lineContainer.buffer.getPoints()).build();
-                        map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, Utils.dpToPixels(getContext(), 80).intValue()));
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Error parsing turf json", e);
                     }
                 }
             });
@@ -1317,17 +1369,21 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_PATH_TAB) {
                     //FIXME: one day mapbox will allow you to change the z-index without this hack :(
                     // can't redraw if it hasn't been drawn yet
-                    if (lineContainer == null || lineContainer.buffer == null) {
+                    if (lineContainer == null || lineContainer.buffers == null) {
                         return;
                     }
 
                     //redraw buffer
-                    PolygonOptions bufferOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
-                    for (LatLng point : lineContainer.buffer.getPoints()) {
-                        bufferOptions.add(point);
+                    List<PolygonOptions> bufferOptions = new ArrayList<>();
+                    for (Polygon polygon : lineContainer.buffers) {
+                        PolygonOptions options = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
+                        for (LatLng point : polygon.getPoints()) {
+                            options.add(point);
+                        }
+                        bufferOptions.add(options);
+                        map.removePolygon(polygon);
                     }
-                    map.removePolygon(lineContainer.buffer);
-                    lineContainer.buffer = map.addPolygon(bufferOptions);
+                    lineContainer.buffers = map.addPolygons(bufferOptions);
 
                     //redraw line
                     PolylineOptions lineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
@@ -1457,7 +1513,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
         void bottomSheetClosed();
 
-        void setPathBufferPoints(List<LatLng> buffer);
+        void setPathBufferPoints(List<LatLng>[] buffers);
 
         TabLayout getTabLayout();
 

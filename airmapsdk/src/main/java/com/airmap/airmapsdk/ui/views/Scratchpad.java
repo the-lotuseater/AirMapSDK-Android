@@ -9,6 +9,7 @@ import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +24,7 @@ public class Scratchpad extends View {
     private Canvas canvas;
     private Paint paint;
     private Path path;
+    private List<Path> disconnectedPaths;
 
     public Scratchpad(Context context) {
         super(context);
@@ -46,11 +48,15 @@ public class Scratchpad extends View {
         paint.setStrokeJoin(Paint.Join.ROUND);
         canvas = new Canvas();
         path = new Path();
+        disconnectedPaths = new ArrayList<>();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawPath(path, paint);
+        for (Path path : disconnectedPaths) {
+            canvas.drawPath(path, paint);
+        }
     }
 
     public void dragTo(PointF start, PointF middle, PointF end) {
@@ -81,7 +87,23 @@ public class Scratchpad extends View {
         invalidate();
     }
 
+    public void drawShapeDisconnected(List<PointF> shape) {
+        if (shape.isEmpty()) return;
+        Path path = new Path();
+        path.moveTo(shape.get(0).x, shape.get(0).y);
+        for (PointF point : shape) {
+            path.lineTo(point.x, point.y);
+        }
+        canvas.drawPath(path, paint);
+        disconnectedPaths.add(path);
+        invalidate();
+    }
+
     public void reset() {
         path.reset();
+        for (Path path : disconnectedPaths) {
+            path.reset();
+        }
+        disconnectedPaths.clear();
     }
 }
