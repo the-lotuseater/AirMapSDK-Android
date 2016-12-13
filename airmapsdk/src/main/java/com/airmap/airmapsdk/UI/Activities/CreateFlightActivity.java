@@ -89,7 +89,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
     private ArrayList<AirMapAvailablePermit> permitsToApplyFor; //Permits that need to be applied for before attaching to flight
     private ArrayList<AirMapAvailablePermit> permitsToShowInReview; //selectedPermits + permitsToApplyFor temporarily transformed into AvailablePermit
 
-    private List<LatLng> pathBuffer; //So that we don't need to recalculate the buffer polygon using turf on flight details screen
+    private List<LatLng>[] pathBuffers; //So that we don't need to recalculate the buffer polygon using turf on flight details screen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -286,8 +286,8 @@ public class CreateFlightActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void setPathBufferPoints(List<LatLng> buffer) {
-        pathBuffer = buffer;
+    public void setPathBufferPoints(List<LatLng>[] buffers) {
+        pathBuffers = buffers;
     }
 
     @Override
@@ -567,8 +567,8 @@ public class CreateFlightActivity extends AppCompatActivity implements
     }
 
     @Override
-    public List<LatLng> getPathBuffer() {
-        return pathBuffer;
+    public List<LatLng>[] getPathBuffers() {
+        return pathBuffers;
     }
 
     @Override

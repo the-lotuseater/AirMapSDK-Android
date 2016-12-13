@@ -78,6 +78,7 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Method;
@@ -362,7 +363,12 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                         }
                         mListener.getFlight().setGeometry(new AirMapPath(coordinates));
                         mListener.getFlight().setBuffer(lineContainer.width);
-                        mListener.setPathBufferPoints(lineContainer.buffer.getPoints());
+                        //FIXME: these buffer points need to be separated by polygon
+                        List<LatLng>[] bufferPoints = new ArrayList[lineContainer.buffers.size()];
+                        for (int i = 0; i < lineContainer.buffers.size(); i++) {
+                            bufferPoints[i] = lineContainer.buffers.get(i).getPoints();
+                        }
+                        mListener.setPathBufferPoints(bufferPoints);
                         tabLayout.setVisibility(View.GONE);
                         mListener.freehandNextClicked();
                     } else if (tabLayout.getSelectedTabPosition() == 2 && polygonContainer.isValid()) { //Polygon
@@ -976,7 +982,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     //Width is in meters
-    public void calculatePathBufferAndDisplayLineAndBuffer(final List<LatLng> linePoints, double width) {
+    public void calculatePathBufferAndDisplayLineAndBuffer(final List<LatLng> linePoints, final double width) {
 
         try {
 //            InputStream is = getAssets().open("turf.min.js");
@@ -1010,26 +1016,61 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             JSONObject json = new JSONObject();
             json.put("line", linestringJSON);
             json.put("buffer", width); // width/100000
-            final PolygonOptions options = getDefaultPolygonOptions(getContext());
+
             webView.send(json.toString(), new CallBackFunction() {
                 @Override
                 public void onCallBack(String data) {
-                    String[] split = data.split(",");
-                    for (int i = 0; i < split.length; i += 2) {
-                        options.add(new LatLng(Double.valueOf(split[i + 1]), Double.valueOf(split[i])));
-                    }
-                    if (map != null) {
-                        if (lineContainer.buffer != null) {
-                            map.removeAnnotation(lineContainer.buffer);
+                    try {
+                        JSONObject json = new JSONObject(data);
+                        JSONObject geometry = json.getJSONObject("geometry");
+                        String geometryType = geometry.getString("type");
+                        JSONArray coordinates = geometry.getJSONArray("coordinates");
+
+                        List<PolygonOptions> optionsList = new ArrayList<>();
+                        if ("Polygon".equals(geometryType)) {
+                            PolygonOptions options = getDefaultPolygonOptions(getActivity());
+                            JSONArray outerPolygon = coordinates.getJSONArray(0);
+
+                            for (int i = 0; i < outerPolygon.length(); i++) {
+                                JSONArray coords = outerPolygon.getJSONArray(i);
+                                options.add(new LatLng(coords.getDouble(1), (coords.getDouble(0))));
+                            }
+                            optionsList.add(options);
+                        } else if ("MultiPolygon".equals(geometryType)) {
+                            for (int k = 0; k < coordinates.length(); k++) {
+                                JSONArray polygon = coordinates.getJSONArray(k);
+                                for (int i = 0; i < polygon.length(); i++) {
+                                    JSONArray coords = polygon.getJSONArray(i);
+                                    PolygonOptions options = getDefaultPolygonOptions(getActivity());
+                                    for (int j = 0; j < coords.length(); j++) {
+                                        options.add(new LatLng(coords.getJSONArray(j).getDouble(1), (coords.getJSONArray(j).getDouble(0))));
+                                    }
+                                    optionsList.add(options);
+                                }
+                            }
                         }
-                        if (lineContainer.line != null) {
-                            map.removeAnnotation(lineContainer.line);
+
+                        if (map != null) {
+                            if (lineContainer.buffers != null && !lineContainer.buffers.isEmpty()) {
+                                map.removeAnnotations(lineContainer.buffers);
+                            }
+                            if (lineContainer.line != null) {
+                                map.removeAnnotation(lineContainer.line);
+                            }
+                            lineContainer.buffers = map.addPolygons(optionsList); //Need to add buffer first for proper z ordering
+                            lineContainer.line = map.addPolyline(getDefaultPolylineOptions(getContext()).addAll(linePoints));
+
+                            checkPathStatus();
+
+                            List<LatLng> bufferPoints = new ArrayList<LatLng>();
+                            for (Polygon polygon : lineContainer.buffers) {
+                                bufferPoints.addAll(polygon.getPoints());
+                            }
+                            LatLngBounds bounds = new LatLngBounds.Builder().includes(bufferPoints).build();
+                            map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, Utils.dpToPixels(getActivity(), 80).intValue()));
                         }
-                        lineContainer.buffer = map.addPolygon(options); //Need to add buffer first for proper z ordering
-                        lineContainer.line = map.addPolyline(getDefaultPolylineOptions(getContext()).addAll(linePoints));
-                        checkPathStatus();
-                        LatLngBounds bounds = new LatLngBounds.Builder().includes(lineContainer.buffer.getPoints()).build();
-                        map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, Utils.dpToPixels(getActivity(), 80).intValue()));
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Error parsing turf json", e);
                     }
                 }
             });
@@ -1415,17 +1456,21 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 } else if (tabLayout.getSelectedTabPosition() == 1) {
                     //FIXME: one day mapbox will allow you to change the z-index without this hack :(
                     // can't redraw if it hasn't been drawn yet
-                    if (lineContainer == null || lineContainer.buffer == null) {
+                    if (lineContainer == null || lineContainer.buffers == null) {
                         return;
                     }
 
                     //redraw buffer
-                    PolygonOptions bufferOptions = getDefaultPolygonOptions(getActivity());
-                    for (LatLng point : lineContainer.buffer.getPoints()) {
-                        bufferOptions.add(point);
+                    List<PolygonOptions> bufferOptions = new ArrayList<>();
+                    for (Polygon polygon : lineContainer.buffers) {
+                        PolygonOptions options = getDefaultPolygonOptions(getActivity());
+                        for (LatLng point : polygon.getPoints()) {
+                            options.add(point);
+                        }
+                        bufferOptions.add(options);
+                        map.removePolygon(polygon);
                     }
-                    map.removePolygon(lineContainer.buffer);
-                    lineContainer.buffer = map.addPolygon(bufferOptions);
+                    lineContainer.buffers = map.addPolygons(bufferOptions);
 
                     //redraw line
                     PolylineOptions lineOptions = getDefaultPolylineOptions(getActivity());
@@ -1641,7 +1686,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
         void bottomSheetClosed();
 
-        void setPathBufferPoints(List<LatLng> buffer);
+        void setPathBufferPoints(List<LatLng>[] buffers);
 
         TabLayout getTabLayout();
     }
