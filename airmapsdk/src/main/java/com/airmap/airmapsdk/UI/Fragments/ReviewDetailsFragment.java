@@ -1,8 +1,6 @@
 package com.airmap.airmapsdk.ui.fragments;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,18 +8,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.airmap.airmapsdk.Utils;
+import com.airmap.airmapsdk.util.Utils;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.util.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.airmap.airmapsdk.Utils.getDurationPresets;
-import static com.airmap.airmapsdk.Utils.indexOfDurationPreset;
-import static com.airmap.airmapsdk.Utils.metersToFeet;
+import static com.airmap.airmapsdk.util.Utils.getDurationPresets;
+import static com.airmap.airmapsdk.util.Utils.indexOfDurationPreset;
+import static com.airmap.airmapsdk.util.Utils.metersToFeet;
 
 
 public class ReviewDetailsFragment extends Fragment {

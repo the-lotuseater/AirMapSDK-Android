@@ -1,6 +1,6 @@
 package com.airmap.airmapsdk.networking.services;
 
-import com.airmap.airmapsdk.Utils;
+import com.airmap.airmapsdk.util.Utils;
 
 /**
  * Created by Vansh Gandhi on 6/23/16.

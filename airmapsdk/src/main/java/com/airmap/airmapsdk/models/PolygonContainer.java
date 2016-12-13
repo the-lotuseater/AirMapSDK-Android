@@ -1,6 +1,5 @@
 package com.airmap.airmapsdk.models;
 
-import com.airmap.airmapsdk.Container;
 import com.mapbox.mapboxsdk.annotations.Polygon;
 import com.mapbox.mapboxsdk.annotations.Polyline;
 

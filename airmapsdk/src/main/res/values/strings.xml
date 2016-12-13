@@ -75,5 +75,6 @@
     <string name="informational">Informational</string>
     <string name="call">Call</string>
     <string name="unknown_size">Unknown Size</string>
+    <string name="airmap_flight_area_overlap_permit_conflict">Flight area cannot overlap with conflicting permit requirements</string>
     <string name="accepts_digital_notice">Accepts Digital Notice</string>
 </resources>

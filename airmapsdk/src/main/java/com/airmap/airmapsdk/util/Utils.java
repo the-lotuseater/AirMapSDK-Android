@@ -1,24 +1,23 @@
-package com.airmap.airmapsdk;
+package com.airmap.airmapsdk.util;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.TypedValue;
 
+import com.airmap.airmapsdk.AirMapException;
+import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.Coordinate;
-import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
-import com.airmap.airmapsdk.util.Constants;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,12 +27,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * Created by Vansh Gandhi on 7/25/16.
@@ -56,7 +51,7 @@ public class Utils {
             return s;
         }
 
-        return s.substring(0,1).toUpperCase() + s.substring(1);
+        return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 
     /**
@@ -88,6 +83,7 @@ public class Utils {
 
     /**
      * Formats a string into a @link{java.util Date} object
+     *
      * @param iso8601 The ISO 8601 string to convert to a Date object
      * @return The converted Date
      */
@@ -121,6 +117,7 @@ public class Utils {
         }
     }
 
+    //So we don't have to be doing null checks constantly
     public static void error(AirMapCallback listener, int code, JSONObject json) {
         if (listener != null) {
             listener.onError(new AirMapException(code, json));
@@ -387,12 +384,4 @@ public class Utils {
     }
 
 
-    public static PolygonOptions getMapboxPolygon(AirMapPolygon airMapPolygon) {
-        PolygonOptions polygonOptions = new PolygonOptions();
-        for (Coordinate coordinate : airMapPolygon.getCoordinates()) {
-            polygonOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
-        }
-
-        return polygonOptions;
-    }
 }

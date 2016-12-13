@@ -32,7 +32,8 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.Utils;
+import com.airmap.airmapsdk.util.AnnotationsFactory;
+import com.airmap.airmapsdk.util.Utils;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
@@ -54,10 +55,6 @@ import com.airmap.airmapsdk.ui.activities.CreateEditAircraftActivity;
 import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
 import com.airmap.airmapsdk.ui.activities.ProfileActivity;
 import com.airmap.airmapsdk.ui.adapters.AircraftAdapter;
-import com.mapbox.mapboxsdk.annotations.Annotation;
-import com.mapbox.mapboxsdk.annotations.Icon;
-import com.mapbox.mapboxsdk.annotations.IconFactory;
-import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.MultiPoint;
 import com.mapbox.mapboxsdk.annotations.Polygon;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
@@ -79,12 +76,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.airmap.airmapsdk.Utils.getDurationPresets;
-import static com.airmap.airmapsdk.Utils.indexOfDurationPreset;
-import static com.airmap.airmapsdk.Utils.indexOfMeterPreset;
-import static com.airmap.airmapsdk.ui.fragments.FreehandMapFragment.getDefaultPolygonOptions;
-import static com.airmap.airmapsdk.ui.fragments.FreehandMapFragment.getDefaultPolylineOptions;
-import static com.airmap.airmapsdk.ui.fragments.FreehandMapFragment.polygonCircleForCoordinate;
+import static com.airmap.airmapsdk.util.Utils.getDurationPresets;
+import static com.airmap.airmapsdk.util.Utils.indexOfDurationPreset;
+import static com.airmap.airmapsdk.util.Utils.indexOfMeterPreset;
 
 
 public class FlightDetailsFragment extends Fragment implements OnMapReadyCallback {
@@ -213,8 +207,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             AirMapFlight flight = mListener.getFlight();
             MultiPoint multiPoint;
             if (flight.getGeometry() instanceof AirMapPolygon) {
-                PolygonOptions polygonOptions = getDefaultPolygonOptions(getContext());
-                PolylineOptions polylineOptions = getDefaultPolylineOptions(getContext());
+                PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
+                PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
                 for (Coordinate coordinate : ((AirMapPolygon) flight.getGeometry()).getCoordinates()) {
                     polygonOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                     polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
@@ -222,15 +216,15 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 map.addPolygon(polygonOptions);
                 multiPoint = map.addPolyline(polylineOptions.add(polylineOptions.getPoints().get(0)));
             } else if (flight.getGeometry() instanceof AirMapPath) {
-                PolylineOptions polylineOptions = getDefaultPolylineOptions(getContext());
+                PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
                 for (Coordinate coordinate : ((AirMapPath) flight.getGeometry()).getCoordinates()) {
                     polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                 }
                 multiPoint = map.addPolyline(polylineOptions);
             } else {
-                List<LatLng> circlePoints = polygonCircleForCoordinate(new LatLng(flight.getCoordinate().getLatitude(), flight.getCoordinate().getLongitude()), flight.getBuffer());
-                map.addPolygon(getDefaultPolygonOptions(getContext()).addAll(circlePoints));
-                multiPoint = map.addPolyline(getDefaultPolylineOptions(getContext()).addAll(circlePoints).add(circlePoints.get(0)));
+                List<LatLng> circlePoints = mListener.getAnnotationsFactory().polygonCircleForCoordinate(new LatLng(flight.getCoordinate().getLatitude(), flight.getCoordinate().getLongitude()), flight.getBuffer());
+                map.addPolygon(mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(circlePoints));
+                multiPoint = map.addPolyline(mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0)));
             }
             LatLngBounds bounds = new LatLngBounds.Builder().includes(multiPoint.getPoints()).build();
             map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
@@ -748,7 +742,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     private Polygon drawPermitPolygon(AirMapAirspace airspace, AirMapStatus.StatusColor statusColor) {
         AirMapGeometry geometry = airspace.getGeometry();
         if (geometry instanceof AirMapPolygon) {
-            PolygonOptions polygonOptions = Utils.getMapboxPolygon((AirMapPolygon) geometry);
+            PolygonOptions polygonOptions = AnnotationsFactory.getMapboxPolygon((AirMapPolygon) geometry);
 
             int color;
             switch (statusColor) {
@@ -803,8 +797,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
             AirMapFlight flight = mListener.getFlight();
             if (flight.getGeometry() instanceof AirMapPolygon) {
-                PolygonOptions polygonOptions = getDefaultPolygonOptions(getContext());
-                PolylineOptions polylineOptions = getDefaultPolylineOptions(getContext());
+                PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
+                PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
                 for (Coordinate coordinate : ((AirMapPolygon) flight.getGeometry()).getCoordinates()) {
                     polygonOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                     polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
@@ -812,17 +806,17 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 flightPolygon = map.addPolygon(polygonOptions);
                 flightPolyline = map.addPolyline(polylineOptions.add(polylineOptions.getPoints().get(0)));
             } else if (flight.getGeometry() instanceof AirMapPath) {
-                PolylineOptions polylineOptions = getDefaultPolylineOptions(getContext());
+                PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
                 for (Coordinate coordinate : ((AirMapPath) flight.getGeometry()).getCoordinates()) {
                     polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                 }
-                PolygonOptions polygonOptions = getDefaultPolygonOptions(getContext()).addAll(mListener.getPathBuffer());
+                PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(mListener.getPathBuffer());
                 flightPolygon = map.addPolygon(polygonOptions); //Add polygon first, then line for proper z ordering
                 flightPolyline = map.addPolyline(polylineOptions);
             } else {
-                List<LatLng> circlePoints = polygonCircleForCoordinate(new LatLng(flight.getCoordinate().getLatitude(), flight.getCoordinate().getLongitude()), flight.getBuffer());
-                flightPolygon = map.addPolygon(getDefaultPolygonOptions(getContext()).addAll(circlePoints));
-                flightPolyline = map.addPolyline(getDefaultPolylineOptions(getContext()).addAll(circlePoints).add(circlePoints.get(0)));
+                List<LatLng> circlePoints = mListener.getAnnotationsFactory().polygonCircleForCoordinate(new LatLng(flight.getCoordinate().getLatitude(), flight.getCoordinate().getLongitude()), flight.getBuffer());
+                flightPolygon = map.addPolygon(mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(circlePoints));
+                flightPolyline = map.addPolyline(mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0)));
             }
         }
     }
@@ -943,6 +937,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         void flightChanged();
 
         void setPilot(AirMapPilot response);
+
+        AnnotationsFactory getAnnotationsFactory();
 
         List<LatLng> getPathBuffer();
     }

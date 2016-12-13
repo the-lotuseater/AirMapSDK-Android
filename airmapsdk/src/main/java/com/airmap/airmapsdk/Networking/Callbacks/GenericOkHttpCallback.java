@@ -2,7 +2,7 @@ package com.airmap.airmapsdk.networking.callbacks;
 
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
-import com.airmap.airmapsdk.Utils;
+import com.airmap.airmapsdk.util.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;

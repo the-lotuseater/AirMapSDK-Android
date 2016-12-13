@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.ui;
+package com.airmap.airmapsdk.ui.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -11,7 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.airmap.airmapsdk.DrawingCallback;
-import com.airmap.airmapsdk.PointMath;
+import com.airmap.airmapsdk.util.PointMath;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
  * Copyright © 2016 AirMap, Inc. All rights reserved.
  *
  * This View allows the user to draw a shape. Once the user is done drawing, it notifies the
- * DrawingCallback
+ * DrawingCallback, if one has been set
  */
 
 public class DrawingBoard extends View {
@@ -45,6 +45,7 @@ public class DrawingBoard extends View {
         super(context, attrs, defStyleAttr);
     }
 
+    //Static initializer block. It is called after the constructor has run
     {
         drawPath = new Path();
         drawPaint = new Paint();
@@ -89,15 +90,16 @@ public class DrawingBoard extends View {
                 return false;
         }
         if (doneDrawing) {
-            doneDrawing();
+            simplifyPathAndInvokeCallback();
         }
         invalidate();
         return true;
     }
 
-    private void doneDrawing() {
+    private void simplifyPathAndInvokeCallback() {
         List<PointF> reduced = PointMath.simplify(points, 50);
         if (reduced != null && !reduced.isEmpty() && callback != null) {
+            //Sometimes the path will have duplicate points. We want to get rid of them, otherwise Mapbox spazs out
             List<PointF> noDuplicates = removeDuplicates(reduced);
             if (noDuplicates != null && noDuplicates.size() >= (isPolygonMode() ? 3 : 2)) {
                 callback.doneDrawing(removeDuplicates(reduced));
@@ -105,14 +107,25 @@ public class DrawingBoard extends View {
         }
     }
 
+    /**
+     * Set the callback to be invoked after the user finishes drawing a shape
+     * @param callback
+     */
     public void setDoneDrawingCallback(DrawingCallback callback) {
         this.callback = callback;
     }
 
-    public void setPolygonMode(boolean enable) {
-        isPolygonMode = enable;
+    /**
+     * Set whether the user will be drawing a polygon or a line
+     * @param isPolygon Whether the user will be drawing a polygon
+     */
+    public void setPolygonMode(boolean isPolygon) {
+        isPolygonMode = isPolygon;
     }
 
+    /**
+     * @return Whether the user is drawing polygons or paths
+     */
     public boolean isPolygonMode() {
         return isPolygonMode;
     }

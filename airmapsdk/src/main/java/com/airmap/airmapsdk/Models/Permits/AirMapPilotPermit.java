@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.airmap.airmapsdk.Utils.getDateFromIso8601String;
+import static com.airmap.airmapsdk.util.Utils.getDateFromIso8601String;
 
 /**
  * Created by Vansh Gandhi on 7/21/16.

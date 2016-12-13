@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.ui;
+package com.airmap.airmapsdk.ui.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -34,7 +34,9 @@ public class ImageViewSwitch extends ImageView {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    //Static initializer. Called after each constructor
     {
+        //Set the onClickListener to toggle
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

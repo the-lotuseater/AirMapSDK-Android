@@ -26,7 +26,7 @@
                 app:compass_enabled="false"
                 app:zoom_controls_enabled="false"/>
 
-        <com.airmap.airmapsdk.ui.DrawingBoard
+        <com.airmap.airmapsdk.ui.views.DrawingBoard
                 android:id="@+id/drawFrame"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -34,7 +34,7 @@
                 android:clickable="true"
                 android:background="#58000000"/>
 
-        <com.airmap.airmapsdk.ui.Scratchpad
+        <com.airmap.airmapsdk.ui.views.Scratchpad
                 android:id="@+id/scratchpad"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -47,7 +47,7 @@
                 android:layout_marginLeft="8dp"
                 android:id="@+id/button_container">
 
-            <com.airmap.airmapsdk.ui.ImageViewSwitch
+            <com.airmap.airmapsdk.ui.views.ImageViewSwitch
                     android:id="@+id/action_button"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -117,7 +117,7 @@
         </RelativeLayout>
 
 
-        <com.airmap.airmapsdk.ui.CustomButton
+        <com.airmap.airmapsdk.ui.views.ClickableDrawableButton
                 android:id="@+id/next_button"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"

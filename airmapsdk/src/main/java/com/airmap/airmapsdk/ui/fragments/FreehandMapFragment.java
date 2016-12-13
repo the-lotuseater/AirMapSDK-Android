@@ -12,7 +12,6 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.annotation.UiThread;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
@@ -33,13 +32,11 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AdvisoriesBottomSheetAdapter;
 import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.CircleContainer;
 import com.airmap.airmapsdk.DrawingCallback;
-import com.airmap.airmapsdk.LineContainer;
-import com.airmap.airmapsdk.PointMath;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.Utils;
+import com.airmap.airmapsdk.models.CircleContainer;
 import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.models.LineContainer;
 import com.airmap.airmapsdk.models.PolygonContainer;
 import com.airmap.airmapsdk.models.airspace.AirMapAirspace;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
@@ -54,18 +51,18 @@ import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.networking.services.AirspaceService;
-import com.airmap.airmapsdk.ui.CustomButton;
-import com.airmap.airmapsdk.ui.DrawingBoard;
-import com.airmap.airmapsdk.ui.ImageViewSwitch;
-import com.airmap.airmapsdk.ui.Scratchpad;
 import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
+import com.airmap.airmapsdk.ui.views.ClickableDrawableButton;
+import com.airmap.airmapsdk.ui.views.DrawingBoard;
+import com.airmap.airmapsdk.ui.views.ImageViewSwitch;
+import com.airmap.airmapsdk.ui.views.Scratchpad;
+import com.airmap.airmapsdk.util.AnnotationsFactory;
+import com.airmap.airmapsdk.util.PointMath;
+import com.airmap.airmapsdk.util.Utils;
 import com.github.lzyzsd.jsbridge.BridgeWebView;
 import com.github.lzyzsd.jsbridge.CallBackFunction;
-import com.mapbox.mapboxsdk.annotations.Icon;
-import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerView;
-import com.mapbox.mapboxsdk.annotations.MarkerViewOptions;
 import com.mapbox.mapboxsdk.annotations.Polygon;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
@@ -78,6 +75,7 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Method;
@@ -90,8 +88,10 @@ import java.util.Map;
 
 import okhttp3.Call;
 
-import static com.airmap.airmapsdk.PointMath.distanceBetween;
-import static com.airmap.airmapsdk.Utils.getBufferPresets;
+import static com.airmap.airmapsdk.models.status.AirMapStatus.StatusColor.Green;
+import static com.airmap.airmapsdk.models.status.AirMapStatus.StatusColor.Yellow;
+import static com.airmap.airmapsdk.util.PointMath.distanceBetween;
+import static com.airmap.airmapsdk.util.Utils.getBufferPresets;
 
 /**
  * Created by Vansh Gandhi on 11/13/16.
@@ -106,17 +106,12 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     private static final String CIRCLE_TAG = "circle";
     private static final String PATH_TAG = "path";
     private static final String POLYGON_TAG = "polygon";
-    private static final String MIDPOINT_TAG = "midpoint";
-    private static final String CORNER_TAG = "corner";
-    private static final String INTERSECTION_TAG = "intersection";
 
-    private static Icon cornerIcon;
-    private static Icon midpointIcon;
-    private static Icon intersectionIcon;
+    private static final int INDEX_OF_CIRCLE_TAB = 0;
+    private static final int INDEX_OF_PATH_TAB = 1;
+    private static final int INDEX_OF_POLYGON_TAB = 2;
 
     //Main layout views
-//    private AppBarLayout appBarLayout;
-//    private Toolbar toolbar;
     private TabLayout tabLayout;
     private RelativeLayout seekBarContainer;
     private SeekBar seekBar;
@@ -128,7 +123,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     private MapView mapView;
     private DrawingBoard drawingBoard;
     private Scratchpad scratchpad;
-    private CustomButton nextButton;
+    private ClickableDrawableButton nextButton;
+    private BridgeWebView webView; //For running javascript
 
     //Bottom sheet layout views
     private CoordinatorLayout bottomSheetLayout;
@@ -148,19 +144,23 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     private List<MarkerView> intersections; //Store this in the Polygon class? since this is only relevant for polygon
     private List<Polygon> redPolygons;
     private Rect deleteCoordinates = new Rect();
-    private float screenDensity;
     private AirMapStatus latestStatus;
     private Call airspaceCall;
     private Call statusCall;
+    private float screenDensity;
 
     private OnFragmentInteractionListener mListener;
 
-    private BridgeWebView webView;
-
+    //Required empty constructor
     public FreehandMapFragment() {
-        //Required empty constructor
     }
 
+    /**
+     * Create a new instance of the class
+     *
+     * @param coordinate The coordinate the center the map at
+     * @return a new instance of the FreehandMapFragment
+     */
     public static FreehandMapFragment newInstance(Coordinate coordinate) {
         Bundle args = new Bundle();
         args.putSerializable(CreateFlightActivity.COORDINATE, coordinate);
@@ -172,7 +172,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.airmap_fragment_freehand, container, false);
-        initializeViews(view);
+        initializeViews(view); //Instantiate all the views
         setupSwitch();
         setupMap(savedInstanceState);
         setupButtons();
@@ -181,6 +181,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
         permitAdvisories = new HashMap<>();
         polygonMap = new HashMap<>();
+
         circleContainer = new CircleContainer();
         lineContainer = new LineContainer();
         polygonContainer = new PolygonContainer();
@@ -189,15 +190,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         midpoints = new ArrayList<>();
         intersections = new ArrayList<>();
         redPolygons = new ArrayList<>();
-        cornerIcon = IconFactory.getInstance(getContext()).fromResource(R.drawable.white_circle);
-        midpointIcon = IconFactory.getInstance(getContext()).fromResource(R.drawable.gray_circle);
-        intersectionIcon = IconFactory.getInstance(getContext()).fromResource(R.drawable.intersection_circle);
 
         screenDensity = getResources().getDisplayMetrics().density;
-
-        webView = new BridgeWebView(getContext());
-        webView.setWillNotDraw(true);
-        webView.loadUrl("file:///android_asset/turf.html");
 
         return view;
     }
@@ -213,7 +207,12 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         mapView = (MapView) view.findViewById(R.id.map);
         drawingBoard = (DrawingBoard) view.findViewById(R.id.drawFrame);
         scratchpad = (Scratchpad) view.findViewById(R.id.scratchpad);
-        nextButton = (CustomButton) view.findViewById(R.id.next_button);
+        nextButton = (ClickableDrawableButton) view.findViewById(R.id.next_button);
+
+        //This hidden WebView does the turf line buffering
+        webView = new BridgeWebView(getContext());
+        webView.setWillNotDraw(true);
+        webView.loadUrl("file:///android_asset/turf.html");
 
         bottomSheetLayout = (CoordinatorLayout) view.findViewById(R.id.bottom_sheet);
         recyclerView = (RecyclerView) view.findViewById(R.id.advisories_list);
@@ -263,18 +262,25 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
+
         //Add tabs after listener so that the callback is invoked
         tabLayout.addTab(getTab(tabLayout, R.string.airmap_circle_radius, R.drawable.ic_point_tab, CIRCLE_TAG));
         tabLayout.addTab(getTab(tabLayout, R.string.airmap_path_buffer, R.drawable.ic_path_tab, PATH_TAG));
         tabLayout.addTab(getTab(tabLayout, R.string.airmap_polygon, R.drawable.ic_polygon_tab, POLYGON_TAG));
+    }
+
+    public TabLayout.Tab getTab(TabLayout tabLayout, @StringRes int textId, @DrawableRes int iconId, String id) {
+        TabLayout.Tab tab = tabLayout.newTab();
+        tab.setText(textId);
+        tab.setIcon(iconId);
+        tab.setTag(id);
+        return tab;
     }
 
     private void setupSwitch() {
@@ -285,7 +291,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 if (isChecked) {
                     updateTip(drawingBoard.isPolygonMode() ? R.string.airmap_draw_freehand_area : R.string.airmap_draw_freehand_path);
                 } else {
-                    updateTip(tabLayout.getSelectedTabPosition() == 2 ? R.string.airmap_freehand_tip_area : R.string.airmap_freehand_tip_path);
+                    updateTip(tabLayout.getSelectedTabPosition() == INDEX_OF_POLYGON_TAB ? R.string.airmap_freehand_tip_area : R.string.airmap_freehand_tip_path);
                 }
             }
         });
@@ -295,93 +301,98 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clear();
-                showDeleteButton(false);
-                if (tabLayout.getSelectedTabPosition() == 2) { //Reset in case we displayed the intersection error message
-                    updateTip(R.string.airmap_freehand_tip_area);
-                }
+                onDeleteClick();
             }
         });
-
-        nextButton.setDrawableClickListener(new CustomButton.DrawableClickListener() {
+        nextButton.setDrawableClickListener(new ClickableDrawableButton.DrawableClickListener() {
             @Override
             public void onDrawableClick() {
-                if (latestStatus != null && !latestStatus.getAdvisories().isEmpty()) {
-                    Map<String, List<AirMapStatusAdvisory>> sections = new HashMap<>();
-                    for (AirMapStatusAdvisory advisory : latestStatus.getAdvisories()) {
-                        if (advisory.getType() != null) {
-                            String key;
-                            AirMapStatus.StatusColor statusColor = advisory.getColor();
-                            switch (statusColor) {
-                                case Red:
-                                    key = getResources().getString(R.string.flight_strictly_regulated);
-                                    break;
-                                case Yellow:
-                                    key = getResources().getString(R.string.advisories);
-                                    break;
-                                case Green:
-                                default:
-                                    key = getResources().getString(R.string.informational);
-                                    break;
-                            }
-                            if (sections.get(key) == null) {
-                                sections.put(key, new ArrayList<AirMapStatusAdvisory>());
-                            }
-                            sections.get(key).add(advisory);
-                        }
-                    }
-
-                    Map<String, String> organizationMap = new HashMap<>();
-                    if (latestStatus.getOrganizations() != null) {
-                        for (AirMapPermitIssuer issuer : latestStatus.getOrganizations()) {
-                            organizationMap.put(issuer.getId(), issuer.getName());
-                        }
-                    }
-
-                    recyclerView.setAdapter(new AdvisoriesBottomSheetAdapter(getActivity(), sections, organizationMap));
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                }
+                onNextButtonDrawableClick();
             }
         });
-
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mListener != null) {
-                    mListener.setPathBufferPoints(null); //reset buffer polygon
-                    if (tabLayout.getSelectedTabPosition() == 0 && circleContainer.isValid()) { //Circle
-
-                        mListener.getFlight().setCoordinate(new Coordinate(circleContainer.center));
-                        mListener.getFlight().setBuffer(circleContainer.radius);
-                        tabLayout.setVisibility(View.GONE);
-                        mListener.freehandNextClicked();
-                    } else if (tabLayout.getSelectedTabPosition() == 1 && lineContainer.isValid()) { //Path
-                        List<Coordinate> coordinates = new ArrayList<>();
-                        for (LatLng latLng : lineContainer.line.getPoints()) {
-                            coordinates.add(new Coordinate(latLng));
-                        }
-                        mListener.getFlight().setGeometry(new AirMapPath(coordinates));
-                        mListener.getFlight().setBuffer(lineContainer.width);
-                        mListener.setPathBufferPoints(lineContainer.buffer.getPoints());
-                        tabLayout.setVisibility(View.GONE);
-                        mListener.freehandNextClicked();
-                    } else if (tabLayout.getSelectedTabPosition() == 2 && polygonContainer.isValid()) { //Polygon
-                        if (!PointMath.findIntersections(polygonContainer.polygon.getPoints()).isEmpty()) {
-                            Toast.makeText(getContext(), R.string.airmap_error_overlap, Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        List<Coordinate> coordinates = new ArrayList<>();
-                        for (LatLng latLng : polygonContainer.polygon.getPoints()) {
-                            coordinates.add(new Coordinate(latLng));
-                        }
-                        mListener.getFlight().setGeometry(new AirMapPolygon(coordinates));
-                        tabLayout.setVisibility(View.GONE);
-                        mListener.freehandNextClicked();
-                    }
-                }
-
+                onNextButtonClick();
             }
         });
+    }
+
+    private void onDeleteClick() {
+        clear();
+        showDeleteButton(false);
+        if (tabLayout.getSelectedTabPosition() == INDEX_OF_POLYGON_TAB) {
+            //Reset in case we displayed the intersection error message
+            updateTip(R.string.airmap_freehand_tip_area);
+        }
+    }
+
+    private void onNextButtonClick() {
+        if (mListener != null) {
+            mListener.setPathBufferPoints(null); //reset buffer polygon
+            if (tabLayout.getSelectedTabPosition() == INDEX_OF_CIRCLE_TAB && circleContainer.isValid()) { //Circle
+                mListener.getFlight().setCoordinate(new Coordinate(circleContainer.center));
+                mListener.getFlight().setBuffer(circleContainer.radius);
+            } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_PATH_TAB && lineContainer.isValid()) { //Path
+                List<Coordinate> coordinates = new ArrayList<>();
+                for (LatLng latLng : lineContainer.line.getPoints()) {
+                    coordinates.add(new Coordinate(latLng));
+                }
+                mListener.getFlight().setGeometry(new AirMapPath(coordinates));
+                mListener.getFlight().setBuffer(lineContainer.width);
+                mListener.setPathBufferPoints(lineContainer.buffer.getPoints());
+            } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_POLYGON_TAB && polygonContainer.isValid()) { //Polygon
+                if (!PointMath.findIntersections(polygonContainer.polygon.getPoints()).isEmpty()) {
+                    Toast.makeText(getContext(), R.string.airmap_error_overlap, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                List<Coordinate> coordinates = new ArrayList<>();
+                for (LatLng latLng : polygonContainer.polygon.getPoints()) {
+                    coordinates.add(new Coordinate(latLng));
+                }
+                mListener.getFlight().setGeometry(new AirMapPolygon(coordinates));
+            }
+            tabLayout.setVisibility(View.GONE);
+            mListener.freehandNextClicked();
+        }
+    }
+
+    private void onNextButtonDrawableClick() {
+        if (latestStatus != null && !latestStatus.getAdvisories().isEmpty()) {
+            Map<String, List<AirMapStatusAdvisory>> sections = new HashMap<>();
+            for (AirMapStatusAdvisory advisory : latestStatus.getAdvisories()) {
+                if (advisory.getType() != null) {
+                    String key;
+                    AirMapStatus.StatusColor statusColor = advisory.getColor();
+                    switch (statusColor) {
+                        case Red:
+                            key = getResources().getString(R.string.flight_strictly_regulated);
+                            break;
+                        case Yellow:
+                            key = getResources().getString(R.string.advisories);
+                            break;
+                        case Green:
+                        default:
+                            key = getResources().getString(R.string.informational);
+                            break;
+                    }
+                    if (sections.get(key) == null) {
+                        sections.put(key, new ArrayList<AirMapStatusAdvisory>());
+                    }
+                    sections.get(key).add(advisory);
+                }
+            }
+
+            Map<String, String> organizationMap = new HashMap<>();
+            if (latestStatus.getOrganizations() != null) {
+                for (AirMapPermitIssuer issuer : latestStatus.getOrganizations()) {
+                    organizationMap.put(issuer.getId(), issuer.getName());
+                }
+            }
+
+            recyclerView.setAdapter(new AdvisoriesBottomSheetAdapter(getActivity(), sections, organizationMap));
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }
     }
 
     private void setupBottomSheet() {
@@ -409,7 +420,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     public void clear() {
-        cancelStatusCall();
+        cancelNetworkCalls();
         map.clear();
         circleContainer.clear();
         lineContainer.clear();
@@ -444,13 +455,13 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
     private void drawCircle(LatLng center, double radius) {
         clear();
-        List<LatLng> circlePoints = polygonCircleForCoordinate(center, radius);
-        PolylineOptions polylineOptions = getDefaultPolylineOptions(getContext()).addAll(circlePoints).add(circlePoints.get(0));
-        circleContainer.circle = map.addPolygon(getDefaultPolygonOptions(getContext()).addAll(circlePoints));
+        List<LatLng> circlePoints = mListener.getAnnotationsFactory().polygonCircleForCoordinate(center, radius);
+        PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0));
+        circleContainer.circle = map.addPolygon(mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(circlePoints));
         circleContainer.outline = map.addPolyline(polylineOptions);
         circleContainer.radius = radius;
         circleContainer.center = center;
-        corners.add(map.addMarker(getDefaultMarkerOptions(center))); //Treat the center of the circle as a "corner", cuz it's not a midpoint
+        corners.add(map.addMarker(mListener.getAnnotationsFactory().getDefaultMarkerOptions(center))); //Treat the center of the circle as a "corner", cuz it's not a midpoint
     }
 
     private void zoomToCircle() {
@@ -462,22 +473,22 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
     public void drawPath(List<PointF> line) {
         clear();
-        PolylineOptions thinLine = getDefaultPolylineOptions(getContext());
+        PolylineOptions thinLine = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
         double width = getPathWidthFromSeekBar(seekBar.getProgress());
-        List<LatLng> midPoints = getMidpointsFromLatLngs(getLatLngsFromPointFs(line));
+        List<LatLng> midPoints = PointMath.getMidpointsFromLatLngs(getLatLngsFromPointFs(line));
         List<LatLng> points = getLatLngsFromPointFs(line);
         for (int i = 0; i < points.size(); i++) {
             LatLng point = points.get(i);
             thinLine.add(point);
-            corners.add(map.addMarker(getDefaultMarkerOptions(point)));
+            corners.add(map.addMarker(mListener.getAnnotationsFactory().getDefaultMarkerOptions(point)));
             if (i < midPoints.size()) {
                 LatLng midPoint = midPoints.get(i);
-                midpoints.add(map.addMarker(getDefaultMidpointMarker(midPoint)));
+                midpoints.add(map.addMarker(mListener.getAnnotationsFactory().getDefaultMidpointMarker(midPoint)));
             }
         }
 
         lineContainer.width = width;
-        calculatePathBufferAndDisplayLineAndBuffer(thinLine.getPoints(), lineContainer.width);
+        calculatePathBufferAndDisplayLineAndBuffer(thinLine.getPoints(), lineContainer.width, false);
 
         LatLngBounds bounds = new LatLngBounds.Builder().includes(thinLine.getPoints()).build();
         map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, Utils.dpToPixels(getActivity(), 80).intValue()));
@@ -492,21 +503,21 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         } else {
             pointsDrawn.add(first);
         }
-        PolygonOptions polygonOptions = getDefaultPolygonOptions(getContext());
-        PolylineOptions polylineOptions = getDefaultPolylineOptions(getContext());
-        List<LatLng> midPoints = getMidpointsFromLatLngs(getLatLngsFromPointFs(pointsDrawn));
+        PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
+        PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
+        List<LatLng> midPoints = PointMath.getMidpointsFromLatLngs(getLatLngsFromPointFs(pointsDrawn));
         List<LatLng> points = getLatLngsFromPointFs(pointsDrawn);
         //At this point, until MapBox fixes their fromScreenLocation bug, pointsDrawn has been tainted and is unusable
         for (int i = 0; i < points.size(); i++) {
             LatLng latLng = points.get(i);
             if (i < midPoints.size()) { //There is one less midpoint than total points
                 LatLng midPoint = midPoints.get(i);
-                midpoints.add(map.addMarker(getDefaultMidpointMarker(midPoint)));
+                midpoints.add(map.addMarker(mListener.getAnnotationsFactory().getDefaultMidpointMarker(midPoint)));
             }
             polygonOptions.add(latLng);
             polylineOptions.add(latLng);
             if (i != points.size() - 1) { //Don't add the last point because it's the same as the first point
-                corners.add(map.addMarker(getDefaultMarkerOptions(latLng)));
+                corners.add(map.addMarker(mListener.getAnnotationsFactory().getDefaultMarkerOptions(latLng)));
             }
         }
         polylineOptions.add(polylineOptions.getPoints().get(0)); //Close the polygon
@@ -525,7 +536,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         List<LatLng> points = PointMath.findIntersections(pointsDrawn);
         if (!points.isEmpty()) {
             for (LatLng point : points) {
-                intersections.add(map.addMarker(getIntersectionMarker(point)));
+                intersections.add(map.addMarker(mListener.getAnnotationsFactory().getIntersectionMarker(point)));
             }
             updateTip(R.string.airmap_error_overlap, R.drawable.rounded_corners_red);
         } else {
@@ -544,16 +555,6 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
     private static double getPathWidthFromSeekBar(int progress) {
         return Utils.getBufferPresets()[progress].value.doubleValue();
-    }
-
-    private static List<LatLng> getMidpointsFromLatLngs(List<LatLng> shape) {
-        List<LatLng> midpoints = new ArrayList<>();
-        for (int i = 1; i < shape.size(); i++) {
-            double lat = (shape.get(i - 1).getLatitude() + shape.get(i).getLatitude()) / 2;
-            double lng = (shape.get(i - 1).getLongitude() + shape.get(i).getLongitude()) / 2;
-            midpoints.add(new LatLng(lat, lng));
-        }
-        return midpoints;
     }
 
     @Override
@@ -608,7 +609,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                                 if (marker instanceof MarkerView && !((MarkerView) marker).isVisible()) {
                                     continue; //Don't let user click on hidden midpoints
                                 }
-                                if (!marker.getTitle().equals(INTERSECTION_TAG)) {
+                                if (!marker.getTitle().equals(AnnotationsFactory.INTERSECTION_TAG)) {
                                     newSelectedMarker = marker;
                                     break;
                                 }
@@ -629,13 +630,13 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                                 deleteButton.setSelected(true);
                                 if (doneDragging) {
                                     deleteButton.setSelected(false);
-                                    updateTip(tabLayout.getSelectedTabPosition() == 2 ? R.string.airmap_freehand_tip_area : R.string.airmap_freehand_tip_path);
+                                    updateTip(tabLayout.getSelectedTabPosition() == INDEX_OF_POLYGON_TAB ? R.string.airmap_freehand_tip_area : R.string.airmap_freehand_tip_path);
                                     deletePoint = true;
                                 }
                             } else {
                                 deleteButton.setSelected(false);
                             }
-                            if (tabLayout.getSelectedTabPosition() != 0) { //We're not showing a tip for circle
+                            if (tabLayout.getSelectedTabPosition() != INDEX_OF_CIRCLE_TAB) { //We're not showing a tip for circle
                                 if (doneDragging) {
                                     updateTip(R.string.airmap_done_drawing_tip);
                                 } else {
@@ -699,11 +700,11 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             return;
         }
 
-        if (tabLayout.getSelectedTabPosition() == 0) {
+        if (tabLayout.getSelectedTabPosition() == INDEX_OF_CIRCLE_TAB) {
             dragCircle(indexOfAnnotationToDrag, newLocation, doneDragging);
-        } else if (tabLayout.getSelectedTabPosition() == 1) {
+        } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_PATH_TAB) {
             dragPointOnLine(indexOfAnnotationToDrag, newLocation, isMidpoint, doneDragging, deletePoint);
-        } else if (tabLayout.getSelectedTabPosition() == 2) {
+        } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_POLYGON_TAB) {
             dragPointOnPolygon(indexOfAnnotationToDrag, newLocation, isMidpoint, doneDragging, deletePoint);
         }
         if (doneDragging) {
@@ -725,9 +726,9 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         map.removeAnnotation(circleContainer.outline);
         corners.get(indexOfAnnotationToDrag).setPosition(newLocation); //Move the center point
         double radius = getBufferPresets()[seekBar.getProgress()].value.doubleValue(); //Move the circle polygon
-        List<LatLng> circlePoints = polygonCircleForCoordinate(newLocation, radius);
-        PolylineOptions polylineOptions = getDefaultPolylineOptions(getContext()).addAll(circlePoints).add(circlePoints.get(0));
-        circleContainer.circle = map.addPolygon(getDefaultPolygonOptions(getContext()).addAll(circlePoints));
+        List<LatLng> circlePoints = mListener.getAnnotationsFactory().polygonCircleForCoordinate(newLocation, radius);
+        PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0));
+        circleContainer.circle = map.addPolygon(mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(circlePoints));
         circleContainer.outline = map.addPolyline(polylineOptions);
         circleContainer.radius = radius;
         circleContainer.center = newLocation;
@@ -738,16 +739,12 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void dragPointOnLine(int indexOfAnnotationToDrag, LatLng newLocation, boolean isMidpoint, boolean doneDragging, boolean deletePoint) {
-        if (isMidpoint) {
-            midpoints.get(indexOfAnnotationToDrag).setPosition(newLocation);
-        } else {
-            corners.get(indexOfAnnotationToDrag).setPosition(newLocation);
-        }
+        (isMidpoint ? midpoints : corners).get(indexOfAnnotationToDrag).setPosition(newLocation);
         if (doneDragging) {
             List<LatLng> points = lineContainer.line.getPoints();
             if (deletePoint) {
-                if (!isMidpoint) {
-                    if (corners.size() > 2) {
+                if (!isMidpoint) { //Only delete if it was not a midpoint
+                    if (corners.size() > 2) { //Need at least 2 points to be a line
                         points.remove(indexOfAnnotationToDrag);
                         map.removeAnnotation(corners.remove(indexOfAnnotationToDrag));
                     } else {
@@ -757,17 +754,17 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             } else if (isMidpoint) {
                 //Add the midpoint as a new normal point
                 points.add((indexOfAnnotationToDrag + 1) % corners.size(), newLocation);
-                corners.add((indexOfAnnotationToDrag + 1) % corners.size(), map.addMarker(getDefaultMarkerOptions(newLocation)));
-                //New midpoints are added when recalculating all midpoints
+                corners.add((indexOfAnnotationToDrag + 1) % corners.size(), map.addMarker(mListener.getAnnotationsFactory().getDefaultMarkerOptions(newLocation)));
+                //New midpoints will be added when recalculating all midpoints
             } else {
                 points.set(indexOfAnnotationToDrag, newLocation); //If not midpoint, then the index of the point to change on the line is the same as the index of the corner annotation
             }
             //Update the polyline (both the line and widthPolyline)
-            calculatePathBufferAndDisplayLineAndBuffer(points, lineContainer.width);
+            calculatePathBufferAndDisplayLineAndBuffer(points, lineContainer.width, false);
             //Update the Midpoints
             clearMidpoints();
-            for (LatLng latLng : getMidpointsFromLatLngs(points)) {
-                midpoints.add(map.addMarker(getDefaultMidpointMarker(latLng)));
+            for (LatLng latLng : PointMath.getMidpointsFromLatLngs(points)) {
+                midpoints.add(map.addMarker(mListener.getAnnotationsFactory().getDefaultMidpointMarker(latLng)));
             }
         } else {
             int indexOfPreviousAnnotation;
@@ -794,35 +791,31 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void dragPointOnPolygon(int indexOfAnnotationToDrag, LatLng newLocation, boolean isMidpoint, boolean doneDragging, boolean deletePoint) {
-        if (isMidpoint) {
-            midpoints.get(indexOfAnnotationToDrag).setPosition(newLocation);
-        } else {
-            corners.get(indexOfAnnotationToDrag).setPosition(newLocation);
-        }
+        (isMidpoint ? midpoints : corners).get(indexOfAnnotationToDrag).setPosition(newLocation); //If midpoint, drag midpoint, else drag corner
         if (doneDragging) {
             List<LatLng> points = polygonContainer.polygon.getPoints();
             if (deletePoint) {
-                if (!isMidpoint) {
-                    if (corners.size() > 3) {
+                if (!isMidpoint) { //Only delete if it is not a midpoint
+                    if (corners.size() > 3) { //Need user to keep at least 3 points for valid polygon
                         points.remove(indexOfAnnotationToDrag);
                         map.removeAnnotation(corners.remove(indexOfAnnotationToDrag));
                         if (indexOfAnnotationToDrag == 0) {
-                            points.set(points.size() - 1, points.get(0));
+                            points.set(points.size() - 1, points.get(0)); //Set the last point to be the first point for complete polygon
                         } else if (indexOfAnnotationToDrag == corners.size() - 1) {
-                            points.set(0, points.get(points.size() - 1));
+                            points.set(0, points.get(points.size() - 1)); //Set the first point to last point for complete polygon
                         }
                     } else {
-                        corners.get(indexOfAnnotationToDrag).setPosition(points.get(indexOfAnnotationToDrag));
+                        corners.get(indexOfAnnotationToDrag).setPosition(points.get(indexOfAnnotationToDrag)); //Instead of deleting, reset it back to its initial position
                     }
                 }
             } else if (isMidpoint) {
                 //Add the midpoint as a new normal point
                 points.add((indexOfAnnotationToDrag + 1) % corners.size(), newLocation);
-                corners.add((indexOfAnnotationToDrag + 1) % corners.size(), map.addMarker(getDefaultMarkerOptions(newLocation)));
+                corners.add((indexOfAnnotationToDrag + 1) % corners.size(), map.addMarker(mListener.getAnnotationsFactory().getDefaultMarkerOptions(newLocation)));
                 if (indexOfAnnotationToDrag == midpoints.size() - 1) { //If the user picked the last midpoint, it affects the first point on the polygon
                     points.set(points.size() - 1, points.get(0)); //The last point need to be the same as the first
                 }
-                //New midpoints are added when recalculating all midpoints
+                //New midpoint annotations will be added when recalculating all midpoints
             } else {
                 points.set(indexOfAnnotationToDrag, newLocation); //If not midpoint, then the index of the point to change on the line is the same as the index of the corner annotation
                 if (indexOfAnnotationToDrag == 0) {
@@ -832,22 +825,30 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             polygonContainer.polygon.setPoints(points);
             polygonContainer.outline.setPoints(points);
             clearMidpoints(); //Delete old midpoints
-            for (LatLng latLng : getMidpointsFromLatLngs(points)) {
-                midpoints.add(map.addMarker(getDefaultMidpointMarker(latLng))); //Compute new midpoints
+            for (LatLng latLng : PointMath.getMidpointsFromLatLngs(points)) {
+                midpoints.add(map.addMarker(mListener.getAnnotationsFactory().getDefaultMidpointMarker(latLng))); //Compute new midpoints
             }
-            checkForIntersections(points); //Don't include the last point when checking for intersection, otherwise it will always say there is one
-            checkPolygonStatus();
+            checkForIntersections(points); //calculate intersections when done dragging
+            checkPolygonStatus(); //check status when done dragging
         } else {
             int indexOfPreviousAnnotation;
             int indexOfNextAnnotation;
             if (isMidpoint) {
                 indexOfPreviousAnnotation = indexOfAnnotationToDrag;
                 indexOfNextAnnotation = (indexOfAnnotationToDrag + 1) % corners.size();
-                scratchpad.dragTo(map.getProjection().toScreenLocation(corners.get(indexOfPreviousAnnotation).getPosition()), map.getProjection().toScreenLocation(midpoints.get(indexOfAnnotationToDrag).getPosition()), map.getProjection().toScreenLocation(corners.get(indexOfNextAnnotation).getPosition()));
+                scratchpad.dragTo(
+                        map.getProjection().toScreenLocation(corners.get(indexOfPreviousAnnotation).getPosition()),
+                        map.getProjection().toScreenLocation(midpoints.get(indexOfAnnotationToDrag).getPosition()),
+                        map.getProjection().toScreenLocation(corners.get(indexOfNextAnnotation).getPosition())
+                );
             } else {
                 indexOfNextAnnotation = (indexOfAnnotationToDrag + 1) % corners.size();
                 indexOfPreviousAnnotation = (indexOfAnnotationToDrag - 1) < 0 ? corners.size() - 1 : indexOfAnnotationToDrag - 1; //Since we only ever decrease by 1, the most it can wrap around to is from the first element to the last element
-                scratchpad.dragTo(map.getProjection().toScreenLocation(corners.get(indexOfPreviousAnnotation).getPosition()), map.getProjection().toScreenLocation(corners.get(indexOfAnnotationToDrag).getPosition()), map.getProjection().toScreenLocation(corners.get(indexOfNextAnnotation).getPosition()));
+                scratchpad.dragTo(
+                        map.getProjection().toScreenLocation(corners.get(indexOfPreviousAnnotation).getPosition()),
+                        map.getProjection().toScreenLocation(corners.get(indexOfAnnotationToDrag).getPosition()),
+                        map.getProjection().toScreenLocation(corners.get(indexOfNextAnnotation).getPosition())
+                );
             }
         }
     }
@@ -891,60 +892,33 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void checkCircleStatus() {
+        cancelNetworkCalls();
         Coordinate coordinate = new Coordinate(circleContainer.center);
         map.removeAnnotations(redPolygons);
         redPolygons.clear();
-        cancelStatusCall();
         statusCall = AirMap.checkCoordinate(coordinate, circleContainer.radius, null, null, false, null, this);
     }
 
     private void checkPathStatus() {
+        cancelNetworkCalls();
         List<Coordinate> coordinates = new ArrayList<>();
         for (LatLng point : lineContainer.line.getPoints()) {
             coordinates.add(new Coordinate(point));
         }
         map.removeAnnotations(redPolygons);
         redPolygons.clear();
-        cancelStatusCall();
         statusCall = AirMap.checkFlightPath(coordinates, (int) lineContainer.width, coordinates.get(0), null, null, false, null, this);
     }
 
     private void checkPolygonStatus() {
+        cancelNetworkCalls();
         List<Coordinate> coordinates = new ArrayList<>();
         for (LatLng point : polygonContainer.polygon.getPoints()) {
             coordinates.add(new Coordinate(point));
         }
         map.removeAnnotations(redPolygons);
         redPolygons.clear();
-        cancelStatusCall();
-        statusCall = AirMap.checkPolygon(coordinates, getPolygonCentroid(coordinates), null, null, false, null, this);
-    }
-
-    Coordinate getPolygonCentroid(List<Coordinate> vertices) {
-        LatLng centroid = new LatLng();
-        double signedArea = 0;
-        double x0 = 0.0; // Current vertex X
-        double y0 = 0.0; // Current vertex Y
-        double x1 = 0.0; // Next vertex X
-        double y1 = 0.0; // Next vertex Y
-        double a = 0.0;  // Partial signed area
-
-        // For all vertices
-        for (int i = 0; i < vertices.size(); ++i) {
-            x0 = vertices.get(i).getLatitude();
-            y0 = vertices.get(i).getLongitude();
-            x1 = vertices.get((i + 1) % vertices.size()).getLatitude();
-            y1 = vertices.get((i + 1) % vertices.size()).getLongitude();
-            a = x0 * y1 - x1 * y0;
-            signedArea += a;
-            centroid.setLatitude(centroid.getLatitude() + (x0 + x1) * a);
-            centroid.setLongitude(centroid.getLongitude() + (y0 + y1) * a);
-        }
-
-        signedArea *= 0.5;
-        centroid.setLatitude(centroid.getLatitude() / (6.0 * signedArea));
-        centroid.setLongitude(centroid.getLongitude() / (6.0 * signedArea));
-        return new Coordinate(centroid.wrap());
+        statusCall = AirMap.checkPolygon(coordinates, coordinates.get(0), null, null, false, null, this);
     }
 
     private void showSeekBarForPath() {
@@ -958,7 +932,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 seekBarValueTextView.setText(getBufferPresets()[progress].label);
                 lineContainer.width = getPathWidthFromSeekBar(progress);
                 if (lineContainer.line != null) {
-                    calculatePathBufferAndDisplayLineAndBuffer(lineContainer.line.getPoints(), lineContainer.width);
+                    calculatePathBufferAndDisplayLineAndBuffer(lineContainer.line.getPoints(), lineContainer.width, true);
                 }
             }
 
@@ -969,27 +943,29 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                scratchpad.reset();
+                scratchpad.invalidate();
+                if (lineContainer.line != null) {
+                    calculatePathBufferAndDisplayLineAndBuffer(lineContainer.line.getPoints(), lineContainer.width, false);
+                }
             }
         });
         seekBar.setProgress(1); //50 ft
     }
 
     //Width is in meters
-    public void calculatePathBufferAndDisplayLineAndBuffer(final List<LatLng> linePoints, double width) {
 
+    /**
+     * This will calculate the buffer around a path, invoke the necessary javascript, will also add
+     * the buffer annotation to the map. The javascript buffer result is returned in a callback, so
+     * it may be a little delayed
+     *
+     * @param linePoints The points of the line to buffer
+     * @param width      The width of the buffer, in meters
+     * @param dashed     Whether to show the buffer as dashed
+     */
+    public void calculatePathBufferAndDisplayLineAndBuffer(final List<LatLng> linePoints, double width, final boolean dashed) {
         try {
-//            InputStream is = getAssets().open("turf.min.js");
-//            byte[] bytes = new byte[is.available()];
-//            is.read(bytes);
-//            String js = new String(bytes);
-
-
-//            String coordArray = "";
-//            for (LatLng latLng : linePoints) {
-//                coordArray += String.format(Locale.US, "[%f, %f],", latLng.getLatitude(), latLng.getLongitude());
-//            }
-
             JSONArray coordinatesArray = new JSONArray();
             for (LatLng latLng : linePoints) {
                 JSONArray point = new JSONArray();
@@ -1009,16 +985,25 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
             JSONObject json = new JSONObject();
             json.put("line", linestringJSON);
-            json.put("buffer", width); // width/100000
-            final PolygonOptions options = getDefaultPolygonOptions(getContext());
+            json.put("buffer", width);
+            final PolygonOptions options = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
             webView.send(json.toString(), new CallBackFunction() {
                 @Override
                 public void onCallBack(String data) {
-                    String[] split = data.split(",");
+                    if (map == null) return; //Null check, since we're in a callback
+                    String[] split = data.split(","); //Buffer points will be comma separated Lng,Lat,Lng,Lat,... etc
+                    List<LatLng> bufferPoints = new ArrayList<>();
                     for (int i = 0; i < split.length; i += 2) {
-                        options.add(new LatLng(Double.valueOf(split[i + 1]), Double.valueOf(split[i])));
+                        bufferPoints.add(new LatLng(Double.valueOf(split[i + 1]), Double.valueOf(split[i])));  //Lat comes after lng in the string
                     }
-                    if (map != null) {
+                    if (dashed) {
+                        List<PointF> bufferScreenLoc = new ArrayList<>();
+                        for (LatLng latLng : bufferPoints) {
+                            bufferScreenLoc.add(map.getProjection().toScreenLocation(latLng));
+                        }
+                        scratchpad.drawShape(bufferScreenLoc);
+                    } else {
+                        options.addAll(bufferPoints);
                         if (lineContainer.buffer != null) {
                             map.removeAnnotation(lineContainer.buffer);
                         }
@@ -1026,74 +1011,17 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                             map.removeAnnotation(lineContainer.line);
                         }
                         lineContainer.buffer = map.addPolygon(options); //Need to add buffer first for proper z ordering
-                        lineContainer.line = map.addPolyline(getDefaultPolylineOptions(getContext()).addAll(linePoints));
+                        lineContainer.line = map.addPolyline(mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(linePoints));
                         checkPathStatus();
                         LatLngBounds bounds = new LatLngBounds.Builder().includes(lineContainer.buffer.getPoints()).build();
-                        map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, Utils.dpToPixels(getActivity(), 80).intValue()));
+                        map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, Utils.dpToPixels(getContext(), 80).intValue()));
                     }
                 }
             });
-//            latch.await();
-//            latch.await(10, TimeUnit.SECONDS);
-//            System.out.println("point size: " + options.getPoints().size());
-//            while (true) {
-//                if (options.getPoints().size() != 0)
-//                    break;
-//            }
-//            return options;
 
-
-//            String jsBufferCall = ";var line1=turf.linestring([%s]); var buffered = turf.buffer(line1, %f, 'feet'); out.print(buffered);";
-//            String call = String.format(Locale.US, jsBufferCall, coordArray, width);
-
-
-//            org.mozilla.javascript.Context rhino = org.mozilla.javascript.Context.enter();
-//            rhino.setOptimizationLevel(-1);
-//            Scriptable scope = rhino.initStandardObjects();
-//            InputStreamReader reader = new InputStreamReader(is);
-//            rhino.evaluateReader(scope, reader, "turf.min.js", 0, null);
-//            Object wrappedOut = org.mozilla.javascript.Context.javaToJS(System.out, scope);
-//            ScriptableObject.putProperty(scope, "out", wrappedOut);
-//            rhino.evaluateString(scope, call, null, 0, null);
-//            Object obj = scope.get("turf.buffer", scope);
-//            if (obj instanceof Function) {
-//                Function jsFunction = (Function) obj;
-//                Object[] params = new Object[] { "line1", width, "'feet'" };
-//                // Call the function with params
-//                Object jsResult = jsFunction.call(rhino, scope, scope, params);
-//                // Parse the jsResult object to a String
-//                String result = org.mozilla.javascript.Context.toString(jsResult);
-//                System.out.println(result);
-//            }
-
-
-//            JsEvaluator jsEvaluator = new JsEvaluator(this);
-//            jsEvaluator.setWebViewWrapper(new WebViewWrapper(this, jsEvaluator));
-//            jsEvaluator.getWebViewWrapper().loadJavaScript(js);
-//            jsEvaluator.evaluate(call, new JsCallback() {
-//                @Override
-//                public void onResult(String s) {
-//                    System.out.println(s);
-//                }
-//            });
-
-//            JSContext context = new JSContext();
-//            JSObject value = (JSObject) context.evaluateScript(js);
-//            System.out.println(value);
-
-        } catch (Exception e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-//        finally {
-//            org.mozilla.javascript.Context.exit();
-//        }
-
-
-//        PolygonOptions options = new PolygonOptions();
-//        options.alpha(0.66f);
-//        options.fillColor(ContextCompat.getColor(this, R.color.colorFill));
-//        options.addAll(linePoints);
-//        return options;
     }
 
     @Override
@@ -1105,9 +1033,10 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         for (MarkerView midpoint1 : midpoints) {
             boolean continueOuterLoop = false;
             for (MarkerView corner : corners) {
-                PointF screenLoc1 = map.getProjection().toScreenLocation(midpoint1.getPosition());
-                PointF screenLoc2 = map.getProjection().toScreenLocation(corner.getPosition());
-                double distance = distanceBetween(screenLoc1, screenLoc2);
+                //Look at distance between the midpoint and corners around it
+                PointF midpointScreenLoc = map.getProjection().toScreenLocation(midpoint1.getPosition());
+                PointF cornerScreenLoc = map.getProjection().toScreenLocation(corner.getPosition());
+                double distance = distanceBetween(midpointScreenLoc, cornerScreenLoc);
                 if (distance < 100) {
                     midpoint1.setVisible(false);
                     continueOuterLoop = true;
@@ -1121,11 +1050,12 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 continue;
             }
 
+            //Look at distance between midpoint and other midpoints
             for (MarkerView midpoint2 : midpoints) {
                 if (midpoint1 == midpoint2) continue;
-                PointF screenLoc1 = map.getProjection().toScreenLocation(midpoint1.getPosition());
-                PointF screenLoc2 = map.getProjection().toScreenLocation(midpoint2.getPosition());
-                double distance = distanceBetween(screenLoc1, screenLoc2);
+                PointF midpoint1ScreenLoc = map.getProjection().toScreenLocation(midpoint1.getPosition());
+                PointF midpoint2ScreenLoc = map.getProjection().toScreenLocation(midpoint2.getPosition());
+                double distance = distanceBetween(midpoint1ScreenLoc, midpoint2ScreenLoc);
                 if (distance < 100) {
                     midpoint1.setVisible(false);
                     break;
@@ -1151,26 +1081,17 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         enableDrawingSwitch.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
-    private void cancelStatusCall() {
-        if (statusCall != null) {
-            statusCall.cancel();
-        }
-        if (airspaceCall != null) {
-            airspaceCall.cancel();
-        }
+    private void cancelNetworkCalls() {
+        if (statusCall != null) statusCall.cancel();
+        if (airspaceCall != null) airspaceCall.cancel();
     }
 
     @Override
     public void onSuccess(final AirMapStatus response) {
+        if (!isFragmentActive()) return;
+
         latestStatus = response;
-        if (nextButton != null) { //Fragment may have been destroyed
-            nextButton.post(new Runnable() {
-                @Override
-                public void run() {
-                    updateButtonColor(response != null ? response.getAdvisoryColor() : null);
-                }
-            });
-        }
+        updateButtonColor(response != null ? response.getAdvisoryColor() : null);
 
         boolean requiresPermit = false;
         if (latestStatus.getAdvisories() != null && !latestStatus.getAdvisories().isEmpty()) {
@@ -1190,26 +1111,24 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 if (!permitAdvisories.keySet().containsAll(advisoryMap.keySet())) {
                     updatePermitPolygons(advisoryMap);
 
-                // invalid polygons that should be removed
+                    // invalid polygons that should be removed
                 } else {
-                    if (getActivity() != null) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                for (String key : permitAdvisories.keySet()) {
-                                    if (!advisoryMap.containsKey(key)) {
-                                        Polygon polygon = polygonMap.remove(key);
-                                        if (polygon != null) {
-                                            map.removePolygon(polygon);
-                                            polygonMap.remove(key);
-                                        }
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (String key : permitAdvisories.keySet()) {
+                                if (!advisoryMap.containsKey(key)) {
+                                    Polygon polygon = polygonMap.remove(key);
+                                    if (polygon != null) {
+                                        map.removePolygon(polygon);
+                                        polygonMap.remove(key);
                                     }
                                 }
-
-                                permitAdvisories = advisoryMap;
                             }
-                        });
-                    }
+
+                            permitAdvisories = advisoryMap;
+                        }
+                    });
                 }
             }
         }
@@ -1217,32 +1136,23 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
         // tell the user if conflicting permits
         if (requiresPermit && (latestStatus.getApplicablePermits() == null || latestStatus.getApplicablePermits().isEmpty())) {
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getActivity(), "Flight area cannot overlap with conflicting permit requirements", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getActivity(), R.string.airmap_flight_area_overlap_permit_conflict, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
     @Override
     public void onError(AirMapException e) {
         e.printStackTrace();
-        if (nextButton != null) {
-            nextButton.post(new Runnable() {
-                @Override
-                public void run() {
-                    updateButtonColor(null);
-                }
-            });
-        }
+        updateButtonColor(null);
     }
 
     private void updatePermitPolygons(final Map<String, AirMapStatusAdvisory> advisoryMap) {
-        AirspaceService.getAirspace(new ArrayList<>(advisoryMap.keySet()), new AirMapCallback<List<AirMapAirspace>>() {
+        airspaceCall = AirspaceService.getAirspace(new ArrayList<>(advisoryMap.keySet()), new AirMapCallback<List<AirMapAirspace>>() {
             @Override
             public void onSuccess(final List<AirMapAirspace> airspacesResponse) {
                 // use pilot permits to show green, yellow or red
@@ -1272,14 +1182,11 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                         @Override
                         public void onError(AirMapException e) {
                             Log.e(TAG, "getPilotPermits failed", e);
-
                             redrawFlightPolygon();
                         }
                     });
                 } else {
-                    if (!isFragmentActive()) {
-                        return;
-                    }
+                    if (!isFragmentActive()) return;
 
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -1293,7 +1200,6 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             @Override
             public void onError(AirMapException e) {
                 Log.e(TAG, "getAirspaces failed", e);
-
                 redrawFlightPolygon();
             }
         });
@@ -1315,12 +1221,12 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             AirMapStatusAdvisory advisory = advisoryMap.get(airspace.getAirspaceId());
             updatedMap.put(advisory.getId(), advisory);
 
-            AirMapStatus.StatusColor statusColor = AirMapStatus.StatusColor.Yellow;
+            AirMapStatus.StatusColor statusColor = Yellow;
             if (pilotPermitIds != null) {
                 for (AirMapAvailablePermit availablePermit : advisory.getAvailablePermits()) {
                     AirMapPilotPermit pilotPermit = pilotPermitIds.get(availablePermit.getId());
                     if (pilotPermit != null && (pilotPermit.getExpiresAt() == null || pilotPermit.getExpiresAt().after(new Date()))) {
-                        statusColor = AirMapStatus.StatusColor.Green;
+                        statusColor = Green;
                         break;
                     }
                 }
@@ -1350,33 +1256,28 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
         // redraw flight radius/path/polygon so its highest in z-index
         redrawFlightPolygon();
-
         permitAdvisories = updatedMap;
     }
 
     private Polygon drawPermitPolygon(AirMapAirspace airspace, AirMapStatus.StatusColor statusColor) {
         AirMapGeometry geometry = airspace.getGeometry();
         if (geometry instanceof AirMapPolygon) {
-            PolygonOptions polygonOptions = Utils.getMapboxPolygon((AirMapPolygon) geometry);
-
-            int color;
+            PolygonOptions polygonOptions = AnnotationsFactory.getMapboxPolygon((AirMapPolygon) geometry);
+            final int color;
             switch (statusColor) {
-                case Red: {
-                    color = getResources().getColor(R.color.airmap_red);
+                case Red:
+                    color = ContextCompat.getColor(getContext(), R.color.airmap_red);
                     polygonOptions.alpha(0.6f);
                     break;
-                }
-                case Yellow: {
-                    color = getResources().getColor(R.color.airmap_yellow);
+                case Yellow:
+                    color = ContextCompat.getColor(getContext(), R.color.airmap_yellow);
                     polygonOptions.alpha(0.6f);
                     break;
-                }
                 default:
-                case Green: {
-                    color = getResources().getColor(R.color.airmap_green);
+                case Green:
+                    color = ContextCompat.getColor(getContext(), R.color.airmap_green);
                     polygonOptions.alpha(0.6f);
                     break;
-                }
             }
             polygonOptions.fillColor(color);
             return map.addPolygon(polygonOptions);
@@ -1387,18 +1288,19 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void redrawFlightPolygon() {
+        if (!isFragmentActive()) return;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 //FIXME: a better way to determine which type of flight annotation to redraw
-                if (tabLayout.getSelectedTabPosition() == 2) {
+                if (tabLayout.getSelectedTabPosition() == INDEX_OF_POLYGON_TAB) {
                     // can't redraw if it hasn't been drawn yet
                     if (polygonContainer == null || polygonContainer.polygon == null) {
                         return;
                     }
 
-                    //redraw circle
-                    PolygonOptions polygonOptions = getDefaultPolygonOptions(getActivity());
+                    //redraw polygon
+                    PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
                     for (LatLng point : polygonContainer.polygon.getPoints()) {
                         polygonOptions.add(point);
                     }
@@ -1406,13 +1308,13 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     polygonContainer.polygon = map.addPolygon(polygonOptions);
 
                     //redraw outline
-                    PolylineOptions lineOptions = getDefaultPolylineOptions(getActivity());
+                    PolylineOptions lineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
                     for (LatLng point : polygonContainer.outline.getPoints()) {
                         lineOptions.add(point);
                     }
                     map.removePolyline(polygonContainer.outline);
                     polygonContainer.outline = map.addPolyline(lineOptions);
-                } else if (tabLayout.getSelectedTabPosition() == 1) {
+                } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_PATH_TAB) {
                     //FIXME: one day mapbox will allow you to change the z-index without this hack :(
                     // can't redraw if it hasn't been drawn yet
                     if (lineContainer == null || lineContainer.buffer == null) {
@@ -1420,7 +1322,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     }
 
                     //redraw buffer
-                    PolygonOptions bufferOptions = getDefaultPolygonOptions(getActivity());
+                    PolygonOptions bufferOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
                     for (LatLng point : lineContainer.buffer.getPoints()) {
                         bufferOptions.add(point);
                     }
@@ -1428,7 +1330,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     lineContainer.buffer = map.addPolygon(bufferOptions);
 
                     //redraw line
-                    PolylineOptions lineOptions = getDefaultPolylineOptions(getActivity());
+                    PolylineOptions lineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
                     for (LatLng point : lineContainer.line.getPoints()) {
                         lineOptions.add(point);
                     }
@@ -1441,7 +1343,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     }
 
                     //redraw circle
-                    PolygonOptions circleOptions = getDefaultPolygonOptions(getActivity());
+                    PolygonOptions circleOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
                     for (LatLng point : circleContainer.circle.getPoints()) {
                         circleOptions.add(point);
                     }
@@ -1449,7 +1351,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     circleContainer.circle = map.addPolygon(circleOptions);
 
                     //redraw outline
-                    PolylineOptions lineOptions = getDefaultPolylineOptions(getActivity());
+                    PolylineOptions lineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
                     for (LatLng point : circleContainer.outline.getPoints()) {
                         lineOptions.add(point);
                     }
@@ -1460,125 +1362,36 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         });
     }
 
-    protected boolean isFragmentActive() {
-        return getActivity() != null && !getActivity().isFinishing() && isResumed();
-    }
-
-    @UiThread
     public void updateButtonColor(@Nullable AirMapStatus.StatusColor color) {
         if (nextButton != null) { //Called from callback, Activity might have been destroyed
+            final int textAndIconColor = color == Yellow ? Color.BLACK : Color.WHITE;
+            final int buttonColor;
             if (color == AirMapStatus.StatusColor.Red) {
-                nextButton.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
-                nextButton.setTextColor(Color.WHITE);
-                for (Drawable drawable : nextButton.getCompoundDrawables()) {
-                    if (drawable != null) {
-                        drawable.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
-                    }
-                }
-            } else if (color == AirMapStatus.StatusColor.Yellow) {
-                nextButton.getBackground().setColorFilter(Color.YELLOW, PorterDuff.Mode.MULTIPLY);
-                nextButton.setTextColor(Color.BLACK);
-                for (Drawable drawable : nextButton.getCompoundDrawables()) {
-                    if (drawable != null) {
-                        drawable.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-                    }
-                }
-            } else if (color == AirMapStatus.StatusColor.Green) {
-                nextButton.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.airmap_green), PorterDuff.Mode.MULTIPLY);
-                nextButton.setTextColor(Color.WHITE);
-                for (Drawable drawable : nextButton.getCompoundDrawables()) {
-                    if (drawable != null) {
-                        drawable.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
-                    }
-                }
+                buttonColor = Color.RED;
+            } else if (color == Yellow) {
+                buttonColor = Color.YELLOW;
+            } else if (color == Green) {
+                buttonColor = Color.GREEN;
             } else {
-                nextButton.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
-                nextButton.setTextColor(Color.WHITE);
-                for (Drawable drawable : nextButton.getCompoundDrawables()) {
-                    if (drawable != null) {
-                        drawable.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+                buttonColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
+            }
+            nextButton.post(new Runnable() {
+                @Override
+                public void run() {
+                    nextButton.getBackground().setColorFilter(buttonColor, PorterDuff.Mode.MULTIPLY);
+                    nextButton.setTextColor(textAndIconColor);
+                    for (Drawable drawable : nextButton.getCompoundDrawables()) {
+                        if (drawable != null) {
+                            drawable.setColorFilter(textAndIconColor, PorterDuff.Mode.MULTIPLY);
+                        }
                     }
                 }
-            }
+            });
         }
     }
 
-    public static PolygonOptions getDefaultPolygonOptions(Context context) {
-        PolygonOptions options = new PolygonOptions();
-        options.fillColor(ContextCompat.getColor(context, R.color.airmap_colorFill));
-        options.alpha(0.66f);
-        return options;
-    }
-
-    private PolygonOptions getDefaultRedPolygonOptions() {
-        PolygonOptions options = new PolygonOptions();
-        options.fillColor(ContextCompat.getColor(getContext(), R.color.airmap_red));
-        options.alpha(0.66f);
-        return options;
-    }
-
-    public static PolylineOptions getDefaultPolylineOptions(Context context) {
-        PolylineOptions options = new PolylineOptions();
-        options.color(ContextCompat.getColor(context, R.color.colorPrimary));
-        options.width(2);
-        return options;
-    }
-
-    private static MarkerViewOptions getDefaultMarkerOptions(LatLng latLng) {
-        MarkerViewOptions options = new MarkerViewOptions();
-        options.position(latLng);
-        options.icon(cornerIcon);
-        options.title(CORNER_TAG);
-        options.anchor(0.5f, 0.5f);
-        return options;
-    }
-
-    private static MarkerViewOptions getDefaultMidpointMarker(LatLng latLng) {
-        MarkerViewOptions options = new MarkerViewOptions();
-        options.position(latLng);
-        options.icon(midpointIcon);
-        options.title(MIDPOINT_TAG);
-        options.anchor(0.5f, 0.5f);
-        return options;
-    }
-
-    private static MarkerViewOptions getIntersectionMarker(LatLng latLng) {
-        MarkerViewOptions options = new MarkerViewOptions();
-        options.position(latLng);
-        options.icon(intersectionIcon);
-        options.title(INTERSECTION_TAG);
-        options.anchor(0.5f, 0.5f);
-        return options;
-    }
-
-    //Emulate a circle as a polygon with a bunch of sides
-    public static ArrayList<LatLng> polygonCircleForCoordinate(LatLng location, double radius) {
-        int degreesBetweenPoints = 2;
-        int numberOfPoints = (int) Math.floor(360 / degreesBetweenPoints);
-        double distRadians = radius / 6371000.0; // earth radius in meters
-        double centerLatRadians = location.getLatitude() * Math.PI / 180;
-        double centerLonRadians = location.getLongitude() * Math.PI / 180;
-        ArrayList<LatLng> polygons = new ArrayList<>(); //array to hold all the points
-        for (int index = 0; index < numberOfPoints; index++) {
-            double degrees = index * degreesBetweenPoints;
-            double degreeRadians = degrees * Math.PI / 180;
-            double pointLatRadians = Math.asin(Math.sin(centerLatRadians) * Math.cos(distRadians) + Math.cos(centerLatRadians) * Math.sin(distRadians) * Math.cos(degreeRadians));
-            double pointLonRadians = centerLonRadians + Math.atan2(Math.sin(degreeRadians) * Math.sin(distRadians) * Math.cos(centerLatRadians),
-                    Math.cos(distRadians) - Math.sin(centerLatRadians) * Math.sin(pointLatRadians));
-            double pointLat = pointLatRadians * 180 / Math.PI;
-            double pointLon = pointLonRadians * 180 / Math.PI;
-            LatLng point = new LatLng(pointLat, pointLon);
-            polygons.add(point);
-        }
-        return polygons;
-    }
-
-    public static TabLayout.Tab getTab(TabLayout tabLayout, @StringRes int textId, @DrawableRes int iconId, String id) {
-        TabLayout.Tab tab = tabLayout.newTab();
-        tab.setText(textId);
-        tab.setIcon(iconId);
-        tab.setTag(id);
-        return tab;
+    private boolean isFragmentActive() {
+        return getActivity() != null && !getActivity().isFinishing() && isResumed();
     }
 
     @Override
@@ -1622,6 +1435,9 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
+    /**
+     * @return True if this fragment consumed the back press, false otherwise
+     */
     public boolean onActivityBackPressed() {
         if (bottomSheetBehavior != null) {
             if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
@@ -1644,5 +1460,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         void setPathBufferPoints(List<LatLng> buffer);
 
         TabLayout getTabLayout();
+
+        AnnotationsFactory getAnnotationsFactory();
     }
 }

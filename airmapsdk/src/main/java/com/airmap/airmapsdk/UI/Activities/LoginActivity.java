@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.Auth;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.Utils;
+import com.airmap.airmapsdk.util.Utils;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.LoginCallback;

@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.ui;
+package com.airmap.airmapsdk.ui.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -8,6 +8,8 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.View;
+
+import java.util.List;
 
 /**
  * Created by Vansh Gandhi on 10/30/16.
@@ -64,6 +66,17 @@ public class Scratchpad extends View {
         reset();
         path.moveTo(start.x, start.y);
         path.lineTo(end.x, end.y);
+        canvas.drawPath(path, paint);
+        invalidate();
+    }
+
+    public void drawShape(List<PointF> shape) {
+        reset();
+        if (shape.isEmpty()) return;
+        path.moveTo(shape.get(0).x, shape.get(0).y);
+        for (PointF point : shape) {
+            path.lineTo(point.x, point.y);
+        }
         canvas.drawPath(path, paint);
         invalidate();
     }

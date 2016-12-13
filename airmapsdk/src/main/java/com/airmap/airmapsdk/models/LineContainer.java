@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk;
+package com.airmap.airmapsdk.models;
 
 import com.mapbox.mapboxsdk.annotations.Polygon;
 import com.mapbox.mapboxsdk.annotations.Polyline;

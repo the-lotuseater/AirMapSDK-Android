@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.airmap.airmapsdk.Utils.getDateFromIso8601String;
-import static com.airmap.airmapsdk.Utils.getIso8601StringFromDate;
+import static com.airmap.airmapsdk.util.Utils.getDateFromIso8601String;
+import static com.airmap.airmapsdk.util.Utils.getIso8601StringFromDate;
 
 /**
  * Created by Vansh Gandhi on 6/15/16.

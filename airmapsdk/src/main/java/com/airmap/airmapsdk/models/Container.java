@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk;
+package com.airmap.airmapsdk.models;
 
 /**
  * Created by Vansh Gandhi on 10/30/16.

@@ -7,7 +7,7 @@ import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPermitIssuer;
 import com.airmap.airmapsdk.networking.services.MappingService;
-import com.airmap.airmapsdk.Utils;
+import com.airmap.airmapsdk.util.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

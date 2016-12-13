@@ -6,7 +6,7 @@ group = 'com.airmap.airmapsdk'
 def libVersion = '1.1.0'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 24
     buildToolsVersion '25.0.1'
 
     defaultConfig {

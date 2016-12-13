@@ -13,7 +13,8 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.Utils;
+import com.airmap.airmapsdk.util.AnnotationsFactory;
+import com.airmap.airmapsdk.util.Utils;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
@@ -27,7 +28,7 @@ import com.airmap.airmapsdk.models.status.AirMapStatusRequirement;
 import com.airmap.airmapsdk.models.status.AirMapStatusRequirementNotice;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
-import com.airmap.airmapsdk.ui.CustomViewPager;
+import com.airmap.airmapsdk.ui.views.CustomViewPager;
 import com.airmap.airmapsdk.ui.adapters.SectionsPagerAdapter;
 import com.airmap.airmapsdk.ui.fragments.FlightDetailsFragment;
 import com.airmap.airmapsdk.ui.fragments.FlightNoticeFragment;
@@ -45,7 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.airmap.airmapsdk.Utils.feetToMeters;
+import static com.airmap.airmapsdk.util.Utils.feetToMeters;
 
 public class CreateFlightActivity extends AppCompatActivity implements
         FreehandMapFragment.OnFragmentInteractionListener,
@@ -90,6 +91,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
     private ArrayList<AirMapAvailablePermit> permitsToShowInReview; //selectedPermits + permitsToApplyFor temporarily transformed into AvailablePermit
 
     private List<LatLng> pathBuffer; //So that we don't need to recalculate the buffer polygon using turf on flight details screen
+    private AnnotationsFactory annotationsFactory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +110,8 @@ public class CreateFlightActivity extends AppCompatActivity implements
         initializeViews();
         setupToolbar();
         setupViewPager();
+
+        annotationsFactory = new AnnotationsFactory(this);
     }
 
     private void setupFlight(Bundle savedInstanceState) {
@@ -203,27 +207,23 @@ public class CreateFlightActivity extends AppCompatActivity implements
             public void onPageSelected(int position) {
                 currentPage = position;
                 Fragment fragment = adapter.getItem(position);
+                viewPager.setPagingEnabled(!(fragment instanceof FreehandMapFragment));
                 if (fragment instanceof FreehandMapFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_title_activity_create_flight);
                     getTabLayout().setVisibility(View.VISIBLE);
                     invalidateFurtherFragments(0);
-                    viewPager.setPagingEnabled(false);
                 } else if (fragment instanceof FlightDetailsFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_flight_details);
                     getTabLayout().setVisibility(View.GONE);
-                    viewPager.setPagingEnabled(true);
                 } else if (fragment instanceof ListPermitsFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_permits);
                     getTabLayout().setVisibility(View.GONE);
-                    viewPager.setPagingEnabled(true);
                 } else if (fragment instanceof FlightNoticeFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_flight_notice);
                     getTabLayout().setVisibility(View.GONE);
-                    viewPager.setPagingEnabled(true);
                 } else if (fragment instanceof ReviewFlightFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_review);
                     getTabLayout().setVisibility(View.GONE);
-                    viewPager.setPagingEnabled(true);
                 }
             }
         });
@@ -305,6 +305,11 @@ public class CreateFlightActivity extends AppCompatActivity implements
     @Override
     public TabLayout getTabLayout() {
         return (TabLayout) findViewById(R.id.tabs);
+    }
+
+    @Override
+    public AnnotationsFactory getAnnotationsFactory() {
+        return annotationsFactory;
     }
 
     @Override

@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.Utils;
+import com.airmap.airmapsdk.util.Utils;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.status.AirMapStatusPermits;

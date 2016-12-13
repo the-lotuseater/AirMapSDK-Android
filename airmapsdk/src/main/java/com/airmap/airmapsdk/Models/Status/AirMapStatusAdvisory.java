@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.airmap.airmapsdk.Utils.getDateFromIso8601String;
+import static com.airmap.airmapsdk.util.Utils.getDateFromIso8601String;
 
 /**
  * Created by Vansh Gandhi on 6/15/16.

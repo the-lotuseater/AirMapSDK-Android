@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
 import com.airmap.airmapsdk.networking.callbacks.RefreshTokenListener;
 import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.util.Utils;
 
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.MalformedClaimException;
@@ -152,7 +153,7 @@ public class Auth {
         String refreshToken = preferences.getString(Utils.REFRESH_TOKEN_KEY, "");
 
         // return if refresh token is empty
-        if(refreshToken.equals("")){
+        if (refreshToken.equals("")) {
             if (listener != null) {
                 listener.onError(new AirMapException("Invalid Refresh Token"));
             }
