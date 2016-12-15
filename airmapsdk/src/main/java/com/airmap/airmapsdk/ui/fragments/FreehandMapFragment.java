@@ -174,10 +174,10 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.airmap_fragment_freehand, container, false);
         initializeViews(view); //Instantiate all the views
+        setupBottomSheet();
         setupSwitch();
         setupMap(savedInstanceState);
         setupButtons();
-        setupBottomSheet();
         drawingBoard.setDoneDrawingCallback(this);
 
         permitAdvisories = new HashMap<>();
@@ -259,6 +259,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     enableDrawingSwitch.setChecked(true);
                     showDeleteButton(false);
                 }
+
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
 
             @Override
