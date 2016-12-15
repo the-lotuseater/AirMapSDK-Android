@@ -7,6 +7,7 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -1397,7 +1398,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_PATH_TAB) {
                     //FIXME: one day mapbox will allow you to change the z-index without this hack :(
                     // can't redraw if it hasn't been drawn yet
-                    if (lineContainer == null || lineContainer.buffers == null) {
+                    if (lineContainer == null || lineContainer.buffers == null || lineContainer.buffers.isEmpty() || lineContainer.line == null) {
                         return;
                     }
 
@@ -1451,18 +1452,22 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             final int textAndIconColor = color == Yellow ? Color.BLACK : Color.WHITE;
             final int buttonColor;
             if (color == AirMapStatus.StatusColor.Red) {
-                buttonColor = Color.RED;
+                buttonColor = ContextCompat.getColor(getActivity(), R.color.airmap_red);
             } else if (color == Yellow) {
-                buttonColor = Color.YELLOW;
+                buttonColor = ContextCompat.getColor(getActivity(), R.color.airmap_yellow);
             } else if (color == Green) {
-                buttonColor = Color.GREEN;
+                buttonColor = ContextCompat.getColor(getActivity(), R.color.airmap_green);
             } else {
                 buttonColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
             }
             nextButton.post(new Runnable() {
                 @Override
                 public void run() {
-                    nextButton.getBackground().setColorFilter(buttonColor, PorterDuff.Mode.MULTIPLY);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        nextButton.getBackground().setColorFilter(buttonColor, PorterDuff.Mode.MULTIPLY);
+                    } else {
+                        nextButton.getBackground().setColorFilter(buttonColor, PorterDuff.Mode.SRC_IN);
+                    }
                     nextButton.setTextColor(textAndIconColor);
                     for (Drawable drawable : nextButton.getCompoundDrawables()) {
                         if (drawable != null) {

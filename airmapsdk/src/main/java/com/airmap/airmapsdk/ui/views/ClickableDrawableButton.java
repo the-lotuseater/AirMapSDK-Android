@@ -3,6 +3,7 @@ package com.airmap.airmapsdk.ui.views;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.AppCompatButton;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.Button;
@@ -14,7 +15,7 @@ import android.widget.Button;
  * Custom Button to handle drawableLeft/Right/Top/Bottom clicks
  */
 
-public class ClickableDrawableButton extends Button {
+public class ClickableDrawableButton extends AppCompatButton {
     private Drawable drawableRight;
     private Drawable drawableLeft;
     private Drawable drawableTop;
