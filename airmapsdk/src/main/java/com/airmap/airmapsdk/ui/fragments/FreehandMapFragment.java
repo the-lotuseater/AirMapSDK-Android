@@ -45,6 +45,7 @@ import com.airmap.airmapsdk.models.permits.AirMapPermitIssuer;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
 import com.airmap.airmapsdk.models.shapes.AirMapPath;
+import com.airmap.airmapsdk.models.shapes.AirMapPoint;
 import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
@@ -87,7 +88,6 @@ import java.util.List;
 import java.util.Map;
 
 import okhttp3.Call;
-import retrofit2.http.HEAD;
 
 import static com.airmap.airmapsdk.models.status.AirMapStatus.StatusColor.Green;
 import static com.airmap.airmapsdk.models.status.AirMapStatus.StatusColor.Yellow;
@@ -332,8 +332,9 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         if (mListener != null) {
             mListener.setPathBufferPoints(null); //reset buffer polygon
             if (tabLayout.getSelectedTabPosition() == INDEX_OF_CIRCLE_TAB && circleContainer.isValid()) { //Circle
-
-                mListener.getFlight().setCoordinate(new Coordinate(circleContainer.center));
+                Coordinate center = new Coordinate(circleContainer.center);
+                mListener.getFlight().setGeometry(new AirMapPoint(center));
+                mListener.getFlight().setCoordinate(center);
                 mListener.getFlight().setBuffer(circleContainer.radius);
             } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_PATH_TAB && lineContainer.isValid()) { //Path
                 List<Coordinate> coordinates = new ArrayList<>();

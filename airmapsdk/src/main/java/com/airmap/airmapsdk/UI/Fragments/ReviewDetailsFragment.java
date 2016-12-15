@@ -6,11 +6,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.airmap.airmapsdk.util.Utils;
-import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.models.flight.AirMapFlight;
+import com.airmap.airmapsdk.models.shapes.AirMapPoint;
+import com.airmap.airmapsdk.util.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,6 +36,8 @@ public class ReviewDetailsFragment extends Fragment {
     private TextView durationTextView;
     private TextView aircraftTextView;
     private TextView publicFlightTextView;
+    private LinearLayout radiusContainer;
+    private LinearLayout aircraftContainer;
 
     public ReviewDetailsFragment() {
         // Required empty public constructor
@@ -67,15 +71,22 @@ public class ReviewDetailsFragment extends Fragment {
         durationTextView = getTextViewById(view, R.id.duration_value);
         aircraftTextView = getTextViewById(view, R.id.aircraft_value);
         publicFlightTextView = getTextViewById(view, R.id.public_flight_value);
+        radiusContainer = (LinearLayout) view.findViewById(R.id.radius_container);
+        aircraftContainer = (LinearLayout) view.findViewById(R.id.aircraft_container);
     }
 
     private void populateViews() {
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
 
-        String radius = useMetric ? String.format(Locale.US, "%d m", Math.round(flight.getBuffer())) :
-                String.format(Locale.US, "%d ft", Math.round(metersToFeet(flight.getBuffer())));
+        if (flight.getGeometry() instanceof AirMapPoint) {
+            String radius = useMetric ? String.format(Locale.US, "%d m", Math.round(flight.getBuffer())) :
+                    String.format(Locale.US, "%d ft", Math.round(metersToFeet(flight.getBuffer())));
 
-        radiusTextView.setText(radius);
+            radiusTextView.setText(radius);
+        } else {
+            radiusContainer.setVisibility(View.GONE);
+        }
+
 
         String altitude = useMetric ? String.format(Locale.US, "%d m", Math.round(flight.getMaxAltitude())) :
                 String.format(Locale.US, "%d ft", Math.round(metersToFeet(flight.getMaxAltitude())));
@@ -89,6 +100,8 @@ public class ReviewDetailsFragment extends Fragment {
         durationTextView.setText(getDurationText());
         if (flight.getAircraft() != null) {
             aircraftTextView.setText(flight.getAircraft().getModel().toString()); //Display only the model name
+        } else {
+            aircraftContainer.setVisibility(View.GONE);
         }
         publicFlightTextView.setText(flight.isPublic() ? "Yes" : "No");
     }
@@ -96,10 +109,10 @@ public class ReviewDetailsFragment extends Fragment {
     public String getDurationText() {
         long difference = flight.getEndsAt().getTime() - flight.getStartsAt().getTime();
         int index = indexOfDurationPreset(difference);
-        if (index != -1){
+        if (index != -1) {
             return getDurationPresets()[index].label;
         }
-        return String.format(Locale.US, "%d seconds", difference/1000);
+        return String.format(Locale.US, "%d seconds", difference / 1000);
     }
 
     private TextView getTextViewById(View view, @IdRes int id) {
