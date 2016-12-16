@@ -21,6 +21,7 @@ import com.airmap.airmapsdk.util.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -54,7 +55,7 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         walletPermitsMap = new HashMap<>();
         if (permitsFromWallet != null && !permitsFromWallet.isEmpty()) {
             for (AirMapPilotPermit permit : permitsFromWallet) {
-                if (permit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || permit.getStatus() == AirMapPilotPermit.PermitStatus.Pending) {
+                if ((permit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || permit.getStatus() == AirMapPilotPermit.PermitStatus.Pending) && (permit.getExpiresAt() == null || permit.getExpiresAt().after(new Date()))) {
                     // if there's already a wallet permit, use the one with the better status (accepted > pending > *)
                     AirMapPilotPermit duplicate = walletPermitsMap.get(permit.getShortDetails().getPermitId());
                     if (duplicate == null || (duplicate.getStatus() != AirMapPilotPermit.PermitStatus.Accepted)) {
@@ -72,7 +73,8 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
             applicablePermitIds.add(applicablePermit.getId());
 
             AirMapPilotPermit pilotPermit = walletPermitsMap.get(applicablePermit.getId());
-            if (pilotPermit != null && (pilotPermit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || pilotPermit.getStatus() == AirMapPilotPermit.PermitStatus.Pending)) {
+            if (pilotPermit != null && (pilotPermit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || pilotPermit.getStatus() == AirMapPilotPermit.PermitStatus.Pending)
+                    && (pilotPermit.getExpiresAt() == null || pilotPermit.getExpiresAt().after(new Date()))) {
                 existingPermits.add(applicablePermit);
             } else {
                 otherAvailablePermits.add(applicablePermit);
@@ -141,7 +143,8 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
             holder.permitDescriptionTextView.setText(permit.getDescription());
 
             AirMapPilotPermit walletPermit = walletPermitsMap.get(permit.getId());
-            if (walletPermit != null && (walletPermit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || walletPermit.getStatus() == AirMapPilotPermit.PermitStatus.Pending)) {
+            if (walletPermit != null && (walletPermit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || walletPermit.getStatus() == AirMapPilotPermit.PermitStatus.Pending)
+                    && (walletPermit.getExpiresAt() == null || walletPermit.getExpiresAt().after(new Date()))) {
                 holder.iconImageView.setVisibility(View.VISIBLE);
                 holder.statusTextView.setText(activity.getString(R.string.permit_status, Utils.titleCase(walletPermit.getStatus().toString())));
                 holder.statusTextView.setVisibility(View.VISIBLE);
@@ -164,7 +167,8 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
                     @Override
                     public void onClick(View v) {
                         AirMapPilotPermit pilotPermit = walletPermitsMap.get(permit.getId());
-                        if (pilotPermit != null && (pilotPermit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || pilotPermit.getStatus() == AirMapPilotPermit.PermitStatus.Pending)) {
+                        if (pilotPermit != null && (pilotPermit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || pilotPermit.getStatus() == AirMapPilotPermit.PermitStatus.Pending)
+                                && (pilotPermit.getExpiresAt() == null || pilotPermit.getExpiresAt().after(new Date()))) {
                             Intent data = new Intent();
                             data.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, permit);
                             activity.setResult(Activity.RESULT_OK, data);

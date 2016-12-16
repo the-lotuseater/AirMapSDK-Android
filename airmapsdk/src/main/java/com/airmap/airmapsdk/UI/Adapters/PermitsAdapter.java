@@ -20,6 +20,7 @@ import com.airmap.airmapsdk.ui.views.PermitRadioButton;
 import com.airmap.airmapsdk.ui.views.PermitRadioGroup;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -48,7 +49,7 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
         walletPermitIds = new HashSet<>();
 
         for (AirMapPilotPermit permit : permitsFromWallet) {
-            if (permit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || permit.getStatus() == AirMapPilotPermit.PermitStatus.Pending) {
+            if ((permit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || permit.getStatus() == AirMapPilotPermit.PermitStatus.Pending) && (permit.getExpiresAt() == null || permit.getExpiresAt().after(new Date()))) {
                 walletPermitIds.add(permit.getShortDetails().getPermitId());
             }
         }
