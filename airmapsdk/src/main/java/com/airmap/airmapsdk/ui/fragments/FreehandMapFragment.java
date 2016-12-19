@@ -94,6 +94,7 @@ import static com.airmap.airmapsdk.models.status.AirMapStatus.StatusColor.Green;
 import static com.airmap.airmapsdk.models.status.AirMapStatus.StatusColor.Yellow;
 import static com.airmap.airmapsdk.util.PointMath.distanceBetween;
 import static com.airmap.airmapsdk.util.Utils.getBufferPresets;
+import static com.airmap.airmapsdk.util.Utils.getBufferPresetsMetric;
 
 /**
  * Created by Vansh Gandhi on 11/13/16.
@@ -491,7 +492,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     public void drawPath(List<PointF> line) {
         clear();
         PolylineOptions thinLine = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
-        double width = getPathWidthFromSeekBar(seekBar.getProgress());
+        double width = getPathWidthFromSeekBar(getActivity(), seekBar.getProgress());
         List<LatLng> midPoints = PointMath.getMidpointsFromLatLngs(getLatLngsFromPointFs(line));
         List<LatLng> points = getLatLngsFromPointFs(line);
         for (int i = 0; i < points.size(); i++) {
@@ -570,8 +571,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         return latLngs;
     }
 
-    private static double getPathWidthFromSeekBar(int progress) {
-        return Utils.getBufferPresets()[progress].value.doubleValue();
+    private static double getPathWidthFromSeekBar(Context context, int progress) {
+        return (Utils.useMetric(context) ? Utils.getBufferPresetsMetric()[progress].value.doubleValue() : Utils.getBufferPresets()[progress].value.doubleValue());
     }
 
     @Override
@@ -742,7 +743,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         map.removeAnnotation(circleContainer.circle);
         map.removeAnnotation(circleContainer.outline);
         corners.get(indexOfAnnotationToDrag).setPosition(newLocation); //Move the center point
-        double radius = getBufferPresets()[seekBar.getProgress()].value.doubleValue(); //Move the circle polygon
+        double radius = Utils.useMetric(getActivity()) ?  getBufferPresetsMetric()[seekBar.getProgress()].value.doubleValue() : getBufferPresets()[seekBar.getProgress()].value.doubleValue(); //Move the circle polygon
         List<LatLng> circlePoints = mListener.getAnnotationsFactory().polygonCircleForCoordinate(newLocation, radius);
         PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0));
         circleContainer.circle = map.addPolygon(mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(circlePoints));
@@ -880,14 +881,14 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         seekBarContainer.setVisibility(View.VISIBLE);
         seekBarLabelTextView.setText(R.string.airmap_buffer);
         seekBar.setOnSeekBarChangeListener(null); //This is needed because when setting max, it might cause progress to change, which we don't want
-        seekBar.setMax(getBufferPresets().length - 1);
+        seekBar.setMax(Utils.useMetric(getActivity()) ? getBufferPresetsMetric().length - 1 : getBufferPresets().length - 1);
         seekBar.setProgress(0);
         circleContainer.center = map.getCameraPosition().target;
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                seekBarValueTextView.setText(getBufferPresets()[progress].label);
-                drawCircle(circleContainer.center, getBufferPresets()[progress].value.doubleValue());
+                seekBarValueTextView.setText(Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[progress].label : getBufferPresets()[progress].label);
+                drawCircle(circleContainer.center, Utils.useMetric(getContext()) ? getBufferPresetsMetric()[progress].value.doubleValue() : getBufferPresets()[progress].value.doubleValue());
                 if (!fromUser) {
                     checkCircleStatus();
                     zoomToCircle();
@@ -942,12 +943,12 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         seekBarContainer.setVisibility(View.VISIBLE);
         seekBarLabelTextView.setText(R.string.airmap_width);
         seekBar.setOnSeekBarChangeListener(null); //This is needed because when setting max, it might cause progress to change, which we don't want since it would call the listener
-        seekBar.setMax(Utils.getBufferPresets().length - 1);
+        seekBar.setMax(Utils.useMetric(getActivity()) ? Utils.getBufferPresetsMetric().length - 1 : Utils.getBufferPresets().length - 1);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                seekBarValueTextView.setText(getBufferPresets()[progress].label);
-                lineContainer.width = getPathWidthFromSeekBar(progress);
+                seekBarValueTextView.setText(Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[progress].label : getBufferPresets()[progress].label);
+                lineContainer.width = getPathWidthFromSeekBar(getActivity(), progress);
                 if (lineContainer.line != null) {
                     calculatePathBufferAndDisplayLineAndBuffer(lineContainer.line.getPoints(), lineContainer.width, true);
                 }
