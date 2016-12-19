@@ -339,6 +339,9 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 mListener.getFlight().setGeometry(new AirMapPoint(center));
                 mListener.getFlight().setCoordinate(center);
                 mListener.getFlight().setBuffer(circleContainer.radius);
+
+                tabLayout.setVisibility(View.GONE);
+                mListener.freehandNextClicked();
             } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_PATH_TAB && lineContainer.isValid()) { //Path
                 List<Coordinate> coordinates = new ArrayList<>();
                 for (LatLng latLng : lineContainer.line.getPoints()) {
@@ -346,12 +349,14 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 }
                 mListener.getFlight().setGeometry(new AirMapPath(coordinates));
                 mListener.getFlight().setBuffer(lineContainer.width);
-                //FIXME: these buffer points need to be separated by polygon
                 List<LatLng>[] bufferPoints = new ArrayList[lineContainer.buffers.size()];
                 for (int i = 0; i < lineContainer.buffers.size(); i++) {
                     bufferPoints[i] = lineContainer.buffers.get(i).getPoints();
                 }
                 mListener.setPathBufferPoints(bufferPoints);
+
+                tabLayout.setVisibility(View.GONE);
+                mListener.freehandNextClicked();
             } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_POLYGON_TAB && polygonContainer.isValid()) { //Polygon
                 if (!PointMath.findIntersections(polygonContainer.polygon.getPoints()).isEmpty()) {
                     Toast.makeText(getContext(), R.string.airmap_error_overlap, Toast.LENGTH_SHORT).show();
@@ -362,9 +367,10 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     coordinates.add(new Coordinate(latLng));
                 }
                 mListener.getFlight().setGeometry(new AirMapPolygon(coordinates));
+
+                tabLayout.setVisibility(View.GONE);
+                mListener.freehandNextClicked();
             }
-            tabLayout.setVisibility(View.GONE);
-            mListener.freehandNextClicked();
         }
     }
 
