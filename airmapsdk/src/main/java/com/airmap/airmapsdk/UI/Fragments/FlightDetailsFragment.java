@@ -405,12 +405,14 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void updateStartsAtTextView() {
+        Date now = new Date();
         if (mListener.getFlight().getStartsAt() == null) {
-            mListener.getFlight().setStartsAt(new Date());
+            mListener.getFlight().setStartsAt(now);
         }
+
         SimpleDateFormat format = new SimpleDateFormat("M/d/yy h:mm a", Locale.US);
         Date date = mListener.getFlight().getStartsAt();
-        startsAtTextView.setText(format.format(date));
+        startsAtTextView.setText(now.after(date) || now.equals(date) ? "Now" : format.format(date));
     }
 
     private void setupAircraftDialog() {
