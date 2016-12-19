@@ -47,6 +47,8 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:hint="@string/airmap_nickname"
+                            android:inputType="textCapWords"
+                            android:maxLines="1"
                             android:id="@+id/nickname"/>
 
                 </android.support.design.widget.TextInputLayout>

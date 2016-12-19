@@ -1,12 +1,15 @@
 package com.airmap.airmapsdk.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -96,6 +99,13 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
                                 response.add(0, new AirMapAircraftModel().setModelId("select_model").setName("Select Model").setManufacturer(new AirMapAircraftManufacturer().setName("")));
                                 modelSpinner.setAdapter(new ArrayAdapter<>(CreateEditAircraftActivity.this, android.R.layout.simple_spinner_dropdown_item, response));
                                 modelSpinner.setVisibility(View.VISIBLE);
+                                modelSpinner.setOnTouchListener(new View.OnTouchListener() {
+                                    @Override
+                                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                                        hideKeyboard();
+                                        return false;
+                                    }
+                                });
                             }
                         });
                     }
@@ -111,6 +121,13 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
 
             public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+        manufacturerSpinner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                hideKeyboard();
+                return false;
             }
         });
     }
@@ -202,6 +219,13 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
                 Toast.makeText(CreateEditAircraftActivity.this, message, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(nicknameEditText.getWindowToken(), 0);
+        }
     }
 
     @Override
