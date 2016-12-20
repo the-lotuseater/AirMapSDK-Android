@@ -8,8 +8,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.AnalyticsTracker;
 import com.airmap.airmapsdk.Auth;
 import com.airmap.airmapsdk.util.Utils;
 import com.airmap.airmapsdk.models.Coordinate;
@@ -70,6 +72,7 @@ public class AirMap {
     private static MappingService airMapMapMappingService;
 
     private static LoginListener loginListener;
+    private static Analytics analytics;
 
     /**
      * Initializes the SDK. This must be called before any requests can be made
@@ -290,6 +293,10 @@ public class AirMap {
 
     public static void setLoginListener(LoginListener listener) {
         loginListener = listener;
+    }
+
+    public static void setAnalytics(AnalyticsTracker tracker) {
+        Analytics.init(tracker);
     }
 
     /**
