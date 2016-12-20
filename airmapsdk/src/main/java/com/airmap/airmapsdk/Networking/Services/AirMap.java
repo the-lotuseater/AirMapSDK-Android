@@ -11,7 +11,6 @@ import android.util.Log;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.Auth;
-import com.airmap.airmapsdk.util.Utils;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
@@ -31,6 +30,7 @@ import com.airmap.airmapsdk.ui.activities.CreateEditAircraftActivity;
 import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
 import com.airmap.airmapsdk.ui.activities.LoginActivity;
 import com.airmap.airmapsdk.ui.activities.ProfileActivity;
+import com.airmap.airmapsdk.util.Utils;
 
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.MalformedClaimException;
@@ -593,7 +593,8 @@ public class AirMap {
 
     /**
      * Start the create flight process in a custom UI with a built-in permit decision flow. This
-     * will use the passed in context to start the UI and to send any activity results
+     * will use the passed in context to start the UI and to send any activity results. The map
+     * shown will have no layers on it
      *
      * @param activity    The activity to start the UI with and to send Activity Result to
      * @param requestCode The request code you would like to start the activity with
@@ -602,10 +603,62 @@ public class AirMap {
      *                    json key, value: EditText Hint)
      */
     public static void createFlight(Activity activity, int requestCode, Coordinate coordinate, @Nullable HashMap<String, String> extras) {
+        createFlight(activity, requestCode, coordinate, extras, null);
+    }
+
+    /**
+     * Start the create flight process in a custom UI with a built-in permit decision flow. This
+     * will use the passed in context to start the UI and to send any activity results. The map
+     * shown will have no layers on it
+     *
+     * @param fragment    The fragment to start the UI with and to send Activity Result to
+     * @param requestCode The request code you would like to start the activity with
+     * @param coordinate  The location to create the flight
+     * @param extras      Extra information to collect from the pilot in the profile page (key:
+     *                    json key, value: EditText Hint)
+     */
+    public static void createFlight(Fragment fragment, int requestCode, Coordinate coordinate, @Nullable HashMap<String, String> extras) {
+        createFlight(fragment, requestCode, coordinate, extras, null);
+    }
+
+    /**
+     * Start the create flight process in a custom UI with a built-in permit decision flow. This
+     * will use the passed in context to start the UI and to send any activity results. The map
+     * shown will have no layers on it
+     *
+     * @param fragment    The fragment to start the UI with and to send Activity Result to
+     * @param requestCode The request code you would like to start the activity with
+     * @param coordinate  The location to create the flight
+     * @param extras      Extra information to collect from the pilot in the profile page (key:
+     *                    json key, value: EditText Hint)
+     */
+    public static void createFlight(android.support.v4.app.Fragment fragment, int requestCode, Coordinate coordinate, @Nullable HashMap<String, String> extras) {
+        createFlight(fragment, requestCode, coordinate, extras, null);
+    }
+
+    /**
+     * Start the create flight process in a custom UI with a built-in permit decision flow. This
+     * will use the passed in context to start the UI and to send any activity results
+     *
+     * @param activity    The activity to start the UI with and to send Activity Result to
+     * @param requestCode The request code you would like to start the activity with
+     * @param coordinate  The location to create the flight
+     * @param extras      Extra information to collect from the pilot in the profile page (key:
+     *                    json key, value: EditText Hint)
+     * @param layers      The layers to show on all maps displayed in the flight creation process
+     */
+    public static void createFlight(Activity activity, int requestCode, Coordinate coordinate, @Nullable HashMap<String, String> extras, @Nullable List<MappingService.AirMapLayerType> layers) {
         Intent intent = new Intent(activity, CreateFlightActivity.class);
         intent.putExtra(CreateFlightActivity.COORDINATE, coordinate);
         if (extras != null) {
             intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
+        }
+        if (layers != null) {
+            ArrayList<String> stringLayers = new ArrayList<>();
+            for (MappingService.AirMapLayerType layer : layers) {
+                stringLayers.add(layer.toString());
+            }
+            intent.putStringArrayListExtra(CreateFlightActivity.KEY_LAYERS, stringLayers);
         }
         activity.startActivityForResult(intent, requestCode);
     }
@@ -619,12 +672,20 @@ public class AirMap {
      * @param coordinate  The location to create the flight
      * @param extras      Extra information to collect from the pilot in the profile page (key:
      *                    json key, value: EditText Hint)
+     * @param layers      The layers to show on all maps displayed in the flight creation process
      */
-    public static void createFlight(Fragment fragment, int requestCode, Coordinate coordinate, @Nullable HashMap<String, String> extras) {
+    public static void createFlight(Fragment fragment, int requestCode, Coordinate coordinate, @Nullable HashMap<String, String> extras, @Nullable List<MappingService.AirMapLayerType> layers) {
         Intent intent = new Intent(fragment.getActivity(), CreateFlightActivity.class);
         intent.putExtra(CreateFlightActivity.COORDINATE, coordinate);
         if (extras != null) {
             intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
+        }
+        if (layers != null) {
+            ArrayList<String> stringLayers = new ArrayList<>();
+            for (MappingService.AirMapLayerType layer : layers) {
+                stringLayers.add(layer.toString());
+            }
+            intent.putStringArrayListExtra(CreateFlightActivity.KEY_LAYERS, stringLayers);
         }
         fragment.startActivityForResult(intent, requestCode);
     }
@@ -638,12 +699,20 @@ public class AirMap {
      * @param coordinate  The location to create the flight
      * @param extras      Extra information to collect from the pilot in the profile page (key:
      *                    json key, value: EditText Hint)
+     * @param layers      The layers to show on all maps displayed in the flight creation process
      */
-    public static void createFlight(android.support.v4.app.Fragment fragment, int requestCode, Coordinate coordinate, @Nullable HashMap<String, String> extras) {
+    public static void createFlight(android.support.v4.app.Fragment fragment, int requestCode, Coordinate coordinate, @Nullable HashMap<String, String> extras, @Nullable List<MappingService.AirMapLayerType> layers) {
         Intent intent = new Intent(fragment.getContext(), CreateFlightActivity.class);
         intent.putExtra(CreateFlightActivity.COORDINATE, coordinate);
         if (extras != null) {
             intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
+        }
+        if (layers != null) {
+            ArrayList<String> stringLayers = new ArrayList<>();
+            for (MappingService.AirMapLayerType layer : layers) {
+                stringLayers.add(layer.toString());
+            }
+            intent.putStringArrayListExtra(CreateFlightActivity.KEY_LAYERS, stringLayers);
         }
         fragment.startActivityForResult(intent, requestCode);
     }
@@ -1045,7 +1114,8 @@ public class AirMap {
 
     /**
      * Get a flight status based on a flight within a polygon
-     *  @param geometry     The polygon the flight will be in
+     *
+     * @param geometry     The polygon the flight will be in
      * @param takeOffPoint The take off point of the flight
      * @param types        Airspace types to include in the calculation and response
      * @param ignoredTypes Airspace types to ignore in the calculation and response
@@ -1063,7 +1133,8 @@ public class AirMap {
 
     /**
      * Get an airspace by its ID
-     *  @param airspaceId The ID of the airspace to get
+     *
+     * @param airspaceId The ID of the airspace to get
      * @param listener   The callback that is invoked on success or error
      */
     public static Call getAirspace(@NonNull String airspaceId,

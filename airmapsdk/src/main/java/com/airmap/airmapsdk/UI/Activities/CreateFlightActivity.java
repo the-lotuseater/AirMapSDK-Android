@@ -13,8 +13,6 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.util.AnnotationsFactory;
-import com.airmap.airmapsdk.util.Utils;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
@@ -28,7 +26,7 @@ import com.airmap.airmapsdk.models.status.AirMapStatusRequirement;
 import com.airmap.airmapsdk.models.status.AirMapStatusRequirementNotice;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
-import com.airmap.airmapsdk.ui.views.CustomViewPager;
+import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.ui.adapters.SectionsPagerAdapter;
 import com.airmap.airmapsdk.ui.fragments.FlightDetailsFragment;
 import com.airmap.airmapsdk.ui.fragments.FlightNoticeFragment;
@@ -36,7 +34,10 @@ import com.airmap.airmapsdk.ui.fragments.FreehandMapFragment;
 import com.airmap.airmapsdk.ui.fragments.ListPermitsFragment;
 import com.airmap.airmapsdk.ui.fragments.ReviewFlightFragment;
 import com.airmap.airmapsdk.ui.fragments.ReviewNoticeFragment;
+import com.airmap.airmapsdk.ui.views.CustomViewPager;
+import com.airmap.airmapsdk.util.AnnotationsFactory;
 import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.Utils;
 import com.mapbox.mapboxsdk.MapboxAccountManager;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
@@ -58,7 +59,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
 
     public static final String COORDINATE = "coordinate";
     public static final String KEY_VALUE_EXTRAS = "keyValueExtras";
-    public static final String MAPBOX_API_KEY = "mapbox_api_key";
+    public static final String KEY_LAYERS = "layers";
 
     public static final String FLIGHT = "flight";
     public static final String FLIGHT_STATUS = "flight_status";
@@ -90,6 +91,8 @@ public class CreateFlightActivity extends AppCompatActivity implements
     private ArrayList<AirMapAvailablePermit> permitsToApplyFor; //Permits that need to be applied for before attaching to flight
     private ArrayList<AirMapAvailablePermit> permitsToShowInReview; //selectedPermits + permitsToApplyFor temporarily transformed into AvailablePermit
 
+    private List<MappingService.AirMapLayerType> mapLayers;
+
     private List<LatLng>[] pathBuffers; //So that we don't need to recalculate the buffer polygon using turf on flight details screen
     private AnnotationsFactory annotationsFactory;
 
@@ -103,6 +106,13 @@ public class CreateFlightActivity extends AppCompatActivity implements
         selectedPermits = new ArrayList<>();
         permitsToApplyFor = new ArrayList<>();
         permitsToShowInReview = new ArrayList<>();
+        mapLayers = new ArrayList<>();
+        if (getIntent().getExtras() != null && getIntent().getStringArrayListExtra(KEY_LAYERS) != null) {
+            ArrayList<String> stringLayers = getIntent().getStringArrayListExtra(KEY_LAYERS);
+            for (String stringLayer : stringLayers) {
+                mapLayers.add(MappingService.AirMapLayerType.fromString(stringLayer));
+            }
+        }
 
         setupFlight(savedInstanceState);
         MapboxAccountManager.start(this, Utils.getMapboxApiKey());
@@ -575,6 +585,10 @@ public class CreateFlightActivity extends AppCompatActivity implements
     @Override
     public List<LatLng>[] getPathBuffers() {
         return pathBuffers;
+    }
+
+    public List<MappingService.AirMapLayerType> getMapLayers() {
+        return mapLayers;
     }
 
     @Override

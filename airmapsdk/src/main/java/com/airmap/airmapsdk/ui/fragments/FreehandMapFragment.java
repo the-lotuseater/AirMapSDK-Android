@@ -53,6 +53,7 @@ import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.networking.services.AirspaceService;
+import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
 import com.airmap.airmapsdk.ui.views.ClickableDrawableButton;
 import com.airmap.airmapsdk.ui.views.DrawingBoard;
@@ -585,7 +586,10 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 return true; //This is simply to prevent opening the info window when selecting the marker from onTouch
             }
         });
-
+        if (mListener != null) {
+            String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), MappingService.AirMapMapTheme.Standard);
+            map.setStyleUrl(url);
+        }
         setupTabs();
         mapView.setOnTouchListener(new View.OnTouchListener() {
             //This onTouch code is a copy of the MapView#onSingleTapConfirmed code, except
@@ -743,7 +747,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         map.removeAnnotation(circleContainer.circle);
         map.removeAnnotation(circleContainer.outline);
         corners.get(indexOfAnnotationToDrag).setPosition(newLocation); //Move the center point
-        double radius = Utils.useMetric(getActivity()) ?  getBufferPresetsMetric()[seekBar.getProgress()].value.doubleValue() : getBufferPresets()[seekBar.getProgress()].value.doubleValue(); //Move the circle polygon
+        double radius = Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[seekBar.getProgress()].value.doubleValue() : getBufferPresets()[seekBar.getProgress()].value.doubleValue(); //Move the circle polygon
         List<LatLng> circlePoints = mListener.getAnnotationsFactory().polygonCircleForCoordinate(newLocation, radius);
         PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0));
         circleContainer.circle = map.addPolygon(mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(circlePoints));
@@ -972,7 +976,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     /**
-     * This will calculate the buffer around a path, invoke the necessary javascript (turf.js), will also add
+     * This will calculate the buffer around a path, invoke the necessary javascript (turf.js), will
+     * also add
      * the buffer annotation to the map. The javascript buffer result is returned in a callback, so
      * it may be a little delayed
      *
@@ -1051,8 +1056,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                                 optionsList.add(options);
                             }
 
-                        // multi-polygon comes back when we're tunneling the polygon holes and they slice the buffer into multiple polygons
-                        // this is fine, the json is just a little different and we have to add all the polygons
+                            // multi-polygon comes back when we're tunneling the polygon holes and they slice the buffer into multiple polygons
+                            // this is fine, the json is just a little different and we have to add all the polygons
                         } else if ("MultiPolygon".equals(geometryType)) {
                             scratchpad.reset();
                             for (int k = 0; k < coordinates.length(); k++) {
@@ -1545,6 +1550,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     public interface OnFragmentInteractionListener {
+        List<MappingService.AirMapLayerType> getMapLayers();
+
         AirMapFlight getFlight();
 
         void freehandNextClicked();

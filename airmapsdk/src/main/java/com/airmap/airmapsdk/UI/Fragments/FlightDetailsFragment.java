@@ -49,6 +49,7 @@ import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.networking.services.AirspaceService;
+import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.ui.activities.CreateEditAircraftActivity;
 import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
 import com.airmap.airmapsdk.ui.activities.ProfileActivity;
@@ -204,6 +205,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         map = mapboxMap;
 
         if (mListener != null) {
+            String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), MappingService.AirMapMapTheme.Standard);
+            map.setStyleUrl(url);
             AirMapFlight flight = mListener.getFlight();
             MultiPoint multiPoint;
             if (flight.getGeometry() instanceof AirMapPolygon) {
@@ -945,5 +948,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         AnnotationsFactory getAnnotationsFactory();
 
         List<LatLng>[] getPathBuffers();
+
+        List<MappingService.AirMapLayerType> getMapLayers();
     }
 }

@@ -36,6 +36,7 @@ import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusRequirementNotice;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.util.AnnotationsFactory;
 import com.mapbox.mapboxsdk.annotations.MultiPoint;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
@@ -212,6 +213,8 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     public void onMapReady(MapboxMap mapboxMap) {
         map = mapboxMap;
         if (mListener != null) {
+            String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), MappingService.AirMapMapTheme.Standard);
+            map.setStyleUrl(url);
             AirMapFlight flight = mListener.getFlight();
             MultiPoint multiPoint;
             if (flight.getGeometry() instanceof AirMapPolygon) {
@@ -499,6 +502,8 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
         AnnotationsFactory getAnnotationsFactory();
 
         List<LatLng>[] getPathBuffers();
+
+        List<MappingService.AirMapLayerType> getMapLayers();
     }
 
     private class SectionsPagerAdapter extends FragmentStatePagerAdapter {
