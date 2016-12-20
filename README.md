@@ -33,7 +33,7 @@ maven { url "https://repo.eclipse.org/content/repositories/paho-snapshots/" }
 
 to your application-level `build.gradle` file under the `allprojects.repositories` block
 
-	* If you were previously using version `1.0.2` or older, note that this url has changed and will need to be changed in your project as well 
+* If you were previously using version `1.0.2` or older, note that this url has changed and will need to be changed in your project as well 
 	* There have also been some package name changes, so classes will need to be re-imported
 
 
