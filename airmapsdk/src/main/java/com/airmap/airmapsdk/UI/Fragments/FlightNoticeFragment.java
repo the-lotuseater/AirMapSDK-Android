@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.permits.AirMapPermitIssuer;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
@@ -179,6 +180,8 @@ public class FlightNoticeFragment extends Fragment {
     }
 
     private void onNextButton() {
+        Analytics.logEvent(Analytics.Page.NOTICES_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.REVIEW);
+
         mListener.onFlightNoticeNextButtonClicked();
     }
 

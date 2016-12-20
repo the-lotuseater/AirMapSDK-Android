@@ -46,6 +46,12 @@ public class Analytics {
         public static final String PATH_CREATE_FLIGHT = "Create Flight - Path";
         public static final String POLYGON_CREATE_FLIGHT = "Create Flight - Polygon";
         public static final String DETAILS_CREATE_FLIGHT = "Create Flight - Details";
+        public static final String PERMITS_CREATE_FLIGHT = "Create Flight - Permits";
+        public static final String AVAILABLE_PERMITS_CREATE_FLIGHT = "Create Flight - Available Permits";
+        public static final String NOTICES_CREATE_FLIGHT = "Create Flight - Flight Notices";
+
+        public static final String PERMIT_DETAILS = "Permit Details";
+        public static final String PILOT_PROFILE = "Pilot Profile";
     }
 
     public static class Event {
@@ -114,6 +120,7 @@ public class Analytics {
         public static final String TRASH_ICON = "Trash Icon";
         public static final String NEXT = "Next Button";
         public static final String CANCEL = "Cancel Button";
+        public static final String REVIEW = "Review Button";
         public static final String DRAG_PATH_POINT = "Drag Path Point";
         public static final String DRAG_POLYGON_POINT = "Drag Polygon Point";
         public static final String DRAG_NEW_POINT = "Drag New Point";
@@ -127,6 +134,11 @@ public class Analytics {
         public static final String SELECT_PILOT = "Select Pilot";
         public static final String SELECT_AIRCRAFT = "Select Aircraft";
         public static final String SHARE_FLIGHT = "Share Flight";
+
+        public static final String INFO_FAQ_BUTTON = "Info Button (Permit FAQ's)";
+        public static final String SELECT_PERMIT = "Select Permit";
+        public static final String SELECT_DIFFERENT_PERMIT = "Select a Different Permit";
+        public static final String PERMIT_DETAILS = "Permit Details";
     }
 
     public static final class Value {

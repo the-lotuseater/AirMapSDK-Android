@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
@@ -53,6 +54,8 @@ public class PermitSelectionActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent dataFromCustomProperties) {
         if (requestCode == Constants.CUSTOM_PROPERTIES_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
+                Analytics.logEvent(Analytics.Page.AVAILABLE_PERMITS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.SELECT_PERMIT);
+
                 Intent data = new Intent();
                 data.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, dataFromCustomProperties.getSerializableExtra(Constants.AVAILABLE_PERMIT_EXTRA));
                 setResult(RESULT_OK, data);
@@ -60,5 +63,22 @@ public class PermitSelectionActivity extends AppCompatActivity {
             }
         }
         super.onActivityResult(requestCode, resultCode, dataFromCustomProperties);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Analytics.logEvent(Analytics.Page.AVAILABLE_PERMITS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.CANCEL);
+        super.onBackPressed();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Analytics.logEvent(Analytics.Page.AVAILABLE_PERMITS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.CANCEL);
+                return false;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
