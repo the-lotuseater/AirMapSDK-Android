@@ -32,6 +32,13 @@ public class Analytics {
         }
     }
 
+    public static class Page {
+        public static final String CREATE_FLIGHT = "Create Flight";
+        public static final String POINT_CREATE_FLIGHT = "Create Flight - Point";
+        public static final String PATH_CREATE_FLIGHT = "Create Flight - Path";
+        public static final String POLYGON_CREATE_FLIGHT = "Create Flight - Polygon";
+    }
+
     public static class Event {
         public static final String unspecified = "";
         public static final String verifyEmail = "email_verification_needed";
@@ -80,5 +87,31 @@ public class Analytics {
         public static final String drag = "drag";
         public static final String close = "close";
         public static final String exit = "exit";
+        public static final String draw = "draw";
+        public static final String drop = "drop";
+        public static final String start = "start";
+    }
+
+    public static class Label {
+        public static final String START_CREATE_FLIGHT = "Start Create Flight";
+        public static final String POINT = "Point";
+        public static final String PATH = "Path";
+        public static final String POLYGON = "Polygon";
+        public static final String DRAG_POINT = "Drag Point";
+        public static final String POINT_RADIUS = "Point Radius";
+        public static final String WIDTH = "Width";
+        public static final String ZOOM_MAP = "Zoom Map";
+        public static final String ADVISORY_ICON = "Advisory Icon";
+        public static final String TRASH_ICON = "Trash Icon";
+        public static final String NEXT = "Next Button";
+        public static final String CANCEL = "Cancel Button";
+
+        public static final String DRAG_PATH_POINT = "Drag Path Point";
+        public static final String DRAG_POLYGON_POINT = "Drag Polygon Point";
+        public static final String DRAG_NEW_POINT = "Drag New Point";
+        public static final String DRAW_PATH = "Draw Path";
+        public static final String DRAW_POLYGON = "Draw Polygon";
+
+        public static final String DROP_POINT_TRASH_ICON = "Drop Point Trash Icon";
     }
 }

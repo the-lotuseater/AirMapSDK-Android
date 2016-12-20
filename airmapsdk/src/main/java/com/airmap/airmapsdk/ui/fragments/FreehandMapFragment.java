@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AdvisoriesBottomSheetAdapter;
 import com.airmap.airmapsdk.AirMapException;
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.DrawingCallback;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.CircleContainer;
@@ -232,9 +233,21 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         tabLayout.removeAllTabs();
         tabLayout.setVisibility(View.VISIBLE);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            String lastTab;
+
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 clear();
+
+                String analyticsPage = Analytics.Page.POINT_CREATE_FLIGHT;
+                if (CIRCLE_TAG.equals(lastTab)) {
+                    analyticsPage = Analytics.Page.POINT_CREATE_FLIGHT;
+                } else if (PATH_TAG.equals(lastTab)) {
+                    analyticsPage = Analytics.Page.PATH_CREATE_FLIGHT;
+                } else if (POLYGON_TAG.equals(lastTab)) {
+                    analyticsPage = Analytics.Page.POLYGON_CREATE_FLIGHT;
+                }
+
                 String tag = (String) tab.getTag();
                 if (CIRCLE_TAG.equals(tag)) {
                     showSeekBarForCircle();
@@ -244,6 +257,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     drawingBoard.setVisibility(View.GONE);
                     enableDrawingSwitch.setVisibility(View.GONE);
                     deleteButton.setVisibility(View.GONE);
+
+                    Analytics.logEvent(analyticsPage, Analytics.Action.tap, Analytics.Label.POINT);
                 } else if (PATH_TAG.equals(tag)) {
                     showSeekBarForPath();
                     updateTip(R.string.airmap_freehand_tip_path);
@@ -252,6 +267,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     enableDrawingSwitch.setVisibility(View.VISIBLE);
                     enableDrawingSwitch.setChecked(true);
                     showDeleteButton(false);
+
+                    Analytics.logEvent(analyticsPage, Analytics.Action.tap, Analytics.Label.PATH);
                 } else if (POLYGON_TAG.equals(tag)) {
                     hideSeekBar();
                     updateTip(R.string.airmap_freehand_tip_area);
@@ -260,6 +277,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     enableDrawingSwitch.setVisibility(View.VISIBLE);
                     enableDrawingSwitch.setChecked(true);
                     showDeleteButton(false);
+
+                    Analytics.logEvent(analyticsPage, Analytics.Action.tap, Analytics.Label.POLYGON);
                 }
 
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -267,10 +286,19 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
+                lastTab = (String) tab.getTag();
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+                String tag = (String) tab.getTag();
+                if (CIRCLE_TAG.equals(tag)) {
+                    Analytics.logEvent(Analytics.Page.POINT_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.POINT);
+                } else if (PATH_TAG.equals(tag)) {
+                    Analytics.logEvent(Analytics.Page.PATH_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.PATH);
+                } else if (POLYGON_TAG.equals(tag)) {
+                    Analytics.logEvent(Analytics.Page.POLYGON_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.POLYGON);
+                }
             }
         });
 
@@ -329,6 +357,10 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         if (tabLayout.getSelectedTabPosition() == INDEX_OF_POLYGON_TAB) {
             //Reset in case we displayed the intersection error message
             updateTip(R.string.airmap_freehand_tip_area);
+
+            Analytics.logEvent(Analytics.Page.POLYGON_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.TRASH_ICON);
+        } else {
+            Analytics.logEvent(Analytics.Page.PATH_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.TRASH_ICON);
         }
     }
 
@@ -343,6 +375,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
                 tabLayout.setVisibility(View.GONE);
                 mListener.freehandNextClicked();
+
+                Analytics.logEvent(Analytics.Page.POINT_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.NEXT);
             } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_PATH_TAB && lineContainer.isValid()) { //Path
                 List<Coordinate> coordinates = new ArrayList<>();
                 for (LatLng latLng : lineContainer.line.getPoints()) {
@@ -358,6 +392,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
                 tabLayout.setVisibility(View.GONE);
                 mListener.freehandNextClicked();
+
+                Analytics.logEvent(Analytics.Page.PATH_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.NEXT);
             } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_POLYGON_TAB && polygonContainer.isValid()) { //Polygon
                 if (!PointMath.findIntersections(polygonContainer.polygon.getPoints()).isEmpty()) {
                     Toast.makeText(getContext(), R.string.airmap_error_overlap, Toast.LENGTH_SHORT).show();
@@ -371,6 +407,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
                 tabLayout.setVisibility(View.GONE);
                 mListener.freehandNextClicked();
+
+                Analytics.logEvent(Analytics.Page.POLYGON_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.NEXT);
             }
         }
     }
@@ -410,6 +448,15 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
             recyclerView.setAdapter(new AdvisoriesBottomSheetAdapter(getActivity(), sections, organizationMap));
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+
+            if (tabLayout.getSelectedTabPosition() == INDEX_OF_CIRCLE_TAB) {
+                Analytics.logEvent(Analytics.Page.POINT_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.ADVISORY_ICON);
+            } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_PATH_TAB) {
+                Analytics.logEvent(Analytics.Page.PATH_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.ADVISORY_ICON);
+            } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_POLYGON_TAB) {
+                Analytics.logEvent(Analytics.Page.POLYGON_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.ADVISORY_ICON);
+            }
         }
     }
 
@@ -466,8 +513,12 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         updateTip(R.string.airmap_done_drawing_tip);
         if (drawingBoard.isPolygonMode()) {
             drawPolygon(points);
+
+            Analytics.logEvent(Analytics.Page.POLYGON_CREATE_FLIGHT, Analytics.Action.draw, Analytics.Label.DRAW_POLYGON);
         } else { //Path mode
             drawPath(points);
+
+            Analytics.logEvent(Analytics.Page.PATH_CREATE_FLIGHT, Analytics.Action.draw, Analytics.Label.DRAW_PATH);
         }
     }
 
@@ -753,6 +804,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         if (doneDragging) {
             zoomToCircle();
             checkCircleStatus();
+
+            Analytics.logEvent(Analytics.Page.POINT_CREATE_FLIGHT, Analytics.Action.drag, Analytics.Label.DRAG_POINT);
         }
     }
 
@@ -769,13 +822,19 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                         corners.get(indexOfAnnotationToDrag).setPosition(points.get(indexOfAnnotationToDrag));
                     }
                 }
+
+                Analytics.logEvent(Analytics.Page.PATH_CREATE_FLIGHT, Analytics.Action.drop, Analytics.Label.DROP_POINT_TRASH_ICON);
             } else if (isMidpoint) {
                 //Add the midpoint as a new normal point
                 points.add((indexOfAnnotationToDrag + 1) % corners.size(), newLocation);
                 corners.add((indexOfAnnotationToDrag + 1) % corners.size(), map.addMarker(mListener.getAnnotationsFactory().getDefaultMarkerOptions(newLocation)));
                 //New midpoints will be added when recalculating all midpoints
+
+                Analytics.logEvent(Analytics.Page.PATH_CREATE_FLIGHT, Analytics.Action.drag, Analytics.Label.DRAG_NEW_POINT);
             } else {
                 points.set(indexOfAnnotationToDrag, newLocation); //If not midpoint, then the index of the point to change on the line is the same as the index of the corner annotation
+
+                Analytics.logEvent(Analytics.Page.PATH_CREATE_FLIGHT, Analytics.Action.drag, Analytics.Label.DRAG_PATH_POINT);
             }
             //Update the polyline (both the line and widthPolyline)
             calculatePathBufferAndDisplayLineAndBuffer(points, lineContainer.width, false);
@@ -826,6 +885,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                         corners.get(indexOfAnnotationToDrag).setPosition(points.get(indexOfAnnotationToDrag)); //Instead of deleting, reset it back to its initial position
                     }
                 }
+
+                Analytics.logEvent(Analytics.Page.POLYGON_CREATE_FLIGHT, Analytics.Action.drop, Analytics.Label.DROP_POINT_TRASH_ICON);
             } else if (isMidpoint) {
                 //Add the midpoint as a new normal point
                 points.add((indexOfAnnotationToDrag + 1) % corners.size(), newLocation);
@@ -834,11 +895,15 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     points.set(points.size() - 1, points.get(0)); //The last point need to be the same as the first
                 }
                 //New midpoint annotations will be added when recalculating all midpoints
+
+                Analytics.logEvent(Analytics.Page.POLYGON_CREATE_FLIGHT, Analytics.Action.drag, Analytics.Label.DRAG_NEW_POINT);
             } else {
                 points.set(indexOfAnnotationToDrag, newLocation); //If not midpoint, then the index of the point to change on the line is the same as the index of the corner annotation
                 if (indexOfAnnotationToDrag == 0) {
                     points.set(points.size() - 1, newLocation); //First and last point both need to be set in polygon and line
                 }
+
+                Analytics.logEvent(Analytics.Page.POLYGON_CREATE_FLIGHT, Analytics.Action.drag, Analytics.Label.DRAG_POLYGON_POINT);
             }
             polygonContainer.polygon.setPoints(points);
             polygonContainer.outline.setPoints(points);
@@ -904,6 +969,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             public void onStopTrackingTouch(SeekBar seekBar) {
                 checkCircleStatus();
                 zoomToCircle();
+
+                Analytics.logEvent(Analytics.Page.POINT_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.POINT_RADIUS);
             }
         });
         seekBar.setProgress(18); //1000 ft
@@ -966,6 +1033,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 if (lineContainer.line != null) {
                     calculatePathBufferAndDisplayLineAndBuffer(lineContainer.line.getPoints(), lineContainer.width, false);
                 }
+
+                Analytics.logEvent(Analytics.Page.PATH_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.WIDTH);
             }
         });
         seekBar.setProgress(1); //50 ft
@@ -1540,6 +1609,19 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 return true;
             }
+        }
+
+        if (tabLayout != null) {
+            String page = Analytics.Page.POINT_CREATE_FLIGHT;
+            switch (tabLayout.getSelectedTabPosition()) {
+                case INDEX_OF_PATH_TAB:
+                    page = Analytics.Page.PATH_CREATE_FLIGHT;
+                    break;
+                case INDEX_OF_POLYGON_TAB:
+                    page = Analytics.Page.POLYGON_CREATE_FLIGHT;
+                    break;
+            }
+            Analytics.logEvent(page, Analytics.Action.tap, Analytics.Label.CANCEL);
         }
         return false;
     }
