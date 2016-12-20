@@ -32,11 +32,20 @@ public class Analytics {
         }
     }
 
+    public static void logEvent(String section, String action, String label, String value) {
+        if (tracker != null) {
+            tracker.logEvent(section, action, label, value);
+        } else {
+            Log.e(TAG, "No tracker set!");
+        }
+    }
+
     public static class Page {
         public static final String CREATE_FLIGHT = "Create Flight";
         public static final String POINT_CREATE_FLIGHT = "Create Flight - Point";
         public static final String PATH_CREATE_FLIGHT = "Create Flight - Path";
         public static final String POLYGON_CREATE_FLIGHT = "Create Flight - Polygon";
+        public static final String DETAILS_CREATE_FLIGHT = "Create Flight - Details";
     }
 
     public static class Event {
@@ -105,13 +114,22 @@ public class Analytics {
         public static final String TRASH_ICON = "Trash Icon";
         public static final String NEXT = "Next Button";
         public static final String CANCEL = "Cancel Button";
-
         public static final String DRAG_PATH_POINT = "Drag Path Point";
         public static final String DRAG_POLYGON_POINT = "Drag Polygon Point";
         public static final String DRAG_NEW_POINT = "Drag New Point";
         public static final String DRAW_PATH = "Draw Path";
         public static final String DRAW_POLYGON = "Draw Polygon";
-
         public static final String DROP_POINT_TRASH_ICON = "Drop Point Trash Icon";
+
+        public static final String ALTITUDE_SLIDER = "Altitude Slider";
+        public static final String FLIGHT_START_TIME = "Flight Start Time";
+        public static final String FLIGHT_END_TIME = "Flight End Time";
+        public static final String SELECT_PILOT = "Select Pilot";
+        public static final String SELECT_AIRCRAFT = "Select Aircraft";
+        public static final String SHARE_FLIGHT = "Share Flight";
+    }
+
+    public static final class Value {
+        public static final String AIRMAP = "AirMap";
     }
 }
