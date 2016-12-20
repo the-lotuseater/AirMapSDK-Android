@@ -248,7 +248,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
         List<Fragment> fragments = new ArrayList<>();
         fragments.add(ReviewDetailsFragment.newInstance(mListener.getFlight()));
         if (!mListener.getPermitsToShowInReview().isEmpty()) {
-            fragments.add(ReviewPermitsFragment.newInstance(mListener.getPermitsToShowInReview()));
+            fragments.add(ReviewPermitsFragment.newInstance(mListener.getPermitsToShowInReview(), mListener.getSelectedPermits()));
         }
         if (!mListener.getNotices().isEmpty()) {
             fragments.add(ReviewNoticeFragment.newInstance(mListener.getFlightStatus(), mListener.getFlight().shouldNotify()));
