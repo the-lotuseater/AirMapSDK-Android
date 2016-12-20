@@ -460,6 +460,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                             @Override
                             public void onClick(DialogInterface dialogInterface, int position) {
                                 if (aircraft.get(position).getAircraftId().equals("add_aircraft")) {
+                                    Analytics.logEvent(Analytics.Page.SELECT_AIRCRAFT, Analytics.Action.tap, Analytics.Label.NEW_AIRCRAFT);
+
                                     Intent intent = new Intent(getContext(), CreateEditAircraftActivity.class);
                                     startActivityForResult(intent, REQUEST_CREATE_AIRCRAFT);
                                 } else {

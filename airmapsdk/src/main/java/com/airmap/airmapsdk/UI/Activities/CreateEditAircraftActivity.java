@@ -18,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
@@ -90,6 +91,11 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
                 if (manufacturer.getId().equals("select_manufacturer")) {
                     return;
                 }
+
+                if (aircraftToEdit == null) {
+                    Analytics.logEvent(Analytics.Page.MANUFACTURERS_CREATE_AIRCRAFT, Analytics.Action.tap, Analytics.Label.SELECT_MANUFACTURER);
+                }
+
                 AirMap.getModels(manufacturer.getId(), new AirMapCallback<List<AirMapAircraftModel>>() {
                     @Override
                     public void onSuccess(final List<AirMapAircraftModel> response) {
@@ -103,7 +109,25 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
                                     @Override
                                     public boolean onTouch(View view, MotionEvent motionEvent) {
                                         hideKeyboard();
+
+                                        if (aircraftToEdit == null) {
+                                            Analytics.logEvent(Analytics.Page.CREATE_AIRCRAFT, Analytics.Action.tap, Analytics.Label.SELECT_MODEL);
+                                        }
+
                                         return false;
+                                    }
+                                });
+                                modelSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                    @Override
+                                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                                        if (aircraftToEdit == null) {
+                                            Analytics.logEvent(Analytics.Page.MODEL_CREATE_AIRCRAFT, Analytics.Action.tap, Analytics.Label.SELECT_MODEL);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onNothingSelected(AdapterView<?> adapterView) {
+
                                     }
                                 });
                             }
@@ -127,6 +151,11 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 hideKeyboard();
+
+                if (aircraftToEdit == null) {
+                    Analytics.logEvent(Analytics.Page.CREATE_AIRCRAFT, Analytics.Action.tap, Analytics.Label.SELECT_MANUFACTURER);
+                }
+
                 return false;
             }
         });
@@ -182,6 +211,8 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
                 }
             });
         } else {
+            Analytics.logEvent(Analytics.Page.CREATE_AIRCRAFT, Analytics.Action.tap, Analytics.Label.SAVE);
+
             if (nickname.isEmpty()) {
                 Toast.makeText(CreateEditAircraftActivity.this, "Please enter a nickname", Toast.LENGTH_SHORT).show();
                 return;
@@ -235,5 +266,14 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (aircraftToEdit == null) {
+            Analytics.logEvent(Analytics.Page.CREATE_AIRCRAFT, Analytics.Action.tap, Analytics.Label.CANCEL);
+        }
+
+        super.onBackPressed();
     }
 }

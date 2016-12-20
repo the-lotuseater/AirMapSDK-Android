@@ -52,6 +52,13 @@ public class Analytics {
 
         public static final String PERMIT_DETAILS = "Permit Details";
         public static final String PILOT_PROFILE = "Pilot Profile";
+        public static final String PHONE_NUMBER_PHONE_VERIFICATION = "Phone Verification - Phone Number";
+        public static final String SMS_CODE_PHONE_VERIFICATION = "Phone Verification - SMS Code";
+
+        public static final String SELECT_AIRCRAFT = "Select Aircraft";
+        public static final String CREATE_AIRCRAFT = "Create Aircraft";
+        public static final String MANUFACTURERS_CREATE_AIRCRAFT = "Create Aircraft - Manufacturers";
+        public static final String MODEL_CREATE_AIRCRAFT = "Create Aircraft - Model";
     }
 
     public static class Event {
@@ -105,6 +112,7 @@ public class Analytics {
         public static final String draw = "draw";
         public static final String drop = "drop";
         public static final String start = "start";
+        public static final String save = "save";
     }
 
     public static class Label {
@@ -133,12 +141,21 @@ public class Analytics {
         public static final String FLIGHT_END_TIME = "Flight End Time";
         public static final String SELECT_PILOT = "Select Pilot";
         public static final String SELECT_AIRCRAFT = "Select Aircraft";
+        public static final String NEW_AIRCRAFT = "New Aircraft Button";
         public static final String SHARE_FLIGHT = "Share Flight";
 
         public static final String INFO_FAQ_BUTTON = "Info Button (Permit FAQ's)";
         public static final String SELECT_PERMIT = "Select Permit";
         public static final String SELECT_DIFFERENT_PERMIT = "Select a Different Permit";
         public static final String PERMIT_DETAILS = "Permit Details";
+
+        public static final String SAVE = "Save";
+        public static final String SUCCESS = "Success";
+        public static final String ERROR = "Error";
+        public static final String SUBMIT = "Submit Button";
+
+        public static final String SELECT_MANUFACTURER = "Select Manufacturer";
+        public static final String SELECT_MODEL = "Select Model";
     }
 
     public static final class Value {

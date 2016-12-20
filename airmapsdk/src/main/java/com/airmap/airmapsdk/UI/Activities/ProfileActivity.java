@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
@@ -204,6 +205,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 .setPositiveButton("Submit", new DialogInterface.OnClickListener() { //Display dialog to enter the verification token
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Analytics.logEvent(Analytics.Page.PHONE_NUMBER_PHONE_VERIFICATION, Analytics.Action.tap, Analytics.Label.SAVE);
+
                         onSubmitPhoneNumber(phoneLayout);
                         dialog.dismiss();
                     }
@@ -231,6 +234,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 AirMap.sendVerificationToken(new AirMapCallback<Void>() {
                     @Override
                     public void onSuccess(Void response) {
+                        Analytics.logEvent(Analytics.Page.PHONE_NUMBER_PHONE_VERIFICATION, Analytics.Action.save, Analytics.Label.SUCCESS);
+
                         phoneEditText.post(new Runnable() {
                             @Override
                             public void run() {
@@ -242,6 +247,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                     @Override
                     public void onError(AirMapException e) {
+                        Analytics.logEvent(Analytics.Page.PHONE_NUMBER_PHONE_VERIFICATION, Analytics.Action.save, Analytics.Label.ERROR, e.getErrorCode());
+
                         e.printStackTrace();
                         toast(e.getMessage());
                     }
@@ -250,6 +257,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onError(AirMapException e) {
+                Analytics.logEvent(Analytics.Page.PHONE_NUMBER_PHONE_VERIFICATION, Analytics.Action.save, Analytics.Label.ERROR, e.getErrorCode());
+
                 e.printStackTrace();
                 toast(e.getMessage());
             }
@@ -300,15 +309,21 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void onSubmitVerificationToken(TextInputLayout verifyLayout) {
+        Analytics.logEvent(Analytics.Page.SMS_CODE_PHONE_VERIFICATION, Analytics.Action.tap, Analytics.Label.SUBMIT);
+
         //noinspection ConstantConditions
         AirMap.verifyPhoneToken(verifyLayout.getEditText().getText().toString(), new AirMapCallback<Void>() {
             @Override
             public void onSuccess(Void response) {
+                Analytics.logEvent(Analytics.Page.SMS_CODE_PHONE_VERIFICATION, Analytics.Action.save, Analytics.Label.SUCCESS);
+
                 toast("Successfully verified new number");
             }
 
             @Override
             public void onError(AirMapException e) {
+                Analytics.logEvent(Analytics.Page.SMS_CODE_PHONE_VERIFICATION, Analytics.Action.save, Analytics.Label.ERROR, e.getErrorCode());
+
                 toast("Error verifying number");
                 e.printStackTrace();
             }
@@ -365,6 +380,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     //Save button onClick
     @Override
     public void onClick(final View v) {
+        Analytics.logEvent(Analytics.Page.PILOT_PROFILE, Analytics.Action.tap, Analytics.Label.SAVE);
+
         profile.setEmail(emailEditText.getText().toString());
         profile.setFirstName(firstNameEditText.getText().toString());
         profile.setLastName(lastNameEditText.getText().toString());
@@ -374,12 +391,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         AirMap.updatePilot(profile, new AirMapCallback<AirMapPilot>() {
             @Override
             public void onSuccess(AirMapPilot response) {
+                Analytics.logEvent(Analytics.Page.PILOT_PROFILE, Analytics.Action.save, Analytics.Label.SUCCESS, 200);
                 toast("Successfully updated");
                 finish();
             }
 
             @Override
             public void onError(AirMapException e) {
+                Analytics.logEvent(Analytics.Page.PILOT_PROFILE, Analytics.Action.save, Analytics.Label.ERROR, e.getErrorCode());
                 toast("Error updating profile");
             }
         });
