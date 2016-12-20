@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
@@ -104,6 +105,8 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                 progressBarContainer.setVisibility(View.VISIBLE);
                 applyPermitsToFlight();
                 submitButton.setEnabled(false);
+
+                Analytics.logEvent(Analytics.Page.REVIEW_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.SAVE);
             }
         });
         PagerTabStrip strip = (PagerTabStrip) view.findViewById(R.id.tab_strip);
@@ -125,6 +128,8 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
             AirMap.applyForPermit(permitToApplyFor, new AirMapCallback<AirMapPilotPermit>() {
                 @Override
                 public void onSuccess(AirMapPilotPermit response) {
+                    Analytics.logEvent(Analytics.Page.PERMIT_APPLY_CREATE_FLIGHT, Analytics.Action.save, Analytics.Label.SUCCESS, 200);
+
                     mListener.getFlight().addPermitId(response.getApplicationId());
                     mListener.getPermitsToApplyFor().remove(permitToApplyFor);
                     totalPermitsObtained++;
@@ -135,6 +140,8 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
 
                 @Override
                 public void onError(final AirMapException e) {
+                    Analytics.logEvent(Analytics.Page.PERMIT_APPLY_CREATE_FLIGHT, Analytics.Action.save, Analytics.Label.ERROR, e.getErrorCode());
+
                     submitButton.post(new Runnable() {
                         @Override
                         public void run() {
@@ -184,11 +191,15 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
         AirMap.createFlight(mListener.getFlight(), new AirMapCallback<AirMapFlight>() {
             @Override
             public void onSuccess(AirMapFlight response) {
+                Analytics.logEvent(Analytics.Page.SUBMIT_CREATE_FLIGHT, Analytics.Action.save, Analytics.Label.SUCCESS, 200);
+
                 mListener.onFlightSubmitted(response);
             }
 
             @Override
             public void onError(final AirMapException e) {
+                Analytics.logEvent(Analytics.Page.SUBMIT_CREATE_FLIGHT, Analytics.Action.save, Analytics.Label.ERROR, e.getErrorCode());
+
                 submitButton.post(new Runnable() {
                     @Override
                     public void run() {

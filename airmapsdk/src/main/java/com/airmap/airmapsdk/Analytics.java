@@ -49,6 +49,9 @@ public class Analytics {
         public static final String PERMITS_CREATE_FLIGHT = "Create Flight - Permits";
         public static final String AVAILABLE_PERMITS_CREATE_FLIGHT = "Create Flight - Available Permits";
         public static final String NOTICES_CREATE_FLIGHT = "Create Flight - Flight Notices";
+        public static final String REVIEW_CREATE_FLIGHT = "Create Flight - Review";
+        public static final String PERMIT_APPLY_CREATE_FLIGHT = "Create Flight - Permit Apply";
+        public static final String SUBMIT_CREATE_FLIGHT = "Create Flight - Submit";
 
         public static final String PERMIT_DETAILS = "Permit Details";
         public static final String PILOT_PROFILE = "Pilot Profile";
