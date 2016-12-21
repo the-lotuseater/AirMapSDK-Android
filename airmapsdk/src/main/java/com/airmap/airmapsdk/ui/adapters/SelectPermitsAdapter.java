@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -195,12 +196,11 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void setElevation(View view, boolean elevate) {
         if (elevate) {
-            view.setElevation(Utils.dpToPixels(activity, 2));
+            ViewCompat.setElevation(view, Utils.dpToPixels(activity, 2));
         } else {
-            view.setElevation(0f);
+            ViewCompat.setElevation(view, 0f);
         }
     }
 
