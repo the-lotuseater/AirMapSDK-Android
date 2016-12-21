@@ -33,7 +33,11 @@ public class MappingService extends BaseService {
         ClassE("class_e0", "Class E Airspace", "Class E controlled airspace to the surface"),
         EssentialAirspace("class_b,class_c,class_d,class_e0", "Essential Airspace (B, C, D & E)", "Essential airspace (B, C, D & E)"),
         HazardAreas("hazard_areas", "Hazard Areas", "Hazard areas"),
-        AerialRecreationalAreas("aerial_recreational_areas", "Aerial Recreational Areas", "Aerial recreational areas");
+        AerialRecreationalAreas("aerial_recreational_areas", "Aerial Recreational Areas", "Aerial recreational areas"),
+        Cities("cities", "Cities", "Cities"),
+        Custom("custom", "Custom", "Custom"),
+        Prisons("prisons", "Prisons", "Prisons"),
+        Universities("universities", "Universities", "Universities");
 
         private final String text;
         private final String title;
@@ -102,6 +106,14 @@ public class MappingService extends BaseService {
                     return HazardAreas;
                 case "aerial_recreational_areas":
                     return AerialRecreationalAreas;
+                case "cities":
+                    return Cities;
+                case "custom":
+                    return Custom;
+                case "prisons":
+                    return Prisons;
+                case "universities":
+                    return Universities;
                 default:
                     return null;
             }
@@ -141,6 +153,14 @@ public class MappingService extends BaseService {
                     return AirMapAirspaceType.HazardArea;
                 case AerialRecreationalAreas:
                     return AirMapAirspaceType.RecreationalArea;
+                case Cities:
+                    return AirMapAirspaceType.City;
+                case Custom:
+                    return AirMapAirspaceType.Custom;
+                case Prisons:
+                    return AirMapAirspaceType.Prison;
+                case Universities:
+                    return AirMapAirspaceType.University;
             }
             return null;
         }
@@ -158,7 +178,11 @@ public class MappingService extends BaseService {
         Wildfires("wildfire", "Wildfire"),
         Hospitals("hospital", "Hospital"),
         HazardArea("hazard_area", "Hazard Area"),
-        RecreationalArea("recreational_area", "Aerial Recreational Area");
+        RecreationalArea("recreational_area", "Aerial Recreational Area"),
+        City("city", "City"),
+        Custom("custom", "Custom"),
+        Prison("prison", "Prison"),
+        University("university", "University");
 
         private final String text;
         private final String title;
@@ -203,6 +227,14 @@ public class MappingService extends BaseService {
                     return HazardArea;
                 case "recreational_area":
                     return RecreationalArea;
+                case "city":
+                    return City;
+                case "custom":
+                    return Custom;
+                case "prison":
+                    return Prison;
+                case "university":
+                    return University;
             }
             return null;
         }
