@@ -29,6 +29,7 @@ import com.airmap.airmapsdk.networking.callbacks.RefreshTokenListener;
 import com.airmap.airmapsdk.ui.activities.CreateEditAircraftActivity;
 import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
 import com.airmap.airmapsdk.ui.activities.LoginActivity;
+import com.airmap.airmapsdk.ui.activities.PilotProfileActivity;
 import com.airmap.airmapsdk.ui.activities.ProfileActivity;
 import com.airmap.airmapsdk.util.Utils;
 
@@ -935,6 +936,20 @@ public class AirMap {
             intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
         }
         fragment.startActivity(intent);
+    }
+
+    /**
+     * Display the another pilot's profile
+     *
+     * @param fragment the fragment to start the UI with
+     * @param pilotId  The ID of the pilot to show the profile for
+     * @param extras   Extra information to collect from the pilot in the profile page (key: json
+     *                 key, value: EditText Hint)
+     */
+    public static void showPilotProfile(android.support.v4.app.Fragment fragment, String pilotId, @Nullable HashMap<String, String> extras) {
+        Intent intent = new Intent(fragment.getActivity(), PilotProfileActivity.class);
+        intent.putExtra(ProfileActivity.ARG_PILOT_ID, pilotId);
+        fragment.getActivity().startActivity(intent);
     }
 
 
