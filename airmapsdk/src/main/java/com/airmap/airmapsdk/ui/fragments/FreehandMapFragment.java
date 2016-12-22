@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AdvisoriesBottomSheetAdapter;
 import com.airmap.airmapsdk.AirMapException;
+import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.DrawingCallback;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.CircleContainer;
@@ -214,7 +215,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         nextButton = (ClickableDrawableButton) view.findViewById(R.id.next_button);
 
         //This hidden WebView does the turf line buffering
-        webView = new BridgeWebView(getContext());
+        webView = new BridgeWebView(getActivity());
         webView.setWillNotDraw(true);
         webView.loadUrl("file:///android_asset/turf.html");
 
@@ -361,7 +362,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 mListener.freehandNextClicked();
             } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_POLYGON_TAB && polygonContainer.isValid()) { //Polygon
                 if (!PointMath.findIntersections(polygonContainer.polygon.getPoints()).isEmpty()) {
-                    Toast.makeText(getContext(), R.string.airmap_error_overlap, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.airmap_error_overlap, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 List<Coordinate> coordinates = new ArrayList<>();
@@ -892,7 +893,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 seekBarValueTextView.setText(Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[progress].label : getBufferPresets()[progress].label);
-                drawCircle(circleContainer.center, Utils.useMetric(getContext()) ? getBufferPresetsMetric()[progress].value.doubleValue() : getBufferPresets()[progress].value.doubleValue());
+                drawCircle(circleContainer.center, Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[progress].value.doubleValue() : getBufferPresets()[progress].value.doubleValue());
                 if (!fromUser) {
                     checkCircleStatus();
                     zoomToCircle();
@@ -1240,8 +1241,10 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onError(AirMapException e) {
-        e.printStackTrace();
-        updateButtonColor(null);
+        if (isFragmentActive()) {
+            updateButtonColor(null);
+            AirMapLog.e(TAG, e.getMessage());
+        }
     }
 
     private void updatePermitPolygons(final Map<String, AirMapStatusAdvisory> advisoryMap) {
@@ -1359,16 +1362,16 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             final int color;
             switch (statusColor) {
                 case Red:
-                    color = ContextCompat.getColor(getContext(), R.color.airmap_red);
+                    color = ContextCompat.getColor(getActivity(), R.color.airmap_red);
                     polygonOptions.alpha(0.6f);
                     break;
                 case Yellow:
-                    color = ContextCompat.getColor(getContext(), R.color.airmap_yellow);
+                    color = ContextCompat.getColor(getActivity(), R.color.airmap_yellow);
                     polygonOptions.alpha(0.6f);
                     break;
                 default:
                 case Green:
-                    color = ContextCompat.getColor(getContext(), R.color.airmap_green);
+                    color = ContextCompat.getColor(getActivity(), R.color.airmap_green);
                     polygonOptions.alpha(0.6f);
                     break;
             }
@@ -1470,7 +1473,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             } else if (color == Green) {
                 buttonColor = ContextCompat.getColor(getActivity(), R.color.airmap_green);
             } else {
-                buttonColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
+                buttonColor = ContextCompat.getColor(getActivity(), R.color.colorPrimary);
             }
             nextButton.post(new Runnable() {
                 @Override
