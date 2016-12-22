@@ -157,8 +157,10 @@ public class AirMapFlight implements Serializable, AirMapBaseModel {
         } else if (getAircraft() != null && getAircraft().getAircraftId() != null) {
             params.put("aircraft_id", getAircraft().getAircraftId());
         }
-        if (getIso8601StringFromDate(getStartsAt()) != null) {
+        if (getStartsAt() != null && getStartsAt().after(new Date()) && getIso8601StringFromDate(getStartsAt()) != null) {
             params.put("start_time", getIso8601StringFromDate(getStartsAt()));
+        } else {
+            params.put("start_time", "now");
         }
         params.put("end_time", getIso8601StringFromDate(getEndsAt()));
         params.put("public", isPublic());
