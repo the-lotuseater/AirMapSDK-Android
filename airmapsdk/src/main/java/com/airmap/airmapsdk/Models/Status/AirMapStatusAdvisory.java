@@ -2,6 +2,7 @@ package com.airmap.airmapsdk.models.status;
 
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.status.properties.AirMapAirportProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapControlledAirspaceProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapHeliportProperties;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.airmap.airmapsdk.Utils.getDateFromIso8601String;
+import static com.airmap.airmapsdk.util.Utils.getDateFromIso8601String;
 
 /**
  * Created by Vansh Gandhi on 6/15/16.
@@ -31,6 +32,7 @@ import static com.airmap.airmapsdk.Utils.getDateFromIso8601String;
 public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
     private String id;
     private String name;
+    private String organizationId;
     private MappingService.AirMapAirspaceType type;
     private String city;
     private String state;
@@ -42,6 +44,7 @@ public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
     private AirMapStatusRequirement requirements;
     private String geometryString;
     private List<AirMapStatusAdvisoryRule> rules;
+    private List<AirMapAvailablePermit> availablePermits;
 
     private AirMapAirportProperties airportProperties;
     private AirMapHeliportProperties heliportProperties;
@@ -74,6 +77,7 @@ public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
         if (json != null) {
             setId(json.optString("id"));
             setName(json.optString("name"));
+            setOrganizationId(json.optString("organization_id"));
             setRequirements(new AirMapStatusRequirement(json.optJSONObject("requirements")));
             String typeString = json.optString("type");
             setType(MappingService.AirMapAirspaceType.fromString(typeString));
@@ -96,6 +100,13 @@ public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
                 rules.add(new AirMapStatusAdvisoryRule(rulesArray.optJSONObject(i)));
             }
             setRules(rules);
+
+            List<AirMapAvailablePermit> availablePermits = new ArrayList<>();
+            JSONArray availablePermitsJSON = json.optJSONArray("available_permits");
+            for (int j = 0; availablePermitsJSON != null && j < availablePermitsJSON.length(); j++) {
+                availablePermits.add(new AirMapAvailablePermit(availablePermitsJSON.optJSONObject(j)));
+            }
+            setAvailablePermits(availablePermits);
 
             JSONObject properties = json.optJSONObject("properties");
             if (type == MappingService.AirMapAirspaceType.Airport) {
@@ -145,6 +156,15 @@ public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
 
     public AirMapStatusAdvisory setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public String getOrganizationId() {
+        return organizationId;
+    }
+
+    public AirMapStatusAdvisory setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
         return this;
     }
 
@@ -316,6 +336,15 @@ public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
 
     public AirMapStatusAdvisory setRules(List<AirMapStatusAdvisoryRule> rules) {
         this.rules = rules;
+        return this;
+    }
+
+    public List<AirMapAvailablePermit> getAvailablePermits() {
+        return availablePermits;
+    }
+
+    public AirMapStatusAdvisory setAvailablePermits(List<AirMapAvailablePermit> availablePermits) {
+        this.availablePermits = availablePermits;
         return this;
     }
 

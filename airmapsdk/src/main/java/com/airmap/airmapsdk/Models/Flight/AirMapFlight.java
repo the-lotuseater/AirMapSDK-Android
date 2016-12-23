@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.airmap.airmapsdk.Utils.getDateFromIso8601String;
-import static com.airmap.airmapsdk.Utils.getIso8601StringFromDate;
+import static com.airmap.airmapsdk.util.Utils.getDateFromIso8601String;
+import static com.airmap.airmapsdk.util.Utils.getIso8601StringFromDate;
 
 /**
  * Created by Vansh Gandhi on 6/15/16.
@@ -103,13 +103,7 @@ public class AirMapFlight implements Serializable, AirMapBaseModel {
             setAircraft(new AirMapAircraft(json.optJSONObject("aircraft")));
             setPublic(json.optBoolean("public"));
             setBuffer(json.optDouble("buffer"));
-            String geo = json.optString("geometry");
-            AirMapFlightGeometryType geoType = AirMapFlightGeometryType.fromString(geo);
-            if (geoType == AirMapFlightGeometryType.Path) {
-                setGeometry(new AirMapPath(geo));
-            } else if (geoType == AirMapFlightGeometryType.Polygon) {
-                setGeometry(new AirMapPolygon(geo));
-            } //else if (geoType == AirMapFlightGeometryType.Point) { //Don't do anything, because coordinate has already been set}
+            setGeometry(AirMapGeometry.getGeometryFromGeoJSON(json.optJSONObject("geometry")));
             statuses = new ArrayList<>();
             permitIds = new ArrayList<>();
             JSONArray statusesJson = json.optJSONArray("statuses");
@@ -141,25 +135,36 @@ public class AirMapFlight implements Serializable, AirMapBaseModel {
      */
     public JSONObject getAsParams() {
         Map<String, Object> params = new HashMap<>();
-        params.put("latitude", coordinate.getLatitude());
-        params.put("longitude", coordinate.getLongitude());
+
+        if (getGeometry() instanceof AirMapPolygon) {
+            params.put("geometry", getGeometry().toString());
+            params.put("latitude", ((AirMapPolygon) getGeometry()).getCoordinates().get(0).getLatitude());
+            params.put("longitude", ((AirMapPolygon) getGeometry()).getCoordinates().get(0).getLongitude());
+        } else if (getGeometry() instanceof AirMapPath) {
+            params.put("geometry", getGeometry().toString());
+            params.put("latitude", ((AirMapPath) getGeometry()).getCoordinates().get(0).getLatitude());
+            params.put("longitude", ((AirMapPath) getGeometry()).getCoordinates().get(0).getLongitude());
+            params.put("buffer", Math.round(getBuffer()));
+        } else {
+            params.put("latitude", coordinate.getLatitude());
+            params.put("longitude", coordinate.getLongitude());
+            params.put("buffer", Math.round(getBuffer()));
+        }
+
         params.put("max_altitude", getMaxAltitude());
         if (getAircraftId() != null && !getAircraftId().isEmpty()) {
             params.put("aircraft_id", getAircraftId());
         } else if (getAircraft() != null && getAircraft().getAircraftId() != null) {
             params.put("aircraft_id", getAircraft().getAircraftId());
         }
-        if (getIso8601StringFromDate(getStartsAt()) != null) {
+        if (getStartsAt() != null && getStartsAt().after(new Date()) && getIso8601StringFromDate(getStartsAt()) != null) {
             params.put("start_time", getIso8601StringFromDate(getStartsAt()));
+        } else {
+            params.put("start_time", "now");
         }
         params.put("end_time", getIso8601StringFromDate(getEndsAt()));
         params.put("public", isPublic());
         params.put("notify", shouldNotify());
-        if (getGeometryType() != AirMapFlightGeometryType.Point) { //Don't include geometry for flights submitted as point
-            params.put("geometry", getGeometry().toString());
-        } else {
-            params.put("buffer", Math.round(getBuffer()));
-        }
         Iterator<Map.Entry<String, Object>> iterator = params.entrySet().iterator();
         while (iterator.hasNext()) { //Remove any null values
             Map.Entry<String, Object> entry = iterator.next();

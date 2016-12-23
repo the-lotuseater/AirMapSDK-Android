@@ -31,19 +31,39 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".ui.activities.CreateFlightActivity"/>
         </activity>
+
+        <activity
+            android:name=".ui.activities.PermitSelectionActivity"
+            android:label="@string/airmap_select_a_permit"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".ui.activities.CreateFlightActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.activities.CreateFlightActivity"/>
+        </activity>
+
         <activity
                 android:name=".ui.activities.CustomPropertiesActivity"
                 android:label="@string/airmap_title_activity_custom_properties"
                 android:launchMode="singleTop"
-                android:parentActivityName=".ui.activities.CreateFlightActivity"
+                android:parentActivityName=".ui.activities.PermitSelectionActivity"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".ui.activities.CreateFlightActivity"/>
+                    android:value=".ui.activities.PermitSelectionActivity"/>
         </activity>
         <activity
                 android:name=".ui.activities.ProfileActivity"
+                android:label="@string/airmap_title_activity_profile"
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.NoActionBar"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+                android:name=".ui.activities.PilotProfileActivity"
                 android:label="@string/airmap_title_activity_profile"
                 android:launchMode="singleTop"
                 android:theme="@style/AppTheme.NoActionBar"
@@ -60,5 +80,12 @@
                 android:label="@string/airmap_title_activity_login"
                 android:launchMode="singleTop"
                 android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
+                android:name=".ui.activities.WebActivity"
+                android:screenOrientation="portrait"
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.NoActionBar" />
+
     </application>
 </manifest>

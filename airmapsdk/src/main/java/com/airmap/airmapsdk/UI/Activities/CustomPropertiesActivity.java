@@ -5,20 +5,28 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.airmap.airmapsdk.AirMapException;
+import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
+import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermitCustomProperty;
 import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.util.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,56 +35,97 @@ import java.util.Locale;
 
 public class CustomPropertiesActivity extends AppCompatActivity {
 
-    public static final String PERMIT = "permit";
-
     private LinearLayout customPropertiesLayout;
+    private FrameLayout progressBarContainer;
+    private Button selectPermitButton;
 
     private List<AirMapPilotPermitCustomProperty> customProperties;
-    private AirMapAvailablePermit permit;
+    private AirMapAvailablePermit availablePermit;
+    private AirMapPilotPermit pilotPermit;
     private List<Pair<AirMapPilotPermitCustomProperty, TextInputEditText>> pairs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.airmap_activity_custom_properties);
-        permit = (AirMapAvailablePermit) getIntent().getSerializableExtra(PERMIT);
-        customProperties = permit.getCustomProperties();
+        availablePermit = (AirMapAvailablePermit) getIntent().getSerializableExtra(Constants.AVAILABLE_PERMIT_EXTRA);
+        pilotPermit = (AirMapPilotPermit) getIntent().getSerializableExtra(Constants.PERMIT_WALLET_EXTRA);
+        customProperties = availablePermit.getCustomProperties();
+
         initializeViews();
-        initializeCustomProperties();
+
+        if (pilotPermit == null) {
+            AirMap.getPermit(availablePermit.getId(), new AirMapCallback<List<AirMapAvailablePermit>>() { //So that we can get other information about the availablePermit, such as its name
+                @Override
+                public void onSuccess(final List<AirMapAvailablePermit> response) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (response != null && !response.isEmpty()) {
+                                availablePermit = response.get(0);
+                                customProperties = availablePermit.getCustomProperties();
+                                initializeViews();
+                                initializeCustomProperties(true);
+                            }
+                            hideProgressBar();
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(AirMapException e) {
+                    e.printStackTrace();
+                    AirMapLog.e("PermitsAdapter", e.getMessage());
+                    hideProgressBar();
+                }
+            });
+        } else {
+            customProperties = pilotPermit.getCustomProperties();
+            initializeCustomProperties(false);
+            hideProgressBar();
+        }
     }
 
     private void initializeViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
-        getSupportActionBar().setTitle(permit.getName());
+        getSupportActionBar().setTitle(availablePermit.getName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TextView descriptionTextView = (TextView) findViewById(R.id.description_text);
         TextView validityTextView = (TextView) findViewById(R.id.validity);
-//        TextView priceTextView = (TextView) findViewById(R.id.price);
+        TextView priceTextView = (TextView) findViewById(R.id.price);
         customPropertiesLayout = (LinearLayout) findViewById(R.id.custom_properties_container);
-        Button selectPermitButton = (Button) findViewById(R.id.select_permit_button);
+        selectPermitButton = (Button) findViewById(R.id.select_permit_button);
 
-        descriptionTextView.setText(permit.getDescription());
-//        priceTextView.setText(permit.getPrice());
-        if (permit.isSingleUse()) {
+        progressBarContainer = (FrameLayout) findViewById(R.id.progress_bar_container);
+
+        descriptionTextView.setText(availablePermit.getDescription());
+        priceTextView.setText(availablePermit.getPrice() == 0 ? getString(R.string.free) : getString(R.string.price, String.format("%.2f", availablePermit.getPrice())));
+        if (availablePermit.isSingleUse()) {
             validityTextView.setText(R.string.single_use);
-        } else if (permit.getValidFor() > 0) {
-            validityTextView.setText(String.format(Locale.US, "%d minutes", permit.getValidFor()));
-        } else if (permit.getValidUntil() != null) {
-            SimpleDateFormat format = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
-            validityTextView.setText(format.format(permit.getValidUntil()));
+        } else if (availablePermit.getValidFor() > 0) {
+            if (availablePermit.getValidFor() >= 60) {
+                validityTextView.setText(String.format(Locale.US, "%d hours", availablePermit.getValidFor() / 60));
+            } else {
+                validityTextView.setText(String.format(Locale.US, "%d minutes", availablePermit.getValidFor()));
+            }
+        } else if (availablePermit.getValidUntil() != null) {
+            SimpleDateFormat format = new SimpleDateFormat("M/d/yy h:mm a", Locale.US);
+            validityTextView.setText(format.format(availablePermit.getValidUntil()));
         }
 
         selectPermitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (allRequiredFieldsFilled()) {
-                    permit.setCustomProperties(getUpdatedCustomProperties());
+                    availablePermit.setCustomProperties(getUpdatedCustomProperties());
                     Intent data = new Intent();
-                    data.putExtra(PERMIT, permit);
+                    data.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, availablePermit);
                     setResult(Activity.RESULT_OK, data);
                     finish();
+                } else {
+                    Toast.makeText(CustomPropertiesActivity.this, "All required fields must be completed to proceed.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -94,7 +143,7 @@ public class CustomPropertiesActivity extends AppCompatActivity {
         return updatedProperties;
     }
 
-    private void initializeCustomProperties() {
+    private void initializeCustomProperties(boolean editable) {
         pairs = new ArrayList<>();
         if (customProperties == null) {
             return;
@@ -102,20 +151,29 @@ public class CustomPropertiesActivity extends AppCompatActivity {
         for (AirMapPilotPermitCustomProperty property : customProperties) {
             switch (property.getType()) {
                 case Text:
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                    TextInputEditText editText = new TextInputEditText(this);
-                    editText.setHint(property.getLabel());
-                    editText.setMaxLines(1);
-                    editText.setInputType(InputType.TYPE_CLASS_TEXT);
-                    editText.setLayoutParams(layoutParams);
-
-                    TextInputLayout textInputLayout = new TextInputLayout(this);
-                    textInputLayout.setLayoutParams(layoutParams);
-                    textInputLayout.addView(editText);
+                    TextInputLayout textInputLayout = (TextInputLayout) LayoutInflater.from(this).inflate(R.layout.custom_property_edit_text, customPropertiesLayout, false);
+                    TextInputEditText editText = (TextInputEditText) textInputLayout.findViewById(R.id.edit_text);
+                    textInputLayout.setHint(property.getLabel() + (property.isRequired() && property.getLabel() != null && !property.getLabel().toLowerCase().contains("require") ? "*" : ""));
                     if (property.getValue() != null) { //Will populate with data if it exists
                         editText.setText(property.getValue());
                     }
+
+                    if (property.getLabel() != null && (property.getLabel().toLowerCase().contains("email") || property.getLabel().toLowerCase().contains("e-mail"))) {
+                        editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+                    }
+
+                    editText.setEnabled(editable);
+
+                    if (!editable) {
+                        editText.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+                        editText.setHintTextColor(ContextCompat.getColor(this, R.color.colorLightGray));
+                        textInputLayout.setSelected(false);
+                        textInputLayout.setEnabled(false);
+                        editText.setSelected(false);
+                        editText.clearFocus();
+                        selectPermitButton.requestFocus();
+                    }
+
                     customPropertiesLayout.addView(textInputLayout);
 
                     pairs.add(new Pair<>(property, editText));
@@ -136,12 +194,12 @@ public class CustomPropertiesActivity extends AppCompatActivity {
         return toggle;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    private void hideProgressBar() {
+        progressBarContainer.post(new Runnable() {
+            @Override
+            public void run() {
+                progressBarContainer.setVisibility(View.GONE);
+            }
+        });
     }
 }

@@ -20,7 +20,7 @@
             <com.mapbox.mapboxsdk.maps.MapView
                     android:id="@+id/airmap_map"
                     android:layout_width="match_parent"
-                    android:layout_height="175dp"
+                    android:layout_height="176dp"
                     android:layout_marginBottom="8dp"
                     app:rotate_enabled="false"
                     app:tilt_enabled="false"
@@ -38,42 +38,10 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="4dp"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:textColor="@color/colorAccent"
                         android:text="@string/flight_header"/>
-
-                <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="8dp">
-
-                    <TextView
-                            android:id="@+id/radius_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="Radius: "/>
-
-                    <TextView
-                            android:id="@+id/radius_value"
-                            android:layout_width="75dp"
-                            android:layout_height="wrap_content"
-                            android:textStyle="bold"
-                            android:layout_centerVertical="true"
-                            android:layout_toRightOf="@+id/radius_label"/>
-
-                    <SeekBar
-                            android:id="@+id/radius_seekbar"
-                            android:layout_width="200dp"
-                            android:layout_height="wrap_content"
-                            android:paddingTop="16dp"
-                            android:paddingBottom="16dp"
-                            android:layout_alignParentRight="true"/>
-
-                </RelativeLayout>
 
                 <RelativeLayout
                         android:layout_width="match_parent"
@@ -105,35 +73,14 @@
                             android:layout_alignParentRight="true"/>
                 </RelativeLayout>
 
-                <RelativeLayout
-                        android:layout_width="match_parent"
+                <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="8dp">
-
-                    <TextView
-                            android:id="@+id/duration_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="Duration: "/>
-
-                    <TextView
-                            android:id="@+id/duration_value"
-                            android:layout_width="75dp"
-                            android:layout_height="wrap_content"
-                            android:textStyle="bold"
-                            android:layout_centerVertical="true"
-                            android:layout_toRightOf="@+id/duration_label"/>
-
-                    <SeekBar
-                            android:id="@+id/duration_seekbar"
-                            android:layout_width="200dp"
-                            android:layout_height="wrap_content"
-                            android:paddingTop="16dp"
-                            android:paddingBottom="16dp"
-                            android:layout_alignParentRight="true"/>
-                </RelativeLayout>
+                        android:paddingBottom="4dp"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorAccent"
+                        android:text="@string/date_and_time"/>
 
                 <RelativeLayout
                         android:id="@+id/date_time_picker_touch_target"
@@ -157,6 +104,35 @@
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:textStyle="bold"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="8dp">
+
+                    <TextView
+                            android:id="@+id/duration_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="Duration: "/>
+
+                    <TextView
+                            android:id="@+id/duration_value"
+                            android:layout_width="75dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/duration_label"/>
+
+                    <SeekBar
+                            android:id="@+id/duration_seekbar"
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="16dp"
+                            android:paddingBottom="16dp"
+                            android:layout_alignParentRight="true"/>
                 </RelativeLayout>
 
                 <View

@@ -63,7 +63,7 @@ public class AirMapPolygon extends AirMapGeometry implements Serializable {
     public String toString() {
         return "POLYGON" +
                 "(" +
-                TextUtils.join(", ", coordinates) +
+                TextUtils.join(",", coordinates) +
                 ")";
     }
 }

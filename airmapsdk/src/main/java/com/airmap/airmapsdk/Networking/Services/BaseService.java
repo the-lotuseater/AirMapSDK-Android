@@ -1,6 +1,6 @@
 package com.airmap.airmapsdk.networking.services;
 
-import com.airmap.airmapsdk.Utils;
+import com.airmap.airmapsdk.util.Utils;
 
 /**
  * Created by Vansh Gandhi on 6/23/16.
@@ -56,11 +56,17 @@ class BaseService {
     protected static final String pilotVerifyUrl = pilotByIdUrl + "phone/verify_token/"; //Replace %s with id using String.format
 
     //Status
-    protected static final String statusVersion = DEBUG ? Utils.getDebugUrl() : "v2/";
+    protected static final String statusVersion = DEBUG ? "stage/" : "v2/";
     protected static final String statusBaseUrl = baseUrl + "status/" + statusVersion;
     protected static final String statusPointUrl = statusBaseUrl + "point/";
     protected static final String statusPathUrl = statusBaseUrl + "path/";
     protected static final String statusPolygonUrl = statusBaseUrl + "polygon/";
+
+    //Airspace
+    protected static final String airspaceVersion = DEBUG ? Utils.getDebugUrl() : "v2/";
+    protected static final String airspaceBaseUrl = baseUrl + "airspace/" + airspaceVersion;
+    protected static final String airspaceByIdUrl = airspaceBaseUrl + "%s/"; //Replace %s with id using String.format
+    protected static final String airspaceByIdsUrl = airspaceBaseUrl + "list/";
 
     //Traffic Alerts
     protected static final String mqttBaseUrl = DEBUG ? Utils.getMqttDebugUrl() : "ssl://mqtt-prod.airmap.io:8883";

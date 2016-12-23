@@ -1,8 +1,14 @@
-package com.airmap.airmapsdk;
+package com.airmap.airmapsdk.util;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
+import android.util.TypedValue;
 
+import com.airmap.airmapsdk.AirMapException;
+import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
@@ -10,6 +16,9 @@ import com.airmap.airmapsdk.networking.services.AirMap;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,12 +27,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * Created by Vansh Gandhi on 7/25/16.
@@ -32,6 +37,22 @@ import java.util.TimeZone;
 @SuppressWarnings("unused")
 public class Utils {
     public static final String REFRESH_TOKEN_KEY = "AIRMAP_SDK_REFRESH_TOKEN";
+
+    public static Float dpToPixels(Context context, int dp) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+    }
+
+    public static boolean useMetric(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.MEASUREMENT_SYSTEM, Constants.IMPERIAL_SYSTEM).equals(Constants.METRIC_SYSTEM);
+    }
+
+    public static String titleCase(String s) {
+        if (TextUtils.isEmpty(s)) {
+            return s;
+        }
+
+        return s.substring(0, 1).toUpperCase() + s.substring(1);
+    }
 
     /**
      * Converts pressure in millimeters of mercury (Hg) to hectoPascals (hPa)
@@ -55,25 +76,27 @@ public class Utils {
         if (date == null) {
             return null;
         }
-        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return isoFormat.format(date);
+
+        DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
+        return dateTimeFormatter.print(new DateTime(date));
     }
 
     /**
      * Formats a string into a @link{java.util Date} object
+     *
      * @param iso8601 The ISO 8601 string to convert to a Date object
      * @return The converted Date
      */
     public static Date getDateFromIso8601String(String iso8601) {
-        if (iso8601 == null) {
+        if (TextUtils.isEmpty(iso8601)) {
             return null;
         }
-        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault());
-        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
         try {
-            return isoFormat.parse(iso8601);
-        } catch (ParseException e) {
+            DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
+            DateTime dateTime = dateTimeFormatter.parseDateTime(iso8601);
+            return dateTime.toDate();
+        } catch (UnsupportedOperationException | IllegalArgumentException e) {
             AirMapLog.e("AirMap Utils", "Error parsing date: " + e.getMessage());
             e.printStackTrace();
         }
@@ -94,6 +117,7 @@ public class Utils {
         }
     }
 
+    //So we don't have to be doing null checks constantly
     public static void error(AirMapCallback listener, int code, JSONObject json) {
         if (listener != null) {
             listener.onError(new AirMapException(code, json));
@@ -134,6 +158,19 @@ public class Utils {
     }
 
     /**
+     * @return Default altitude presets when creating a flight
+     */
+    public static StringNumberPair[] getAltitudePresetsMetric() {
+        return new StringNumberPair[]{
+                new StringNumberPair("15m", 20),
+                new StringNumberPair("30m", 30),
+                new StringNumberPair("60m", 60),
+                new StringNumberPair("90m", 90),
+                new StringNumberPair("120m", 120)
+        };
+    }
+
+    /**
      * @return Default buffer presets when creating a flight
      */
     public static StringNumberPair[] getBufferPresets() {
@@ -163,6 +200,37 @@ public class Utils {
                 new StringNumberPair("2000 ft", feetToMeters(2000)),
                 new StringNumberPair("2500 ft", feetToMeters(2500)),
                 new StringNumberPair("3000 ft", feetToMeters(3000))
+        };
+    }
+
+    /**
+     * @return Default buffer presets when creating a flight
+     */
+    public static StringNumberPair[] getBufferPresetsMetric() {
+        return new StringNumberPair[]{
+                new StringNumberPair("10m", 10),
+                new StringNumberPair("15m", 15),
+                new StringNumberPair("20m", 20),
+                new StringNumberPair("25m", 25),
+                new StringNumberPair("30m", 30),
+                new StringNumberPair("50m", 50),
+                new StringNumberPair("60m", 60),
+                new StringNumberPair("75m", 75),
+                new StringNumberPair("100m", 100),
+                new StringNumberPair("125m", 125),
+                new StringNumberPair("150m", 150),
+                new StringNumberPair("175m", 175),
+                new StringNumberPair("200m", 200),
+                new StringNumberPair("225m", 225),
+                new StringNumberPair("250m", 250),
+                new StringNumberPair("275m", 275),
+                new StringNumberPair("300m", 300),
+                new StringNumberPair("350m", 350),
+                new StringNumberPair("400m", 400),
+                new StringNumberPair("500m", 500),
+                new StringNumberPair("600m", 600),
+                new StringNumberPair("750m", 750),
+                new StringNumberPair("1000m", 1000)
         };
     }
 
@@ -232,7 +300,7 @@ public class Utils {
             LatLng point = new LatLng(pointLat, pointLon);
             points.add(point);
         }
-        return new PolygonOptions().addAll(points).strokeColor(color).alpha(0.5f).fillColor(color);
+        return new PolygonOptions().addAll(points).strokeColor(color).alpha(0.66f).fillColor(color);
     }
 
     public static int getStatusCircleColor(AirMapStatus latestStatus, Context context) {
@@ -314,4 +382,6 @@ public class Utils {
             return "v2/";
         }
     }
+
+
 }

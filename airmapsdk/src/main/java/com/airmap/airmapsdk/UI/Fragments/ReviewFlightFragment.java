@@ -24,21 +24,26 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
+import com.airmap.airmapsdk.models.shapes.AirMapPath;
+import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusRequirementNotice;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
-import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.Utils;
-import com.mapbox.mapboxsdk.annotations.Icon;
-import com.mapbox.mapboxsdk.annotations.IconFactory;
-import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.airmap.airmapsdk.networking.services.MappingService;
+import com.airmap.airmapsdk.util.AnnotationsFactory;
+import com.mapbox.mapboxsdk.annotations.MultiPoint;
+import com.mapbox.mapboxsdk.annotations.PolygonOptions;
+import com.mapbox.mapboxsdk.annotations.PolylineOptions;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -47,7 +52,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.airmap.airmapsdk.Utils.getStatusCircleColor;
+import static com.airmap.airmapsdk.util.Utils.dpToPixels;
 
 /**
  * Created by Vansh Gandhi on 7/25/16.
@@ -121,7 +126,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
             AirMap.applyForPermit(permitToApplyFor, new AirMapCallback<AirMapPilotPermit>() {
                 @Override
                 public void onSuccess(AirMapPilotPermit response) {
-                    mListener.getFlight().addPermitId(response.getId());
+                    mListener.getFlight().addPermitId(response.getApplicationId());
                     mListener.getPermitsToApplyFor().remove(permitToApplyFor);
                     totalPermitsObtained++;
                     if (totalPermitsObtained == totalNumberOfPermits) {
@@ -145,11 +150,20 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     }
 
     private void submitFlight() {
+        for (AirMapPilotPermit selectedPermit : mListener.getSelectedPermits()) {
+            mListener.getFlight().addPermitId(selectedPermit.getApplicationId());
+        }
+
         if (mListener.getFlight().shouldNotify()) {
             String phone = mListener.getPilot().getPhone();
             if (phone == null || phone.isEmpty() || !mListener.getPilot().getVerificationStatus().isPhone()) {
-                showPhoneDialog();
-                //the phone dialog will submit flight once verified
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //the phone dialog will submit flight once verified
+                        showPhoneDialog();
+                    }
+                });
             } else {
                 doSubmitFlight();
             }
@@ -162,7 +176,10 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     void doSubmitFlight() {
         if (mListener.getFlight().getStartsAt() != null) {
             if (mListener.getFlight().getStartsAt().before(new Date())) { //If the startsAt date is in past
-                mListener.getFlight().setStartsAt(null); //Default to current time
+                long duration = mListener.getFlight().getEndsAt().getTime() - mListener.getFlight().getStartsAt().getTime();
+                Date currentTime = new Date();
+                mListener.getFlight().setStartsAt(currentTime);
+                mListener.getFlight().setEndsAt(new Date(currentTime.getTime() + duration));
             }
         }
         AirMap.createFlight(mListener.getFlight(), new AirMapCallback<AirMapFlight>() {
@@ -195,18 +212,46 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     @Override
     public void onMapReady(MapboxMap mapboxMap) {
         map = mapboxMap;
-        LatLng position = new LatLng(mListener.getFlight().getCoordinate().getLatitude(), mListener.getFlight().getCoordinate().getLongitude());
-        map.setCameraPosition(new CameraPosition.Builder().target(position).zoom(14).build());
-        Icon icon = IconFactory.getInstance(getContext()).fromResource(R.drawable.airmap_flight_marker);
-        map.addMarker(new MarkerOptions().position(position).icon(icon));
-        map.addPolygon(Utils.getCirclePolygon(mListener.getFlight().getBuffer(), mListener.getFlight().getCoordinate(), getStatusCircleColor(mListener.getFlightStatus(), getContext())));
+        if (mListener != null) {
+            String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), MappingService.AirMapMapTheme.Standard);
+            map.setStyleUrl(url);
+            AirMapFlight flight = mListener.getFlight();
+            MultiPoint multiPoint;
+            if (flight.getGeometry() instanceof AirMapPolygon) {
+                PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
+                PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
+                for (Coordinate coordinate : ((AirMapPolygon) flight.getGeometry()).getCoordinates()) {
+                    polygonOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
+                    polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
+                }
+                map.addPolygon(polygonOptions);
+                multiPoint = map.addPolyline(polylineOptions.add(polylineOptions.getPoints().get(0)));
+            } else if (flight.getGeometry() instanceof AirMapPath) {
+                PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
+                for (Coordinate coordinate : ((AirMapPath) flight.getGeometry()).getCoordinates()) {
+                    polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
+                }
+
+                for (List<LatLng> polygonPoints : mListener.getPathBuffers()) {
+                    PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(polygonPoints);
+                    map.addPolygon(polygonOptions); //Add polygon first, then line for proper z ordering
+                }
+                multiPoint = map.addPolyline(polylineOptions);
+            } else {
+                List<LatLng> circlePoints = mListener.getAnnotationsFactory().polygonCircleForCoordinate(new LatLng(flight.getCoordinate().getLatitude(), flight.getCoordinate().getLongitude()), flight.getBuffer());
+                map.addPolygon(mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(circlePoints));
+                multiPoint = map.addPolyline(mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0)));
+            }
+            LatLngBounds bounds = new LatLngBounds.Builder().includes(multiPoint.getPoints()).build();
+            map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, dpToPixels(getActivity(), 20).intValue()));
+        }
     }
 
     private void setupViewPager() {
         List<Fragment> fragments = new ArrayList<>();
         fragments.add(ReviewDetailsFragment.newInstance(mListener.getFlight()));
         if (!mListener.getPermitsToShowInReview().isEmpty()) {
-            fragments.add(ReviewPermitsFragment.newInstance(mListener.getPermitsToShowInReview()));
+            fragments.add(ReviewPermitsFragment.newInstance(mListener.getPermitsToShowInReview(), mListener.getSelectedPermits()));
         }
         if (!mListener.getNotices().isEmpty()) {
             fragments.add(ReviewNoticeFragment.newInstance(mListener.getFlightStatus(), mListener.getFlight().shouldNotify()));
@@ -453,6 +498,12 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
         void onFlightSubmitted(AirMapFlight response);
 
         AirMapPilot getPilot();
+
+        AnnotationsFactory getAnnotationsFactory();
+
+        List<LatLng>[] getPathBuffers();
+
+        List<MappingService.AirMapLayerType> getMapLayers();
     }
 
     private class SectionsPagerAdapter extends FragmentStatePagerAdapter {

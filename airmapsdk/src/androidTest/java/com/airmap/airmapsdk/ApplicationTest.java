@@ -220,7 +220,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
                 for (AirMapPilotPermit permit :
                         response) {
                     assertNotNull(permit);
-                    assertNotNull(permit.getId());
+                    assertNotNull(permit.getApplicationId());
                 }
             }
 

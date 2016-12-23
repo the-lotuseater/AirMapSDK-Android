@@ -1,3 +1,17 @@
+##`1.0.5 (12/19/16)`
+* Added custom flight tools for Point, Path & Polygon
+* Update Advisory UI
+* Added new airspace layers
+* Update Status models
+* Added support for Imperial/Metric measurement system
+* Resolved minor issues
+
+##`1.0.4 (11/1/16)`
+* Fixed refreshAccessToken bug
+* Fixed memory leak
+* Updated tests
+* Bug fixes
+
 ##`1.0.3 (9/9/16)`
 * Package names have changed. Classes will need to be re-imported
 * Traffic Alerts are now compatible with Android 7.0

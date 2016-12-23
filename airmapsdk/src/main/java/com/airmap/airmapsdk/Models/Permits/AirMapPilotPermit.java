@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.airmap.airmapsdk.Utils.getDateFromIso8601String;
+import static com.airmap.airmapsdk.util.Utils.getDateFromIso8601String;
 
 /**
  * Created by Vansh Gandhi on 7/21/16.
@@ -22,7 +22,7 @@ import static com.airmap.airmapsdk.Utils.getDateFromIso8601String;
 @SuppressWarnings("unused")
 public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
     public enum PermitStatus {
-        Accepted("accepted"), Rejected("rejected"), Pending("pending"), Detached("detached");
+        Accepted("accepted"), Rejected("rejected"), Pending("pending"), Detached("detached"), Expired("expired");
 
         private String text;
 
@@ -38,6 +38,8 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
                     return Rejected;
                 case "detached":
                     return Detached;
+                case "expired":
+                    return Expired;
                 default:
                     return Pending;
             }
@@ -49,9 +51,8 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
 
     }
 
-    private String id;
-    private String permitId;
-    private String issuerId;
+    private String applicationId;
+    private AirMapPermitIssuer issuer;
     private PermitStatus status;
     private String pilotId;
     private Date createdAt;
@@ -69,12 +70,15 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
 
     @Override
     public AirMapPilotPermit constructFromJson(JSONObject json) {
-        setId(json.optString("id"));
-        setPermitId(json.optString("permit_id"));
-        setIssuerId(json.optString("issuer_id"));
+        setApplicationId(json.optString("id"));
+
+        JSONObject issuerJSON = json.optJSONObject("organization");
+        if (issuerJSON != null) {
+            setIssuer(new AirMapPermitIssuer(json.optJSONObject("organization")));
+        }
         setPilotId(json.optString("pilot_id"));
         setCreatedAt(getDateFromIso8601String(json.optString("created_at")));
-        setExpiresAt(getDateFromIso8601String(json.optString("expires_at")));
+        setExpiresAt(getDateFromIso8601String(json.optString("expiration")));
         setUpdatedAt(getDateFromIso8601String(json.optString("updated_at")));
         setStatus(PermitStatus.fromString(json.optString("status")));
         JSONArray properties = json.optJSONArray("custom_properties");
@@ -92,7 +96,7 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
 
     public JSONObject getAsParams() {
         Map<String, String> params = new HashMap<>();
-        params.put("id", getId());
+        params.put("id", getApplicationId());
         JSONObject object = new JSONObject(params);
         try {
             object.put("custom_properties", getCustomPropertiesJson());
@@ -114,21 +118,12 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
         return propertiesJsonArray;
     }
 
-    public String getId() {
-        return id;
+    public String getApplicationId() {
+        return applicationId;
     }
 
-    public AirMapPilotPermit setId(String id) {
-        this.id = id;
-        return this;
-    }
-
-    public String getPermitId() {
-        return permitId;
-    }
-
-    public AirMapPilotPermit setPermitId(String permitId) {
-        this.permitId = permitId;
+    public AirMapPilotPermit setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
         return this;
     }
 
@@ -186,12 +181,12 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
         return this;
     }
 
-    public String getIssuerId() {
-        return issuerId;
+    public AirMapPermitIssuer getIssuer() {
+        return issuer;
     }
 
-    public AirMapPilotPermit setIssuerId(String issuerId) {
-        this.issuerId = issuerId;
+    public AirMapPilotPermit setIssuer(AirMapPermitIssuer issuer) {
+        this.issuer = issuer;
         return this;
     }
 
@@ -209,6 +204,6 @@ public class AirMapPilotPermit implements AirMapBaseModel, Serializable {
      */
     @Override
     public boolean equals(Object o) {
-        return o instanceof AirMapPilotPermit && getId().equals(((AirMapPilotPermit) o).getId());
+        return o instanceof AirMapPilotPermit && getApplicationId().equals(((AirMapPilotPermit) o).getApplicationId());
     }
 }

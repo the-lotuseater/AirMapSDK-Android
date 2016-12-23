@@ -25,9 +25,9 @@ public class AirMapPilotPermitCustomProperty implements Serializable, AirMapBase
         public static CustomPropertyType fromString(String text) {
             switch (text) {
                 case "text":
+                default:
                     return Text;
             }
-            return null;
         }
 
         @Override

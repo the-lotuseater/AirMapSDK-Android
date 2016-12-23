@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.Date;
 
-import static com.airmap.airmapsdk.Utils.getDateFromIso8601String;
+import static com.airmap.airmapsdk.util.Utils.getDateFromIso8601String;
 
 /**
  * Created by Vansh Gandhi on 7/26/16.

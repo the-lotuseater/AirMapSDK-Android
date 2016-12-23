@@ -13,7 +13,6 @@ import java.io.Serializable;
 @SuppressWarnings("unused")
 public class AirMapStatusRequirement implements Serializable, AirMapBaseModel {
     private AirMapStatusRequirementNotice notice;
-    private AirMapStatusPermits permits;
 
     public AirMapStatusRequirement(JSONObject requirementJson) {
         constructFromJson(requirementJson);
@@ -26,7 +25,6 @@ public class AirMapStatusRequirement implements Serializable, AirMapBaseModel {
     public AirMapStatusRequirement constructFromJson(JSONObject json) {
         if (json != null) {
             setNotice(new AirMapStatusRequirementNotice(json.optJSONObject("notice")));
-            setPermit(new AirMapStatusPermits(json.optJSONObject("permits")));
         }
         return this;
     }
@@ -37,15 +35,6 @@ public class AirMapStatusRequirement implements Serializable, AirMapBaseModel {
 
     public AirMapStatusRequirement setNotice(AirMapStatusRequirementNotice notice) {
         this.notice = notice;
-        return this;
-    }
-
-    public AirMapStatusPermits getPermit() {
-        return permits;
-    }
-
-    public AirMapStatusRequirement setPermit(AirMapStatusPermits permits) {
-        this.permits = permits;
         return this;
     }
 }

@@ -14,8 +14,6 @@ import java.util.Map;
 
 import okhttp3.Call;
 
-import static android.R.attr.width;
-
 /**
  * Created by Vansh Gandhi on 6/23/16.
  * Copyright © 2016 AirMap, Inc. All rights reserved.
@@ -58,7 +56,7 @@ class StatusService extends BaseService {
      * @param date         Date and time for planned flight
      * @param listener     The callback that is invoked on success or error
      */
-    public static void checkFlightPath(List<Coordinate> path, int buffer, Coordinate takeOffPoint,
+    public static Call checkFlightPath(List<Coordinate> path, int buffer, Coordinate takeOffPoint,
                                        List<MappingService.AirMapAirspaceType> types,
                                        List<MappingService.AirMapAirspaceType> ignoredTypes,
                                        boolean weather, Date date,
@@ -67,13 +65,12 @@ class StatusService extends BaseService {
         Map<String, String> params = AirMapStatus.getAsParams(takeOffPoint, types, ignoredTypes, weather, date);
         params.put("geometry", "LINESTRING(" + makeGeoString(path) + ")");
         params.put("buffer", String.valueOf(buffer));
-        AirMap.getClient().get(url, params, new GenericOkHttpCallback(listener, AirMapStatus.class));
+        return AirMap.getClient().get(url, params, new GenericOkHttpCallback(listener, AirMapStatus.class));
     }
 
     /**
      * Get a flight status based on a flight within a polygon
-     *
-     * @param geometry     The polygon the flight will be in
+     *  @param geometry     The polygon the flight will be in
      * @param takeOffPoint The take off point of the flight
      * @param types        Airspace types to include in the calculation and response
      * @param ignoredTypes Airspace types to ignore in the calculation and response
@@ -81,7 +78,7 @@ class StatusService extends BaseService {
      * @param date         Date and time for planned flight
      * @param listener     The callback that is invoked on success or error
      */
-    public static void checkPolygon(List<Coordinate> geometry, Coordinate takeOffPoint,
+    public static Call checkPolygon(List<Coordinate> geometry, Coordinate takeOffPoint,
                                     List<MappingService.AirMapAirspaceType> types,
                                     List<MappingService.AirMapAirspaceType> ignoredTypes,
                                     boolean weather, Date date,
@@ -89,7 +86,7 @@ class StatusService extends BaseService {
         String url = statusPolygonUrl;
         Map<String, String> params = AirMapStatus.getAsParams(takeOffPoint, types, ignoredTypes, weather, date);
         params.put("geometry", "POLYGON(" + makeGeoString(geometry) + ")");
-        AirMap.getClient().get(url, params, new GenericOkHttpCallback(listener, AirMapStatus.class));
+        return AirMap.getClient().get(url, params, new GenericOkHttpCallback(listener, AirMapStatus.class));
     }
 
     /**
