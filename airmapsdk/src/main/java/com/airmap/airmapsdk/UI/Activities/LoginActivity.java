@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +18,7 @@ import android.widget.Toast;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.Auth;
 import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.util.PreferenceUtils;
 import com.airmap.airmapsdk.util.Utils;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
                 final boolean shouldOverrideUrlLoading = Auth.login(url, LoginActivity.this, new LoginCallback() {
                     @Override
                     public void onSuccess(Auth.AuthCredential authCredential) {
-                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+                        SharedPreferences preferences = PreferenceUtils.getPreferences(LoginActivity.this);
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putString(Utils.REFRESH_TOKEN_KEY, authCredential.getRefreshToken());
                         AirMap.getInstance().setAuthToken(authCredential.getAccessToken());

@@ -2,11 +2,11 @@ package com.airmap.airmapsdk;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
 import com.airmap.airmapsdk.networking.callbacks.RefreshTokenListener;
 import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.util.PreferenceUtils;
 import com.airmap.airmapsdk.util.Utils;
 
 import org.jose4j.jwt.JwtClaims;
@@ -133,8 +133,10 @@ public class Auth {
         if (authCredentials != null) {
             AirMap.getInstance().setAuthToken(authCredentials.getAccessToken());
             if (authCredentials.getRefreshToken() != null && !authCredentials.getRefreshToken().isEmpty()) {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                preferences.edit().putString(Utils.REFRESH_TOKEN_KEY, authCredentials.getRefreshToken()).apply();
+                PreferenceUtils.getPreferences(context)
+                        .edit()
+                        .putString(Utils.REFRESH_TOKEN_KEY, authCredentials.getRefreshToken())
+                        .apply();
             }
             callback.onSuccess(authCredentials);
             return true;
@@ -149,7 +151,7 @@ public class Auth {
      */
     public static void refreshAccessToken(final Context context, final RefreshTokenListener listener) {
         AirMapLog.i("AuthServices", "Trying to refresh token");
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences preferences = PreferenceUtils.getPreferences(context);
         String refreshToken = preferences.getString(Utils.REFRESH_TOKEN_KEY, "");
 
         // return if refresh token is empty

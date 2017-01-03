@@ -31,6 +31,7 @@ import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
 import com.airmap.airmapsdk.ui.activities.LoginActivity;
 import com.airmap.airmapsdk.ui.activities.PilotProfileActivity;
 import com.airmap.airmapsdk.ui.activities.ProfileActivity;
+import com.airmap.airmapsdk.util.PreferenceUtils;
 import com.airmap.airmapsdk.util.Utils;
 
 import org.jose4j.jwt.JwtClaims;
@@ -44,11 +45,21 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.crypto.NoSuchPaddingException;
+
+import devliving.online.securedpreferencestore.SecuredPreferenceStore;
 import okhttp3.Call;
 
 /**
@@ -150,6 +161,13 @@ public class AirMap {
         this.context = context;
         authToken = auth == null ? "" : auth;
         certificatePinning = pinCertificates;
+
+        try {
+            PreferenceUtils.migrateSecurePreferences(context);
+        } catch (PreferenceUtils.SecuredPreferenceStoreException e) {
+            Log.e("AirMap", "Unable to migrate prefs", e);
+        }
+
         decodeToken(auth);
         try {
             InputStream inputStream = getContext().getResources().getAssets().open("airmap.config.json");
