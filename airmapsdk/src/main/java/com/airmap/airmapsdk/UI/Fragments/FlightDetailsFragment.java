@@ -205,7 +205,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     public void onMapReady(MapboxMap mapboxMap) {
         map = mapboxMap;
 
-        if (mListener != null) {
+        if (mListener != null && isFragmentActive()) {
             String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), MappingService.AirMapMapTheme.Standard);
             map.setStyleUrl(url);
             AirMapFlight flight = mListener.getFlight();
@@ -232,45 +232,38 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             }
             LatLngBounds bounds = new LatLngBounds.Builder().includes(multiPoint.getPoints()).build();
             map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
-        }
 
-        mapView.post(new Runnable() {
-            @Override
-            public void run() {
-                setupSeekBars();
-            }
-        });
+            // draw polygons for advisories with permits (green if user has permit, yellow otherwise)
+            if (!mapPolygonsSet && latestStatus != null) {
+                if (latestStatus.getAdvisories() != null && !latestStatus.getAdvisories().isEmpty()) {
+                    Map<String, AirMapStatusAdvisory> advisoryMap = new HashMap<>();
+                    for (AirMapStatusAdvisory advisory : latestStatus.getAdvisories()) {
+                        if (advisory.getAvailablePermits() != null && !advisory.getAvailablePermits().isEmpty()) {
+                            advisoryMap.put(advisory.getId(), advisory);
+                        } else if (advisory.getColor() == AirMapStatus.StatusColor.Red) {
+                            advisoryMap.put(advisory.getId(), advisory);
+                        }
+                    }
 
-        // draw polygons for advisories with permits (green if user has permit, yellow otherwise)
-        if (!mapPolygonsSet && latestStatus != null) {
-            if (latestStatus.getAdvisories() != null && !latestStatus.getAdvisories().isEmpty()) {
-                Map<String, AirMapStatusAdvisory> advisoryMap = new HashMap<>();
-                for (AirMapStatusAdvisory advisory : latestStatus.getAdvisories()) {
-                    if (advisory.getAvailablePermits() != null && !advisory.getAvailablePermits().isEmpty()) {
-                        advisoryMap.put(advisory.getId(), advisory);
-                    } else if (advisory.getColor() == AirMapStatus.StatusColor.Red) {
-                        advisoryMap.put(advisory.getId(), advisory);
+                    // check if advisories have changed
+                    if (!permitAdvisories.keySet().equals(advisoryMap.keySet())) {
+                        if (!permitAdvisories.keySet().containsAll(advisoryMap.keySet())) {
+                            updatePermitPolygons(advisoryMap);
+                        }
                     }
                 }
 
-                // check if advisories have changed
-                if (!permitAdvisories.keySet().equals(advisoryMap.keySet())) {
-                    if (!permitAdvisories.keySet().containsAll(advisoryMap.keySet())) {
-                        updatePermitPolygons(advisoryMap);
-                    }
+                mapPolygonsSet = true;
+            }
+            drawFlightPolygonDelayed();
+
+            mapView.post(new Runnable() {
+                @Override
+                public void run() {
+                    setupSeekBars();
                 }
-            }
-
-            mapPolygonsSet = true;
+            });
         }
-        drawFlightPolygonDelayed();
-
-        mapView.post(new Runnable() {
-            @Override
-            public void run() {
-                setupSeekBars();
-            }
-        });
     }
 
     private void setupSwitches() {
@@ -334,17 +327,19 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         altitudeAnimator.addListener(new AnimationListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                altitudeSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        altitudeValueTextView.setText(getAltitudePresets()[progress].label);
-                        mListener.getFlight().setMaxAltitude(getAltitudePresets()[altitudeSeekBar.getProgress()].value.doubleValue());
+                if (isFragmentActive()) {
+                    altitudeSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener() {
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                            altitudeValueTextView.setText(getAltitudePresets()[progress].label);
+                            mListener.getFlight().setMaxAltitude(getAltitudePresets()[altitudeSeekBar.getProgress()].value.doubleValue());
 
-                        Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.ALTITUDE_SLIDER, getAltitudePresets()[progress].value.intValue());
-                    }
-                });
-                altitudeSeekBar.setMax(getAltitudePresets().length - 1);
-                altitudeSeekBar.setProgress(altitudeIndex);
+                            Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.ALTITUDE_SLIDER, getAltitudePresets()[progress].value.intValue());
+                        }
+                    });
+                    altitudeSeekBar.setMax(getAltitudePresets().length - 1);
+                    altitudeSeekBar.setProgress(altitudeIndex);
+                }
             }
         });
 
@@ -356,18 +351,20 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         durationAnimator.addListener(new AnimationListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                durationSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        durationValueTextView.setText(getDurationPresets()[progress].label);
-                        Date endsAt = new Date(mListener.getFlight().getStartsAt().getTime() + getDurationPresets()[durationSeekBar.getProgress()].value.longValue());
-                        mListener.getFlight().setEndsAt(endsAt);
+                if (isFragmentActive()) {
+                    durationSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener() {
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                            durationValueTextView.setText(getDurationPresets()[progress].label);
+                            Date endsAt = new Date(mListener.getFlight().getStartsAt().getTime() + getDurationPresets()[durationSeekBar.getProgress()].value.longValue());
+                            mListener.getFlight().setEndsAt(endsAt);
 
-                        Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.FLIGHT_END_TIME);
-                    }
-                });
-                durationSeekBar.setMax(getDurationPresets().length - 1);
-                durationSeekBar.setProgress(durationIndex);
+                            Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.FLIGHT_END_TIME);
+                        }
+                    });
+                    durationSeekBar.setMax(getDurationPresets().length - 1);
+                    durationSeekBar.setProgress(durationIndex);
+                }
             }
         });
     }
