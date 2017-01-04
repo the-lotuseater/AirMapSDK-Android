@@ -308,8 +308,12 @@ public class TrafficService extends BaseService {
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    AirMapLog.e("TrafficService", exception.getMessage());
-                    exception.printStackTrace();
+                    if (exception != null) {
+                        AirMapLog.e("TrafficService", exception.getMessage());
+                        exception.printStackTrace();
+                    } else {
+                        AirMapLog.e("TrafficService", "Failed with no exception.");
+                    }
                 }
             });
         } catch (MqttException e) {
