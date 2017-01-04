@@ -3,6 +3,7 @@ package com.airmap.airmapsdk.ui.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -68,6 +71,9 @@ public class LoginActivity extends AppCompatActivity {
                         } catch (SecuredPreferenceException e) {
                             e.printStackTrace();
                         }
+
+                        clearCookies();
+
                         AirMap.getInstance().setAuthToken(authCredential.getAccessToken());
                         AirMap.getPilot(new AirMapCallback<AirMapPilot>() {
                             @Override
@@ -144,6 +150,28 @@ public class LoginActivity extends AppCompatActivity {
         });
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl(Auth.getLoginUrl());
+    }
+
+    private void clearCookies() {
+        if (webView != null) {
+            webView.clearCache(true);
+            webView.clearHistory();
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            CookieManager.getInstance().removeAllCookies(null);
+            CookieManager.getInstance().flush();
+        } else {
+            CookieSyncManager cookieSyncManager = CookieSyncManager.createInstance(LoginActivity.this);
+            cookieSyncManager.startSync();
+
+            CookieManager cookieManager = CookieManager.getInstance();
+            cookieManager.removeAllCookie();
+            cookieManager.removeSessionCookie();
+
+            cookieSyncManager.stopSync();
+            cookieSyncManager.sync();
+        }
     }
 
     @Override
