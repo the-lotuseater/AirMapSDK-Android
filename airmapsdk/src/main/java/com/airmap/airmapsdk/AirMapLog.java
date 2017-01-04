@@ -41,6 +41,16 @@ public class AirMapLog {
         }
     }
 
+    public static void e(String tag, String message, Exception e) {
+        if (ENABLED) {
+            if (TESTING) {
+                System.out.println(tag + ": " + message);
+            } else {
+                Log.e(tag, message, e);
+            }
+        }
+    }
+
     public static void i(String tag, String message) {
         if (ENABLED) {
             if (TESTING) {

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -19,6 +20,7 @@ import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.Auth;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.util.PreferenceUtils;
+import com.airmap.airmapsdk.util.SecuredPreferenceException;
 import com.airmap.airmapsdk.util.Utils;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
@@ -59,11 +61,14 @@ public class LoginActivity extends AppCompatActivity {
                 final boolean shouldOverrideUrlLoading = Auth.login(url, LoginActivity.this, new LoginCallback() {
                     @Override
                     public void onSuccess(Auth.AuthCredential authCredential) {
-                        SharedPreferences preferences = PreferenceUtils.getPreferences(LoginActivity.this);
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString(Utils.REFRESH_TOKEN_KEY, authCredential.getRefreshToken());
+                        try {
+                            PreferenceUtils.getPreferences(LoginActivity.this).edit()
+                                    .putString(Utils.REFRESH_TOKEN_KEY, authCredential.getRefreshToken())
+                                    .apply();
+                        } catch (SecuredPreferenceException e) {
+                            e.printStackTrace();
+                        }
                         AirMap.getInstance().setAuthToken(authCredential.getAccessToken());
-                        editor.apply();
                         AirMap.getPilot(new AirMapCallback<AirMapPilot>() {
                             @Override
                             public void onSuccess(AirMapPilot response) {

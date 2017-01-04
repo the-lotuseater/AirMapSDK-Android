@@ -161,13 +161,6 @@ public class AirMap {
         this.context = context;
         authToken = auth == null ? "" : auth;
         certificatePinning = pinCertificates;
-
-        try {
-            PreferenceUtils.migrateSecurePreferences(context);
-        } catch (PreferenceUtils.SecuredPreferenceStoreException e) {
-            Log.e("AirMap", "Unable to migrate prefs", e);
-        }
-
         decodeToken(auth);
         try {
             InputStream inputStream = getContext().getResources().getAssets().open("airmap.config.json");
