@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
@@ -105,6 +106,8 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                 progressBarContainer.setVisibility(View.VISIBLE);
                 applyPermitsToFlight();
                 submitButton.setEnabled(false);
+
+                Analytics.logEvent(Analytics.Page.REVIEW_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.SAVE);
             }
         });
         PagerTabStrip strip = (PagerTabStrip) view.findViewById(R.id.tab_strip);
@@ -126,6 +129,8 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
             AirMap.applyForPermit(permitToApplyFor, new AirMapCallback<AirMapPilotPermit>() {
                 @Override
                 public void onSuccess(AirMapPilotPermit response) {
+                    Analytics.logEvent(Analytics.Page.REVIEW_CREATE_FLIGHT, Analytics.Action.save, Analytics.Label.APPLY_PERMIT_SUCCESS);
+
                     mListener.getFlight().addPermitId(response.getApplicationId());
                     mListener.getPermitsToApplyFor().remove(permitToApplyFor);
                     totalPermitsObtained++;
@@ -136,6 +141,8 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
 
                 @Override
                 public void onError(final AirMapException e) {
+                    Analytics.logEvent(Analytics.Page.REVIEW_CREATE_FLIGHT, Analytics.Action.save, Analytics.Label.APPLY_PERMIT_ERROR, e.getErrorCode());
+
                     submitButton.post(new Runnable() {
                         @Override
                         public void run() {
@@ -185,11 +192,15 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
         AirMap.createFlight(mListener.getFlight(), new AirMapCallback<AirMapFlight>() {
             @Override
             public void onSuccess(AirMapFlight response) {
+                Analytics.logEvent(Analytics.Page.REVIEW_CREATE_FLIGHT, Analytics.Action.save, Analytics.Label.CREATE_FLIGHT_SUCCESS);
+
                 mListener.onFlightSubmitted(response);
             }
 
             @Override
             public void onError(final AirMapException e) {
+                Analytics.logEvent(Analytics.Page.REVIEW_CREATE_FLIGHT, Analytics.Action.save, Analytics.Label.CREATE_FLIGHT_ERROR, e.getErrorCode());
+
                 submitButton.post(new Runnable() {
                     @Override
                     public void run() {
@@ -257,6 +268,27 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
             fragments.add(ReviewNoticeFragment.newInstance(mListener.getFlightStatus(), mListener.getFlight().shouldNotify()));
         }
         viewPager.setAdapter(new SectionsPagerAdapter(fragments, getChildFragmentManager()));
+        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                String tab;
+                switch (position) {
+                    case 0:
+                        tab = Analytics.Label.REVIEW_DETAILS_TAB;
+                        break;
+                    case 1:
+                        tab = Analytics.Label.REVIEW_PERMITS_TAB;
+                        break;
+                    case 2:
+                        tab = Analytics.Label.REVIEW_NOTICES_TAB;
+                        break;
+                    default:
+                        tab = Analytics.Label.REVIEW_DETAILS_TAB;
+                        break;
+                }
+                Analytics.logEvent(Analytics.Page.REVIEW_CREATE_FLIGHT, Analytics.Action.slide, tab);
+            }
+        });
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.status.AirMapStatusPermits;
@@ -147,6 +148,8 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
             @Override
             public void onClick(View v) {
                 mListener.selectPermit(holder.permit);
+
+                Analytics.logEvent(Analytics.Page.PERMITS_CREATE_FLIGHT, Analytics.Action.tap, holder.enabledPermits.isEmpty() ? Analytics.Label.SELECT_PERMIT : Analytics.Label.SELECT_DIFFERENT_PERMIT);
             }
         });
         holder.selectPermitButton.setText(holder.enabledPermits.isEmpty() ? fragment.getString(R.string.airmap_select_a_permit) : fragment.getString(R.string.airmap_select_different_permit));

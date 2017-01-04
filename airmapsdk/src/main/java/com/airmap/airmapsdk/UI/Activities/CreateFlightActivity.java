@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
@@ -56,6 +57,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
         FlightNoticeFragment.OnFragmentInteractionListener,
         ReviewFlightFragment.OnFragmentInteractionListener,
         ReviewNoticeFragment.OnFragmentInteractionListener {
+
 
     public static final String COORDINATE = "coordinate";
     public static final String KEY_VALUE_EXTRAS = "keyValueExtras";
@@ -122,6 +124,8 @@ public class CreateFlightActivity extends AppCompatActivity implements
         setupViewPager();
 
         annotationsFactory = new AnnotationsFactory(this);
+
+        Analytics.logEvent(Analytics.Page.CREATE_FLIGHT, Analytics.Action.start, Analytics.Label.START_CREATE_FLIGHT);
     }
 
     private void setupFlight(Bundle savedInstanceState) {
@@ -310,6 +314,8 @@ public class CreateFlightActivity extends AppCompatActivity implements
     public void bottomSheetClosed() {
         getSupportActionBar().setTitle(R.string.airmap_title_activity_create_flight);
 //        getTabLayout().setVisibility(View.VISIBLE);
+
+        Analytics.logEvent(Analytics.Page.ADVISORIES, Analytics.Action.tap, Analytics.Label.CLOSE_BUTTON);
     }
 
     @Override

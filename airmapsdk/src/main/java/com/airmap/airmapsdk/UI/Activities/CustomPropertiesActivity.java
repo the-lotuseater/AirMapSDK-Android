@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermitCustomProperty;
@@ -118,6 +120,8 @@ public class CustomPropertiesActivity extends AppCompatActivity {
         selectPermitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Analytics.logEvent(Analytics.Page.PERMIT_DETAILS, Analytics.Action.tap, Analytics.Label.SELECT_PERMIT);
+
                 if (allRequiredFieldsFilled()) {
                     availablePermit.setCustomProperties(getUpdatedCustomProperties());
                     Intent data = new Intent();
@@ -201,5 +205,22 @@ public class CustomPropertiesActivity extends AppCompatActivity {
                 progressBarContainer.setVisibility(View.GONE);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        Analytics.logEvent(Analytics.Page.PERMIT_DETAILS, Analytics.Action.tap, Analytics.Label.CANCEL);
+        super.onBackPressed();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Analytics.logEvent(Analytics.Page.PERMIT_DETAILS, Analytics.Action.tap, Analytics.Label.CANCEL);
+                return false;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

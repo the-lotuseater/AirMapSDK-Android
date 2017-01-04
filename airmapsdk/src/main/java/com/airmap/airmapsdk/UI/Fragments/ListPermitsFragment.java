@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.status.AirMapStatusPermits;
@@ -59,6 +60,8 @@ public class ListPermitsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mListener.onListPermitsNextClicked(adapter.getSelectedPermits());
+
+                Analytics.logEvent(Analytics.Page.PERMITS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.NEXT);
             }
         });
         return view;
@@ -147,6 +150,8 @@ public class ListPermitsFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.permit_faq) {
+            Analytics.logEvent(Analytics.Page.PERMITS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.INFO_FAQ_BUTTON);
+
             Intent intent = new Intent(getActivity(), WebActivity.class);
             intent.putExtra(Intent.EXTRA_TITLE, getString(R.string.faq));
             intent.putExtra(Constants.URL_EXTRA, Constants.FAQ_PERMITS_URL);

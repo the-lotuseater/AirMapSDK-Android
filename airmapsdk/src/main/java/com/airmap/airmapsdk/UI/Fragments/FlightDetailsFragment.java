@@ -31,6 +31,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
@@ -278,6 +279,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mListener.getFlight().setPublic(isChecked);
+
+                Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.toggle, Analytics.Label.AIRMAP_PUBLIC_FLIGHT, isChecked ? 1 : 0);
             }
         });
     }
@@ -286,6 +289,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         saveNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.NEXT);
+
                 saveNextButton.post(new Runnable() {
                     @Override
                     public void run() {
@@ -304,6 +309,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         pilotProfileTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.SELECT_PILOT);
+
                 Intent intent = new Intent(getContext(), ProfileActivity.class);
                 if (getActivity() != null) {
                     if (getActivity().getIntent().hasExtra(CreateFlightActivity.KEY_VALUE_EXTRAS)) {
@@ -332,6 +339,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         altitudeValueTextView.setText(getAltitudePresets()[progress].label);
                         mListener.getFlight().setMaxAltitude(getAltitudePresets()[altitudeSeekBar.getProgress()].value.doubleValue());
+
+                        Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.ALTITUDE_SLIDER, getAltitudePresets()[progress].value.intValue());
                     }
                 });
                 altitudeSeekBar.setMax(getAltitudePresets().length - 1);
@@ -353,6 +362,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                         durationValueTextView.setText(getDurationPresets()[progress].label);
                         Date endsAt = new Date(mListener.getFlight().getStartsAt().getTime() + getDurationPresets()[durationSeekBar.getProgress()].value.longValue());
                         mListener.getFlight().setEndsAt(endsAt);
+
+                        Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.FLIGHT_END_TIME);
                     }
                 });
                 durationSeekBar.setMax(getDurationPresets().length - 1);
@@ -403,6 +414,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 dialog.getDatePicker().setMinDate(now.getTime() - 10000); //Subtract a second because of a crash on older devices/api levels
                 dialog.getDatePicker().setMaxDate(now.getTime() + sevenDays);
                 dialog.show();
+
+                Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.FLIGHT_START_TIME);
             }
         });
     }
@@ -442,12 +455,16 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         aircraftTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.SELECT_AIRCRAFT);
+
                 new AlertDialog.Builder(getContext())
                         .setTitle("Select Aircraft")
                         .setAdapter(new AircraftAdapter(getContext(), aircraft), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int position) {
                                 if (aircraft.get(position).getAircraftId().equals("add_aircraft")) {
+                                    Analytics.logEvent(Analytics.Page.SELECT_AIRCRAFT, Analytics.Action.tap, Analytics.Label.NEW_AIRCRAFT);
+
                                     Intent intent = new Intent(getContext(), CreateEditAircraftActivity.class);
                                     startActivityForResult(intent, REQUEST_CREATE_AIRCRAFT);
                                 } else {
