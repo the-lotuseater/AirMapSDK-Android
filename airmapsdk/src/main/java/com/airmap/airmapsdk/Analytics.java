@@ -41,27 +41,28 @@ public class Analytics {
     }
 
     public static class Page {
-        public static final String CREATE_FLIGHT = "Create Flight";
-        public static final String POINT_CREATE_FLIGHT = "Create Flight - Point";
-        public static final String PATH_CREATE_FLIGHT = "Create Flight - Path";
-        public static final String POLYGON_CREATE_FLIGHT = "Create Flight - Polygon";
-        public static final String DETAILS_CREATE_FLIGHT = "Create Flight - Details";
-        public static final String PERMITS_CREATE_FLIGHT = "Create Flight - Permits";
-        public static final String AVAILABLE_PERMITS_CREATE_FLIGHT = "Create Flight - Available Permits";
-        public static final String NOTICES_CREATE_FLIGHT = "Create Flight - Flight Notices";
-        public static final String REVIEW_CREATE_FLIGHT = "Create Flight - Review";
-        public static final String PERMIT_APPLY_CREATE_FLIGHT = "Create Flight - Permit Apply";
-        public static final String SUBMIT_CREATE_FLIGHT = "Create Flight - Submit";
+        public static final String CREATE_FLIGHT = "Create_Flight";
+        public static final String POINT_CREATE_FLIGHT = "Create_Flight_Point";
+        public static final String PATH_CREATE_FLIGHT = "Create_Flight_Path";
+        public static final String POLYGON_CREATE_FLIGHT = "Create_Flight_Polygon";
+        public static final String DETAILS_CREATE_FLIGHT = "Create_Flight_Details";
+        public static final String PERMITS_CREATE_FLIGHT = "Create_Flight_Permits";
+        public static final String AVAILABLE_PERMITS_CREATE_FLIGHT = "Create_Flight_Available_Permits";
+        public static final String NOTICES_CREATE_FLIGHT = "Create_Flight_Flight_Notices";
+        public static final String REVIEW_CREATE_FLIGHT = "Create_Flight_Review";
 
-        public static final String PERMIT_DETAILS = "Permit Details";
-        public static final String PILOT_PROFILE = "Pilot Profile";
-        public static final String PHONE_NUMBER_PHONE_VERIFICATION = "Phone Verification - Phone Number";
-        public static final String SMS_CODE_PHONE_VERIFICATION = "Phone Verification - SMS Code";
+        public static final String PERMIT_DETAILS = "Permit_Details";
+        public static final String PILOT_PROFILE = "Pilot_Profile";
+        public static final String PHONE_NUMBER_PHONE_VERIFICATION = "Phone_Verification_Phone_Number";
+        public static final String SMS_CODE_PHONE_VERIFICATION = "Phone_Verification_SMS_Code";
 
-        public static final String SELECT_AIRCRAFT = "Select Aircraft";
-        public static final String CREATE_AIRCRAFT = "Create Aircraft";
-        public static final String MANUFACTURERS_CREATE_AIRCRAFT = "Create Aircraft - Manufacturers";
-        public static final String MODEL_CREATE_AIRCRAFT = "Create Aircraft - Model";
+        public static final String LIST_AIRCRAFT = "List_Aircraft";
+        public static final String SELECT_AIRCRAFT = "Select_Aircraft";
+        public static final String CREATE_AIRCRAFT = "Create_Aircraft";
+        public static final String MANUFACTURERS_CREATE_AIRCRAFT = "Create_Aircraft_Manufacturers";
+        public static final String MODEL_CREATE_AIRCRAFT = "Create_Aircraft_Model";
+
+        public static final String ADVISORIES = "Advisories";
     }
 
     public static class Event {
@@ -124,8 +125,7 @@ public class Analytics {
         public static final String PATH = "Path";
         public static final String POLYGON = "Polygon";
         public static final String DRAG_POINT = "Drag Point";
-        public static final String POINT_RADIUS = "Point Radius";
-        public static final String WIDTH = "Width";
+        public static final String BUFFER = "Buffer";
         public static final String ZOOM_MAP = "Zoom Map";
         public static final String ADVISORY_ICON = "Advisory Icon";
         public static final String TRASH_ICON = "Trash Icon";
@@ -145,7 +145,9 @@ public class Analytics {
         public static final String SELECT_PILOT = "Select Pilot";
         public static final String SELECT_AIRCRAFT = "Select Aircraft";
         public static final String NEW_AIRCRAFT = "New Aircraft Button";
+        public static final String EDIT_AIRCRAFT = "Edit Aircraft Button";
         public static final String SHARE_FLIGHT = "Share Flight";
+        public static final String AIRMAP_PUBLIC_FLIGHT = "AirMap Public Flight";
 
         public static final String INFO_FAQ_BUTTON = "Info Button (Permit FAQ's)";
         public static final String SELECT_PERMIT = "Select Permit";
@@ -153,12 +155,25 @@ public class Analytics {
         public static final String PERMIT_DETAILS = "Permit Details";
 
         public static final String SAVE = "Save";
+        public static final String DELETE = "Delete";
+        public static final String SUBMIT = "Submit Button";
         public static final String SUCCESS = "Success";
         public static final String ERROR = "Error";
-        public static final String SUBMIT = "Submit Button";
+
+        public static final String APPLY_PERMIT_SUCCESS = "Apply Permit Success";
+        public static final String APPLY_PERMIT_ERROR = "Apply Permit Error";
+        public static final String CREATE_FLIGHT_SUCCESS = "Create Flight Success";
+        public static final String CREATE_FLIGHT_ERROR = "Create Flight Error";
 
         public static final String SELECT_MANUFACTURER = "Select Manufacturer";
         public static final String SELECT_MODEL = "Select Model";
+
+        public static final String TFR_DETAILS = "TFR Details";
+        public static final String CLOSE_BUTTON = "Close Button";
+
+        public static final String REVIEW_DETAILS_TAB = "Review Details Tab";
+        public static final String REVIEW_PERMITS_TAB = "Review Permits Tab";
+        public static final String REVIEW_NOTICES_TAB = "Review Notices Tab";
     }
 
     public static final class Value {

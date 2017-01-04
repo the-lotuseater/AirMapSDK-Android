@@ -277,7 +277,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mListener.getFlight().setPublic(isChecked);
 
-                Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.toggle, Analytics.Label.SHARE_FLIGHT, Analytics.Value.AIRMAP);
+                Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.toggle, Analytics.Label.AIRMAP_PUBLIC_FLIGHT, isChecked ? 1 : 0);
             }
         });
     }
@@ -337,7 +337,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                         altitudeValueTextView.setText(getAltitudePresets()[progress].label);
                         mListener.getFlight().setMaxAltitude(getAltitudePresets()[altitudeSeekBar.getProgress()].value.doubleValue());
 
-                        Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.ALTITUDE_SLIDER);
+                        Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.ALTITUDE_SLIDER, getAltitudePresets()[progress].value.intValue());
                     }
                 });
                 altitudeSeekBar.setMax(getAltitudePresets().length - 1);

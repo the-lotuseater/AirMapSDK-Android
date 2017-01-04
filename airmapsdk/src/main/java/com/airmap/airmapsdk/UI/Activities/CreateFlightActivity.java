@@ -304,6 +304,8 @@ public class CreateFlightActivity extends AppCompatActivity implements
     public void bottomSheetClosed() {
         getSupportActionBar().setTitle(R.string.airmap_title_activity_create_flight);
 //        getTabLayout().setVisibility(View.VISIBLE);
+
+        Analytics.logEvent(Analytics.Page.ADVISORIES, Analytics.Action.tap, Analytics.Label.CLOSE_BUTTON);
     }
 
     @Override

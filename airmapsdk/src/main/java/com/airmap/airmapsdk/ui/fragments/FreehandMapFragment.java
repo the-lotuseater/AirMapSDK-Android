@@ -518,7 +518,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         } else { //Path mode
             drawPath(points);
 
-            Analytics.logEvent(Analytics.Page.PATH_CREATE_FLIGHT, Analytics.Action.draw, Analytics.Label.DRAW_PATH);
+            Analytics.logEvent(Analytics.Page.PATH_CREATE_FLIGHT, Analytics.Action.draw, Analytics.Label.DRAW_PATH, points.size());
         }
     }
 
@@ -970,7 +970,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 checkCircleStatus();
                 zoomToCircle();
 
-                Analytics.logEvent(Analytics.Page.POINT_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.POINT_RADIUS);
+                Analytics.logEvent(Analytics.Page.POINT_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.BUFFER);
             }
         });
         seekBar.setProgress(18); //1000 ft
@@ -1034,7 +1034,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     calculatePathBufferAndDisplayLineAndBuffer(lineContainer.line.getPoints(), lineContainer.width, false);
                 }
 
-                Analytics.logEvent(Analytics.Page.PATH_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.WIDTH);
+                Analytics.logEvent(Analytics.Page.PATH_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.BUFFER);
             }
         });
         seekBar.setProgress(1); //50 ft
