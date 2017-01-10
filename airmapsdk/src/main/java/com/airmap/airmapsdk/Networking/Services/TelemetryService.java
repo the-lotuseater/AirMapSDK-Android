@@ -293,7 +293,7 @@ public class TelemetryService extends BaseService {
         private void send(List<Message> messageList) {
             Log.e(TAG, "send message batch of size: " + messageList.size() + " messages");
             try {
-                byte[] message = buildPacketData(comm.getKey(), flight, Encryption.NONE, messageList);
+                byte[] message = buildPacketData(comm.getKey(), flight, Encryption.AES256CBC, messageList);
                 DatagramPacket packet = new DatagramPacket(message, message.length);
                 socket.send(packet);
                 packetNumber++;
@@ -311,17 +311,6 @@ public class TelemetryService extends BaseService {
 
             byte flightIdLength = (byte) flightId.length();
 
-            byte encryptionType;
-            switch(encryption) {
-                case AES256CBC:
-                    encryptionType = 1;
-                    break;
-                case NONE:
-                default:
-                    encryptionType = 0;
-                    break;
-            }
-
             IvParameterSpec iv = generateIv();
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -330,8 +319,17 @@ public class TelemetryService extends BaseService {
             daos.writeInt(serialNumber);
             daos.writeByte(flightIdLength);
             daos.writeBytes(flightId);
-            daos.writeByte(encryptionType);
-            daos.write(iv.getIV());
+
+            switch(encryption) {
+                case AES256CBC:
+                    daos.writeByte(1);
+                    daos.write(iv.getIV());
+                    break;
+                case NONE:
+                default:
+                    daos.writeByte(0);
+                    break;
+            }
 
             ByteArrayOutputStream payloadBaos = new ByteArrayOutputStream();
             for (Message message : messageList) {
