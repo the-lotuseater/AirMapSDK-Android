@@ -18,6 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Response;
+import rx.Observable;
+
 import static com.airmap.airmapsdk.util.Utils.getIso8601StringFromDate;
 
 /**
@@ -170,6 +173,11 @@ class FlightService extends BaseService {
     public static void getCommKey(AirMapFlight flight, final AirMapCallback<AirMapComm> listener) {
         String url = String.format(flightStartCommUrl, flight.getFlightId());
         AirMap.getClient().post(url, new GenericOkHttpCallback(listener, AirMapComm.class));
+    }
+
+    public static Observable<AirMapComm> getCommKey(AirMapFlight flight) {
+        String url = String.format(flightStartCommUrl, flight.getFlightId());
+        return (Observable<AirMapComm>) AirMap.getClient().post(url, AirMapComm.class);
     }
 
     /**

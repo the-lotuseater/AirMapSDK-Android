@@ -1,5 +1,11 @@
 package com.airmap.airmapsdk.networking.services;
 
+import com.airmap.airmapsdk.AirMapException;
+import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.models.AirMapBaseModel;
+import com.airmap.airmapsdk.util.Utils;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -20,6 +26,8 @@ import okhttp3.Request;
 import okhttp3.Request.Builder;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import rx.Observable;
+import rx.functions.Func0;
 
 /**
  * Created by Vansh Gandhi on 6/16/16.
@@ -104,6 +112,59 @@ public class AirMapClient {
         Call call = client.newCall(request);
         call.enqueue(callback);
         return call;
+    }
+
+    /**
+     * Make a POST call with params
+     *
+     * @param url      The full url to POST
+     * @param params   The params to add to the request
+     */
+    public Observable post(String url, Map<String, String> params) {
+        try {
+            Request request = new Builder().url(url).post(bodyFromMap(params)).tag(url).build();
+            Response response = client.newCall(request).execute();
+            return Observable.just(response);
+        } catch (IOException e) {
+            return Observable.error(e);
+        }
+    }
+
+    /**
+     * Make a POST call without params
+     *
+     * @param url      The full url to POST
+     */
+    public Observable<? extends AirMapBaseModel> post(final String url, final Class<? extends AirMapBaseModel> classToInstantiate) {
+        return Observable.defer(new Func0<Observable<AirMapBaseModel>>() {
+            @Override
+            public Observable<AirMapBaseModel> call() {
+                try {
+                    Request request = new Builder().url(url).post(bodyFromMap(null)).tag(url).build();
+                    Response response = client.newCall(request).execute();
+                    AirMapBaseModel model = parseResponse(response, classToInstantiate);
+
+                    return Observable.just(model);
+                } catch (IOException | IllegalAccessException | InstantiationException | JSONException | AirMapException e) {
+                    return Observable.error(e);
+                }
+            }
+        });
+    }
+
+    private AirMapBaseModel parseResponse(Response response, Class<? extends AirMapBaseModel> classToInstantiate) throws IOException, JSONException,
+            IllegalAccessException, InstantiationException, AirMapException {
+
+        String jsonString = response.body().string();
+        response.body().close();
+        JSONObject result = new JSONObject(jsonString);
+
+        if (!response.isSuccessful() || !Utils.statusSuccessful(result)) {
+            throw new AirMapException(response.code(), result);
+        }
+
+        JSONObject jsonObject = result.optJSONObject("data");
+        return classToInstantiate.newInstance().constructFromJson(jsonObject);
     }
 
     /**

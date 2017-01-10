@@ -1,16 +1,14 @@
 package com.airmap.airmapsdk.networking.services;
 
-import com.google.protobuf.ByteString;
-
 import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
+import android.util.Log;
 
-import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.comm.AirMapComm;
-import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.Telemetry;
-import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.google.protobuf.Message;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -18,13 +16,32 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.functions.Func2;
+import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
 
 /**
  * Created by Vansh Gandhi on 7/1/16.
@@ -33,163 +50,360 @@ import javax.crypto.spec.SecretKeySpec;
 @SuppressWarnings("unused")
 public class TelemetryService extends BaseService {
 
-    AirMapComm comm;
-    DatagramSocket socket;
-    AirMapFlight flight;
+    private static final String TAG = "Telemetry Service";
 
-    /**
-     * Initializes service to send Telemetry data
-     *
-     * @param flight The flight to send telemetry for
-     */
-    public TelemetryService(AirMapFlight flight) {
-        this.flight = flight;
-        connect(); //Initializes socket
+    // frequencies in milliseconds
+    private static final long POSITION_FREQUENCY = 200;
+    private static final long ATTITUDE_FREQUENCY = 200;
+    private static final long SPEED_FREQUENCY = 200;
+    private static final long BAROMETER_FREQUENCY = 5000;
+
+    private PublishSubject<Pair<AirMapFlight, Message>> telemetry;
+
+    public TelemetryService() {
+        telemetry = PublishSubject.create();
+        setupBindings();
     }
 
-    /**
-     * Sends a telemetry update to AirMap
-     *
-     * @param coordinate  The location of the aircraft
-     * @param altitude    The altitude of the aircraft AGL in meters
-     * @param groundSpeed The speed of the aircraft in m/s
-     * @param trueHeading The heading of the aircraft, measured in degrees relative to true north
-     * @param pressure    The barometric pressure around the aircraft, measured in hectoPascals
-     */
-    public void sendMessage(final Coordinate coordinate, final int altitude, @Nullable final Integer groundSpeed, @Nullable final Integer trueHeading, @Nullable final Float pressure) {
-        if (!socket.isConnected()) {
-            connect();
-        }
+    public void sendPositionMessage(AirMapFlight flight, double latitude, double longitude, @Nullable float altitudeAGL, @Nullable float altitudeMSL, @Nullable float horizontalAccuracy) {
+        long timestamp = System.currentTimeMillis();
 
-        if (comm == null || comm.isExpired()) {
-            FlightService.getCommKey(flight, new AirMapCallback<AirMapComm>() {
-                @Override
-                public void onSuccess(AirMapComm response) {
-                    comm = response;
-                    doSendMessage(coordinate, altitude, groundSpeed, trueHeading, pressure);
-                }
+        Telemetry.Position positionMessage = Telemetry.Position.newBuilder()
+                .setTimestamp(timestamp)
+                .setLatitude(latitude)
+                .setLongitude(longitude)
+                .setAltitudeAgl(altitudeAGL)
+                .setAltitudeMsl(altitudeMSL)
+                .setHorizontalAccuracy(horizontalAccuracy)
+                .build();
 
-                @Override
-                public void onError(AirMapException e) {
-                    onException(e);
-                }
-            });
-        } else {
-            doSendMessage(coordinate, altitude, groundSpeed, trueHeading, pressure);
-        }
+        sendTelemetry(flight, positionMessage);
     }
 
-    /**
-     * Gets the flight associated with this telemetry service
-     *
-     * @return the flight associated with this telemetry service
-     */
-    public AirMapFlight getFlight() {
-        return flight;
+    public void sendAttitudeMessage(AirMapFlight flight, float yaw, float pitch, float roll) {
+        long timestamp = System.currentTimeMillis();
+
+        Telemetry.Attitude attitudeMessage = Telemetry.Attitude.newBuilder()
+                .setTimestamp(timestamp)
+                .setYaw(yaw)
+                .setPitch(pitch)
+                .setRoll(roll)
+                .build();
+
+        sendTelemetry(flight, attitudeMessage);
     }
 
-    //Connects to the UDP server
-    private void connect() {
-        AirMapLog.v("TelemetryService", "Connecting to Telemetry");
-        try {
-            InetAddress address = InetAddress.getByName(telemetryBaseUrl);
-            socket = new DatagramSocket();
-            socket.connect(address, telemetryPort);
-        } catch (Exception e) {
-            onException(e);
-        }
+    public void sendSpeedMessage(AirMapFlight flight, float velocityX, float velocityY, float velocityZ) {
+        long timestamp = System.currentTimeMillis();
+
+        Telemetry.Speed speedMessage = Telemetry.Speed.newBuilder()
+                .setTimestamp(timestamp)
+                .setVelocityX(velocityX)
+                .setVelocityY(velocityY)
+                .setVelocityZ(velocityZ)
+                .build();
+
+        sendTelemetry(flight, speedMessage);
     }
 
-    /**
-     * Disconnects from the telemetry service
-     */
-    public void disconnect() {
-        socket.disconnect();
+    public void setBarometerMessage(AirMapFlight flight, float pressure) {
+        long timestamp = System.currentTimeMillis();
+
+        Telemetry.Barometer barometerMessage = Telemetry.Barometer.newBuilder()
+                .setTimestamp(timestamp)
+                .setPressure(pressure)
+                .build();
+
+        sendTelemetry(flight, barometerMessage);
     }
 
-    //Sends the encrypted, encoded message
-    private void doSendMessage(Coordinate coordinate, int altitude, Integer groundSpeed, Integer trueHeading, Float baro) {
-        byte[] message = encodeData(comm.getKey(), flight, coordinate, altitude, groundSpeed, trueHeading, baro);
-        if (message != null) {
-            DatagramPacket packet = new DatagramPacket(message, message.length);
-            try {
-                socket.send(packet);
-            } catch (Exception e) {
-                onException(e);
-            }
-        }
+    private void sendTelemetry(AirMapFlight flight, Message message) {
+        Log.e(TAG, "sendTelemetry");
+
+        telemetry.onNext(new Pair<>(flight, message));
     }
 
-    //Gets the OpenMessage ready to send
-    private byte[] encodeData(int[] key, AirMapFlight flight, Coordinate coord, int altitude, Integer groundSpeed, Integer trueHeading, Float baro) {
-        IvParameterSpec iv = generateIv();
-        byte[] encryptedMessage = encrypt(key, iv, buildSecretMessage(coord, altitude, groundSpeed, trueHeading, baro));
-        if (encryptedMessage != null) {
-            Telemetry.OpenMessage openMessage = Telemetry.OpenMessage.newBuilder()
-                    .setFlightId(flight.getFlightId())
-                    .setIv(ByteString.copyFrom(iv.getIV()))
-                    .setPayload(ByteString.copyFrom(encryptedMessage))
-                    .build();
-            return openMessage.toByteArray();
-        }
-        return null;
+    private void setupBindings() {
+        Log.e(TAG, "setupBindings");
+
+        Observable<Session> session = telemetry
+                .map(new Func1<Pair<AirMapFlight, Message>, AirMapFlight>() {
+                    @Override
+                    public AirMapFlight call(Pair<AirMapFlight, Message> pair) {
+                        return pair.first;
+                    }
+                })
+                .distinctUntilChanged()
+                .flatMap(new Func1<AirMapFlight, Observable<Session>>() {
+                    @Override
+                    public Observable<Session> call(final AirMapFlight flight) {
+                        return FlightService.getCommKey(flight)
+                                .map(new Func1<AirMapComm, Session>() {
+                                    @Override
+                                    public Session call(AirMapComm airMapComm) {
+                                        return new Session(flight, airMapComm, null);
+                                    }
+                                })
+                                .subscribeOn(Schedulers.io());
+                    }
+                });
+
+        Observable<Pair<Session, Message>> flightMessages = Observable
+                .combineLatest(session, telemetry, new Func2<Session, Pair<AirMapFlight, Message>, Pair<Session, Pair<AirMapFlight, Message>>>() {
+                    @Override
+                    public Pair<Session,Pair<AirMapFlight, Message>> call(Session s, Pair<AirMapFlight, Message> p) {
+                        return new Pair<>(s, p);
+                    }
+                })
+                .filter(new Func1<Pair<Session, Pair<AirMapFlight,Message>>, Boolean>() {
+                    @Override
+                    public Boolean call(Pair<Session, Pair<AirMapFlight, Message>> p) {
+                        AirMapFlight sessionFlight = p.first.flight;
+                        AirMapFlight telemetryFlight = p.second.first;
+                        return sessionFlight.equals(telemetryFlight);
+                    }
+                })
+                .map(new Func1<Pair<Session, Pair<AirMapFlight, Message>>, Pair<Session, Message>>() {
+                    @Override
+                    public Pair<Session,Message> call(Pair<Session, Pair<AirMapFlight, Message>> pair) {
+                        return new Pair<>(pair.first, pair.second.second);
+                    }
+                });
+
+
+        //TODO: do we need to use a specific schedule for the interval observables?
+//        Scheduler scheduler = Schedulers.io();
+
+        Observable<Pair<Session,Message>> position = flightMessages
+                .filter(new Func1<Pair<Session,Message>,Boolean>() {
+                    @Override
+                    public Boolean call(Pair<Session, Message> p) {
+                        return p.second instanceof Telemetry.Position;
+                    }
+                })
+                .sample(Observable.interval(POSITION_FREQUENCY, TimeUnit.MILLISECONDS));
+
+        Observable<Pair<Session,Message>> attitude = flightMessages
+                .filter(new Func1<Pair<Session,Message>,Boolean>() {
+                    @Override
+                    public Boolean call(Pair<Session, Message> p) {
+                        return p.second instanceof Telemetry.Attitude;
+                    }
+                })
+                .sample(Observable.interval(ATTITUDE_FREQUENCY, TimeUnit.MILLISECONDS));
+
+        Observable<Pair<Session,Message>> speed = flightMessages
+                .filter(new Func1<Pair<Session,Message>,Boolean>() {
+                    @Override
+                    public Boolean call(Pair<Session, Message> p) {
+                        return p.second instanceof Telemetry.Speed;
+                    }
+                })
+                .sample(Observable.interval(SPEED_FREQUENCY, TimeUnit.MILLISECONDS));
+
+        Observable<Pair<Session,Message>> barometer = flightMessages
+                .filter(new Func1<Pair<Session,Message>,Boolean>() {
+                    @Override
+                    public Boolean call(Pair<Session, Message> p) {
+                        return p.second instanceof Telemetry.Barometer;
+                    }
+                })
+                .sample(Observable.interval(BAROMETER_FREQUENCY, TimeUnit.MILLISECONDS));
+
+        Subscription latestMessages = Observable.merge(position, attitude, speed, barometer)
+                .buffer(1, TimeUnit.SECONDS, 20)
+                .doOnNext(new Action1<List<Pair<Session,Message>>>() {
+                    @Override
+                    public void call(List<Pair<Session,Message>> sessionMessages) {
+                        sendMessages(sessionMessages);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+
     }
 
-    //Encrypts a SecretMessage with the given key and iv
-    private byte[] encrypt(int[] key, IvParameterSpec iv, Telemetry.SecretMessage secretMessage) {
-        try {
-            SecretKey secretKey = new SecretKeySpec(integersToBytes(key), "AES");
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
-            return cipher.doFinal(secretMessage.toByteArray());
-        } catch (Exception e) {
-            onException(e);
-        }
-        return null;
-    }
+    private void sendMessages(List<Pair<Session,Message>> sessionMessages) {
+        if (sessionMessages == null || sessionMessages.isEmpty()) return;
 
-    //Builds the protobuf secret message
-    private Telemetry.SecretMessage buildSecretMessage(Coordinate coordinate, int altitude, Integer groundSpeed, Integer trueHeading, Float pressure) {
-        Telemetry.SecretMessage.Builder builder = Telemetry.SecretMessage.newBuilder();
-        builder.setAltitude(altitude)
-                .setTimestamp(new Date().getTime() / 1000) //timestamp should be sent as seconds
-                .setLatitude((float) coordinate.getLatitude())
-                .setLongitude((float) coordinate.getLongitude());
-        //Optional parameter
-        if (pressure != null) {
-            builder.setBaro(pressure);
-        }
-        //Optional parameter
-        if (groundSpeed != null) {
-            builder.setGroundSpeedMs(groundSpeed);
-        }
-        //Optional parameter
-        if (trueHeading != null) {
-            builder.setTrueHeading(trueHeading);
-        }
-        return builder.build();
-    }
+        Pair<Session,Message> pair = sessionMessages.get(0);
+        Session session = pair.first;
 
-    //Generates a random IV to be used for the AES encryption
-    private IvParameterSpec generateIv() {
-        int blockSize = 16;
-        byte[] iv = new byte[blockSize];
-        new SecureRandom().nextBytes(iv);
-        return new IvParameterSpec(iv);
-    }
-
-    //Converts an array of 8 bit integers to a byte array
-    private byte[] integersToBytes(int[] values) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(baos);
-        for (int value : values) {
-            dos.writeByte(value); //Only writes the least significant byte of the int
+        List<Message> messages = new ArrayList<>();
+        for (Pair<Session, Message> p : sessionMessages) {
+            messages.add(p.second);
         }
-        return baos.toByteArray();
+        session.send(messages);
     }
 
     private void onException(Exception e) {
         AirMapLog.e("TelemetryService", e.getMessage());
         e.printStackTrace();
+    }
+
+    private enum Encryption {
+        NONE,
+        AES256CBC
+    }
+
+    private enum MessageType {
+        POSITION(1),
+        SPEED(2),
+        ATTITUDE(3),
+        BAROMETER(4);
+
+        public final int value;
+
+        MessageType(int value) {
+            this.value = value;
+        }
+    }
+
+    private class Session {
+        private AirMapComm comm;
+        private DatagramSocket socket;
+        private AirMapFlight flight;
+
+        private int packetNumber;
+
+        Session(AirMapFlight flight, AirMapComm comm, DatagramSocket socket) {
+            this.flight = flight;
+            this.comm = comm;
+
+            this.packetNumber = 1;
+
+            this.socket = socket;
+            if (this.socket == null || !this.socket.isConnected()) {
+                try {
+                    connect();
+                } catch (UnknownHostException | SocketException e) {
+                    Log.e(TAG, "Unable to connect to telemetry socket", e);
+                }
+            }
+        }
+
+        private void connect() throws UnknownHostException, SocketException {
+            InetAddress address = InetAddress.getByName(telemetryBaseUrl);
+            socket = new DatagramSocket();
+            socket.connect(address, telemetryPort);
+        }
+
+        //Sends the encrypted, encoded message
+        private void send(List<Message> messageList) {
+            Log.e(TAG, "send message batch of size: " + messageList.size() + " messages");
+            try {
+                byte[] message = buildPacketData(comm.getKey(), flight, Encryption.NONE, messageList);
+                DatagramPacket packet = new DatagramPacket(message, message.length);
+                socket.send(packet);
+                packetNumber++;
+            } catch (IOException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
+                Log.e(TAG, "Unable to build or send packet", e);
+            }
+        }
+
+        private byte[] buildPacketData(int[] key, AirMapFlight flight, Encryption encryption, List<Message> messageList) throws IOException, NoSuchPaddingException,
+                InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+
+            int serialNumber = packetNumber;
+
+            String flightId = flight.getFlightId();
+
+            byte flightIdLength = (byte) flightId.length();
+
+            byte encryptionType;
+            switch(encryption) {
+                case AES256CBC:
+                    encryptionType = 1;
+                    break;
+                case NONE:
+                default:
+                    encryptionType = 0;
+                    break;
+            }
+
+            IvParameterSpec iv = generateIv();
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DataOutputStream daos = new DataOutputStream(baos);
+
+            daos.writeInt(serialNumber);
+            daos.writeByte(flightIdLength);
+            daos.writeBytes(flightId);
+            daos.writeByte(encryptionType);
+            daos.write(iv.getIV());
+
+            ByteArrayOutputStream payloadBaos = new ByteArrayOutputStream();
+            for (Message message : messageList) {
+                MessageType messageType;
+                if (message instanceof Telemetry.Position) {
+                    messageType = MessageType.POSITION;
+                } else if (message instanceof Telemetry.Speed) {
+                    messageType = MessageType.SPEED;
+                } else if (message instanceof Telemetry.Attitude) {
+                    messageType = MessageType.ATTITUDE;
+                } else if (message instanceof Telemetry.Barometer) {
+                    messageType = MessageType.BAROMETER;
+                } else {
+                    messageType = null;
+                }
+
+                payloadBaos.write(buildMessage(messageType, message));
+            }
+
+            byte[] encryptedPayload = encryption == Encryption.AES256CBC ? encrypt(key, iv, payloadBaos.toByteArray()) : payloadBaos.toByteArray();
+            payloadBaos.close();
+
+            daos.write(encryptedPayload);
+            daos.close();
+
+            byte[] result = baos.toByteArray();
+            baos.close();
+
+            return result;
+        }
+
+        private byte[] buildMessage(MessageType messageType, Message message) throws IOException {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DataOutputStream daos = new DataOutputStream(baos);
+            daos.writeShort(messageType.value);
+            daos.writeShort(message.getSerializedSize());
+            daos.write(message.toByteArray());
+
+            daos.close();
+
+            byte[] result = baos.toByteArray();
+            baos.close();
+
+            return result;
+        }
+
+        //Encrypts a SecretMessage with the given key and iv
+        private byte[] encrypt(int[] key, IvParameterSpec iv, byte[] payload) throws InvalidAlgorithmParameterException, InvalidKeyException,
+                IOException, NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException, IllegalBlockSizeException {
+
+            SecretKey secretKey = new SecretKeySpec(integersToBytes(key), "AES");
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
+            return cipher.doFinal(payload);
+        }
+
+        //Generates a random IV to be used for the AES encryption
+        private IvParameterSpec generateIv() {
+            int blockSize = 16;
+            byte[] iv = new byte[blockSize];
+            new SecureRandom().nextBytes(iv);
+            return new IvParameterSpec(iv);
+        }
+
+        //Converts an array of 8 bit integers to a byte array
+        private byte[] integersToBytes(int[] values) throws IOException {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DataOutputStream dos = new DataOutputStream(baos);
+            for (int value : values) {
+                dos.writeByte(value); //Only writes the least significant byte of the int
+            }
+            return baos.toByteArray();
+        }
     }
 }
