@@ -8,9 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.AnalyticsTracker;
 import com.airmap.airmapsdk.Auth;
 import com.airmap.airmapsdk.models.Coordinate;
@@ -24,6 +24,7 @@ import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
+import com.airmap.airmapsdk.models.welcome.AirMapWelcome;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapTrafficListener;
 import com.airmap.airmapsdk.networking.callbacks.LoginListener;
@@ -33,7 +34,6 @@ import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
 import com.airmap.airmapsdk.ui.activities.LoginActivity;
 import com.airmap.airmapsdk.ui.activities.PilotProfileActivity;
 import com.airmap.airmapsdk.ui.activities.ProfileActivity;
-import com.airmap.airmapsdk.util.PreferenceUtils;
 import com.airmap.airmapsdk.util.Utils;
 
 import org.jose4j.jwt.JwtClaims;
@@ -47,21 +47,11 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.UnrecoverableEntryException;
-import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.crypto.NoSuchPaddingException;
-
-import devliving.online.securedpreferencestore.SecuredPreferenceStore;
 import okhttp3.Call;
 
 /**
@@ -1142,6 +1132,11 @@ public class AirMap {
     public static Call getAirspace(@NonNull List<String> airspaceIds,
                                    @Nullable AirMapCallback<List<AirMapAirspace>> listener) {
         return AirspaceService.getAirspace(airspaceIds, listener);
+    }
+
+    //TODO: Remove context. only necessary since we're reading from assets to mock
+    public static Call getWelcomeSummary(@NonNull Context context, @NonNull Coordinate coordinate, @Nullable AirMapCallback<AirMapWelcome> listener) {
+        return WelcomeService.getWelcomeSummary(context, coordinate, listener);
     }
 
     /**

@@ -1,0 +1,28 @@
+{
+  "status": "success",
+  "data": {
+    "results": [
+      {
+        "id": "abcd001",
+        "jurisdiction_name": "United States of America",
+        "jurisdiction_type": "country",
+        "text": "Your drone must be registered with the FAA at https://registermyuas.faa.gov/.  You can fly under Part 107, bla bla bla",
+        "url" : "http://www.faa.gov/beforeyoufly.pdf",
+        "last_updated": "2016-06-21T12:52:45Z"
+      }, {
+        "id": "abcd002",
+        "jurisdiction_name": "California",
+        "jurisdiction_type": "state",
+        "text" : "California law prohibits x, y and z if your drone has a camera.",
+        "last_updated": "2016-06-21T12:52:45Z"
+      }, {
+        "id": "abcd003",
+        "jurisdiction_name": "City of Santa Monica",
+        "jurisdiction_type": "city",
+        "summary": "Flying at the beach or in parks is prohibited in Santa Monica.",
+        "text": "Flying at the beach or in parks is prohibited in Santa Monica.  This rule was passed in the 1980s to prevent model aircraft from flying in these areas... bla bla bla.",
+        "last_updated": "2016-06-21T12:52:45Z"
+      }
+    ]
+  }
+}
