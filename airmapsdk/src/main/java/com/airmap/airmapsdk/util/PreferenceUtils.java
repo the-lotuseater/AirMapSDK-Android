@@ -19,6 +19,7 @@ import java.util.Set;
 import javax.crypto.BadPaddingException;
 import javax.crypto.NoSuchPaddingException;
 
+import devliving.online.securedpreferencestore.RecoveryHandler;
 import devliving.online.securedpreferencestore.SecuredPreferenceStore;
 
 /**
@@ -33,10 +34,14 @@ public class PreferenceUtils {
         try {
             return SecuredPreferenceStore.getSharedInstance(context);
         } catch (IOException | CertificateException | InvalidKeyException | NoSuchAlgorithmException | InvalidAlgorithmParameterException
-                | UnrecoverableEntryException | NoSuchProviderException | NoSuchPaddingException | KeyStoreException e) {
+                | UnrecoverableEntryException | NoSuchProviderException | NoSuchPaddingException | KeyStoreException | RuntimeException e) {
             e.printStackTrace();
 
             throw new SecuredPreferenceException(e.getMessage());
         }
+    }
+
+    public static void setRecoveryHandler(RecoveryHandler recoveryHandler) {
+        SecuredPreferenceStore.setRecoveryHandler(recoveryHandler);
     }
 }
