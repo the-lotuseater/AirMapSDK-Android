@@ -17,6 +17,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -184,12 +185,17 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     private void onBindWelcomeHolder(VHWelcome holder) {
         holder.cityTextView.setText("Welcome to " + welcomeCity);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO:
+                Intent intent = new Intent()
+                context.startActivity(intent);
             }
-        });
+        };
+
+        holder.moreButton.setOnClickListener(onClickListener);
+
+        holder.itemView.setOnClickListener(onClickListener);
     }
 
     private void onBindHeaderViewHolder(VHHeader holder, AirMapStatusAdvisory advisory) {
@@ -368,12 +374,14 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     public class VHWelcome extends RecyclerView.ViewHolder {
         TextView cityTextView;
         TextView descriptionTextView;
+        Button moreButton;
 
         public VHWelcome(View itemView) {
             super(itemView);
 
             cityTextView = (TextView) itemView.findViewById(R.id.city_text_view);
             descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
+            moreButton = (Button) itemView.findViewById(R.id.more_button);
         }
     }
 
