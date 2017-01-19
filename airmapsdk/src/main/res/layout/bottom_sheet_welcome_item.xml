@@ -24,12 +24,14 @@
             android:textColor="@color/colorTextAndIcons"
             android:textSize="20sp"/>
 
+
+
         <LinearLayout android:id="@+id/weather_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:gravity="center"
-            android:orientation="horizontal" />
+            android:orientation="horizontal" /> <!-- Don't delete. Need for app -->
 
     </LinearLayout>
 

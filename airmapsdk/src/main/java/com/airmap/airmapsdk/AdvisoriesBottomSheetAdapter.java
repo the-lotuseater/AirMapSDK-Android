@@ -1,9 +1,5 @@
 package com.airmap.airmapsdk;
 
-import com.airmap.airmapsdk.models.welcome.AirMapWelcome;
-import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
-import com.airmap.airmapsdk.ui.activities.WelcomeActivity;
-import com.airmap.airmapsdk.util.Constants;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -27,6 +23,9 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
+import com.airmap.airmapsdk.models.welcome.AirMapWelcome;
+import com.airmap.airmapsdk.ui.activities.WelcomeActivity;
+import com.airmap.airmapsdk.util.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,7 +60,6 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     private AirMapWelcome welcomeData;
     private String welcomeCity;
 
-    private View weatherView;
 
     public AdvisoriesBottomSheetAdapter(Context context, Map<String, List<AirMapStatusAdvisory>> data, Map<String, String> organizations) {
         this.context = context;
@@ -147,16 +145,6 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
         notifyDataSetChanged();
     }
 
-    public void setWeather(View weather) {
-        weatherView = weather;
-
-        if (weatherView != null && weatherView.getParent() != null) {
-            ((ViewGroup) weatherView.getParent()).removeView(weatherView);
-        }
-
-        notifyDataSetChanged();
-    }
-
     private boolean isWelcomeEnabled() {
         return !TextUtils.isEmpty(welcomeCity);
     }
@@ -204,10 +192,6 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
 
         final String cityText = "Welcome to " + welcomeCity;
         holder.cityTextView.setText(cityText);
-
-        if (holder.weatherContainer.getChildCount() == 0 && weatherView != null) {
-            holder.weatherContainer.addView(weatherView);
-        }
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -401,7 +385,6 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
         TextView cityTextView;
         TextView descriptionTextView;
         Button moreButton;
-        ViewGroup weatherContainer;
 
         public VHWelcome(View itemView) {
             super(itemView);
@@ -409,7 +392,6 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
             cityTextView = (TextView) itemView.findViewById(R.id.city_text_view);
             descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
             moreButton = (Button) itemView.findViewById(R.id.more_button);
-            weatherContainer = (ViewGroup) itemView.findViewById(R.id.weather_container);
         }
     }
 
