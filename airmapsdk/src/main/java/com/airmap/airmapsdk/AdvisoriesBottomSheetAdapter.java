@@ -1,5 +1,9 @@
 package com.airmap.airmapsdk;
 
+import com.airmap.airmapsdk.models.welcome.AirMapWelcome;
+import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
+import com.airmap.airmapsdk.ui.activities.WelcomeActivity;
+import com.airmap.airmapsdk.util.Constants;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -53,8 +57,10 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     private Map<String, String> organizationsMap;
     private Context context;
 
-    // welcome data
+    //TODO: welcome data
     private String welcomeCity;
+
+    private View weatherView;
 
     public AdvisoriesBottomSheetAdapter(Context context, Map<String, List<AirMapStatusAdvisory>> data, Map<String, String> organizations) {
         this.context = context;
@@ -139,6 +145,16 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
         notifyDataSetChanged();
     }
 
+    public void setWeather(View weather) {
+        weatherView = weather;
+
+        if (weatherView != null && weatherView.getParent() != null) {
+            ((ViewGroup) weatherView.getParent()).removeView(weatherView);
+        }
+
+        notifyDataSetChanged();
+    }
+
     private boolean isWelcomeEnabled() {
         return !TextUtils.isEmpty(welcomeCity);
     }
@@ -183,12 +199,51 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     }
 
     private void onBindWelcomeHolder(VHWelcome holder) {
-        holder.cityTextView.setText("Welcome to " + welcomeCity);
+
+        final String cityText = "Welcome to " + welcomeCity;
+        holder.cityTextView.setText(cityText);
+
+        if (holder.weatherContainer.getChildCount() == 0 && weatherView != null) {
+            holder.weatherContainer.addView(weatherView);
+        }
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent()
+                //TODO: delete this sample stuff
+                AirMapWelcomeResult cityResult = new AirMapWelcomeResult();
+                cityResult.setId("sm");
+                cityResult.setJurisdictionName("City of Santa Monica");
+                cityResult.setJurisdictionType("city");
+                cityResult.setSummary("Heads Up! The City of Santa Monica has rules that relate to the use of drones in the beach and park areas...");
+                cityResult.setText(context.getString(R.string.example_city));
+
+                AirMapWelcomeResult stateResult = new AirMapWelcomeResult();
+                stateResult.setId("ca");
+                stateResult.setJurisdictionName("State Rules");
+                stateResult.setJurisdictionType("state");
+                stateResult.setSummary("Heads Up! The state of California has rules that relate to the use of drones in the beach and park areas...");
+                stateResult.setText(context.getString(R.string.example_city));
+
+                AirMapWelcomeResult federalResult = new AirMapWelcomeResult();
+                federalResult.setId("fed");
+                federalResult.setJurisdictionName("Federal Rules");
+                federalResult.setJurisdictionType("federal");
+                federalResult.setSummary("Heads Up! The United States has rules that relate to the use of drones in the beach and park areas...");
+                federalResult.setText(context.getString(R.string.example_city));
+
+                List<AirMapWelcomeResult> welcomeResults = new ArrayList<>();
+                welcomeResults.add(cityResult);
+                welcomeResults.add(stateResult);
+                welcomeResults.add(federalResult);
+
+                AirMapWelcome welcome = new AirMapWelcome();
+                welcome.setResults(welcomeResults);
+                //TODO: end of sample stuff
+
+                Intent intent = new Intent(context, WelcomeActivity.class);
+                intent.putExtra(Constants.CITY_EXTRA, cityText);
+                intent.putExtra(Constants.WELCOME_EXTRA, welcome);
                 context.startActivity(intent);
             }
         };
@@ -375,6 +430,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
         TextView cityTextView;
         TextView descriptionTextView;
         Button moreButton;
+        ViewGroup weatherContainer;
 
         public VHWelcome(View itemView) {
             super(itemView);
@@ -382,6 +438,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
             cityTextView = (TextView) itemView.findViewById(R.id.city_text_view);
             descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
             moreButton = (Button) itemView.findViewById(R.id.more_button);
+            weatherContainer = (ViewGroup) itemView.findViewById(R.id.weather_container);
         }
     }
 

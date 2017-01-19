@@ -77,4 +77,8 @@
     <string name="unknown_size">Unknown Size</string>
     <string name="airmap_flight_area_overlap_permit_conflict">Flight area cannot overlap with conflicting permit requirements</string>
     <string name="accepts_digital_notice">Accepts Digital Notice</string>
+
+    <string name="example_city">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ut dapibus lacus. Morbi luctus pellentesque justo consequat porta. Aliquam tristique tempor faucibus. Nunc orci nunc, vulputate eget ligula vel, molestie viverra mi. Aenean a auctor tellus. Nullam rutrum consectetur sodales. Donec vel fringilla purus.
+
+</string>
 </resources>

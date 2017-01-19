@@ -5,6 +5,7 @@ import com.airmap.airmapsdk.models.AirMapBaseModel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  * Copyright © 2016 AirMap, Inc. All rights reserved.
  */
 
-public class AirMapWelcome implements AirMapBaseModel {
+public class AirMapWelcome implements Serializable, AirMapBaseModel {
 
     private List<AirMapWelcomeResult> results;
 

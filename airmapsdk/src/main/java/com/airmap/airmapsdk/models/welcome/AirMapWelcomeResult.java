@@ -4,6 +4,7 @@ import com.airmap.airmapsdk.models.AirMapBaseModel;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import static com.airmap.airmapsdk.util.Utils.getDateFromIso8601String;
@@ -13,7 +14,7 @@ import static com.airmap.airmapsdk.util.Utils.getDateFromIso8601String;
  * Copyright © 2016 AirMap, Inc. All rights reserved.
  */
 
-public class AirMapWelcomeResult implements AirMapBaseModel {
+public class AirMapWelcomeResult implements Serializable, AirMapBaseModel {
 
     private String id;
     private String jurisdictionName;
