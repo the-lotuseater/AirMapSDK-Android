@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +65,9 @@ public class WelcomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         final AirMapWelcomeResult welcomeResult = getItem(position);
 
         holder.nameTextView.setText(welcomeResult.getJurisdictionName());
-        holder.descriptionTextView.setText(welcomeResult.getSummary());
+
+        String description = TextUtils.isEmpty(welcomeResult.getSummary()) ? welcomeResult.getText() : welcomeResult.getSummary();
+        holder.descriptionTextView.setText(description);
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
