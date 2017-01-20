@@ -243,10 +243,13 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                     polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                 }
 
-                for (List<LatLng> polygonPoints : mListener.getPathBuffers()) {
-                    PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(polygonPoints);
-                    map.addPolygon(polygonOptions); //Add polygon first, then line for proper z ordering
+                if (mListener != null && mListener.getPathBuffers() != null) {
+                    for (List<LatLng> polygonPoints : mListener.getPathBuffers()) {
+                        PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(polygonPoints);
+                        map.addPolygon(polygonOptions); //Add polygon first, then line for proper z ordering
+                    }
                 }
+
                 multiPoint = map.addPolyline(polylineOptions);
             } else {
                 List<LatLng> circlePoints = mListener.getAnnotationsFactory().polygonCircleForCoordinate(new LatLng(flight.getCoordinate().getLatitude(), flight.getCoordinate().getLongitude()), flight.getBuffer());
