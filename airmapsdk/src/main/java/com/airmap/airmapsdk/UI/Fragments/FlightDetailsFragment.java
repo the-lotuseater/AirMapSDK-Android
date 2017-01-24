@@ -829,9 +829,11 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 for (Coordinate coordinate : ((AirMapPath) flight.getGeometry()).getCoordinates()) {
                     polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                 }
-                for (List<LatLng> polygonPoints : mListener.getPathBuffers()) {
-                    PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(polygonPoints);
-                    flightPolygon = map.addPolygon(polygonOptions); //Add polygon first, then line for proper z ordering
+                if (mListener.getPathBuffers() != null) {
+                    for (List<LatLng> polygonPoints : mListener.getPathBuffers()) {
+                        PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(polygonPoints);
+                        flightPolygon = map.addPolygon(polygonOptions); //Add polygon first, then line for proper z ordering
+                    }
                 }
                 flightPolyline = map.addPolyline(polylineOptions);
             } else {

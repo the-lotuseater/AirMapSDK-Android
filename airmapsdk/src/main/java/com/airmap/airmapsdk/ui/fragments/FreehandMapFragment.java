@@ -367,7 +367,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void onNextButtonClick() {
-        if (mListener != null) {
+        if (mListener != null && tabLayout != null) {
             mListener.setPathBufferPoints(null); //reset buffer polygon
             if (tabLayout.getSelectedTabPosition() == INDEX_OF_CIRCLE_TAB && circleContainer.isValid()) { //Circle
                 Coordinate center = new Coordinate(circleContainer.center);
