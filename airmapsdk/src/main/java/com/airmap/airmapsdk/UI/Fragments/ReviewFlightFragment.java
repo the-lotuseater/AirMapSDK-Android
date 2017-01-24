@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.airmap.airmapsdk.R.id.phone;
 import static com.airmap.airmapsdk.util.Utils.dpToPixels;
 
 /**
@@ -162,7 +163,10 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
         }
 
         if (mListener.getFlight().shouldNotify()) {
-            String phone = mListener.getPilot().getPhone();
+            String phone = null;
+            if (mListener.getPilot() != null) {
+                phone = mListener.getPilot().getPhone();
+            }
             if (phone == null || phone.isEmpty() || !mListener.getPilot().getVerificationStatus().isPhone()) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
