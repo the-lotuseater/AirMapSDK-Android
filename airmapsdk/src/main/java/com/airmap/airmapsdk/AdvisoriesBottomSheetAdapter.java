@@ -1,5 +1,6 @@
 package com.airmap.airmapsdk;
 
+import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -145,7 +146,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
         notifyDataSetChanged();
     }
 
-    private boolean isWelcomeEnabled() {
+    public boolean isWelcomeEnabled() {
         return !TextUtils.isEmpty(welcomeCity);
     }
 
@@ -190,8 +191,10 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
 
     private void onBindWelcomeHolder(VHWelcome holder) {
 
-        final String cityText = "Welcome to " + welcomeCity;
+        final String cityText = welcomeCity;
         holder.cityTextView.setText(cityText);
+
+        holder.rulesContainer.setVisibility(welcomeData != null && !welcomeData.isEmpty() ? View.VISIBLE : View.GONE);
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -385,6 +388,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
         TextView cityTextView;
         TextView descriptionTextView;
         Button moreButton;
+        View rulesContainer;
 
         public VHWelcome(View itemView) {
             super(itemView);
@@ -392,6 +396,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
             cityTextView = (TextView) itemView.findViewById(R.id.city_text_view);
             descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
             moreButton = (Button) itemView.findViewById(R.id.more_button);
+            rulesContainer = itemView.findViewById(R.id.rules_container);
         }
     }
 
