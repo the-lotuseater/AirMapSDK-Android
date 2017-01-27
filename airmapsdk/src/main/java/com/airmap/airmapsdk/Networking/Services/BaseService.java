@@ -78,5 +78,5 @@ class BaseService {
     protected static final int telemetryPort = 8000;
 
     //Welcome
-    protected static final String welcomeBaseUrl = baseUrl + "rules/v1/locale/";
+    protected static final String welcomeBaseUrl = baseUrl + "rules/stage/locale/";
 }

@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -56,8 +57,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     private Map<String, String> organizationsMap;
     private Context context;
 
-    //TODO: welcome data
-    private AirMapWelcome welcomeData;
+    private ArrayList<AirMapWelcomeResult> welcomeData;
     private String welcomeCity;
 
 
@@ -138,7 +138,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
         notifyDataSetChanged();
     }
 
-    public void setWelcomeData(String city, AirMapWelcome data) {
+    public void setWelcomeData(String city, ArrayList<AirMapWelcomeResult> data) {
         welcomeCity = city;
         welcomeData = data;
 

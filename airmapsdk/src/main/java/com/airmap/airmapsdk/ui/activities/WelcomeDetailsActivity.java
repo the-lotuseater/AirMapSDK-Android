@@ -1,6 +1,7 @@
 package com.airmap.airmapsdk.ui.activities;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -45,18 +46,25 @@ public class WelcomeDetailsActivity extends AppCompatActivity {
 
         summaryTextView.setText(welcomeResult.getText());
 
-        if (!TextUtils.isEmpty(welcomeResult.getUrl())) {
-            linkTextView.setText(welcomeResult.getUrl());
-        } else {
+        if (TextUtils.isEmpty(welcomeResult.getUrl())) {
             linkTextView.setVisibility(View.GONE);
+        } else {
+            linkTextView.setText(welcomeResult.getUrl());
         }
 
-        moreButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO:
-            }
-        });
+        if (TextUtils.isEmpty(welcomeResult.getUrl())) {
+            moreButton.setVisibility(View.GONE);
+        } else {
+            moreButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(WelcomeDetailsActivity.this, WebActivity.class);
+                    intent.putExtra(Intent.EXTRA_TITLE, welcomeResult.getJurisdictionName());
+                    intent.putExtra(Constants.URL_EXTRA, welcomeResult.getUrl());
+                    startActivity(intent);
+                }
+            });
+        }
     }
 
     @Override

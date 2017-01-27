@@ -9,8 +9,11 @@ import android.view.MenuItem;
 
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.welcome.AirMapWelcome;
+import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.airmap.airmapsdk.ui.adapters.WelcomeAdapter;
 import com.airmap.airmapsdk.util.Constants;
+
+import java.util.List;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -19,13 +22,13 @@ public class WelcomeActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private WelcomeAdapter adapter;
 
-    private AirMapWelcome welcome;
+    private List<AirMapWelcomeResult> welcome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        welcome = (AirMapWelcome) getIntent().getSerializableExtra(Constants.WELCOME_EXTRA);
+        welcome = (List<AirMapWelcomeResult>) getIntent().getSerializableExtra(Constants.WELCOME_EXTRA);
 
         setContentView(R.layout.activity_welcome);
 
@@ -37,7 +40,7 @@ public class WelcomeActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         recyclerView = (RecyclerView) findViewById(R.id.welcome_results_recycler_view);
-        adapter = new WelcomeAdapter(this, welcome.getResults());
+        adapter = new WelcomeAdapter(this, welcome);
         recyclerView.setAdapter(adapter);
     }
 
