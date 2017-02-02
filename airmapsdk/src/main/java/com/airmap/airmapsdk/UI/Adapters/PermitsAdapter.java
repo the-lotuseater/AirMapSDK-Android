@@ -70,8 +70,7 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
 
                 @Override
                 public void onError(AirMapException e) {
-                    e.printStackTrace();
-                    AirMapLog.e("PermitsAdapter", e.getMessage());
+                    AirMapLog.e("PermitsAdapter", e.getMessage(), e);
                 }
             });
         }

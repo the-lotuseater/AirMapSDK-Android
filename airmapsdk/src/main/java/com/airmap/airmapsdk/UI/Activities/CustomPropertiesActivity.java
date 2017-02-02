@@ -108,9 +108,9 @@ public class CustomPropertiesActivity extends AppCompatActivity {
             validityTextView.setText(R.string.single_use);
         } else if (availablePermit.getValidFor() > 0) {
             if (availablePermit.getValidFor() >= 60) {
-                validityTextView.setText(String.format(Locale.US, "%d hours", availablePermit.getValidFor() / 60));
+                validityTextView.setText(getString(R.string.validity_hours, availablePermit.getValidFor() / 60));
             } else {
-                validityTextView.setText(String.format(Locale.US, "%d minutes", availablePermit.getValidFor()));
+                validityTextView.setText(getString(R.string.validity_minutes, availablePermit.getValidFor()));
             }
         } else if (availablePermit.getValidUntil() != null) {
             SimpleDateFormat format = new SimpleDateFormat("M/d/yy h:mm a", Locale.US);
@@ -129,7 +129,7 @@ public class CustomPropertiesActivity extends AppCompatActivity {
                     setResult(Activity.RESULT_OK, data);
                     finish();
                 } else {
-                    Toast.makeText(CustomPropertiesActivity.this, "All required fields must be completed to proceed.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CustomPropertiesActivity.this, R.string.required_field_must_be_complete, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -192,7 +192,7 @@ public class CustomPropertiesActivity extends AppCompatActivity {
             TextInputEditText editText = pair.second;
             if (property.isRequired() && editText.getText().length() == 0) {
                 toggle = false;
-                editText.setError("This is a required field");
+                editText.setError(getString(R.string.required_field));
             }
         }
         return toggle;

@@ -2,9 +2,11 @@
 <android.support.design.widget.CoordinatorLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        tools:theme="@style/Theme.AppCompat">
 
     <android.support.design.widget.AppBarLayout
             android:layout_height="wrap_content"
@@ -25,7 +27,8 @@
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:background="@color/colorPrimary">
 
         <ScrollView
                 android:layout_width="match_parent"
@@ -54,7 +57,8 @@
                         android:id="@+id/description_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"/>
+                        android:layout_marginBottom="8dp"
+                        tools:text="Lorem Ipsum Dolor Sit Amet"/>
 
                 <LinearLayout
                         android:layout_width="match_parent"
@@ -68,49 +72,50 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/font_title"
                             android:textSize="18sp"
-                            android:text="Validity: "/>
+                            android:text="@string/validity_label"/>
 
                     <TextView
                             android:id="@+id/validity"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="18sp"
-                            android:textColor="@color/font_title" />
+                            android:textColor="@color/font_title"
+                            tools:text="1 hour"/>
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp" >
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/font_title"
-                        android:textSize="18sp"
-                        android:text="Price: "/>
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/font_title"
+                            android:textSize="18sp"
+                            android:text="@string/price_label"/>
 
                     <TextView
-                        android:id="@+id/price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/font_title"
-                        android:textSize="18sp"
-                        android:text="Free"/>
+                            android:id="@+id/price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/font_title"
+                            android:textSize="18sp"
+                            tools:text="Free"/>
 
                 </LinearLayout>
 
                 <!--<TextView-->
-                    <!--android:id="@+id/fields_label"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_marginTop="8dp"-->
-                    <!--android:textColor="@color/font_title"-->
-                    <!--android:textSize="18sp"-->
-                    <!--android:text="Fields (* required)"/>-->
+                <!--android:id="@+id/fields_label"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:textColor="@color/font_title"-->
+                <!--android:textSize="18sp"-->
+                <!--android:text="Fields (* required)"/>-->
 
                 <LinearLayout
                         android:id="@+id/custom_properties_container"
@@ -132,18 +137,18 @@
                 android:layout_alignParentBottom="true"/>
 
         <FrameLayout
-            android:id="@+id/progress_bar_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#b8000000">
+                android:id="@+id/progress_bar_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#b8000000">
 
             <ProgressBar
-                android:id="@+id/progress_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:indeterminate="true"
-                style="@style/Base.Widget.AppCompat.ProgressBar"/>
+                    android:id="@+id/progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:indeterminate="true"
+                    style="@style/Base.Widget.AppCompat.ProgressBar"/>
 
         </FrameLayout>
 

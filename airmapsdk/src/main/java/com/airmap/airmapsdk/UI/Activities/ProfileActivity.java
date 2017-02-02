@@ -102,8 +102,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Snackbar.make(toolbar, "Error getting profile", Snackbar.LENGTH_LONG)
-                                    .setAction("Retry", new View.OnClickListener() {
+                            Snackbar.make(toolbar, R.string.error_getting_profile, Snackbar.LENGTH_LONG)
+                                    .setAction(R.string.retry, new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
                                             getPilot(pilotId);
@@ -112,8 +112,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                                     .show();
                         }
                     });
-                    Log.e("ProfileFragment", e.getMessage());
-                    e.printStackTrace();
+                    Log.e("ProfileFragment", e.getMessage(), e);
                 }
             }
         });
@@ -189,7 +188,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             }
         };
         final TextInputLayout phoneLayout = new TextInputLayout(this); //The phone EditText
-        phoneLayout.setHint("Phone Number");
+        phoneLayout.setHint(getString(R.string.phone_number));
         TextInputEditText editText = new TextInputEditText(this);
         editText.setInputType(EditorInfo.TYPE_CLASS_PHONE);
         editText.setMaxLines(1);
@@ -199,10 +198,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         phoneLayout.setPadding(dpAsPixels, dpAsPixels, dpAsPixels, 0);
         final AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(R.string.airmap_phone_number_disclaimer)
-                .setTitle("Phone Number")
+                .setTitle(R.string.phone_number)
                 .setView(phoneLayout)
-                .setNegativeButton("Cancel", dismissOnClickListener)
-                .setPositiveButton("Submit", new DialogInterface.OnClickListener() { //Display dialog to enter the verification token
+                .setNegativeButton(R.string.cancel, dismissOnClickListener)
+                .setPositiveButton(R.string.submit, new DialogInterface.OnClickListener() { //Display dialog to enter the verification token
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Analytics.logEvent(Analytics.Page.PHONE_NUMBER_PHONE_VERIFICATION, Analytics.Action.tap, Analytics.Label.SAVE);
@@ -279,14 +278,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             public void run() {
                 final AlertDialog dialog = new AlertDialog.Builder(ProfileActivity.this)
                         .setView(verifyLayout)
-                        .setMessage("Enter the verification token that was sent to your phone number")
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        .setMessage(R.string.enter_verification_token)
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int i) {
                                 dialog.dismiss();
                             }
                         })
-                        .setPositiveButton("Verify", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.verify, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(final DialogInterface dialog, int which) {
                                 onSubmitVerificationToken(verifyLayout);
@@ -317,14 +316,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             public void onSuccess(Void response) {
                 Analytics.logEvent(Analytics.Page.SMS_CODE_PHONE_VERIFICATION, Analytics.Action.save, Analytics.Label.SUCCESS);
 
-                toast("Successfully verified new number");
+                toast(getString(R.string.successfully_verified_number));
             }
 
             @Override
             public void onError(AirMapException e) {
                 Analytics.logEvent(Analytics.Page.SMS_CODE_PHONE_VERIFICATION, Analytics.Action.save, Analytics.Label.ERROR, e.getErrorCode());
 
-                toast("Error verifying number");
+                toast(getString(R.string.error_verifying_number));
                 e.printStackTrace();
             }
         });
@@ -392,14 +391,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onSuccess(AirMapPilot response) {
                 Analytics.logEvent(Analytics.Page.PILOT_PROFILE, Analytics.Action.save, Analytics.Label.SUCCESS, 200);
-                toast("Successfully updated");
+                toast(getString(R.string.successfully_updated));
                 finish();
             }
 
             @Override
             public void onError(AirMapException e) {
                 Analytics.logEvent(Analytics.Page.PILOT_PROFILE, Analytics.Action.save, Analytics.Label.ERROR, e.getErrorCode());
-                toast("Error updating profile");
+                toast(getString(R.string.error_updating_profile));
             }
         });
     }

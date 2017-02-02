@@ -1,9 +1,7 @@
 package com.airmap.airmapsdk.ui.adapters;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,12 +12,12 @@ import android.widget.TextView;
 
 import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.util.Utils;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.status.AirMapStatusPermits;
 import com.airmap.airmapsdk.ui.activities.CustomPropertiesActivity;
 import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -91,19 +89,19 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         // add Existing Permits header and section
         if (!existingPermits.isEmpty()) {
-            permitsAndHeadersList.add(new Header("Existing Permits"));
+            permitsAndHeadersList.add(new Header(activity.getString(R.string.existing_permits)));
             permitsAndHeadersList.addAll(existingPermits);
         }
 
         // add Other Available Permits
         if (!otherAvailablePermits.isEmpty()) {
-            permitsAndHeadersList.add(new Header("Available Permits"));
+            permitsAndHeadersList.add(new Header(activity.getString(R.string.available_permits)));
             permitsAndHeadersList.addAll(otherAvailablePermits);
         }
 
         // add Non-Available Permits header and section
         if (!nonAvailablePermits.isEmpty()) {
-            permitsAndHeadersList.add(new Header("Unavailable Permits"));
+            permitsAndHeadersList.add(new Header(activity.getString(R.string.unavailable_permits)));
             permitsAndHeadersList.addAll(nonAvailablePermits);
         }
     }
