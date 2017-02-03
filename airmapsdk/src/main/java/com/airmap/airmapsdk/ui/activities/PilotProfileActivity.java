@@ -133,6 +133,7 @@ public class PilotProfileActivity extends AppCompatActivity {
             e.printStackTrace(); //Probably some NPE
             aircraftCounterTextView.setText("0");
         }
+
         try {
             flightCounterTextView.setText(String.valueOf(profile.getStats().getFlightStats().getTotal()));
         } catch (Exception e) {
