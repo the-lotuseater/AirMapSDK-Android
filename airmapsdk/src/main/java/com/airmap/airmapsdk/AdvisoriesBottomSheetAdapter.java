@@ -190,25 +190,23 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     }
 
     private void onBindWelcomeHolder(VHWelcome holder) {
-
-        final String cityText = welcomeCity;
-        holder.cityTextView.setText(cityText);
-
-        holder.rulesContainer.setVisibility(welcomeData != null && !welcomeData.isEmpty() ? View.VISIBLE : View.GONE);
-
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, WelcomeActivity.class);
-                intent.putExtra(Constants.CITY_EXTRA, cityText);
+                intent.putExtra(Constants.CITY_EXTRA, welcomeCity);
                 intent.putExtra(Constants.WELCOME_EXTRA, welcomeData);
                 context.startActivity(intent);
             }
         };
 
-        holder.moreButton.setOnClickListener(onClickListener);
+        boolean hasWelcomeData = welcomeData != null && !welcomeData.isEmpty();
 
-        holder.itemView.setOnClickListener(onClickListener);
+        holder.cityTextView.setText(welcomeCity);
+        holder.rulesContainer.setVisibility(hasWelcomeData ? View.VISIBLE : View.GONE);
+        holder.moreButton.setOnClickListener(hasWelcomeData ? onClickListener : null);
+        holder.itemView.setOnClickListener(hasWelcomeData ? onClickListener : null);
+        holder.itemView.setClickable(hasWelcomeData);
     }
 
     private void onBindHeaderViewHolder(VHHeader holder, AirMapStatusAdvisory advisory) {
