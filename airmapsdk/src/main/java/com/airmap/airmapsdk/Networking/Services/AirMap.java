@@ -24,6 +24,8 @@ import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
+import com.airmap.airmapsdk.models.welcome.AirMapWelcome;
+import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapTrafficListener;
 import com.airmap.airmapsdk.networking.callbacks.LoginListener;
@@ -1208,6 +1210,11 @@ public class AirMap {
     public static Call getAirspace(@NonNull List<String> airspaceIds,
                                    @Nullable AirMapCallback<List<AirMapAirspace>> listener) {
         return AirspaceService.getAirspace(airspaceIds, listener);
+    }
+
+    //TODO: Remove context. only necessary since we're reading from assets to mock
+    public static Call getWelcomeSummary(@NonNull Coordinate coordinate, @Nullable AirMapCallback<List<AirMapWelcomeResult>> listener) {
+        return WelcomeService.getWelcomeSummary(coordinate, listener);
     }
 
     /**

@@ -87,5 +87,18 @@
                 android:launchMode="singleTop"
                 android:theme="@style/AppTheme.NoActionBar" />
 
+        <activity
+            android:name=".ui.activities.WelcomeActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".ui.activities.WelcomeDetailsActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar" />
+
     </application>
+
 </manifest>
