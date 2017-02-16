@@ -5,7 +5,7 @@
 Create Flights, Send Telemetry Data, Get Realtime Traffic Alerts.
 
 ##Requirements
-* Minimum Andorid SDK Level 15 or higher
+* Minimum Andorid SDK Level 18 or higher
 
 ### Sign up for an [AirMap Developer Account.](https://dashboard.airmap.io/developer/)
 
@@ -21,20 +21,13 @@ Start by adding the Android SDK to your project:
 
 * Add 
 ```groovy
-compile('com.airmap.sdk:airmapsdk:1.1.0')
+compile('com.airmap.sdk:airmapsdk:1.0.6')
 ``` 
 
 to your module level `build.gradle` file
 
-* Add 
-```groovy
-maven { url "https://repo.eclipse.org/content/repositories/paho-snapshots/" }
-``` 
 
-to your application-level `build.gradle` file under the `allprojects.repositories` block
-
-* If you were previously using version `1.0.2` or older, note that this url has changed and will need to be changed in your project as well 
-	* There have also been some package name changes, so classes will need to be re-imported
+* If you were previously using version `1.0.2` or older, note that there have also been some package name changes, so some classes will need to be re-imported
 
 
 
