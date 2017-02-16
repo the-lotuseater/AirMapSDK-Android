@@ -21,6 +21,10 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+/**
+ * Activity for viewing another pilot's profile (not your own)
+ * @see com.airmap.airmapsdk.ui.activities.ProfileActivity
+ */
 public class PilotProfileActivity extends AppCompatActivity {
 
     public static final String ARG_PILOT_ID = "pilotId";

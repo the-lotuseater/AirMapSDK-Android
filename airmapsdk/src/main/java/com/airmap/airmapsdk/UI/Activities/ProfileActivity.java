@@ -33,6 +33,10 @@ import com.bumptech.glide.Glide;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Activity for viewing your own profile (not another person's profile)
+ * @see com.airmap.airmapsdk.ui.activities.PilotProfileActivity
+ */
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String ARG_PILOT_ID = "pilotId";
