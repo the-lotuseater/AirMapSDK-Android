@@ -26,6 +26,13 @@ compile('com.airmap.sdk:airmapsdk:1.0.6')
 
 to your module level `build.gradle` file
 
+* Add 
+```groovy
+maven { url "https://jitpack.io" }
+``` 
+
+to your application-level `build.gradle` file under the `allprojects.repositories` block
+
 
 * If you were previously using version `1.0.2` or older, note that there have also been some package name changes, so some classes will need to be re-imported
 
