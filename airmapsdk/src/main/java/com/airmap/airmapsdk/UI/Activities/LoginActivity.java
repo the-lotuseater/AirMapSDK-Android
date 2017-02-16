@@ -3,13 +3,16 @@ package com.airmap.airmapsdk.ui.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -19,6 +22,8 @@ import android.widget.Toast;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.Auth;
 import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.util.PreferenceUtils;
+import com.airmap.airmapsdk.util.SecuredPreferenceException;
 import com.airmap.airmapsdk.util.Utils;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
@@ -59,11 +64,17 @@ public class LoginActivity extends AppCompatActivity {
                 final boolean shouldOverrideUrlLoading = Auth.login(url, LoginActivity.this, new LoginCallback() {
                     @Override
                     public void onSuccess(Auth.AuthCredential authCredential) {
-                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString(Utils.REFRESH_TOKEN_KEY, authCredential.getRefreshToken());
+                        try {
+                            PreferenceUtils.getPreferences(LoginActivity.this).edit()
+                                    .putString(Utils.REFRESH_TOKEN_KEY, authCredential.getRefreshToken())
+                                    .apply();
+                        } catch (SecuredPreferenceException e) {
+                            e.printStackTrace();
+                        }
+
+                        clearCookies();
+
                         AirMap.getInstance().setAuthToken(authCredential.getAccessToken());
-                        editor.apply();
                         AirMap.getPilot(new AirMapCallback<AirMapPilot>() {
                             @Override
                             public void onSuccess(AirMapPilot response) {
@@ -139,6 +150,28 @@ public class LoginActivity extends AppCompatActivity {
         });
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl(Auth.getLoginUrl());
+    }
+
+    private void clearCookies() {
+        if (webView != null) {
+            webView.clearCache(true);
+            webView.clearHistory();
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            CookieManager.getInstance().removeAllCookies(null);
+            CookieManager.getInstance().flush();
+        } else {
+            CookieSyncManager cookieSyncManager = CookieSyncManager.createInstance(LoginActivity.this);
+            cookieSyncManager.startSync();
+
+            CookieManager cookieManager = CookieManager.getInstance();
+            cookieManager.removeAllCookie();
+            cookieManager.removeSessionCookie();
+
+            cookieSyncManager.stopSync();
+            cookieSyncManager.sync();
+        }
     }
 
     @Override

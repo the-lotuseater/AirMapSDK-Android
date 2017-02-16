@@ -2,11 +2,14 @@ package com.airmap.airmapsdk;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
 import com.airmap.airmapsdk.networking.callbacks.RefreshTokenListener;
 import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.util.PreferenceUtils;
+import com.airmap.airmapsdk.util.SecuredPreferenceException;
 import com.airmap.airmapsdk.util.Utils;
 
 import org.jose4j.jwt.JwtClaims;
@@ -133,8 +136,12 @@ public class Auth {
         if (authCredentials != null) {
             AirMap.getInstance().setAuthToken(authCredentials.getAccessToken());
             if (authCredentials.getRefreshToken() != null && !authCredentials.getRefreshToken().isEmpty()) {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                preferences.edit().putString(Utils.REFRESH_TOKEN_KEY, authCredentials.getRefreshToken()).apply();
+                try {
+                    PreferenceUtils.getPreferences(context).edit()
+                            .putString(Utils.REFRESH_TOKEN_KEY, authCredentials.getRefreshToken()).apply();
+                } catch (SecuredPreferenceException e) {
+                    AirMapLog.e("Auth", "Unable to save refresh token to secure prefs", e);
+                }
             }
             callback.onSuccess(authCredentials);
             return true;
@@ -149,11 +156,17 @@ public class Auth {
      */
     public static void refreshAccessToken(final Context context, final RefreshTokenListener listener) {
         AirMapLog.i("AuthServices", "Trying to refresh token");
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String refreshToken = preferences.getString(Utils.REFRESH_TOKEN_KEY, "");
+
+        String refreshToken = null;
+        try {
+            SharedPreferences preferences = PreferenceUtils.getPreferences(context);
+            refreshToken = preferences.getString(Utils.REFRESH_TOKEN_KEY, "");
+        } catch (SecuredPreferenceException e) {
+            AirMapLog.e("Auth", "Unable to get refresh token from secure prefs", e);
+        }
 
         // return if refresh token is empty
-        if (refreshToken.equals("")) {
+        if (TextUtils.isEmpty(refreshToken)) {
             if (listener != null) {
                 listener.onError(new AirMapException("Invalid Refresh Token"));
             }

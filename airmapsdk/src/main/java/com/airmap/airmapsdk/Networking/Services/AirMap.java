@@ -10,6 +10,8 @@ import android.util.Log;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.Analytics;
+import com.airmap.airmapsdk.AnalyticsTracker;
 import com.airmap.airmapsdk.Auth;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
@@ -22,6 +24,8 @@ import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
+import com.airmap.airmapsdk.models.welcome.AirMapWelcome;
+import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapTrafficListener;
 import com.airmap.airmapsdk.networking.callbacks.LoginListener;
@@ -55,7 +59,7 @@ import okhttp3.Call;
  * Created by Vansh Gandhi on 6/16/16.
  * Copyright © 2016 AirMap, Inc. All rights reserved.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "ConstantConditions"})
 public class AirMap {
     private Context context;
     private static String authToken;
@@ -69,8 +73,10 @@ public class AirMap {
 
     private static TrafficService airMapTrafficService;
     private static MappingService airMapMapMappingService;
+    private static TelemetryService airMapTelemetryService;
 
     private static LoginListener loginListener;
+    private static Analytics analytics;
 
     /**
      * Initializes the SDK. This must be called before any requests can be made
@@ -85,7 +91,7 @@ public class AirMap {
      * @return An AirMap instance
      * @see <a href="http://www.airmap.com/makers">http://www.airmap.com/makers</a>
      */
-    public static AirMap init(Context context, String authToken, boolean pinCertificates) {
+    public static AirMap init(@NonNull Context context, @Nullable String authToken, boolean pinCertificates) {
         ourInstance = new AirMap(context, authToken, pinCertificates);
         airMapTrafficService = new TrafficService(context); //Initialized here because TrafficService requires AirMap to be initialized already, so it is called after the constructor
         airMapMapMappingService = new MappingService(); //Initialized here because MappingService requires AirMap to be initialized already, so it is called after the constructor
@@ -100,7 +106,7 @@ public class AirMap {
      * @return An AirMap instance
      * @see <a href="http://www.airmap.com/makers">http://www.airmap.com/makers</a>
      */
-    public static AirMap init(Context context, String authToken) {
+    public static AirMap init(@NonNull Context context, @Nullable String authToken) {
         return init(context, authToken, false);
     }
 
@@ -113,7 +119,7 @@ public class AirMap {
      * @return An AirMap instance
      * @see <a href="http://www.airmap.com/makers">http://www.airmap.com/makers</a>
      */
-    public static AirMap init(Context context, boolean pinCertificates) {
+    public static AirMap init(@NonNull Context context, boolean pinCertificates) {
         return init(context, "", pinCertificates);
     }
 
@@ -124,7 +130,7 @@ public class AirMap {
      * @return An AirMap instance
      * @see <a href="http://www.airmap.com/makers">http://www.airmap.com/makers</a>
      */
-    public static AirMap init(Context context) {
+    public static AirMap init(@NonNull Context context) {
         return init(context, "");
     }
 
@@ -146,7 +152,7 @@ public class AirMap {
      * @param auth            The auth token
      * @param pinCertificates Whether to enable certificate pinning (recommended)
      */
-    private AirMap(Context context, String auth, boolean pinCertificates) {
+    private AirMap(@NonNull Context context, @Nullable String auth, boolean pinCertificates) {
         this.context = context;
         authToken = auth == null ? "" : auth;
         certificatePinning = pinCertificates;
@@ -293,6 +299,10 @@ public class AirMap {
         loginListener = listener;
     }
 
+    public static void setAnalytics(AnalyticsTracker tracker) {
+        Analytics.init(tracker);
+    }
+
     /**
      * Logs the user out
      */
@@ -381,8 +391,10 @@ public class AirMap {
      * @param requestCode The request code to start the activity with
      */
     public static void showLogin(Activity activity, int requestCode) {
-        Intent intent = new Intent(activity, LoginActivity.class);
-        activity.startActivityForResult(intent, requestCode);
+        if (activity != null) {
+            Intent intent = new Intent(activity, LoginActivity.class);
+            activity.startActivityForResult(intent, requestCode);
+        }
     }
 
     /**
@@ -392,8 +404,10 @@ public class AirMap {
      * @param requestCode The request code to start the activity with
      */
     public static void showLogin(Fragment fragment, int requestCode) {
-        Intent intent = new Intent(fragment.getActivity(), LoginActivity.class);
-        fragment.startActivityForResult(intent, requestCode);
+        if (fragment != null) {
+            Intent intent = new Intent(fragment.getActivity(), LoginActivity.class);
+            fragment.startActivityForResult(intent, requestCode);
+        }
     }
 
     /**
@@ -403,8 +417,10 @@ public class AirMap {
      * @param requestCode The request code to start the activity with
      */
     public static void showLogin(android.support.v4.app.Fragment fragment, int requestCode) {
-        Intent intent = new Intent(fragment.getContext(), LoginActivity.class);
-        fragment.startActivityForResult(intent, requestCode);
+        if (fragment != null) {
+            Intent intent = new Intent(fragment.getContext(), LoginActivity.class);
+            fragment.startActivityForResult(intent, requestCode);
+        }
     }
 
     /**
@@ -412,7 +428,7 @@ public class AirMap {
      *
      * @param listener The callback that is invoked on success or error
      */
-    public static void refreshAccessToken(RefreshTokenListener listener) {
+    public static void refreshAccessToken(@Nullable RefreshTokenListener listener) {
         Auth.refreshAccessToken(getInstance().getContext(), listener);
     }
 
@@ -442,7 +458,7 @@ public class AirMap {
      * @param manufacturerId The id of the manufacturer to get models for
      * @param callback       The callback that is invoked on success or error
      */
-    public static void getModels(String manufacturerId, @Nullable AirMapCallback<List<AirMapAircraftModel>> callback) {
+    public static void getModels(@Nullable String manufacturerId, @Nullable AirMapCallback<List<AirMapAircraftModel>> callback) {
         AircraftService.getModels(manufacturerId, callback);
     }
 
@@ -452,8 +468,10 @@ public class AirMap {
      * @param modelId  The ID of the model to get
      * @param callback The callback that is invoked on success or error
      */
-    public static void getModel(String modelId, @Nullable AirMapCallback<AirMapAircraftModel> callback) {
-        AircraftService.getModel(modelId, callback);
+    public static void getModel(@NonNull String modelId, @Nullable AirMapCallback<AirMapAircraftModel> callback) {
+        if (modelId != null) {
+            AircraftService.getModel(modelId, callback);
+        }
     }
 
     //Flight
@@ -502,7 +520,7 @@ public class AirMap {
      * @param to       Search for flights to this date
      * @param callback The callback that is invoked on success or error
      */
-    public static void getPublicFlights(@Nullable Integer limit, Date from, Date to,
+    public static void getPublicFlights(@Nullable Integer limit, @Nullable Date from, @Nullable Date to,
                                         @Nullable AirMapCallback<List<AirMapFlight>> callback) {
         FlightService.getPublicFlights(limit, from, to, callback);
     }
@@ -549,8 +567,10 @@ public class AirMap {
      *                 instead of just IDs
      * @param callback The callback that is invoked on success or error
      */
-    public static void getFlight(String flightId, boolean enhance, @Nullable AirMapCallback<AirMapFlight> callback) {
-        FlightService.getFlight(flightId, enhance, callback);
+    public static void getFlight(@NonNull String flightId, boolean enhance, @Nullable AirMapCallback<AirMapFlight> callback) {
+        if (flightId != null) {
+            FlightService.getFlight(flightId, enhance, callback);
+        }
     }
 
     /**
@@ -559,7 +579,7 @@ public class AirMap {
      * @param flightId The ID of the flight to get
      * @param callback The callback that is invoked on success or error
      */
-    public static void getFlight(String flightId, @Nullable AirMapCallback<AirMapFlight> callback) {
+    public static void getFlight(@NonNull String flightId, @Nullable AirMapCallback<AirMapFlight> callback) {
         getFlight(flightId, false, callback);
     }
 
@@ -569,8 +589,10 @@ public class AirMap {
      * @param pilot    The pilot to get flights for
      * @param callback The callback that is invoked on success or error
      */
-    public static void getFlights(AirMapPilot pilot, @Nullable AirMapCallback<List<AirMapFlight>> callback) {
-        FlightService.getFlights(null, pilot.getPilotId(), null, null, null, null, null, null, null, null, null, null, null, true, callback);
+    public static void getFlights(@NonNull AirMapPilot pilot, @Nullable AirMapCallback<List<AirMapFlight>> callback) {
+        if (pilot != null) {
+            FlightService.getFlights(null, pilot.getPilotId(), null, null, null, null, null, null, null, null, null, null, null, true, callback);
+        }
     }
 
     /**
@@ -588,8 +610,10 @@ public class AirMap {
      * @param flight   The flight to create
      * @param callback The callback that is invoked on success or error
      */
-    public static void createFlight(AirMapFlight flight, @Nullable AirMapCallback<AirMapFlight> callback) {
-        FlightService.createFlight(flight, callback);
+    public static void createFlight(@NonNull AirMapFlight flight, @Nullable AirMapCallback<AirMapFlight> callback) {
+        if (flight != null) {
+            FlightService.createFlight(flight, callback);
+        }
     }
 
     /**
@@ -604,20 +628,24 @@ public class AirMap {
      * @param layers      The layers to show on all maps displayed in the flight creation process
      *                    (null or empty list for no layers)
      */
-    public static void createFlight(Activity activity, int requestCode, Coordinate coordinate, @Nullable HashMap<String, String> extras, @Nullable List<MappingService.AirMapLayerType> layers) {
-        Intent intent = new Intent(activity, CreateFlightActivity.class);
-        intent.putExtra(CreateFlightActivity.COORDINATE, coordinate);
-        if (extras != null) {
-            intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
-        }
-        if (layers != null) {
-            ArrayList<String> stringLayers = new ArrayList<>();
-            for (MappingService.AirMapLayerType layer : layers) {
-                stringLayers.add(layer.toString());
+    public static void createFlight(@NonNull Activity activity, int requestCode,
+                                    @NonNull Coordinate coordinate, @Nullable HashMap<String, String> extras,
+                                    @Nullable List<MappingService.AirMapLayerType> layers) {
+        if (activity != null && coordinate != null) {
+            Intent intent = new Intent(activity, CreateFlightActivity.class);
+            intent.putExtra(CreateFlightActivity.COORDINATE, coordinate);
+            if (extras != null) {
+                intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
             }
-            intent.putStringArrayListExtra(CreateFlightActivity.KEY_LAYERS, stringLayers);
+            if (layers != null) {
+                ArrayList<String> stringLayers = new ArrayList<>();
+                for (MappingService.AirMapLayerType layer : layers) {
+                    stringLayers.add(layer.toString());
+                }
+                intent.putStringArrayListExtra(CreateFlightActivity.KEY_LAYERS, stringLayers);
+            }
+            activity.startActivityForResult(intent, requestCode);
         }
-        activity.startActivityForResult(intent, requestCode);
     }
 
     /**
@@ -632,20 +660,24 @@ public class AirMap {
      * @param layers      The layers to show on all maps displayed in the flight creation process
      *                    (null or empty list for no layers)
      */
-    public static void createFlight(Fragment fragment, int requestCode, Coordinate coordinate, @Nullable HashMap<String, String> extras, @Nullable List<MappingService.AirMapLayerType> layers) {
-        Intent intent = new Intent(fragment.getActivity(), CreateFlightActivity.class);
-        intent.putExtra(CreateFlightActivity.COORDINATE, coordinate);
-        if (extras != null) {
-            intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
-        }
-        if (layers != null) {
-            ArrayList<String> stringLayers = new ArrayList<>();
-            for (MappingService.AirMapLayerType layer : layers) {
-                stringLayers.add(layer.toString());
+    public static void createFlight(@NonNull Fragment fragment, int requestCode,
+                                    @NonNull Coordinate coordinate, @Nullable HashMap<String, String> extras,
+                                    @Nullable List<MappingService.AirMapLayerType> layers) {
+        if (fragment != null && coordinate != null) {
+            Intent intent = new Intent(fragment.getActivity(), CreateFlightActivity.class);
+            intent.putExtra(CreateFlightActivity.COORDINATE, coordinate);
+            if (extras != null) {
+                intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
             }
-            intent.putStringArrayListExtra(CreateFlightActivity.KEY_LAYERS, stringLayers);
+            if (layers != null) {
+                ArrayList<String> stringLayers = new ArrayList<>();
+                for (MappingService.AirMapLayerType layer : layers) {
+                    stringLayers.add(layer.toString());
+                }
+                intent.putStringArrayListExtra(CreateFlightActivity.KEY_LAYERS, stringLayers);
+            }
+            fragment.startActivityForResult(intent, requestCode);
         }
-        fragment.startActivityForResult(intent, requestCode);
     }
 
     /**
@@ -660,20 +692,24 @@ public class AirMap {
      * @param layers      The layers to show on all maps displayed in the flight creation process
      *                    (null or empty list for no layers)
      */
-    public static void createFlight(android.support.v4.app.Fragment fragment, int requestCode, Coordinate coordinate, @Nullable HashMap<String, String> extras, @Nullable List<MappingService.AirMapLayerType> layers) {
-        Intent intent = new Intent(fragment.getContext(), CreateFlightActivity.class);
-        intent.putExtra(CreateFlightActivity.COORDINATE, coordinate);
-        if (extras != null) {
-            intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
-        }
-        if (layers != null) {
-            ArrayList<String> stringLayers = new ArrayList<>();
-            for (MappingService.AirMapLayerType layer : layers) {
-                stringLayers.add(layer.toString());
+    public static void createFlight(@NonNull android.support.v4.app.Fragment fragment, int requestCode,
+                                    @NonNull Coordinate coordinate, @Nullable HashMap<String, String> extras,
+                                    @Nullable List<MappingService.AirMapLayerType> layers) {
+        if (fragment != null && coordinate != null) {
+            Intent intent = new Intent(fragment.getContext(), CreateFlightActivity.class);
+            intent.putExtra(CreateFlightActivity.COORDINATE, coordinate);
+            if (extras != null) {
+                intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
             }
-            intent.putStringArrayListExtra(CreateFlightActivity.KEY_LAYERS, stringLayers);
+            if (layers != null) {
+                ArrayList<String> stringLayers = new ArrayList<>();
+                for (MappingService.AirMapLayerType layer : layers) {
+                    stringLayers.add(layer.toString());
+                }
+                intent.putStringArrayListExtra(CreateFlightActivity.KEY_LAYERS, stringLayers);
+            }
+            fragment.startActivityForResult(intent, requestCode);
         }
-        fragment.startActivityForResult(intent, requestCode);
     }
 
 
@@ -683,8 +719,10 @@ public class AirMap {
      * @param flight   The flight to close
      * @param callback The callback that is invoked on success or error
      */
-    public static void endFlight(AirMapFlight flight, @Nullable AirMapCallback<AirMapFlight> callback) {
-        FlightService.endFlight(flight, callback);
+    public static void endFlight(@NonNull AirMapFlight flight, @Nullable AirMapCallback<AirMapFlight> callback) {
+        if (flight != null) {
+            FlightService.endFlight(flight, callback);
+        }
     }
 
     /**
@@ -693,8 +731,10 @@ public class AirMap {
      * @param flight   The flight to delete
      * @param callback The callback that is invoked on success or error
      */
-    public static void deleteFlight(AirMapFlight flight, @Nullable AirMapCallback<Void> callback) {
-        FlightService.deleteFlight(flight, callback);
+    public static void deleteFlight(@NonNull AirMapFlight flight, @Nullable AirMapCallback<Void> callback) {
+        if (flight != null) {
+            FlightService.deleteFlight(flight, callback);
+        }
     }
 
     /**
@@ -703,8 +743,10 @@ public class AirMap {
      * @param flight   The flight to get the comm key for
      * @param callback The callback that is invoked on success or error
      */
-    public static void startComm(AirMapFlight flight, @Nullable AirMapCallback<AirMapComm> callback) {
-        FlightService.getCommKey(flight, callback);
+    public static void startComm(@NonNull AirMapFlight flight, @Nullable AirMapCallback<AirMapComm> callback) {
+        if (flight != null) {
+            FlightService.getCommKey(flight, callback);
+        }
     }
 
     /**
@@ -713,8 +755,10 @@ public class AirMap {
      * @param flight   The flight to stop receiving notifications for
      * @param callback The callback that is invoked on success or error
      */
-    public static void clearComm(AirMapFlight flight, @Nullable AirMapCallback<Void> callback) {
-        FlightService.clearCommKey(flight, callback);
+    public static void clearComm(@NonNull AirMapFlight flight, @Nullable AirMapCallback<Void> callback) {
+        if (flight != null) {
+            FlightService.clearCommKey(flight, callback);
+        }
     }
 
     //Permits
@@ -732,14 +776,15 @@ public class AirMap {
     }
 
     /**
-     * Gets permits by a singular permit ID and/or organization ID. either permitId or
+     * Gets permits by a singular permit ID and/or organization ID. Either permitId or
      * organizationId must be non-null
      *
      * @param permitId       The ID of the permit to get
      * @param organizationId The organization to get permits for
      * @param callback       The callback that is invoked on success or error
      */
-    public static void getPermits(@Nullable String permitId, @Nullable String organizationId, @Nullable AirMapCallback<List<AirMapAvailablePermit>> callback) {
+    public static void getPermits(@Nullable String permitId, @Nullable String organizationId,
+                                  @Nullable AirMapCallback<List<AirMapAvailablePermit>> callback) {
         List<String> permitIds = new ArrayList<>();
         if (permitId != null && !permitId.isEmpty()) {
             permitIds.add(permitId);
@@ -754,7 +799,9 @@ public class AirMap {
      * @param callback The callback that is invoked on success or error
      */
     public static void getPermit(@NonNull String permitId, @Nullable AirMapCallback<List<AirMapAvailablePermit>> callback) {
-        getPermits(permitId, null, callback);
+        if (permitId != null) {
+            getPermits(permitId, null, callback);
+        }
     }
 
     /**
@@ -763,8 +810,10 @@ public class AirMap {
      * @param permit   The permit to apply for
      * @param callback The callback that is invoked on success or error
      */
-    public static void applyForPermit(AirMapAvailablePermit permit, @Nullable AirMapCallback<AirMapPilotPermit> callback) {
-        PermitService.applyForPermit(permit, callback);
+    public static void applyForPermit(@NonNull AirMapAvailablePermit permit, @Nullable AirMapCallback<AirMapPilotPermit> callback) {
+        if (permit != null) {
+            PermitService.applyForPermit(permit, callback);
+        }
     }
 
     //Pilot
@@ -774,8 +823,10 @@ public class AirMap {
      *
      * @param callback The callback that is invoked on success or error
      */
-    public static void getPilot(String pilotId, @Nullable AirMapCallback<AirMapPilot> callback) {
-        PilotService.getPilot(pilotId, callback);
+    public static void getPilot(@NonNull String pilotId, @Nullable AirMapCallback<AirMapPilot> callback) {
+        if (pilotId != null) {
+            PilotService.getPilot(pilotId, callback);
+        }
     }
 
     /**
@@ -802,8 +853,10 @@ public class AirMap {
      * @param permitId The ID of the permit to delete
      * @param callback The callback that is invoked on success or error
      */
-    public static void deletePermit(String permitId, @Nullable AirMapCallback<Void> callback) {
-        PilotService.deletePermit(permitId, callback);
+    public static void deletePermit(@NonNull String permitId, @Nullable AirMapCallback<Void> callback) {
+        if (permitId != null) {
+            PilotService.deletePermit(permitId, callback);
+        }
     }
 
     /**
@@ -812,8 +865,10 @@ public class AirMap {
      * @param pilot    The updated version of the pilot
      * @param callback The callback that is invoked on success or error
      */
-    public static void updatePilot(AirMapPilot pilot, @Nullable AirMapCallback<AirMapPilot> callback) {
-        PilotService.updatePilot(pilot, callback);
+    public static void updatePilot(@NonNull AirMapPilot pilot, @Nullable AirMapCallback<AirMapPilot> callback) {
+        if (pilot != null) {
+            PilotService.updatePilot(pilot, callback);
+        }
     }
 
     /**
@@ -822,8 +877,10 @@ public class AirMap {
      * @param phoneNumber The updated phone number
      * @param callback    The callback that is invoked on success or error
      */
-    public static void updatePhoneNumber(String phoneNumber, @Nullable AirMapCallback<Void> callback) {
-        PilotService.updatePhoneNumber(phoneNumber, callback);
+    public static void updatePhoneNumber(@NonNull String phoneNumber, @Nullable AirMapCallback<Void> callback) {
+        if (phoneNumber != null) {
+            PilotService.updatePhoneNumber(phoneNumber, callback);
+        }
     }
 
     /**
@@ -831,7 +888,7 @@ public class AirMap {
      *
      * @param listener The callback that is invoked on success or error
      */
-    public static void sendVerificationToken(AirMapCallback<Void> listener) {
+    public static void sendVerificationToken(@Nullable AirMapCallback<Void> listener) {
         PilotService.sendVerificationToken(listener);
     }
 
@@ -841,8 +898,10 @@ public class AirMap {
      * @param token    The token that the pilot received in the text
      * @param callback The callback that is invoked on success or error
      */
-    public static void verifyPhoneToken(String token, @Nullable AirMapCallback<Void> callback) {
-        PilotService.verifyToken(token, callback);
+    public static void verifyPhoneToken(@NonNull String token, @Nullable AirMapCallback<Void> callback) {
+        if (token != null) {
+            PilotService.verifyToken(token, callback);
+        }
     }
 
     /**
@@ -852,8 +911,10 @@ public class AirMap {
      * @param extras   Extra information to collect from the pilot in the profile page (key: json
      *                 key, value: EditText Hint)
      */
-    public static void showProfile(Activity activity, @Nullable HashMap<String, String> extras) {
-        showProfile(activity, AirMap.getUserId(), extras);
+    public static void showProfile(@NonNull Activity activity, @Nullable HashMap<String, String> extras) {
+        if (activity != null) {
+            showProfile(activity, AirMap.getUserId(), extras);
+        }
     }
 
     /**
@@ -863,8 +924,10 @@ public class AirMap {
      * @param extras   Extra information to collect from the pilot in the profile page (key: json
      *                 key, value: EditText Hint)
      */
-    public static void showProfile(android.support.v4.app.Fragment fragment, @Nullable HashMap<String, String> extras) {
-        showProfile(fragment, AirMap.getUserId(), extras);
+    public static void showProfile(@NonNull android.support.v4.app.Fragment fragment, @Nullable HashMap<String, String> extras) {
+        if (fragment != null) {
+            showProfile(fragment, AirMap.getUserId(), extras);
+        }
     }
 
     /**
@@ -874,8 +937,10 @@ public class AirMap {
      * @param extras   Extra information to collect from the pilot in the profile page (key: json
      *                 key, value: EditText Hint)
      */
-    public static void showProfile(Fragment fragment, @Nullable HashMap<String, String> extras) {
-        showProfile(fragment, AirMap.getUserId(), extras);
+    public static void showProfile(@NonNull Fragment fragment, @Nullable HashMap<String, String> extras) {
+        if (fragment != null) {
+            showProfile(fragment, AirMap.getUserId(), extras);
+        }
     }
 
     /**
@@ -886,16 +951,18 @@ public class AirMap {
      * @param extras   Extra information to collect from the pilot in the profile page (key: json
      *                 key, value: EditText Hint)
      */
-    public static void showProfile(Activity activity, String pilotId, @Nullable HashMap<String, String> extras) {
-        if ((pilotId == null || pilotId.isEmpty()) && AirMap.hasValidAuthenticatedUser()) {
-            pilotId = AirMap.getUserId();
+    public static void showProfile(@NonNull Activity activity, @Nullable String pilotId, @Nullable HashMap<String, String> extras) {
+        if (activity != null) {
+            if ((pilotId == null || pilotId.isEmpty()) && AirMap.hasValidAuthenticatedUser()) {
+                pilotId = AirMap.getUserId();
+            }
+            Intent intent = new Intent(activity, ProfileActivity.class);
+            intent.putExtra(ProfileActivity.ARG_PILOT_ID, pilotId);
+            if (extras != null) {
+                intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
+            }
+            activity.startActivity(intent);
         }
-        Intent intent = new Intent(activity, ProfileActivity.class);
-        intent.putExtra(ProfileActivity.ARG_PILOT_ID, pilotId);
-        if (extras != null) {
-            intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
-        }
-        activity.startActivity(intent);
     }
 
     /**
@@ -906,16 +973,18 @@ public class AirMap {
      * @param extras   Extra information to collect from the pilot in the profile page (key: json
      *                 key, value: EditText Hint)
      */
-    public static void showProfile(android.support.v4.app.Fragment fragment, String pilotId, @Nullable HashMap<String, String> extras) {
-        if ((pilotId == null || pilotId.isEmpty()) && AirMap.hasValidAuthenticatedUser()) {
-            pilotId = AirMap.getUserId();
+    public static void showProfile(@NonNull android.support.v4.app.Fragment fragment, @Nullable String pilotId, @Nullable HashMap<String, String> extras) {
+        if (fragment != null) {
+            if ((pilotId == null || pilotId.isEmpty()) && AirMap.hasValidAuthenticatedUser()) {
+                pilotId = AirMap.getUserId();
+            }
+            Intent intent = new Intent(fragment.getContext(), ProfileActivity.class);
+            intent.putExtra(ProfileActivity.ARG_PILOT_ID, pilotId);
+            if (extras != null) {
+                intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
+            }
+            fragment.startActivity(intent);
         }
-        Intent intent = new Intent(fragment.getContext(), ProfileActivity.class);
-        intent.putExtra(ProfileActivity.ARG_PILOT_ID, pilotId);
-        if (extras != null) {
-            intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
-        }
-        fragment.startActivity(intent);
     }
 
     /**
@@ -926,16 +995,18 @@ public class AirMap {
      * @param extras   Extra information to collect from the pilot in the profile page (key: json
      *                 key, value: EditText Hint)
      */
-    public static void showProfile(Fragment fragment, String pilotId, @Nullable HashMap<String, String> extras) {
-        if ((pilotId == null || pilotId.isEmpty()) && AirMap.hasValidAuthenticatedUser()) {
-            pilotId = AirMap.getUserId();
+    public static void showProfile(@NonNull Fragment fragment, @Nullable String pilotId, @Nullable HashMap<String, String> extras) {
+        if (fragment != null) {
+            if ((pilotId == null || pilotId.isEmpty()) && AirMap.hasValidAuthenticatedUser()) {
+                pilotId = AirMap.getUserId();
+            }
+            Intent intent = new Intent(fragment.getActivity(), ProfileActivity.class);
+            intent.putExtra(ProfileActivity.ARG_PILOT_ID, pilotId);
+            if (extras != null) {
+                intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
+            }
+            fragment.startActivity(intent);
         }
-        Intent intent = new Intent(fragment.getActivity(), ProfileActivity.class);
-        intent.putExtra(ProfileActivity.ARG_PILOT_ID, pilotId);
-        if (extras != null) {
-            intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
-        }
-        fragment.startActivity(intent);
     }
 
     /**
@@ -946,10 +1017,12 @@ public class AirMap {
      * @param extras   Extra information to collect from the pilot in the profile page (key: json
      *                 key, value: EditText Hint)
      */
-    public static void showPilotProfile(android.support.v4.app.Fragment fragment, String pilotId, @Nullable HashMap<String, String> extras) {
-        Intent intent = new Intent(fragment.getActivity(), PilotProfileActivity.class);
-        intent.putExtra(ProfileActivity.ARG_PILOT_ID, pilotId);
-        fragment.getActivity().startActivity(intent);
+    public static void showPilotProfile(@NonNull android.support.v4.app.Fragment fragment, @Nullable String pilotId, @Nullable HashMap<String, String> extras) {
+        if (fragment != null) {
+            Intent intent = new Intent(fragment.getActivity(), PilotProfileActivity.class);
+            intent.putExtra(ProfileActivity.ARG_PILOT_ID, pilotId);
+            fragment.getActivity().startActivity(intent);
+        }
     }
 
 
@@ -968,8 +1041,10 @@ public class AirMap {
      * @param aircraftId The ID of the aircraft to get
      * @param callback   The callback that is invoked on success or error
      */
-    public static void getAircraft(String aircraftId, @Nullable AirMapCallback<AirMapAircraft> callback) {
-        PilotService.getAircraft(aircraftId, callback);
+    public static void getAircraft(@NonNull String aircraftId, @Nullable AirMapCallback<AirMapAircraft> callback) {
+        if (aircraftId != null) {
+            PilotService.getAircraft(aircraftId, callback);
+        }
     }
 
     /**
@@ -978,8 +1053,10 @@ public class AirMap {
      * @param aircraft The aircraft to add to the pilot's profile
      * @param callback The callback that is invoked on success or error
      */
-    public static void createAircraft(AirMapAircraft aircraft, @Nullable AirMapCallback<AirMapAircraft> callback) {
-        PilotService.createAircraft(aircraft, callback);
+    public static void createAircraft(@NonNull AirMapAircraft aircraft, @Nullable AirMapCallback<AirMapAircraft> callback) {
+        if (aircraft != null) {
+            PilotService.createAircraft(aircraft, callback);
+        }
     }
 
     /**
@@ -988,8 +1065,10 @@ public class AirMap {
      * @param aircraft The aircraft with the updated nickname
      * @param callback The callback that is invoked on success or error
      */
-    public static void updateAircraft(AirMapAircraft aircraft, @Nullable AirMapCallback<AirMapAircraft> callback) {
-        PilotService.updateAircraft(aircraft, callback);
+    public static void updateAircraft(@NonNull AirMapAircraft aircraft, @Nullable AirMapCallback<AirMapAircraft> callback) {
+        if (aircraft != null) {
+            PilotService.updateAircraft(aircraft, callback);
+        }
     }
 
     /**
@@ -998,8 +1077,10 @@ public class AirMap {
      * @param aircraft The aircraft to delete
      * @param callback The callback that is invoked on success or error
      */
-    public static void deleteAircraft(AirMapAircraft aircraft, @Nullable AirMapCallback<Void> callback) {
-        PilotService.deleteAircraft(aircraft, callback);
+    public static void deleteAircraft(@NonNull AirMapAircraft aircraft, @Nullable AirMapCallback<Void> callback) {
+        if (aircraft != null) {
+            PilotService.deleteAircraft(aircraft, callback);
+        }
     }
 
     /**
@@ -1018,9 +1099,11 @@ public class AirMap {
      *                    start an activity for result and to deliver the result to the activity)
      * @param requestCode the requestCode to start the Activity with
      */
-    public static void showCreateAircraft(Activity activity, int requestCode) {
-        Intent intent = new Intent(activity, CreateEditAircraftActivity.class);
-        activity.startActivityForResult(intent, requestCode);
+    public static void showCreateAircraft(@NonNull Activity activity, int requestCode) {
+        if (activity != null) {
+            Intent intent = new Intent(activity, CreateEditAircraftActivity.class);
+            activity.startActivityForResult(intent, requestCode);
+        }
     }
 
     /**
@@ -1030,9 +1113,11 @@ public class AirMap {
      *                    start an activity for result and to deliver the result to the activity)
      * @param requestCode the requestCode to start the Activity with
      */
-    public static void showCreateAircraft(Fragment fragment, int requestCode) {
-        Intent intent = new Intent(fragment.getActivity(), CreateEditAircraftActivity.class);
-        fragment.startActivityForResult(intent, requestCode);
+    public static void showCreateAircraft(@NonNull Fragment fragment, int requestCode) {
+        if (fragment != null) {
+            Intent intent = new Intent(fragment.getActivity(), CreateEditAircraftActivity.class);
+            fragment.startActivityForResult(intent, requestCode);
+        }
     }
 
     /**
@@ -1042,9 +1127,11 @@ public class AirMap {
      *                    start an activity for result and to deliver the result to the activity)
      * @param requestCode the requestCode to start the Activity with
      */
-    public static void showCreateAircraft(android.support.v4.app.Fragment fragment, int requestCode) {
-        Intent intent = new Intent(fragment.getContext(), CreateEditAircraftActivity.class);
-        fragment.startActivityForResult(intent, requestCode);
+    public static void showCreateAircraft(@NonNull android.support.v4.app.Fragment fragment, int requestCode) {
+        if (fragment != null) {
+            Intent intent = new Intent(fragment.getContext(), CreateEditAircraftActivity.class);
+            fragment.startActivityForResult(intent, requestCode);
+        }
     }
 
     /**
@@ -1058,7 +1145,7 @@ public class AirMap {
      * @param date         Date and time for planned flight
      * @param callback     The callback that is invoked on success or error
      */
-    public static Call checkCoordinate(Coordinate coordinate, @Nullable Double buffer,
+    public static Call checkCoordinate(@NonNull Coordinate coordinate, @Nullable Double buffer,
                                        @Nullable List<MappingService.AirMapAirspaceType> types,
                                        @Nullable List<MappingService.AirMapAirspaceType> ignoredTypes,
                                        boolean showWeather, @Nullable Date date,
@@ -1078,9 +1165,9 @@ public class AirMap {
      * @param date         Date and time for planned flight
      * @param callback     The callback that is invoked on success or error
      */
-    public static Call checkFlightPath(List<Coordinate> path, int buffer, Coordinate takeOffPoint,
-                                       List<MappingService.AirMapAirspaceType> types,
-                                       List<MappingService.AirMapAirspaceType> ignoredTypes, boolean showWeather,
+    public static Call checkFlightPath(@NonNull List<Coordinate> path, int buffer, @NonNull Coordinate takeOffPoint,
+                                       @Nullable List<MappingService.AirMapAirspaceType> types,
+                                       @Nullable List<MappingService.AirMapAirspaceType> ignoredTypes, boolean showWeather,
                                        @Nullable Date date, @Nullable AirMapCallback<AirMapStatus> callback) {
         return StatusService.checkFlightPath(path, buffer, takeOffPoint, types, ignoredTypes, showWeather, date, callback);
     }
@@ -1096,9 +1183,9 @@ public class AirMap {
      * @param date         Date and time for planned flight
      * @param callback     The callback that is invoked on success or error
      */
-    public static Call checkPolygon(List<Coordinate> geometry, Coordinate takeOffPoint,
-                                    List<MappingService.AirMapAirspaceType> types,
-                                    List<MappingService.AirMapAirspaceType> ignoredTypes,
+    public static Call checkPolygon(@NonNull List<Coordinate> geometry, @NonNull Coordinate takeOffPoint,
+                                    @Nullable List<MappingService.AirMapAirspaceType> types,
+                                    @Nullable List<MappingService.AirMapAirspaceType> ignoredTypes,
                                     boolean showWeather, @Nullable Date date,
                                     @Nullable AirMapCallback<AirMapStatus> callback) {
         return StatusService.checkPolygon(geometry, takeOffPoint, types, ignoredTypes, showWeather, date, callback);
@@ -1124,6 +1211,11 @@ public class AirMap {
     public static Call getAirspace(@NonNull List<String> airspaceIds,
                                    @Nullable AirMapCallback<List<AirMapAirspace>> listener) {
         return AirspaceService.getAirspace(airspaceIds, listener);
+    }
+
+    //TODO: Remove context. only necessary since we're reading from assets to mock
+    public static Call getWelcomeSummary(@NonNull Coordinate coordinate, @Nullable AirMapCallback<List<AirMapWelcomeResult>> listener) {
+        return WelcomeService.getWelcomeSummary(coordinate, listener);
     }
 
     /**
@@ -1170,5 +1262,13 @@ public class AirMap {
      */
     public static void removeAllTrafficListeners() {
         getAirMapTrafficService().removeAllListeners();
+    }
+
+    public static TelemetryService getTelemetryService() {
+        if (airMapTelemetryService == null) {
+            airMapTelemetryService = new TelemetryService();
+        }
+
+        return airMapTelemetryService;
     }
 }

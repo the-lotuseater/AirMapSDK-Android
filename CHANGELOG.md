@@ -1,3 +1,10 @@
+##`1.0.6 (2/16/17)`
+* Added Telemetry support
+* Updated Advisory UI
+* Added new airspace layers
+* Resolved some crashes
+* No longer need to include separate maven repo
+
 ##`1.0.5 (12/19/16)`
 * Added custom flight tools for Point, Path & Polygon
 * Update Advisory UI

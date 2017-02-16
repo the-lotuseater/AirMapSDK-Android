@@ -15,7 +15,7 @@ public class AirMapLog {
         if (ENABLED) {
             if (TESTING) {
                 System.out.println(tag + ": " + message);
-            } else {
+            } else if (!message.isEmpty()) {
                 Log.d(tag, message);
             }
         }
@@ -25,7 +25,7 @@ public class AirMapLog {
         if (ENABLED) {
             if (TESTING) {
                 System.out.println(tag + ": " + message);
-            } else {
+            } else if (!message.isEmpty()) {
                 Log.v(tag, message);
             }
         }
@@ -35,8 +35,18 @@ public class AirMapLog {
         if (ENABLED) {
             if (TESTING) {
                 System.out.println(tag + ": " + message);
-            } else {
+            } else if (!message.isEmpty()) {
                 Log.e(tag, message);
+            }
+        }
+    }
+
+    public static void e(String tag, String message, Exception e) {
+        if (ENABLED) {
+            if (TESTING) {
+                System.out.println(tag + ": " + message);
+            } else if (!message.isEmpty()) {
+                Log.e(tag, message, e);
             }
         }
     }
@@ -45,7 +55,7 @@ public class AirMapLog {
         if (ENABLED) {
             if (TESTING) {
                 System.out.println(tag + ": " + message);
-            } else {
+            } else if (!message.isEmpty()) {
                 Log.i(tag, message);
             }
         }

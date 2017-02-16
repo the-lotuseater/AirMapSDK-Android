@@ -1,5 +1,6 @@
 package com.airmap.airmapsdk;
 
+import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -9,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -17,11 +19,15 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
+import com.airmap.airmapsdk.models.welcome.AirMapWelcome;
+import com.airmap.airmapsdk.ui.activities.WelcomeActivity;
+import com.airmap.airmapsdk.util.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,6 +46,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     private static final int TYPE_NORMAL = 1;
     private static final int TYPE_TFR = 2;
     private static final int TYPE_WILDFIRE = 3;
+    private static final int TYPE_WELCOME = 4;
 
     private static final String HEADER_STRING = "header";
 
@@ -50,6 +57,9 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     private List<AirMapStatusAdvisory> advisories = new ArrayList<>();
     private Map<String, String> organizationsMap;
     private Context context;
+
+    private ArrayList<AirMapWelcomeResult> welcomeData;
+    private String welcomeCity;
 
 
     public AdvisoriesBottomSheetAdapter(Context context, Map<String, List<AirMapStatusAdvisory>> data, Map<String, String> organizations) {
@@ -91,9 +101,61 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
         organizationsMap = organizations;
     }
 
+    public void setData(Map<String, List<AirMapStatusAdvisory>> data, Map<String, String> organizations) {
+        advisories.clear();
+
+        if (data.containsKey(RED_TITLE)) {
+            AirMapStatusAdvisory header = new AirMapStatusAdvisory();
+            header.setName(RED_TITLE);
+            header.setId(HEADER_STRING); //Hack to have only a list of Advisories, but let it know it's a header
+            advisories.add(header);
+            for (AirMapStatusAdvisory advisory : data.get(RED_TITLE)) {
+                advisories.add(advisory);
+            }
+        }
+
+        if (data.containsKey(YELLOW_TITLE)) {
+            AirMapStatusAdvisory header = new AirMapStatusAdvisory();
+            header.setName(YELLOW_TITLE);
+            header.setId(HEADER_STRING); //Hack to have only a list of Advisories, but let it know it's a header
+            advisories.add(header);
+            for (AirMapStatusAdvisory advisory : data.get(YELLOW_TITLE)) {
+                advisories.add(advisory);
+            }
+        }
+
+        if (data.containsKey(GREEN_TITLE)) {
+            AirMapStatusAdvisory header = new AirMapStatusAdvisory();
+            header.setName(GREEN_TITLE);
+            header.setId(HEADER_STRING); //Hack to have only a list of Advisories, but let it know it's a header
+            advisories.add(header);
+            for (AirMapStatusAdvisory advisory : data.get(GREEN_TITLE)) {
+                advisories.add(advisory);
+            }
+        }
+
+        organizationsMap = organizations;
+
+        notifyDataSetChanged();
+    }
+
+    public void setWelcomeData(String city, ArrayList<AirMapWelcomeResult> data) {
+        welcomeCity = city;
+        welcomeData = data;
+
+        notifyDataSetChanged();
+    }
+
+    public boolean isWelcomeEnabled() {
+        return !TextUtils.isEmpty(welcomeCity);
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == TYPE_HEADER) {
+        if (viewType == TYPE_WELCOME) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bottom_sheet_welcome_item, parent, false);
+            return new VHWelcome(view);
+        } else if (viewType == TYPE_HEADER) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bottom_sheet_header_item, parent, false);
             return new VHHeader(view);
         } else if (viewType == TYPE_NORMAL) {
@@ -111,18 +173,41 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        AirMapStatusAdvisory advisory = getItem(position);
-        if (holder instanceof VHHeader) {
-            onBindHeaderViewHolder((VHHeader) holder, advisory);
-        } else if (holder instanceof VHItem) {
-            onBindItemViewHolder((VHItem) holder, advisory);
-        } else if (holder instanceof VHTfr) {
-            onBindTfrViewHolder((VHTfr) holder, advisory);
-        } else if (holder instanceof VHWildfire) {
-            onBindWildfireViewHolder((VHWildfire) holder, advisory);
+        if (holder instanceof VHWelcome) {
+            onBindWelcomeHolder((VHWelcome) holder);
+        } else {
+            AirMapStatusAdvisory advisory = getItem(position);
+            if (holder instanceof VHHeader) {
+                onBindHeaderViewHolder((VHHeader) holder, advisory);
+            } else if (holder instanceof VHItem) {
+                onBindItemViewHolder((VHItem) holder, advisory);
+            } else if (holder instanceof VHTfr) {
+                onBindTfrViewHolder((VHTfr) holder, advisory);
+            } else if (holder instanceof VHWildfire) {
+                onBindWildfireViewHolder((VHWildfire) holder, advisory);
+            }
         }
     }
 
+    private void onBindWelcomeHolder(VHWelcome holder) {
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, WelcomeActivity.class);
+                intent.putExtra(Constants.CITY_EXTRA, welcomeCity);
+                intent.putExtra(Constants.WELCOME_EXTRA, welcomeData);
+                context.startActivity(intent);
+            }
+        };
+
+        boolean hasWelcomeData = welcomeData != null && !welcomeData.isEmpty();
+
+        holder.cityTextView.setText(welcomeCity);
+        holder.rulesContainer.setVisibility(hasWelcomeData ? View.VISIBLE : View.GONE);
+        holder.moreButton.setOnClickListener(hasWelcomeData ? onClickListener : null);
+        holder.itemView.setOnClickListener(hasWelcomeData ? onClickListener : null);
+        holder.itemView.setClickable(hasWelcomeData);
+    }
 
     private void onBindHeaderViewHolder(VHHeader holder, AirMapStatusAdvisory advisory) {
         holder.headerTextView.setText(advisory.getName().toUpperCase());
@@ -218,6 +303,8 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Analytics.logEvent(Analytics.Page.ADVISORIES, Analytics.Action.tap, Analytics.Label.TFR_DETAILS);
+
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(advisory.getTfrProperties().getUrl()));
                     holder.itemView.getContext().startActivity(intent);
                 }
@@ -255,16 +342,20 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     }
 
     private AirMapStatusAdvisory getItem(int position) {
-        return advisories.get(position);
+        return advisories.get(isWelcomeEnabled() ? position - 1 : position);
     }
 
     @Override
     public int getItemCount() {
-        return advisories.size();
+        return advisories.size() + (isWelcomeEnabled() ? 1 : 0);
     }
 
     @Override
     public int getItemViewType(int position) {
+        if (position == 0 && isWelcomeEnabled()) {
+            return TYPE_WELCOME;
+        }
+
         AirMapStatusAdvisory advisory = getItem(position);
         if (advisory.getId().equals(HEADER_STRING)) {
             return TYPE_HEADER;
@@ -288,6 +379,22 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
             default: {
                 return ContextCompat.getColor(context, R.color.green);
             }
+        }
+    }
+
+    public class VHWelcome extends RecyclerView.ViewHolder {
+        TextView cityTextView;
+        TextView descriptionTextView;
+        Button moreButton;
+        View rulesContainer;
+
+        public VHWelcome(View itemView) {
+            super(itemView);
+
+            cityTextView = (TextView) itemView.findViewById(R.id.city_text_view);
+            descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
+            moreButton = (Button) itemView.findViewById(R.id.more_button);
+            rulesContainer = itemView.findViewById(R.id.rules_container);
         }
     }
 

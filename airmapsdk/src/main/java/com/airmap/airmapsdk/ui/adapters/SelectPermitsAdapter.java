@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.util.Utils;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
@@ -170,11 +171,15 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
                         AirMapPilotPermit pilotPermit = walletPermitsMap.get(permit.getId());
                         if (pilotPermit != null && (pilotPermit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || pilotPermit.getStatus() == AirMapPilotPermit.PermitStatus.Pending)
                                 && (pilotPermit.getExpiresAt() == null || pilotPermit.getExpiresAt().after(new Date()))) {
+                            Analytics.logEvent(Analytics.Page.AVAILABLE_PERMITS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.SELECT_PERMIT);
+
                             Intent data = new Intent();
                             data.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, permit);
                             activity.setResult(Activity.RESULT_OK, data);
                             activity.finish();
                         } else {
+                            Analytics.logEvent(Analytics.Page.AVAILABLE_PERMITS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.PERMIT_DETAILS);
+
                             Intent intent = new Intent(activity, CustomPropertiesActivity.class);
                             intent.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, permit);
                             activity.startActivityForResult(intent, Constants.CUSTOM_PROPERTIES_REQUEST_CODE);

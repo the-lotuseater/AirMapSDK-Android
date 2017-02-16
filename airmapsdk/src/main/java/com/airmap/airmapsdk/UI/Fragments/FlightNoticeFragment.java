@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +18,13 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.airmap.airmapsdk.Analytics;
+import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.permits.AirMapPermitIssuer;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapStatusRequirementNotice;
-import com.airmap.airmapsdk.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -163,7 +163,9 @@ public class FlightNoticeFragment extends Fragment {
                     String number = notDigitalNotices.get(position).getPhoneNumber();
                     if (number != null && number.length() >= 10) {
                         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number));
-                        startActivity(intent);
+                        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                            startActivity(intent);
+                        }
                     }
                 }
             });
@@ -179,6 +181,8 @@ public class FlightNoticeFragment extends Fragment {
     }
 
     private void onNextButton() {
+        Analytics.logEvent(Analytics.Page.NOTICES_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.REVIEW);
+
         mListener.onFlightNoticeNextButtonClicked();
     }
 
