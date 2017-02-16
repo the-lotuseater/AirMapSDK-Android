@@ -35,7 +35,7 @@ dependencies {
     testCompile "org.mockito:mockito-core:1.10.19"
     testCompile "org.robolectric:robolectric:3.1"
 
-    def supportLibraryVersion = '25.1.0'
+    def supportLibraryVersion = '25.1.1'
     compile "com.android.support:appcompat-v7:$supportLibraryVersion"
     compile "com.android.support:design:$supportLibraryVersion"
     compile "com.android.support:cardview-v7:$supportLibraryVersion"
@@ -55,8 +55,8 @@ dependencies {
     compile('com.mapbox.mapboxsdk:mapbox-android-sdk:4.2.0@aar') { transitive = true }
     compile 'com.github.lzyzsd:jsbridge:1.0.4'
     compile('org.eclipse.paho:org.eclipse.paho.android.service:1.1.1-20160907.104533-5@aar') { exclude module: 'support-v4' }
-    compile 'online.devliving:securedpreferencestore:0.3.0'
     compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'online.devliving:securedpreferencestore:0.3.1'
 }
 
 configurations {
@@ -69,7 +69,7 @@ def projectName = 'com.airmap.airmapsdk'
 def gitUrl = 'https://github.com/airmap/AirMapSDK-Android.git'
 
 bintray {
-    user = 'vanshg'
+    user = bintray_user
     key = bintray_api_key
     configurations = ['archives']
     pkg {

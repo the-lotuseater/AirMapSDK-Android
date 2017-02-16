@@ -316,6 +316,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void setupSeekBars() {
+        if (mListener == null || mListener.getFlight() == null) return;
         final int altitudeIndex = indexOfMeterPreset(mListener.getFlight().getMaxAltitude(), getAltitudePresets());
         final int durationIndex = indexOfDurationPreset(mListener.getFlight().getEndsAt().getTime() - mListener.getFlight().getStartsAt().getTime());
         final int animationDuration = 250;
@@ -829,9 +830,11 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 for (Coordinate coordinate : ((AirMapPath) flight.getGeometry()).getCoordinates()) {
                     polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                 }
-                for (List<LatLng> polygonPoints : mListener.getPathBuffers()) {
-                    PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(polygonPoints);
-                    flightPolygon = map.addPolygon(polygonOptions); //Add polygon first, then line for proper z ordering
+                if (mListener.getPathBuffers() != null) {
+                    for (List<LatLng> polygonPoints : mListener.getPathBuffers()) {
+                        PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(polygonPoints);
+                        flightPolygon = map.addPolygon(polygonOptions); //Add polygon first, then line for proper z ordering
+                    }
                 }
                 flightPolyline = map.addPolyline(polylineOptions);
             } else {

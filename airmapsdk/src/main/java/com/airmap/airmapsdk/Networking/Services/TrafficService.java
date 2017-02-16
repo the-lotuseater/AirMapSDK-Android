@@ -347,12 +347,14 @@ public class TrafficService extends BaseService {
      * @param removed a list of all traffic that was removed
      */
     private void notifyRemoved(List<AirMapTraffic> removed) {
-        if (removed == null || removed.isEmpty()) {
+        if (removed == null) {
             return;
         }
 
         for (AirMapTrafficListener listener : listeners) {
-            listener.onRemoveTraffic(removed);
+            if (listener != null) {
+                listener.onRemoveTraffic(removed);
+            }
         }
     }
 
@@ -362,12 +364,14 @@ public class TrafficService extends BaseService {
      * @param added a list of all traffic that was added
      */
     private void notifyAdded(List<AirMapTraffic> added) {
-        if (added == null || added.isEmpty()) {
+        if (added == null) {
             return;
         }
 
         for (AirMapTrafficListener listener : listeners) {
-            listener.onAddTraffic(added);
+            if (listener != null) {
+                listener.onAddTraffic(added);
+            }
         }
     }
 
@@ -377,11 +381,14 @@ public class TrafficService extends BaseService {
      * @param updated a list of all traffic that was updated
      */
     private void notifyUpdated(List<AirMapTraffic> updated) {
-        if (updated == null || updated.isEmpty()) {
+        if (updated == null) {
             return;
         }
+
         for (AirMapTrafficListener listener : listeners) {
-            listener.onUpdateTraffic(updated);
+            if (listener != null) {
+                listener.onUpdateTraffic(updated);
+            }
         }
     }
 

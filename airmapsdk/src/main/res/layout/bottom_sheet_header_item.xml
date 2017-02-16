@@ -4,14 +4,15 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="4dp"
         android:paddingBottom="4dp"
-        android:paddingLeft="16dp">
+        android:background="#EFEFEF" >
 
     <TextView
             android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/tertiary_text_light"/>
+            android:textColor="@color/colorSecondaryText"/>
 
 </LinearLayout>

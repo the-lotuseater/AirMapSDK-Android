@@ -76,4 +76,7 @@ class BaseService {
     //Telemetry
     protected static final String telemetryBaseUrl = DEBUG ? "api-udp-telemetry.stage.airmap.com" : "api-udp-telemetry.prod.airmap.com";
     protected static final int telemetryPort = 16060;
+
+    //Welcome
+    protected static final String welcomeBaseUrl = baseUrl + "rules/stage/locale/";
 }
