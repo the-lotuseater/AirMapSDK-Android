@@ -73,6 +73,7 @@ public class AirMap {
 
     private static TrafficService airMapTrafficService;
     private static MappingService airMapMapMappingService;
+    private static TelemetryService airMapTelemetryService;
 
     private static LoginListener loginListener;
     private static Analytics analytics;
@@ -1261,5 +1262,13 @@ public class AirMap {
      */
     public static void removeAllTrafficListeners() {
         getAirMapTrafficService().removeAllListeners();
+    }
+
+    public static TelemetryService getTelemetryService() {
+        if (airMapTelemetryService == null) {
+            airMapTelemetryService = new TelemetryService();
+        }
+
+        return airMapTelemetryService;
     }
 }
