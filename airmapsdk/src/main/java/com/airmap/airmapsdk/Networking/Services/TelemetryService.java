@@ -118,14 +118,10 @@ public class TelemetryService extends BaseService {
     }
 
     private void sendTelemetry(AirMapFlight flight, Message message) {
-        Log.e(TAG, "sendTelemetry");
-
         telemetry.onNext(new Pair<>(flight, message));
     }
 
     private void setupBindings() {
-        Log.e(TAG, "setupBindings");
-
         Observable<Session> session = telemetry
                 .map(new Func1<Pair<AirMapFlight, Message>, AirMapFlight>() {
                     @Override
@@ -138,6 +134,13 @@ public class TelemetryService extends BaseService {
                     @Override
                     public Observable<Session> call(final AirMapFlight flight) {
                         return FlightService.getCommKey(flight)
+                                .doOnError(new Action1<Throwable>() {
+                                    @Override
+                                    public void call(Throwable throwable) {
+                                        Log.e(TAG, "getCommKey failed", throwable);
+                                    }
+                                })
+                                .onErrorResumeNext(Observable.<AirMapComm>empty())
                                 .map(new Func1<AirMapComm, Session>() {
                                     @Override
                                     public Session call(AirMapComm airMapComm) {
@@ -169,10 +172,6 @@ public class TelemetryService extends BaseService {
                         return new Pair<>(pair.first, pair.second.second);
                     }
                 });
-
-
-        //TODO: do we need to use a specific schedule for the interval observables?
-//        Scheduler scheduler = Schedulers.io();
 
         Observable<Pair<Session,Message>> position = flightMessages
                 .filter(new Func1<Pair<Session,Message>,Boolean>() {
@@ -291,7 +290,6 @@ public class TelemetryService extends BaseService {
 
         //Sends the encrypted, encoded message
         private void send(List<Message> messageList) {
-            Log.e(TAG, "send message batch of size: " + messageList.size() + " messages");
             try {
                 byte[] message = buildPacketData(comm.getKey(), flight, Encryption.AES256CBC, messageList);
                 DatagramPacket packet = new DatagramPacket(message, message.length);
@@ -302,7 +300,7 @@ public class TelemetryService extends BaseService {
             }
         }
 
-        private byte[] buildPacketData(int[] key, AirMapFlight flight, Encryption encryption, List<Message> messageList) throws IOException, NoSuchPaddingException,
+        private byte[] buildPacketData(byte[] key, AirMapFlight flight, Encryption encryption, List<Message> messageList) throws IOException, NoSuchPaddingException,
                 InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
 
             int serialNumber = packetNumber;
@@ -377,10 +375,10 @@ public class TelemetryService extends BaseService {
         }
 
         //Encrypts a SecretMessage with the given key and iv
-        private byte[] encrypt(int[] key, IvParameterSpec iv, byte[] payload) throws InvalidAlgorithmParameterException, InvalidKeyException,
+        private byte[] encrypt(byte[] key, IvParameterSpec iv, byte[] payload) throws InvalidAlgorithmParameterException, InvalidKeyException,
                 IOException, NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException, IllegalBlockSizeException {
 
-            SecretKey secretKey = new SecretKeySpec(integersToBytes(key), "AES");
+            SecretKey secretKey = new SecretKeySpec(key, "AES");
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
             return cipher.doFinal(payload);

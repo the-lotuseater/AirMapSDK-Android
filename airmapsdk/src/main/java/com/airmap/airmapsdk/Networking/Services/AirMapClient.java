@@ -3,6 +3,7 @@ package com.airmap.airmapsdk.networking.services;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
+import com.airmap.airmapsdk.models.comm.AirMapComm;
 import com.airmap.airmapsdk.util.Utils;
 
 import org.json.JSONException;
@@ -35,6 +36,8 @@ import rx.functions.Func0;
  */
 @SuppressWarnings("unused")
 public class AirMapClient {
+
+    private static final String TAG = "AirMapClient";
 
     private String authToken;
     private String xApiKey;
@@ -135,14 +138,14 @@ public class AirMapClient {
      *
      * @param url      The full url to POST
      */
-    public Observable<? extends AirMapBaseModel> post(final String url, final Class<? extends AirMapBaseModel> classToInstantiate) {
-        return Observable.defer(new Func0<Observable<AirMapBaseModel>>() {
+    public <T extends AirMapBaseModel> Observable<T> post(final String url, final Class<T> classToInstantiate) {
+        return Observable.defer(new Func0<Observable<T>>() {
             @Override
-            public Observable<AirMapBaseModel> call() {
+            public Observable<T> call() {
                 try {
                     Request request = new Builder().url(url).post(bodyFromMap(null)).tag(url).build();
                     Response response = client.newCall(request).execute();
-                    AirMapBaseModel model = parseResponse(response, classToInstantiate);
+                    T model = parseResponse(response, classToInstantiate);
 
                     return Observable.just(model);
                 } catch (IOException | IllegalAccessException | InstantiationException | JSONException | AirMapException e) {
@@ -152,7 +155,7 @@ public class AirMapClient {
         });
     }
 
-    private AirMapBaseModel parseResponse(Response response, Class<? extends AirMapBaseModel> classToInstantiate) throws IOException, JSONException,
+    private <T extends AirMapBaseModel> T parseResponse(Response response, Class<T> classToInstantiate) throws IOException, JSONException,
             IllegalAccessException, InstantiationException, AirMapException {
 
         String jsonString = response.body().string();
@@ -164,7 +167,9 @@ public class AirMapClient {
         }
 
         JSONObject jsonObject = result.optJSONObject("data");
-        return classToInstantiate.newInstance().constructFromJson(jsonObject);
+        T model = classToInstantiate.newInstance();
+        model.constructFromJson(jsonObject);
+        return model;
     }
 
     /**

@@ -177,7 +177,7 @@ class FlightService extends BaseService {
 
     public static Observable<AirMapComm> getCommKey(AirMapFlight flight) {
         String url = String.format(flightStartCommUrl, flight.getFlightId());
-        return (Observable<AirMapComm>) AirMap.getClient().post(url, AirMapComm.class);
+        return AirMap.getClient().post(url, AirMapComm.class);
     }
 
     /**
