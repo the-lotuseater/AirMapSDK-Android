@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     @Override
     public void onMapLongClick(@NonNull LatLng point) {
-        AirMap.createFlight(this, REQUEST_FLIGHT, getCoordinateFromLatLng(point), null); //The created flight will be returned in onActivityResult
+        AirMap.createFlight(this, REQUEST_FLIGHT, getCoordinateFromLatLng(point), null, null); //The created flight will be returned in onActivityResult
     }
 
 
