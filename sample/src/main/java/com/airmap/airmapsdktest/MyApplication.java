@@ -3,8 +3,9 @@ package com.airmap.airmapsdktest;
 import android.app.Application;
 
 import com.airmap.airmapsdk.networking.services.AirMap;
-import com.airmap.airmapsdk.Utils;
 import com.mapbox.mapboxsdk.MapboxAccountManager;
+
+import static com.airmap.airmapsdk.util.Utils.getMapboxApiKey;
 
 /**
  * Created by Vansh Gandhi on 8/12/16.
@@ -16,6 +17,6 @@ public class MyApplication extends Application {
         super.onCreate();
         AirMap.init(this);
         AirMap.enableLogging(true);
-        MapboxAccountManager.start(this, Utils.getMapboxApiKey());
+        MapboxAccountManager.start(this, getMapboxApiKey());
     }
 }
