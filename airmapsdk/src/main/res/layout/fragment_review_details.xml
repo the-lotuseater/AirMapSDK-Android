@@ -23,7 +23,7 @@
                     android:textStyle="bold"
                     android:text="@string/airmap_buffer"
                     android:paddingEnd="16dp"
-                    android:paddingRight="16dp"/>
+                    android:paddingStart="0dp"/>
 
             <TextView
                     android:id="@+id/radius_value"
@@ -44,7 +44,7 @@
                     android:textStyle="bold"
                     android:text="@string/airmap_max_altitude"
                     android:paddingEnd="16dp"
-                    android:paddingRight="16dp"/>
+                    android:paddingStart="0dp"/>
 
             <TextView
                     android:id="@+id/altitude_value"
@@ -65,7 +65,7 @@
                     android:textStyle="bold"
                     android:text="@string/airmap_starts"
                     android:paddingEnd="16dp"
-                    android:paddingRight="16dp"/>
+                    android:paddingStart="0dp"/>
 
             <TextView
                     android:id="@+id/starts_at_value"
@@ -86,7 +86,7 @@
                     android:textStyle="bold"
                     android:text="@string/airmap_duration"
                     android:paddingEnd="16dp"
-                    android:paddingRight="16dp"/>
+                    android:paddingStart="0dp"/>
 
             <TextView
                     android:id="@+id/duration_value"
@@ -108,7 +108,7 @@
                     android:textStyle="bold"
                     android:text="@string/airmap_aircraft_stats"
                     android:paddingEnd="16dp"
-                    android:paddingRight="16dp"/>
+                    android:paddingStart="0dp"/>
 
             <TextView
                     android:id="@+id/aircraft_value"
@@ -129,7 +129,7 @@
                     android:textStyle="bold"
                     android:text="@string/airmap_public_flight"
                     android:paddingEnd="16dp"
-                    android:paddingRight="16dp"/>
+                    android:paddingStart="0dp"/>
 
             <TextView
                     android:id="@+id/public_flight_value"

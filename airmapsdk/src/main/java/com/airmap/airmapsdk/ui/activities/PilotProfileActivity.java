@@ -1,27 +1,15 @@
 package com.airmap.airmapsdk.ui.activities;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.R;
@@ -33,9 +21,10 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
-import java.util.HashMap;
-import java.util.Map;
-
+/**
+ * Activity for viewing another pilot's profile (not your own)
+ * @see com.airmap.airmapsdk.ui.activities.ProfileActivity
+ */
 public class PilotProfileActivity extends AppCompatActivity {
 
     public static final String ARG_PILOT_ID = "pilotId";
@@ -91,8 +80,8 @@ public class PilotProfileActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Snackbar.make(toolbar, "Error getting profile", Snackbar.LENGTH_LONG)
-                                    .setAction("Retry", new View.OnClickListener() {
+                            Snackbar.make(toolbar, R.string.error_getting_profile, Snackbar.LENGTH_LONG)
+                                    .setAction(R.string.retry, new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
                                             getPilot(pilotId);
@@ -101,8 +90,7 @@ public class PilotProfileActivity extends AppCompatActivity {
                                     .show();
                         }
                     });
-                    Log.e("ProfileFragment", e.getMessage());
-                    e.printStackTrace();
+                    Log.e("ProfileFragment", e.getMessage(), e);
                 }
             }
         });
@@ -149,6 +137,7 @@ public class PilotProfileActivity extends AppCompatActivity {
             e.printStackTrace(); //Probably some NPE
             aircraftCounterTextView.setText("0");
         }
+
         try {
             flightCounterTextView.setText(String.valueOf(profile.getStats().getFlightStats().getTotal()));
         } catch (Exception e) {

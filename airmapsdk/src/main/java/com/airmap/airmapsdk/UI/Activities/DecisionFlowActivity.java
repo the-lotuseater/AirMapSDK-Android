@@ -104,7 +104,7 @@ public class DecisionFlowActivity extends AppCompatActivity implements PermitQue
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(DecisionFlowActivity.this, "Error getting permit", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(DecisionFlowActivity.this, R.string.error_getting_permit, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -115,7 +115,7 @@ public class DecisionFlowActivity extends AppCompatActivity implements PermitQue
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(DecisionFlowActivity.this, "Error getting permit", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DecisionFlowActivity.this, R.string.error_getting_permit, Toast.LENGTH_SHORT).show();
                     }
                 });
                 e.printStackTrace();

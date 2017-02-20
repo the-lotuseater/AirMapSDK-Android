@@ -244,7 +244,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
                     public void onClick(View v) {
                         new AlertDialog.Builder(holder.itemView.getContext())
                                 .setTitle(advisory.getName())
-                                .setMessage(String.format(Locale.getDefault(), "Do you want to call %s?", advisory.getName()))
+                                .setMessage(context.getString(R.string.do_you_want_to_call, advisory.getName()))
                                 .setPositiveButton(R.string.call, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -256,13 +256,13 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
                                             holder.description2TextView.post(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    Toast.makeText(context, "No dialer found on device", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, R.string.no_dialer_found, Toast.LENGTH_SHORT).show();
                                                 }
                                             });
                                         }
                                     }
                                 })
-                                .setNegativeButton(android.R.string.cancel, null)
+                                .setNegativeButton(R.string.cancel, null)
                                 .show();
                     }
                 });

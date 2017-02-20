@@ -415,7 +415,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(CreateFlightActivity.this, "Error getting Permit Wallet", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CreateFlightActivity.this, R.string.error_getting_wallet, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

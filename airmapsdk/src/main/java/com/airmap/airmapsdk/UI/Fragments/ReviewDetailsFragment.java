@@ -79,8 +79,8 @@ public class ReviewDetailsFragment extends Fragment {
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
 
         if (flight.getGeometry() instanceof AirMapPoint) {
-            String radius = useMetric ? String.format(Locale.US, "%d m", Math.round(flight.getBuffer())) :
-                    String.format(Locale.US, "%d ft", Math.round(metersToFeet(flight.getBuffer())));
+            String radius = useMetric ? getString(R.string.number_meters, Math.round(flight.getBuffer())) :
+                    getString(R.string.number_feet, Math.round(metersToFeet(flight.getBuffer())));
 
             radiusTextView.setText(radius);
         } else {
@@ -88,8 +88,8 @@ public class ReviewDetailsFragment extends Fragment {
         }
 
 
-        String altitude = useMetric ? String.format(Locale.US, "%d m", Math.round(flight.getMaxAltitude())) :
-                String.format(Locale.US, "%d ft", Math.round(metersToFeet(flight.getMaxAltitude())));
+        String altitude = useMetric ? getString(R.string.number_meters, Math.round(flight.getMaxAltitude())) :
+                getString(R.string.number_feet, Math.round(metersToFeet(flight.getMaxAltitude())));
 
         altitudeTextView.setText(altitude);
         if (flight.getStartsAt() != null) {
@@ -103,7 +103,7 @@ public class ReviewDetailsFragment extends Fragment {
         } else {
             aircraftContainer.setVisibility(View.GONE);
         }
-        publicFlightTextView.setText(flight.isPublic() ? "Yes" : "No");
+        publicFlightTextView.setText(flight.isPublic() ? getString(R.string.yes) : getString(R.string.no));
     }
 
     public String getDurationText() {
@@ -112,7 +112,7 @@ public class ReviewDetailsFragment extends Fragment {
         if (index != -1) {
             return getDurationPresets()[index].label;
         }
-        return String.format(Locale.US, "%d seconds", difference / 1000);
+        return getString(R.string.number_seconds, difference/1000);
     }
 
     private TextView getTextViewById(View view, @IdRes int id) {

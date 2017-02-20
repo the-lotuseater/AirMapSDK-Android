@@ -54,6 +54,7 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
                 walletPermitIds.add(permit.getShortDetails().getPermitId());
             }
         }
+
         if (!walletPermitIds.isEmpty()) {
             AirMap.getPermits(new ArrayList<>(walletPermitIds), null, new AirMapCallback<List<AirMapAvailablePermit>>() { //So that we can get other information about the permit, such as its name
                 @Override
@@ -70,8 +71,7 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
 
                 @Override
                 public void onError(AirMapException e) {
-                    e.printStackTrace();
-                    AirMapLog.e("PermitsAdapter", e.getMessage());
+                    AirMapLog.e("PermitsAdapter", e.getMessage(), e);
                 }
             });
         }
