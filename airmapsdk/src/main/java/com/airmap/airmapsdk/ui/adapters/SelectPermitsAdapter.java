@@ -149,7 +149,7 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
                 holder.statusTextView.setText(activity.getString(R.string.permit_status, Utils.titleCase(walletPermit.getStatus().toString())));
                 holder.statusTextView.setVisibility(View.VISIBLE);
                 holder.expirationTextView.setText(activity.getString(R.string.permit_expiration,
-                        walletPermit.getExpiresAt() != null ? dateFormat.format(walletPermit.getExpiresAt()) : "N/A"));
+                        walletPermit.getExpiresAt() != null ? dateFormat.format(walletPermit.getExpiresAt()) : activity.getString(R.string.na)));
                 holder.expirationTextView.setVisibility(View.VISIBLE);
             } else {
                 holder.iconImageView.setVisibility(View.GONE);

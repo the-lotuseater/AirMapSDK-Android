@@ -2,6 +2,7 @@ package com.airmap.airmapsdk.util;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -129,18 +130,18 @@ public class Utils {
      */
     public static StringNumberPair[] getDurationPresets() {
         return new StringNumberPair[]{
-                new StringNumberPair("5 min", 5 * 60 * 1000L), //5 minutes in millis
-                new StringNumberPair("10 min", 10 * 60 * 1000L),
-                new StringNumberPair("15 min", 15 * 60 * 1000L),
-                new StringNumberPair("30 min", 30 * 60 * 1000L),
-                new StringNumberPair("45 min", 45 * 60 * 1000L),
-                new StringNumberPair("1 hr", 60 * 60 * 1000L),
-                new StringNumberPair("1.5 hrs", 90 * 60 * 1000L),
-                new StringNumberPair("2 hrs", 120 * 60 * 1000L),
-                new StringNumberPair("2.5 hrs", 150 * 60 * 1000L),
-                new StringNumberPair("3 hrs", 180 * 60 * 1000L),
-                new StringNumberPair("3.5 hrs", 210 * 60 * 1000L),
-                new StringNumberPair("4 hrs", 240 * 60 * 1000L)
+                new StringNumberPair(R.string.five_min, 5 * 60 * 1000L), //5 minutes in millis
+                new StringNumberPair(R.string.ten_min, 10 * 60 * 1000L),
+                new StringNumberPair(R.string.fifteen_min, 15 * 60 * 1000L),
+                new StringNumberPair(R.string.thirty_min, 30 * 60 * 1000L),
+                new StringNumberPair(R.string.forty_five_min, 45 * 60 * 1000L),
+                new StringNumberPair(R.string.one_hour, 60 * 60 * 1000L),
+                new StringNumberPair(R.string.one_half_hour, 90 * 60 * 1000L),
+                new StringNumberPair(R.string.two_hour, 120 * 60 * 1000L),
+                new StringNumberPair(R.string.two_half_hour, 150 * 60 * 1000L),
+                new StringNumberPair(R.string.three_hour, 180 * 60 * 1000L),
+                new StringNumberPair(R.string.three_half_hour, 210 * 60 * 1000L),
+                new StringNumberPair(R.string.four_hour, 240 * 60 * 1000L)
         };
     }
 
@@ -149,11 +150,11 @@ public class Utils {
      */
     public static StringNumberPair[] getAltitudePresets() {
         return new StringNumberPair[]{
-                new StringNumberPair("50 ft", feetToMeters(50)),
-                new StringNumberPair("100 ft", feetToMeters(100)),
-                new StringNumberPair("200 ft", feetToMeters(200)),
-                new StringNumberPair("300 ft", feetToMeters(300)),
-                new StringNumberPair("400 ft", feetToMeters(400))
+                new StringNumberPair(R.string.fifty_feet, feetToMeters(50)),
+                new StringNumberPair(R.string.one_hundred_feet, feetToMeters(100)),
+                new StringNumberPair(R.string.two_hundred_feet, feetToMeters(200)),
+                new StringNumberPair(R.string.three_hundred_feet, feetToMeters(300)),
+                new StringNumberPair(R.string.four_hundred_feet, feetToMeters(400))
         };
     }
 
@@ -162,11 +163,11 @@ public class Utils {
      */
     public static StringNumberPair[] getAltitudePresetsMetric() {
         return new StringNumberPair[]{
-                new StringNumberPair("15m", 20),
-                new StringNumberPair("30m", 30),
-                new StringNumberPair("60m", 60),
-                new StringNumberPair("90m", 90),
-                new StringNumberPair("120m", 120)
+                new StringNumberPair(R.string.fifteen_meters, 15),
+                new StringNumberPair(R.string.thirty_meters, 30),
+                new StringNumberPair(R.string.sixty_meters, 60),
+                new StringNumberPair(R.string.ninty_meters, 90),
+                new StringNumberPair(R.string.one_twenty_meters, 120)
         };
     }
 
@@ -175,31 +176,31 @@ public class Utils {
      */
     public static StringNumberPair[] getBufferPresets() {
         return new StringNumberPair[]{
-                new StringNumberPair("25 ft", feetToMeters(25)),
-                new StringNumberPair("50 ft", feetToMeters(50)),
-                new StringNumberPair("75 ft", feetToMeters(75)),
-                new StringNumberPair("100 ft", feetToMeters(100)),
-                new StringNumberPair("125 ft", feetToMeters(125)),
-                new StringNumberPair("150 ft", feetToMeters(150)),
-                new StringNumberPair("175 ft", feetToMeters(175)),
-                new StringNumberPair("200 ft", feetToMeters(200)),
-                new StringNumberPair("250 ft", feetToMeters(250)),
-                new StringNumberPair("300 ft", feetToMeters(300)),
-                new StringNumberPair("350 ft", feetToMeters(350)),
-                new StringNumberPair("400 ft", feetToMeters(400)),
-                new StringNumberPair("450 ft", feetToMeters(450)),
-                new StringNumberPair("500 ft", feetToMeters(500)),
-                new StringNumberPair("600 ft", feetToMeters(600)),
-                new StringNumberPair("700 ft", feetToMeters(700)),
-                new StringNumberPair("800 ft", feetToMeters(800)),
-                new StringNumberPair("900 ft", feetToMeters(900)),
-                new StringNumberPair("1000 ft", feetToMeters(1000)),
-                new StringNumberPair("1250 ft", feetToMeters(1250)),
-                new StringNumberPair("1500 ft", feetToMeters(1500)),
-                new StringNumberPair("1750 ft", feetToMeters(1750)),
-                new StringNumberPair("2000 ft", feetToMeters(2000)),
-                new StringNumberPair("2500 ft", feetToMeters(2500)),
-                new StringNumberPair("3000 ft", feetToMeters(3000))
+                new StringNumberPair(R.string.twenty_five_feet, feetToMeters(25)),
+                new StringNumberPair(R.string.fifty_feet, feetToMeters(50)),
+                new StringNumberPair(R.string.seventy_feet, feetToMeters(75)),
+                new StringNumberPair(R.string.hundred_feet, feetToMeters(100)),
+                new StringNumberPair(R.string.one_twenty_five_feet, feetToMeters(125)),
+                new StringNumberPair(R.string.one_fifty_feet, feetToMeters(150)),
+                new StringNumberPair(R.string.one_seventy_five_feet, feetToMeters(175)),
+                new StringNumberPair(R.string.two_hundred_feet, feetToMeters(200)),
+                new StringNumberPair(R.string.two_fifty_feet, feetToMeters(250)),
+                new StringNumberPair(R.string.three_hundred_feet, feetToMeters(300)),
+                new StringNumberPair(R.string.three_fifty_feet, feetToMeters(350)),
+                new StringNumberPair(R.string.four_hundred_feet, feetToMeters(400)),
+                new StringNumberPair(R.string.four_fifty_feet, feetToMeters(450)),
+                new StringNumberPair(R.string.five_hundred_feet, feetToMeters(500)),
+                new StringNumberPair(R.string.six_hundred, feetToMeters(600)),
+                new StringNumberPair(R.string.seven_hundred, feetToMeters(700)),
+                new StringNumberPair(R.string.eight_hundred, feetToMeters(800)),
+                new StringNumberPair(R.string.nine_hundred_feet, feetToMeters(900)),
+                new StringNumberPair(R.string.one_thousand_feet, feetToMeters(1000)),
+                new StringNumberPair(R.string.twelve_fifty_feet, feetToMeters(1250)),
+                new StringNumberPair(R.string.fifteen_hundred_feet, feetToMeters(1500)),
+                new StringNumberPair(R.string.seventeen_fifty_feet, feetToMeters(1750)),
+                new StringNumberPair(R.string.two_thousand_feet, feetToMeters(2000)),
+                new StringNumberPair(R.string.twenty_five_hundred, feetToMeters(2500)),
+                new StringNumberPair(R.string.three_thousand_feet, feetToMeters(3000))
         };
     }
 
@@ -208,29 +209,29 @@ public class Utils {
      */
     public static StringNumberPair[] getBufferPresetsMetric() {
         return new StringNumberPair[]{
-                new StringNumberPair("10m", 10),
-                new StringNumberPair("15m", 15),
-                new StringNumberPair("20m", 20),
-                new StringNumberPair("25m", 25),
-                new StringNumberPair("30m", 30),
-                new StringNumberPair("50m", 50),
-                new StringNumberPair("60m", 60),
-                new StringNumberPair("75m", 75),
-                new StringNumberPair("100m", 100),
-                new StringNumberPair("125m", 125),
-                new StringNumberPair("150m", 150),
-                new StringNumberPair("175m", 175),
-                new StringNumberPair("200m", 200),
-                new StringNumberPair("225m", 225),
-                new StringNumberPair("250m", 250),
-                new StringNumberPair("275m", 275),
-                new StringNumberPair("300m", 300),
-                new StringNumberPair("350m", 350),
-                new StringNumberPair("400m", 400),
-                new StringNumberPair("500m", 500),
-                new StringNumberPair("600m", 600),
-                new StringNumberPair("750m", 750),
-                new StringNumberPair("1000m", 1000)
+                new StringNumberPair(R.string.ten_meters, 10),
+                new StringNumberPair(R.string.fifteen_meters, 15),
+                new StringNumberPair(R.string.twenty_meters, 20),
+                new StringNumberPair(R.string.twenty_five_meters, 25),
+                new StringNumberPair(R.string.thirty_meters, 30),
+                new StringNumberPair(R.string.fifty_meters, 50),
+                new StringNumberPair(R.string.sixty_meters, 60),
+                new StringNumberPair(R.string.seventy_five_meters, 75),
+                new StringNumberPair(R.string.one_hundred_meters, 100),
+                new StringNumberPair(R.string.one_twenty_meters, 120),
+                new StringNumberPair(R.string.one_fifty_meters, 150),
+                new StringNumberPair(R.string.one_seventy_five_meters, 175),
+                new StringNumberPair(R.string.two_hundred_meters, 200),
+                new StringNumberPair(R.string.two_twenty_five_meters, 225),
+                new StringNumberPair(R.string.two_fifty_meters, 250),
+                new StringNumberPair(R.string.two_seventy_five_meters, 275),
+                new StringNumberPair(R.string.three_hundred_meters, 300),
+                new StringNumberPair(R.string.three_fifty_meters, 350),
+                new StringNumberPair(R.string.four_hundred_meters, 400),
+                new StringNumberPair(R.string.five_hundred_meters, 500),
+                new StringNumberPair(R.string.six_hundred_meters, 600),
+                new StringNumberPair(R.string.seven_fifty_meters, 750),
+                new StringNumberPair(R.string.one_thousand_meters, 1000)
         };
     }
 
@@ -259,19 +260,18 @@ public class Utils {
      */
     public static class StringNumberPair {
 
-        public StringNumberPair(String label, long value) {
+        public StringNumberPair(@StringRes int label, long value) {
             this.label = label;
             this.value = new BigDecimal(value);
         }
 
-        public StringNumberPair(String label, double value) {
+        public StringNumberPair(@StringRes int label, double value) {
             this.label = label;
             this.value = new BigDecimal(value);
         }
 
-        public String label;
+        public int label;
         public BigDecimal value;
-
     }
 
     /**

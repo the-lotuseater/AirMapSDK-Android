@@ -110,7 +110,7 @@ public class ReviewDetailsFragment extends Fragment {
         long difference = flight.getEndsAt().getTime() - flight.getStartsAt().getTime();
         int index = indexOfDurationPreset(difference);
         if (index != -1) {
-            return getDurationPresets()[index].label;
+            return getString(getDurationPresets()[index].label);
         }
         return getString(R.string.number_seconds, difference/1000);
     }
