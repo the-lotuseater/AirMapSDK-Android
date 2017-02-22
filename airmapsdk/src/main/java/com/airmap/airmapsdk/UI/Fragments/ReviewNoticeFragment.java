@@ -151,7 +151,7 @@ public class ReviewNoticeFragment extends Fragment {
                 map.put("name", notDigitalNoticeNames.get(i));
                 String number = notDigitalNotices.get(i).getPhoneNumber();
                 if (number == null || number.length() < 10) {
-                    number = getString(R.string.no_known_knumber);
+                    number = getString(R.string.no_known_number);
                 }
                 map.put("phone", number);
                 list.add(map);

@@ -306,7 +306,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
 
     @Override
     public void bottomSheetOpened() {
-        getSupportActionBar().setTitle(R.string.R_string_airmap_airspace_advisories);
+        getSupportActionBar().setTitle(R.string.airmap_airspace_advisories);
 //        getTabLayout().setVisibility(View.GONE); //This causes wonky behavior
     }
 
