@@ -14,9 +14,9 @@ import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.shapes.AirMapPoint;
 import com.airmap.airmapsdk.util.Utils;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import static com.airmap.airmapsdk.util.Utils.getDurationPresets;
 import static com.airmap.airmapsdk.util.Utils.indexOfDurationPreset;
@@ -76,26 +76,26 @@ public class ReviewDetailsFragment extends Fragment {
     }
 
     private void populateViews() {
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+        NumberFormat numberFormat = NumberFormat.getIntegerInstance();
 
         if (flight.getGeometry() instanceof AirMapPoint) {
-            String radius = useMetric ? getString(R.string.number_meters, Math.round(flight.getBuffer())) :
-                    getString(R.string.number_feet, Math.round(metersToFeet(flight.getBuffer())));
+            String radius = useMetric ? numberFormat.format(flight.getBuffer()) + " " + getString(R.string.meters) :
+                    numberFormat.format(metersToFeet(flight.getBuffer())) + " " + getString(R.string.feet);
 
             radiusTextView.setText(radius);
         } else {
             radiusContainer.setVisibility(View.GONE);
         }
 
-
-        String altitude = useMetric ? getString(R.string.number_meters, Math.round(flight.getMaxAltitude())) :
-                getString(R.string.number_feet, Math.round(metersToFeet(flight.getMaxAltitude())));
+        String altitude = useMetric ? numberFormat.format(flight.getMaxAltitude()) + " " + getString(R.string.meters) :
+                numberFormat.format(metersToFeet(flight.getMaxAltitude())) + " " + getString(R.string.feet);
 
         altitudeTextView.setText(altitude);
         if (flight.getStartsAt() != null) {
-            startsAtTextView.setText(format.format(flight.getStartsAt()));
+            startsAtTextView.setText(dateFormat.format(flight.getStartsAt()));
         } else {
-            startsAtTextView.setText(format.format(new Date()));
+            startsAtTextView.setText(dateFormat.format(new Date()));
         }
         durationTextView.setText(getDurationText());
         if (flight.getAircraft() != null) {
@@ -112,7 +112,8 @@ public class ReviewDetailsFragment extends Fragment {
         if (index != -1) {
             return getString(getDurationPresets()[index].label);
         }
-        return getString(R.string.number_seconds, difference/1000);
+        NumberFormat numberFormat = NumberFormat.getIntegerInstance();
+        return numberFormat.format(difference/1000) + " " + getString(R.string.seconds);
     }
 
     private TextView getTextViewById(View view, @IdRes int id) {
