@@ -70,13 +70,12 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import static com.airmap.airmapsdk.util.Utils.getDurationPresets;
@@ -332,7 +331,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                     altitudeSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener() {
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                            altitudeValueTextView.setText(getAltitudePresets()[progress].label);
+                            altitudeValueTextView.setText(getAltitudePresets()[progress].label); //StringRes - should already be translated
                             mListener.getFlight().setMaxAltitude(getAltitudePresets()[altitudeSeekBar.getProgress()].value.doubleValue());
 
                             Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.ALTITUDE_SLIDER, getAltitudePresets()[progress].value.intValue());
@@ -393,15 +392,19 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
                                 // don't allow the user to pick a time in the past
                                 if (flightDate.getTime().before(new Date())) {
-                                    Toast.makeText(getActivity(), R.string.only_schedule_present_future, Toast.LENGTH_SHORT).show();
+                                    if (getActivity() != null) {
+                                        Toast.makeText(getActivity(), R.string.only_schedule_present_future, Toast.LENGTH_SHORT).show();
+                                    }
                                     flightDate.setTime(new Date());
                                 }
 
-                                mListener.getFlight().setStartsAt(flightDate.getTime());
-                                Date correctedEndTime = new Date(flightDate.getTime().getTime() + getDurationPresets()[durationSeekBar.getProgress()].value.longValue());
-                                mListener.getFlight().setEndsAt(correctedEndTime);
-                                updateStartsAtTextView();
-                                mListener.flightChanged();
+                                if (mListener != null) {
+                                    mListener.getFlight().setStartsAt(flightDate.getTime());
+                                    Date correctedEndTime = new Date(flightDate.getTime().getTime() + getDurationPresets()[durationSeekBar.getProgress()].value.longValue());
+                                    mListener.getFlight().setEndsAt(correctedEndTime);
+                                    updateStartsAtTextView();
+                                    mListener.flightChanged();
+                                }
                             }
                         }, nowHour, nowMinute, false).show();
                         updateSaveNextButtonText();
@@ -419,12 +422,15 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void updateStartsAtTextView() {
+        if (mListener == null) {
+            return;
+        }
         Date now = new Date();
         if (mListener.getFlight().getStartsAt() == null) {
             mListener.getFlight().setStartsAt(now);
         }
 
-        SimpleDateFormat format = new SimpleDateFormat("M/d/yy h:mm a", Locale.US);
+        DateFormat format = DateFormat.getDateInstance(DateFormat.SHORT);
         Date date = mListener.getFlight().getStartsAt();
         startsAtTextView.setText(now.after(date) || now.equals(date) ? getString(R.string.now) : format.format(date));
     }
@@ -466,8 +472,10 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                                     Intent intent = new Intent(getContext(), CreateEditAircraftActivity.class);
                                     startActivityForResult(intent, REQUEST_CREATE_AIRCRAFT);
                                 } else {
-                                    mListener.getFlight().setAircraft(aircraft.get(position));
-                                    aircraftTextView.setText(aircraft.get(position).getNickname());
+                                    if (mListener != null) {
+                                        mListener.getFlight().setAircraft(aircraft.get(position));
+                                        aircraftTextView.setText(aircraft.get(position).getNickname());
+                                    }
                                 }
                                 dialogInterface.dismiss();
                             }
@@ -486,7 +494,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 }
 
                 hideProgressBar();
-                mListener.flightDetailsSaveClicked(response);
+                if (mListener != null) {
+                    mListener.flightDetailsSaveClicked(response);
+                }
             }
 
             @Override
@@ -520,7 +530,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
                 hideProgressBar();
                 latestStatus = response;
-                mListener.flightDetailsNextClicked(response);
+                if (mListener != null) {
+                    mListener.flightDetailsNextClicked(response);
+                }
             }
 
             @Override
@@ -533,7 +545,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 saveNextButton.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        if (getContext() != null) {
+                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }
@@ -549,6 +563,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void updateSaveNextButtonText() {
+        if (mListener == null) {
+            return;
+        }
         AirMapFlight flight = mListener.getFlight();
         AirMapCallback<AirMapStatus> callback = new AirMapCallback<AirMapStatus>() {
             @Override
@@ -599,12 +616,14 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
                 // tell the user if conflicting permits
                 if (requiresPermit && (latestStatus.getApplicablePermits() == null || latestStatus.getApplicablePermits().isEmpty())) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getActivity(), R.string.flight_area_cannot_overlap_permit, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getActivity(), R.string.flight_area_cannot_overlap_permit, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
                 }
             }
 
@@ -640,7 +659,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         progressBarContainer.post(new Runnable() {
             @Override
             public void run() {
-                progressBarContainer.setVisibility(View.GONE);
+                if (progressBarContainer != null) {
+                    progressBarContainer.setVisibility(View.GONE);
+                }
             }
         });
     }

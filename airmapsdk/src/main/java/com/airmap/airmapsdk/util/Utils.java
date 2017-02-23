@@ -130,6 +130,7 @@ public class Utils {
      */
     public static StringNumberPair[] getDurationPresets() {
         return new StringNumberPair[]{
+                //TODO: Use NumberFormat here instead of having hardcoded translations
                 new StringNumberPair(R.string.five_min, 5 * 60 * 1000L), //5 minutes in millis
                 new StringNumberPair(R.string.ten_min, 10 * 60 * 1000L),
                 new StringNumberPair(R.string.fifteen_min, 15 * 60 * 1000L),
@@ -150,6 +151,7 @@ public class Utils {
      */
     public static StringNumberPair[] getAltitudePresets() {
         return new StringNumberPair[]{
+                //TODO: Use NumberFormat here instead of having hardcoded translations
                 new StringNumberPair(R.string.fifty_feet, feetToMeters(50)),
                 new StringNumberPair(R.string.one_hundred_feet, feetToMeters(100)),
                 new StringNumberPair(R.string.two_hundred_feet, feetToMeters(200)),
@@ -162,6 +164,7 @@ public class Utils {
      * @return Default altitude presets when creating a flight
      */
     public static StringNumberPair[] getAltitudePresetsMetric() {
+        //TODO: Use NumberFormat here instead of having hardcoded translations
         return new StringNumberPair[]{
                 new StringNumberPair(R.string.fifteen_meters, 15),
                 new StringNumberPair(R.string.thirty_meters, 30),
@@ -175,6 +178,7 @@ public class Utils {
      * @return Default buffer presets when creating a flight
      */
     public static StringNumberPair[] getBufferPresets() {
+        //TODO: Use NumberFormat here instead of having hardcoded translations
         return new StringNumberPair[]{
                 new StringNumberPair(R.string.twenty_five_feet, feetToMeters(25)),
                 new StringNumberPair(R.string.fifty_feet, feetToMeters(50)),
@@ -208,6 +212,7 @@ public class Utils {
      * @return Default buffer presets when creating a flight
      */
     public static StringNumberPair[] getBufferPresetsMetric() {
+        //TODO: Use NumberFormat here instead of having hardcoded translations
         return new StringNumberPair[]{
                 new StringNumberPair(R.string.ten_meters, 10),
                 new StringNumberPair(R.string.fifteen_meters, 15),
@@ -270,7 +275,7 @@ public class Utils {
             this.value = new BigDecimal(value);
         }
 
-        public int label;
+        @StringRes public int label;
         public BigDecimal value;
     }
 
