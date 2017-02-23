@@ -111,8 +111,6 @@
     <string name="permit_status">Status: %1$s</string>
     <string name="permit_expiration">Expires: %1$s</string>
     <string name="select_a_permit_title">Select a Permit</string>
-    <string name="select_a_permit_description">The following permit meets the requirements for the flight\'s operating area</string>
-    <string name="select_a_permit_description_multiple">The following permits meet the requirements for the flight\'s operating area</string>
     <string name="permit_details">Permit Details</string>
     <string name="no_available_permits_for_flight">No single permit satisfies this flight\'s operating area. </string>
     <string name="airmap_flight_area_overlap_permit_conflict">Flight area cannot overlap with conflicting permit requirements</string>
@@ -280,5 +278,10 @@
     <string name="six_hundred_meters">600m</string>
     <string name="seven_fifty_meters">750m</string>
     <string name="one_thousand_meters">1000m</string>
+
+    <plurals name="select_a_permit_description">
+        <item quantity="one">The following permit meets the requirements for the flight\'s operating area</item>
+        <item quantity="other">The following permits meet the requirements for the flight\'s operating area</item>
+    </plurals>
 
 </resources>

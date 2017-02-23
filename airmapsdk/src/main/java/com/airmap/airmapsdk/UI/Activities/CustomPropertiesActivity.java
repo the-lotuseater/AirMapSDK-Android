@@ -22,18 +22,17 @@ import android.widget.Toast;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.Analytics;
+import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermitCustomProperty;
-import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.util.Constants;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class CustomPropertiesActivity extends AppCompatActivity {
 
@@ -113,7 +112,7 @@ public class CustomPropertiesActivity extends AppCompatActivity {
                 validityTextView.setText(getString(R.string.validity_minutes, availablePermit.getValidFor()));
             }
         } else if (availablePermit.getValidUntil() != null) {
-            SimpleDateFormat format = new SimpleDateFormat("M/d/yy h:mm a", Locale.US);
+            DateFormat format = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
             validityTextView.setText(format.format(availablePermit.getValidUntil()));
         }
 

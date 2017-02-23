@@ -8,7 +8,9 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.PhoneNumberUtils;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -24,12 +26,13 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.Analytics;
+import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
-import com.airmap.airmapsdk.R;
 import com.bumptech.glide.Glide;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -159,21 +162,22 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         firstNameEditText.setText(profile.getFirstName());
         lastNameEditText.setText(profile.getLastName());
         emailEditText.setText(profile.getEmail());
-        if (profile.getPhone() != null && !profile.getPhone().isEmpty()) {
-            phoneEditText.setText(profile.getPhone()); //If we don't check, the EditText might show "null"
+        if (!TextUtils.isEmpty(profile.getPhone())) {
+            phoneEditText.setText(PhoneNumberUtils.formatNumber(profile.getPhone())); //If we don't check, the EditText might show "null"
         }
         populateExtras();
+        NumberFormat format = NumberFormat.getIntegerInstance();
         try {
-            aircraftCounterTextView.setText(String.valueOf(profile.getStats().getAircraftStats().getTotal()));
+            aircraftCounterTextView.setText(format.format(profile.getStats().getAircraftStats().getTotal()));
         } catch (Exception e) {
             e.printStackTrace(); //Probably some NPE
-            aircraftCounterTextView.setText("0");
+            aircraftCounterTextView.setText("-");
         }
         try {
-            flightCounterTextView.setText(String.valueOf(profile.getStats().getFlightStats().getTotal()));
+            flightCounterTextView.setText(format.format(profile.getStats().getFlightStats().getTotal()));
         } catch (Exception e) {
             e.printStackTrace(); //Probably some NPE
-            flightCounterTextView.setText("0");
+            flightCounterTextView.setText("-");
         }
         saveButton.setOnClickListener(this);
         phoneEditText.setOnClickListener(new View.OnClickListener() {

@@ -21,6 +21,8 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+import java.text.NumberFormat;
+
 /**
  * Activity for viewing another pilot's profile (not your own)
  * @see com.airmap.airmapsdk.ui.activities.ProfileActivity
@@ -131,18 +133,19 @@ public class PilotProfileActivity extends AppCompatActivity {
         nameTextView.setVisibility(TextUtils.isEmpty(profile.getFirstName()) ? View.GONE : View.VISIBLE);
         usernameTextView.setText(profile.getUsername());
 
+        NumberFormat format = NumberFormat.getIntegerInstance();
         try {
-            aircraftCounterTextView.setText(String.valueOf(profile.getStats().getAircraftStats().getTotal()));
+            aircraftCounterTextView.setText(format.format(profile.getStats().getAircraftStats().getTotal()));
         } catch (Exception e) {
             e.printStackTrace(); //Probably some NPE
-            aircraftCounterTextView.setText("0");
+            aircraftCounterTextView.setText("-");
         }
 
         try {
-            flightCounterTextView.setText(String.valueOf(profile.getStats().getFlightStats().getTotal()));
+            flightCounterTextView.setText(format.format(profile.getStats().getFlightStats().getTotal()));
         } catch (Exception e) {
             e.printStackTrace(); //Probably some NPE
-            flightCounterTextView.setText("0");
+            flightCounterTextView.setText("-");
         }
     }
 
