@@ -257,13 +257,6 @@ public class CreateFlightActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void showDecisionFlow(final AirMapStatusPermits permit) {
-        Intent intent = new Intent(this, DecisionFlowActivity.class);
-        intent.putExtra(DecisionFlowActivity.ARG_PERMIT, permit);
-        startActivityForResult(intent, REQUEST_DECISION_FLOW);
-    }
-
-    @Override
     public void selectPermit(AirMapStatusPermits permit) {
         Intent intent = new Intent(this, PermitSelectionActivity.class);
         intent.putExtra(Constants.STATUS_PERMIT_EXTRA, permit);
