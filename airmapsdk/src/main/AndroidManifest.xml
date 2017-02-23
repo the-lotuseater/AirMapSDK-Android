@@ -20,17 +20,6 @@
                 android:screenOrientation="portrait"
                 android:theme="@style/AppTheme.NoActionBar"
                 android:windowSoftInputMode="adjustResize"/>
-        <activity
-                android:name=".ui.activities.DecisionFlowActivity"
-                android:label="@string/airmap_title_activity_decision_flow"
-                android:launchMode="singleTop"
-                android:screenOrientation="portrait"
-                android:parentActivityName=".ui.activities.CreateFlightActivity"
-                android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".ui.activities.CreateFlightActivity"/>
-        </activity>
 
         <activity
             android:name=".ui.activities.PermitSelectionActivity"

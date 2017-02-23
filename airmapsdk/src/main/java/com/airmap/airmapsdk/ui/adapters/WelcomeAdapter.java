@@ -2,34 +2,19 @@ package com.airmap.airmapsdk.ui.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
-import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
-import com.airmap.airmapsdk.models.status.AirMapStatusPermits;
 import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
-import com.airmap.airmapsdk.ui.activities.CustomPropertiesActivity;
 import com.airmap.airmapsdk.ui.activities.WelcomeDetailsActivity;
 import com.airmap.airmapsdk.util.Constants;
-import com.airmap.airmapsdk.util.Utils;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Vansh Gandhi on 7/19/16.

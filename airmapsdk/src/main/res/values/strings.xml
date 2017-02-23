@@ -20,7 +20,6 @@
     <string name="airmap_title_activity_login">Login</string>
     <string name="airmap_title_activity_create_flight">Create Flight</string>
     <string name="airmap_title_activity_create_aircraft">Create Aircraft</string>
-    <string name="airmap_title_activity_decision_flow">Decision Flow</string>
     <string name="airmap_title_activity_custom_properties">Custom Properties</string>
     <string name="airmap_airspace_advisories">Airspace Advisories</string>
 
