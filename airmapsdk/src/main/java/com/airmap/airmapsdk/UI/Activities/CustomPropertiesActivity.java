@@ -29,6 +29,7 @@ import com.airmap.airmapsdk.models.permits.AirMapPilotPermitCustomProperty;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.Utils;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -112,7 +113,7 @@ public class CustomPropertiesActivity extends AppCompatActivity {
                 validityTextView.setText(getString(R.string.validity_minutes, availablePermit.getValidFor()));
             }
         } else if (availablePermit.getValidUntil() != null) {
-            DateFormat format = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+            DateFormat format = Utils.getDateTimeFormat();
             validityTextView.setText(format.format(availablePermit.getValidUntil()));
         }
 

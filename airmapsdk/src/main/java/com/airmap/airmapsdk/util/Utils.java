@@ -28,8 +28,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Vansh Gandhi on 7/25/16.
@@ -71,6 +73,18 @@ public class Utils {
 
     public static double metersToFeet(double meters) {
         return meters * 3.2808;
+    }
+
+    public static DateFormat getDateTimeFormat() {
+        return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault());
+    }
+
+    public static DateFormat getDateFormat() {
+        return DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+    }
+
+    public static DateFormat getTimeFormat() {
+        return DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault());
     }
 
     public static String getIso8601StringFromDate(Date date) {

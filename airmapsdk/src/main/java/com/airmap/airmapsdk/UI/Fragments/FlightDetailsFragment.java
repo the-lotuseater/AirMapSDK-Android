@@ -430,7 +430,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             mListener.getFlight().setStartsAt(now);
         }
 
-        DateFormat format = DateFormat.getDateInstance(DateFormat.SHORT);
+        DateFormat format = Utils.getDateTimeFormat();
         Date date = mListener.getFlight().getStartsAt();
         startsAtTextView.setText(now.after(date) || now.equals(date) ? getString(R.string.now) : format.format(date));
     }
