@@ -34,9 +34,9 @@ import java.util.Set;
  */
 public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int HEADER_VIEW_TYPE = 0;
-    private static final int PERMIT_VIEW_TYPE = 1;
-    private static final int INSTRUCTIONS_VIEW_TYPE = 2;
+    public final int HEADER_VIEW_TYPE = 0;
+    public final int PERMIT_VIEW_TYPE = 1;
+    public final int INSTRUCTIONS_VIEW_TYPE = 2;
 
     private Activity activity;
     private List permitsAndHeadersList;
@@ -229,7 +229,7 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    private static class Header {
+    public class Header {
         public final String name;
 
         public Header(String name) {
@@ -237,14 +237,14 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    private static class PermitViewHolder extends RecyclerView.ViewHolder {
+    public class PermitViewHolder extends RecyclerView.ViewHolder {
 
-        View cardView;
-        ImageView iconImageView;
-        TextView permitNameTextView;
-        TextView permitDescriptionTextView;
-        TextView statusTextView;
-        TextView expirationTextView;
+        public View cardView;
+        public ImageView iconImageView;
+        public TextView permitNameTextView;
+        public TextView permitDescriptionTextView;
+        public TextView statusTextView;
+        public TextView expirationTextView;
 
         PermitViewHolder(View itemView) {
             super(itemView);
@@ -258,8 +258,8 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    private static class HeaderViewHolder extends RecyclerView.ViewHolder {
-        TextView titleTextView;
+    public class HeaderViewHolder extends RecyclerView.ViewHolder {
+        public TextView titleTextView;
 
         HeaderViewHolder(View itemView) {
             super(itemView);
@@ -267,9 +267,9 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    private static class InstructionsViewHolder extends RecyclerView.ViewHolder {
-        TextView titleTextView;
-        TextView descriptionTextView;
+    public class InstructionsViewHolder extends RecyclerView.ViewHolder {
+        public TextView titleTextView;
+        public TextView descriptionTextView;
 
         InstructionsViewHolder(View itemView) {
             super(itemView);
