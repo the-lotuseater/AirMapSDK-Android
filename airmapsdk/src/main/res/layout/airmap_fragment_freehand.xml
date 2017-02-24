@@ -116,21 +116,23 @@
 
         </RelativeLayout>
 
-
+        <!-- Using drawableStart doesn't work, using drawableLeft should be fine even for RTL -->
         <com.airmap.airmapsdk.ui.views.ClickableDrawableButton
                 android:id="@+id/next_button"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:backgroundTint="@color/colorPrimary"
                 android:layout_alignParentBottom="true"
-                android:drawableStart="@drawable/ic_info"
+                android:drawableLeft="@drawable/ic_info"
                 android:drawablePadding="-16dp"
                 android:layout_marginLeft="-4dp"
                 android:layout_marginRight="-4dp"
                 android:layout_marginTop="-5dp"
                 android:layout_marginBottom="-5dp"
                 android:text="@string/airmap_next"/>
-        <!-- Negative margins are to get rid of the shadow buroder around button-->
+
+        <!-- Negative margins are to get rid of the shadow border around button-->
+
     </RelativeLayout>
 
     <!-- bottom sheet layout -->

@@ -38,6 +38,10 @@ public class ClickableDrawableButton extends AppCompatButton {
         this.drawableClickListener = drawableClickListener;
     }
 
+    /**
+     *  //FIXME: this does not work using drawableStart instead of drawableLeft, not sure why
+     *  //FIXME: reverting to drawableLeft for now
+     */
     @Override
     public void setCompoundDrawables(Drawable left, Drawable top,
                                      Drawable right, Drawable bottom) {
