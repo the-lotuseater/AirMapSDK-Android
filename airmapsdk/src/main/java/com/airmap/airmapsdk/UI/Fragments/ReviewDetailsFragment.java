@@ -77,7 +77,7 @@ public class ReviewDetailsFragment extends Fragment {
 
     private void populateViews() {
         NumberFormat numberFormat = NumberFormat.getIntegerInstance();
-        DateFormat format = Utils.getDateTimeFormat();
+        DateFormat dateFormat = Utils.getDateTimeFormat();
 
         if (flight.getGeometry() instanceof AirMapPoint) {
             String radius = useMetric ? numberFormat.format(flight.getBuffer()) + " " + getString(R.string.meters) :
