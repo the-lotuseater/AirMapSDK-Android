@@ -37,7 +37,8 @@ public class MappingService extends BaseService {
         Cities("cities", "Cities", "Cities"),
         Custom("custom", "Custom", "Custom"),
         Prisons("prisons", "Prisons", "Prisons"),
-        Universities("universities", "Universities", "Universities");
+        Universities("universities", "Universities", "Universities"),
+        Other("aerial_recreational_areas,custom,hazard_areas,hospitals,power_plants,prisons,schools,universities,cities", "Other Cautionary Areas", "Other (Hospitals, Power Plants, Schools, etc");
 
         private final String text;
         private final String title;

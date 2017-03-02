@@ -19,12 +19,12 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.airmap.airmapsdk.Analytics;
+import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.permits.AirMapPermitIssuer;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapStatusRequirementNotice;
-import com.airmap.airmapsdk.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -163,7 +163,9 @@ public class FlightNoticeFragment extends Fragment {
                     String number = notDigitalNotices.get(position).getPhoneNumber();
                     if (number != null && number.length() >= 10) {
                         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number));
-                        startActivity(intent);
+                        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                            startActivity(intent);
+                        }
                     }
                 }
             });

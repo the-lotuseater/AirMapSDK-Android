@@ -1,5 +1,7 @@
 package com.airmap.airmapsdk.networking.callbacks;
 
+import android.util.Log;
+
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.util.Utils;
 
@@ -48,6 +50,7 @@ public class GenericListOkHttpCallback extends GenericBaseOkHttpCallback {
             Utils.error(listener, response.code(), result);
             return;
         }
+
         JSONArray jsonArray = result.optJSONArray("data");
         if (jsonArray == null && result.isNull("data")) {
             //noinspection unchecked

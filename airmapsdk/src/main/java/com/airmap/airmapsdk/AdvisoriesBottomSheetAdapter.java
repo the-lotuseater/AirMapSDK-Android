@@ -1,5 +1,6 @@
 package com.airmap.airmapsdk;
 
+import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -9,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -56,8 +58,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     private Map<String, String> organizationsMap;
     private Context context;
 
-    //TODO: welcome data
-    private AirMapWelcome welcomeData;
+    private ArrayList<AirMapWelcomeResult> welcomeData;
     private String welcomeCity;
 
 
@@ -138,14 +139,14 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
         notifyDataSetChanged();
     }
 
-    public void setWelcomeData(String city, AirMapWelcome data) {
+    public void setWelcomeData(String city, ArrayList<AirMapWelcomeResult> data) {
         welcomeCity = city;
         welcomeData = data;
 
         notifyDataSetChanged();
     }
 
-    private boolean isWelcomeEnabled() {
+    public boolean isWelcomeEnabled() {
         return !TextUtils.isEmpty(welcomeCity);
     }
 
@@ -189,23 +190,23 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     }
 
     private void onBindWelcomeHolder(VHWelcome holder) {
-
-        final String cityText = "Welcome to " + welcomeCity;
-        holder.cityTextView.setText(cityText);
-
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, WelcomeActivity.class);
-                intent.putExtra(Constants.CITY_EXTRA, cityText);
+                intent.putExtra(Constants.CITY_EXTRA, welcomeCity);
                 intent.putExtra(Constants.WELCOME_EXTRA, welcomeData);
                 context.startActivity(intent);
             }
         };
 
-        holder.moreButton.setOnClickListener(onClickListener);
+        boolean hasWelcomeData = welcomeData != null && !welcomeData.isEmpty();
 
-        holder.itemView.setOnClickListener(onClickListener);
+        holder.cityTextView.setText(welcomeCity);
+        holder.rulesContainer.setVisibility(hasWelcomeData ? View.VISIBLE : View.GONE);
+        holder.moreButton.setOnClickListener(hasWelcomeData ? onClickListener : null);
+        holder.itemView.setOnClickListener(hasWelcomeData ? onClickListener : null);
+        holder.itemView.setClickable(hasWelcomeData);
     }
 
     private void onBindHeaderViewHolder(VHHeader holder, AirMapStatusAdvisory advisory) {
@@ -385,6 +386,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
         TextView cityTextView;
         TextView descriptionTextView;
         Button moreButton;
+        View rulesContainer;
 
         public VHWelcome(View itemView) {
             super(itemView);
@@ -392,6 +394,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
             cityTextView = (TextView) itemView.findViewById(R.id.city_text_view);
             descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
             moreButton = (Button) itemView.findViewById(R.id.more_button);
+            rulesContainer = itemView.findViewById(R.id.rules_container);
         }
     }
 
