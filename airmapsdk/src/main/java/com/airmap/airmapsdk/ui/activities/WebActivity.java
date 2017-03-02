@@ -2,6 +2,7 @@ package com.airmap.airmapsdk.ui.activities;
 
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -61,7 +62,13 @@ public class WebActivity extends AppCompatActivity {
             }
 
         });
-        webView.loadUrl(getIntent().getStringExtra(Constants.URL_EXTRA));
+
+        String url = getIntent().getStringExtra(Constants.URL_EXTRA);
+        if (url.endsWith(".pdf")) {
+            // This enables the user to view PDF's within the app's built in web browser
+            url = Uri.parse("http://docs.google.com/viewer?url=" + url).toString();
+        }
+        webView.loadUrl(url);
     }
 
     @Override
