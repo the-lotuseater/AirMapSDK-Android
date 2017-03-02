@@ -20,6 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:text="@string/initial_welcome_text"
             android:textColor="@color/colorTextAndIcons"
             android:textSize="20sp"/>
 

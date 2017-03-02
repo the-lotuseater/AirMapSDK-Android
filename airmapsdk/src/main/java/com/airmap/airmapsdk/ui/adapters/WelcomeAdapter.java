@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
+import com.airmap.airmapsdk.ui.activities.WebActivity;
 import com.airmap.airmapsdk.ui.activities.WelcomeDetailsActivity;
 import com.airmap.airmapsdk.util.Constants;
 
@@ -51,15 +52,23 @@ public class WelcomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         holder.nameTextView.setText(welcomeResult.getJurisdictionName());
 
-        String description = TextUtils.isEmpty(welcomeResult.getSummary()) ? welcomeResult.getText() : welcomeResult.getSummary();
+        final String description = TextUtils.isEmpty(welcomeResult.getSummary()) ? welcomeResult.getText() : welcomeResult.getSummary();
         holder.descriptionTextView.setText(description);
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Automatically open the Web view if the welcome result has a url
+                if (!TextUtils.isEmpty(welcomeResult.getUrl())) {
+                    Intent intent = new Intent(activity, WebActivity.class);
+                    intent.putExtra(Intent.EXTRA_TITLE, welcomeResult.getJurisdictionName());
+                    intent.putExtra(Constants.URL_EXTRA, welcomeResult.getUrl());
+                    activity.startActivity(intent);
+                } else {
                     Intent intent = new Intent(activity, WelcomeDetailsActivity.class);
                     intent.putExtra(Constants.WELCOME_RESULT_EXTRA, welcomeResult);
                     activity.startActivity(intent);
+                }
             }
         });
     }

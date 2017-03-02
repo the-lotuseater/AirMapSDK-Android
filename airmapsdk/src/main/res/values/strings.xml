@@ -101,6 +101,8 @@
     <string name="do_you_want_to_call">Do you want to call %1$s?</string>
 
     <!-- Rules and Welcome -->
+    <string name="example_city">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ut dapibus lacus. Morbi luctus pellentesque justo consequat porta. Aliquam tristique tempor faucibus. Nunc orci nunc, vulputate eget ligula vel, molestie viverra mi. Aenean a auctor tellus. Nullam rutrum consectetur sodales. Donec vel fringilla purus.</string>
+    <string name="initial_welcome_text">Welcome</string>
     <string name="rules_hint">Learn about federal, state, and local rules that may impact operations in this area</string>
     <string name="learn_more">Learn More</string>
 
