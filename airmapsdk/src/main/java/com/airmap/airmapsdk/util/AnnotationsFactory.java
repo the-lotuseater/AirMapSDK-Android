@@ -1,6 +1,11 @@
 package com.airmap.airmapsdk.util;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
 
 import com.airmap.airmapsdk.R;
@@ -33,10 +38,10 @@ public class AnnotationsFactory {
     private Context context;
 
     public AnnotationsFactory(Context context) {
-        cornerIcon = IconFactory.getInstance(context).fromResource(R.drawable.white_circle);
-        midpointIcon = IconFactory.getInstance(context).fromResource(R.drawable.gray_circle);
-        intersectionIcon = IconFactory.getInstance(context).fromResource(R.drawable.intersection_circle);
         this.context = context;
+        cornerIcon = IconFactory.getInstance(context).fromBitmap(getBitmapForDrawable(context, R.drawable.white_circle));
+        midpointIcon = IconFactory.getInstance(context).fromBitmap(getBitmapForDrawable(context, R.drawable.gray_circle));
+        intersectionIcon = IconFactory.getInstance(context).fromBitmap(getBitmapForDrawable(context, R.drawable.intersection_circle));
     }
 
     public static PolygonOptions getMapboxPolygon(AirMapPolygon airMapPolygon) {
@@ -116,5 +121,25 @@ public class AnnotationsFactory {
             polygons.add(point);
         }
         return polygons;
+    }
+
+    public static Bitmap getBitmapForDrawable(Context context, @DrawableRes int id) {
+        Drawable drawable = ContextCompat.getDrawable(context, id);
+        Bitmap bitmap;
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            bitmap = bitmapDrawable.getBitmap();
+        } else {
+            if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+                bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+            } else {
+                bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            }
+
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+        }
+        return bitmap;
     }
 }
