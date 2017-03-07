@@ -18,13 +18,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/next_button"
-                app:zoom="14"
-                app:zoom_min="8"
-                app:zoom_max="22"
-                app:rotate_enabled="false"
-                app:tilt_enabled="false"
-                app:compass_enabled="false"
-                app:zoom_controls_enabled="false"/>
+                app:mapbox_cameraZoom="14"
+                app:mapbox_cameraZoomMin="8"
+                app:mapbox_cameraZoomMax="22"
+                app:mapbox_uiRotateGestures="false"
+                app:mapbox_uiTiltGestures="false"
+                app:mapbox_uiCompass="false"
+                app:mapbox_uiZoomControls="false"/>
 
         <com.airmap.airmapsdk.ui.views.DrawingBoard
                 android:id="@+id/drawFrame"

@@ -11,7 +11,7 @@
 
     <application>
         <service android:name="org.eclipse.paho.android.service.MqttService"/>
-        <service android:name="com.mapbox.mapboxsdk.telemetry.TelemetryService"/>
+        <service android:name="com.mapbox.services.android.telemetry.service.TelemetryService"/>
 
         <activity
                 android:name=".ui.activities.CreateFlightActivity"

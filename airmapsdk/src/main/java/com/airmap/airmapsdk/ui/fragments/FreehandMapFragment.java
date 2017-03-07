@@ -1598,6 +1598,18 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mapView.onStop();
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof FlightDetailsFragment.OnFragmentInteractionListener) {

@@ -345,6 +345,18 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
         mapView.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mapView.onStop();
+    }
+
 
     private void showPhoneDialog() {
         final DialogInterface.OnClickListener dismissOnClickListener = new DialogInterface.OnClickListener() {

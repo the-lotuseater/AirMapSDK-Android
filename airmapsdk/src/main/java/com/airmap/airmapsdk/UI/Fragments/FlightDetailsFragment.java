@@ -915,6 +915,18 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         mapView.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mapView.onStop();
+    }
+
     public abstract class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
         @Override

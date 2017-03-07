@@ -39,7 +39,7 @@ import com.airmap.airmapsdk.ui.views.CustomViewPager;
 import com.airmap.airmapsdk.util.AnnotationsFactory;
 import com.airmap.airmapsdk.util.Constants;
 import com.airmap.airmapsdk.util.Utils;
-import com.mapbox.mapboxsdk.MapboxAccountManager;
+import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import java.util.ArrayList;
@@ -117,7 +117,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
         }
 
         setupFlight(savedInstanceState);
-        MapboxAccountManager.start(this, Utils.getMapboxApiKey());
+        Mapbox.getInstance(this, Utils.getMapboxApiKey());
         setContentView(R.layout.airmap_activity_create_flight);
         initializeViews();
         setupToolbar();
