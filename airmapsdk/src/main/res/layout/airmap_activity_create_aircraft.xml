@@ -43,13 +43,13 @@
                         android:textColorHint="@color/colorAccent">
 
                     <EditText
+                            android:id="@+id/nickname"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:hint="@string/airmap_nickname"
                             android:inputType="textCapWords"
-                            android:maxLines="1"
-                            android:id="@+id/nickname"/>
+                            android:maxLines="1"/>
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -58,14 +58,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/colorAccent"
-                        android:paddingTop="16dp"/>
+                        android:paddingTop="16dp"
+                        tools:listitem="@android:layout/simple_spinner_dropdown_item"/>
 
                 <Spinner
                         android:id="@+id/models"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingTop="16dp"
-                        android:textColor="@color/colorAccent"/>
+                        android:textColor="@color/colorAccent"
+                        tools:listitem="@android:layout/simple_spinner_dropdown_item"/>
             </LinearLayout>
         </ScrollView>
 

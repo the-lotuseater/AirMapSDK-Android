@@ -770,7 +770,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         }
 
         if (indexOfAnnotationToDrag == -1) {
-            System.out.println("Index was null??");
+            Log.e(TAG, "indexOfAnnotationToDrag was -1???");
             return;
         }
 
@@ -785,13 +785,6 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             scratchpad.reset();
             scratchpad.invalidate();
             setMidpointVisibilities();
-//            map.removeMarker(map.addMarker(new MarkerOptions()));
-//            mapView.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    setMidpointVisibilities();
-//                }
-//            }, 2000);
         }
     }
 

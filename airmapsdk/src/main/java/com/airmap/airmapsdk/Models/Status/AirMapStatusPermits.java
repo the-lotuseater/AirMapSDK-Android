@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
-import com.airmap.airmapsdk.models.permits.AirMapPermitDecisionFlow;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,7 +21,6 @@ public class AirMapStatusPermits implements Serializable, AirMapBaseModel {
     private String authorityName; //This has to be manually set (it is not from JSON)
     private List<AirMapAvailablePermit> applicablePermits;
     private List<AirMapAvailablePermit> availablePermits;
-    private AirMapPermitDecisionFlow decisionFlow;
 
     public AirMapStatusPermits() {
         applicablePermits = new ArrayList<>();
@@ -32,7 +30,6 @@ public class AirMapStatusPermits implements Serializable, AirMapBaseModel {
     @Override
     public AirMapStatusPermits constructFromJson(JSONObject json) {
         if (json != null) {
-            setDecisionFlow(new AirMapPermitDecisionFlow(json.optJSONObject("permit_decision_flow")));
             JSONArray typesArray = json.optJSONArray("applicablePermits");
             applicablePermits = new ArrayList<>();
             for (int i = 0; i < typesArray.length(); i++) {
@@ -57,15 +54,6 @@ public class AirMapStatusPermits implements Serializable, AirMapBaseModel {
 
     public AirMapStatusPermits setAvailablePermits(List<AirMapAvailablePermit> availablePermits) {
         this.availablePermits = availablePermits;
-        return this;
-    }
-
-    public AirMapPermitDecisionFlow getDecisionFlow() {
-        return decisionFlow;
-    }
-
-    public AirMapStatusPermits setDecisionFlow(AirMapPermitDecisionFlow decisionFlow) {
-        this.decisionFlow = decisionFlow;
         return this;
     }
 

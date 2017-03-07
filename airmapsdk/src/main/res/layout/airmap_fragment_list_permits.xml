@@ -21,7 +21,8 @@
             android:layout_below="@+id/summary"
             android:layout_above="@+id/next_button"
             android:padding="16dp"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:listitem="@layout/permit_list_item"/>
 
     <Button
             android:id="@+id/next_button"

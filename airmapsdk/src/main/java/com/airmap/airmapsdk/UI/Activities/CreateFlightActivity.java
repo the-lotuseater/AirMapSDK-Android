@@ -257,13 +257,6 @@ public class CreateFlightActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void showDecisionFlow(final AirMapStatusPermits permit) {
-        Intent intent = new Intent(this, DecisionFlowActivity.class);
-        intent.putExtra(DecisionFlowActivity.ARG_PERMIT, permit);
-        startActivityForResult(intent, REQUEST_DECISION_FLOW);
-    }
-
-    @Override
     public void selectPermit(AirMapStatusPermits permit) {
         Intent intent = new Intent(this, PermitSelectionActivity.class);
         intent.putExtra(Constants.STATUS_PERMIT_EXTRA, permit);
@@ -306,7 +299,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
 
     @Override
     public void bottomSheetOpened() {
-        getSupportActionBar().setTitle(R.string.R_string_airmap_airspace_advisories);
+        getSupportActionBar().setTitle(R.string.airmap_airspace_advisories);
 //        getTabLayout().setVisibility(View.GONE); //This causes wonky behavior
     }
 
@@ -415,7 +408,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(CreateFlightActivity.this, "Error getting Permit Wallet", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CreateFlightActivity.this, R.string.error_getting_wallet, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

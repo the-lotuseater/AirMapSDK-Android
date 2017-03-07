@@ -230,7 +230,8 @@
             android:id="@+id/progress_bar_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#b8000000">
+            android:background="#b8000000"
+            tools:visibility="gone">
 
         <ProgressBar
                 android:id="@+id/progress_bar"

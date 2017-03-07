@@ -1,6 +1,7 @@
 package com.airmap.airmapsdk;
 
 import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
+import com.airmap.airmapsdk.util.Utils;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -29,7 +30,7 @@ import com.airmap.airmapsdk.models.welcome.AirMapWelcome;
 import com.airmap.airmapsdk.ui.activities.WelcomeActivity;
 import com.airmap.airmapsdk.util.Constants;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -57,6 +58,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     private List<AirMapStatusAdvisory> advisories = new ArrayList<>();
     private Map<String, String> organizationsMap;
     private Context context;
+    private DateFormat dateFormat;
 
     private ArrayList<AirMapWelcomeResult> welcomeData;
     private String welcomeCity;
@@ -64,6 +66,8 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
 
     public AdvisoriesBottomSheetAdapter(Context context, Map<String, List<AirMapStatusAdvisory>> data, Map<String, String> organizations) {
         this.context = context;
+        this.dateFormat = Utils.getDateTimeFormat();
+
         RED_TITLE = context.getString(R.string.flight_strictly_regulated);
         YELLOW_TITLE = context.getString(R.string.advisories);
         GREEN_TITLE = context.getString(R.string.informational);
@@ -244,7 +248,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
                     public void onClick(View v) {
                         new AlertDialog.Builder(holder.itemView.getContext())
                                 .setTitle(advisory.getName())
-                                .setMessage(String.format(Locale.getDefault(), "Do you want to call %s?", advisory.getName()))
+                                .setMessage(context.getString(R.string.do_you_want_to_call, advisory.getName()))
                                 .setPositiveButton(R.string.call, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -256,13 +260,13 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
                                             holder.description2TextView.post(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    Toast.makeText(context, "No dialer found on device", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, R.string.no_dialer_found, Toast.LENGTH_SHORT).show();
                                                 }
                                             });
                                         }
                                     }
                                 })
-                                .setNegativeButton(android.R.string.cancel, null)
+                                .setNegativeButton(R.string.cancel, null)
                                 .show();
                     }
                 });
@@ -285,7 +289,6 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     private void onBindTfrViewHolder(final VHTfr holder, final AirMapStatusAdvisory advisory) {
         holder.colorView.setBackgroundColor(getColor(advisory.getColor()));
         holder.nameTextView.setText(advisory.getName());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy, hh:mm a", Locale.US);
         StringBuilder builder = new StringBuilder();
         if (advisory.getTfrProperties().getStartTime() != null) {
             builder.append(dateFormat.format(advisory.getTfrProperties().getStartTime()));
