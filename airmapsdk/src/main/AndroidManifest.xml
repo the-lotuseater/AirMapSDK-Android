@@ -66,7 +66,7 @@
                 android:theme="@style/AppTheme.NoActionBar"/>
         <activity
                 android:name=".ui.activities.LoginActivity"
-                android:label="@string/airmap_title_activity_login"
+                android:label="@string/login"
                 android:launchMode="singleTop"
                 android:theme="@style/AppTheme.NoActionBar"/>
 

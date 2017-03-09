@@ -305,8 +305,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         });
 
         //Add tabs after listener so that the callback is invoked
-        tabLayout.addTab(getTab(tabLayout, R.string.airmap_circle_radius, R.drawable.ic_point_tab, CIRCLE_TAG));
-        tabLayout.addTab(getTab(tabLayout, R.string.airmap_path_buffer, R.drawable.ic_path_tab, PATH_TAG));
+        tabLayout.addTab(getTab(tabLayout, R.string.airmap_circle, R.drawable.ic_point_tab, CIRCLE_TAG));
+        tabLayout.addTab(getTab(tabLayout, R.string.airmap_path, R.drawable.ic_path_tab, PATH_TAG));
         tabLayout.addTab(getTab(tabLayout, R.string.airmap_polygon, R.drawable.ic_polygon_tab, POLYGON_TAG));
     }
 
@@ -625,7 +625,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private static double getPathWidthFromSeekBar(Context context, int progress) {
-        return (Utils.useMetric(context) ? Utils.getBufferPresetsMetric()[progress].value.doubleValue() : Utils.getBufferPresets()[progress].value.doubleValue());
+        return (Utils.useMetric(context) ? Utils.getBufferPresetsMetric()[progress] : Utils.getBufferPresets()[progress]);
     }
 
     @Override
@@ -792,7 +792,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         map.removeAnnotation(circleContainer.circle);
         map.removeAnnotation(circleContainer.outline);
         corners.get(indexOfAnnotationToDrag).setPosition(newLocation); //Move the center point
-        double radius = Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[seekBar.getProgress()].value.doubleValue() : getBufferPresets()[seekBar.getProgress()].value.doubleValue(); //Move the circle polygon
+        double radius = Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[seekBar.getProgress()] : getBufferPresets()[seekBar.getProgress()]; //Move the circle polygon
         List<LatLng> circlePoints = mListener.getAnnotationsFactory().polygonCircleForCoordinate(newLocation, radius);
         PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0));
         circleContainer.circle = map.addPolygon(mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(circlePoints));
@@ -950,8 +950,11 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                seekBarValueTextView.setText(Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[progress].label : getBufferPresets()[progress].label);
-                drawCircle(circleContainer.center, Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[progress].value.doubleValue() : getBufferPresets()[progress].value.doubleValue());
+                double bufferPreset = Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[progress] : getBufferPresets()[progress];
+                Log.e(TAG, "buffer preset");
+                String bufferText = Utils.getMeasurementText(bufferPreset, Utils.useMetric(getActivity()));
+                seekBarValueTextView.setText(bufferText);
+                drawCircle(circleContainer.center, bufferPreset);
                 if (!fromUser) {
                     checkCircleStatus();
                     zoomToCircle();
@@ -1012,8 +1015,11 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                seekBarValueTextView.setText(Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[progress].label : getBufferPresets()[progress].label);
+                double bufferPreset = Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[progress] : getBufferPresets()[progress];
+                String bufferText = Utils.getMeasurementText(bufferPreset, Utils.useMetric(getActivity()));
+
                 lineContainer.width = getPathWidthFromSeekBar(getActivity(), progress);
+                seekBarValueTextView.setText(bufferText);
                 if (lineContainer.line != null) {
                     calculatePathBufferAndDisplayLineAndBuffer(lineContainer.line.getPoints(), lineContainer.width, true);
                 }

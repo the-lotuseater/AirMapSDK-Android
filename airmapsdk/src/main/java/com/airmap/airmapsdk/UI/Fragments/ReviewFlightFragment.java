@@ -371,7 +371,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                 .setMessage(R.string.airmap_phone_number_disclaimer)
                 .setTitle(getString(R.string.phone_number))
                 .setView(phoneLayout)
-                .setNegativeButton(R.string.cancel, dismissOnClickListener)
+                .setNegativeButton(android.R.string.cancel, dismissOnClickListener)
                 .setPositiveButton(R.string.submit, new DialogInterface.OnClickListener() { //Display dialog to enter the verification token
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -449,7 +449,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                 final AlertDialog dialog = new AlertDialog.Builder(getContext())
                         .setView(verifyLayout)
                         .setMessage(R.string.enter_verification_token)
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int i) {
                                 dialog.dismiss();
@@ -569,9 +569,9 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
             } else if (fragment instanceof ReviewPermitsFragment) {
                 return getString(R.string.permits);
             } else if (fragment instanceof ReviewNoticeFragment) {
-                return getString(R.string.flight_notice);
+                return getString(R.string.review_flight_plan_tab_title_digital_notice);
             } else {
-                return getString(R.string.review);
+                return getString(R.string.airmap_review);
             }
         }
     }

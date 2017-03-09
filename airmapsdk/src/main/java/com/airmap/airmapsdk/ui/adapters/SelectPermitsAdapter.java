@@ -130,8 +130,8 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof InstructionsViewHolder) {
             final InstructionsViewHolder holder = (InstructionsViewHolder) viewHolder;
-            holder.titleTextView.setText(R.string.select_a_permit_title);
-            holder.descriptionTextView.setText(activity.getResources().getQuantityString(R.plurals.select_a_permit_description, applicablePermitIds.size()));
+            holder.titleTextView.setText(R.string.select_a_permit);
+            holder.descriptionTextView.setText(R.string.you_have_selected_permits_of_total_required);
         } else if (viewHolder instanceof HeaderViewHolder) {
             final HeaderViewHolder holder = (HeaderViewHolder) viewHolder;
             holder.titleTextView.setText(((Header) getItem(position)).name);
@@ -148,7 +148,7 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
                 holder.iconImageView.setVisibility(View.VISIBLE);
                 if (activity != null) {
                     holder.statusTextView.setText(activity.getString(R.string.permit_status, Utils.titleCase(walletPermit.getStatus().toString())));
-                    holder.expirationTextView.setText(activity.getString(R.string.permit_expiration,
+                    holder.expirationTextView.setText(activity.getString(R.string.pilot_permit_expiration_format,
                             walletPermit.getExpiresAt() != null ? dateFormat.format(walletPermit.getExpiresAt()) : activity.getString(R.string.na)));
                 }
                 holder.statusTextView.setVisibility(View.VISIBLE);

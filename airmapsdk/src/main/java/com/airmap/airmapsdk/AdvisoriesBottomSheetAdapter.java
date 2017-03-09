@@ -266,7 +266,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
                                         }
                                     }
                                 })
-                                .setNegativeButton(R.string.cancel, null)
+                                .setNegativeButton(android.R.string.cancel, null)
                                 .show();
                     }
                 });

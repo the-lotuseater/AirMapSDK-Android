@@ -59,6 +59,7 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'online.devliving:securedpreferencestore:0.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.0'
+    compile 'com.ibm.icu:icu4j:58.2'
 }
 
 configurations {

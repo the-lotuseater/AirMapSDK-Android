@@ -71,7 +71,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         initializeViews();
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
-        getSupportActionBar().setTitle(R.string.airmap_pilot_profile);
+        getSupportActionBar().setTitle(R.string.airmap_title_activity_profile);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if (getIntent().hasExtra(CreateFlightActivity.KEY_VALUE_EXTRAS)) {
             //noinspection unchecked
@@ -208,7 +208,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 .setMessage(R.string.airmap_phone_number_disclaimer)
                 .setTitle(R.string.phone_number)
                 .setView(phoneLayout)
-                .setNegativeButton(R.string.cancel, dismissOnClickListener)
+                .setNegativeButton(android.R.string.cancel, dismissOnClickListener)
                 .setPositiveButton(R.string.submit, new DialogInterface.OnClickListener() { //Display dialog to enter the verification token
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -287,7 +287,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 final AlertDialog dialog = new AlertDialog.Builder(ProfileActivity.this)
                         .setView(verifyLayout)
                         .setMessage(R.string.enter_verification_token)
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int i) {
                                 dialog.dismiss();
