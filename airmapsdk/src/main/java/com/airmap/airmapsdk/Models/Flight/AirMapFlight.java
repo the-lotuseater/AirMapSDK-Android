@@ -144,11 +144,11 @@ public class AirMapFlight implements Serializable, AirMapBaseModel {
             params.put("geometry", getGeometry().toString());
             params.put("latitude", ((AirMapPath) getGeometry()).getCoordinates().get(0).getLatitude());
             params.put("longitude", ((AirMapPath) getGeometry()).getCoordinates().get(0).getLongitude());
-            params.put("buffer", Math.round(getBuffer()));
+            params.put("buffer", getBuffer());
         } else {
             params.put("latitude", coordinate.getLatitude());
             params.put("longitude", coordinate.getLongitude());
-            params.put("buffer", Math.round(getBuffer()));
+            params.put("buffer", getBuffer());
         }
 
         params.put("max_altitude", getMaxAltitude());
