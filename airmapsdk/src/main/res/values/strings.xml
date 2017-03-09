@@ -304,7 +304,7 @@
   <!--<string name="gx9-8x-5nk.text">[Ends]</string>-->
   <!-- Class = "UILabel"; text = "Operating in this flight area requires a permit from each of the following authorities:"; ObjectID = "HLI-qV-iML"; -->
   <string name="you_have_selected_permits_of_total_required">Operating in this flight area requires a permit from each of the following authorities:</string>
-  Class = "UINavigationItem"; title = "Create Flight"; ObjectID = "HM6-qn-wuK";
+  <!--Class = "UINavigationItem"; title = "Create Flight"; ObjectID = "HM6-qn-wuK";-->
   <string name="airmap_title_activity_create_flight">Create Flight</string>
   <!-- Class = "UILabel"; text = "[My Drone Name]"; ObjectID = "hoG-X4-5p9"; -->
   <!--<string name="hog-x4-5p9.text">[My Drone Name]</string>-->
@@ -399,7 +399,7 @@
   <!-- Class = "UILabel"; text = "[Unavailable Permit Title]"; ObjectID = "pOg-3O-fMT"; -->
   <!--<string name="pog-3o-fmt.text">[Unavailable Permit Title]</string>-->
   <string name="price_label">Price:\t\t</string>
-  Class = "UINavigationItem"; title = "Pilot Profile"; ObjectID = "q0o-oq-I1W";
+  <!--Class = "UINavigationItem"; title = "Pilot Profile"; ObjectID = "q0o-oq-I1W";-->
   <string name="airmap_title_activity_profile">Pilot Profile</string>
   <!-- Class = "UILabel"; text = "[Status]"; ObjectID = "QBe-UL-P4j"; -->
   <!--<string name="qbe-ul-p4j.text">[Status]</string>-->
@@ -580,7 +580,7 @@ Altitude %2$s
   <!--<string name="you_have_selected_permits_of_total_required">You have selected %1$d of %2$d permits required for this flight</string>-->
   <!-- Class = "UIButton"; normalTitle = "Area"; ObjectID = "Yyg-xF-uSz"; -->
   <string name="airmap_polygon">Area</string>
-   Class = "UINavigationItem"; title = "Create Aircraft"; ObjectID = "Z9F-I6-niw";
+   <!--Class = "UINavigationItem"; title = "Create Aircraft"; ObjectID = "Z9F-I6-niw";-->
   <string name="create_aircraft">Create Aircraft</string>
   <!-- Class = "UILabel"; text = "[Label]"; ObjectID = "Zf8-fW-gj4"; -->
   <!--<string name="zf8-fw-gj4.text">[Label]</string>-->
