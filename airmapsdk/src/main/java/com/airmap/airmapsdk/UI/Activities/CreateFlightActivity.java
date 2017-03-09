@@ -227,10 +227,10 @@ public class CreateFlightActivity extends AppCompatActivity implements
                     getTabLayout().setVisibility(View.VISIBLE);
                     invalidateFurtherFragments(0);
                 } else if (fragment instanceof FlightDetailsFragment) {
-                    getSupportActionBar().setTitle(R.string.airmap_flight_details);
+                    getSupportActionBar().setTitle(R.string.flight_details);
                     getTabLayout().setVisibility(View.GONE);
                 } else if (fragment instanceof ListPermitsFragment) {
-                    getSupportActionBar().setTitle(R.string.airmap_permits);
+                    getSupportActionBar().setTitle(R.string.permits);
                     getTabLayout().setVisibility(View.GONE);
                 } else if (fragment instanceof FlightNoticeFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_flight_notice);

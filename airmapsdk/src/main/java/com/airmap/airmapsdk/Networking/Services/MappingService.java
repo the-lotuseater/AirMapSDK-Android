@@ -16,40 +16,38 @@ import java.util.List;
 public class MappingService extends BaseService {
 
     public enum AirMapLayerType implements Serializable {
-        TFRS("tfrs", R.string.tfrs_title, R.string.tfrs_description),
-        Wildfires("wildfires", R.string.wildfires_title, R.string.wildfires_description),
-        Prohibited("sua_prohibited", R.string.prohibited_area_title, R.string.prohibited_area_description),
-        Restricted("sua_restricted", R.string.restricted_area_title, R.string.restricted_area_description),
-        NationalParks("national_parks", R.string.national_park_title, R.string.national_park_description),
-        NOAA("noaa", R.string.noaa_title, R.string.noaa_description),
-        Schools("schools", R.string.school_title, R.string.school_description),
-        Hospitals("hospitals", R.string.hospital_title, R.string.hospital_description),
-        Heliports("heliports", R.string.heliport_title, R.string.heliport_description),
-        PowerPlants("power_plants", R.string.power_plant_title, R.string.power_plant_description),
-        AirportsCommercial("airports_commercial", R.string.airport_title, R.string.airport_description),
-        AirportsRecreational("airports_recreational", R.string.airport_title, R.string.airport_description),
-        AirportsCommercialPrivate("airports_commercial_private", R.string.private_airport_title, R.string.private_airport_description),
-        AirportsRecreationalPrivate("airports_recreational_private", R.string.private_airport_title, R.string.private_airport_description),
-        ClassB("class_b", R.string.class_b_title, R.string.class_b_description),
-        ClassC("class_c", R.string.class_c_title, R.string.class_c_description),
-        ClassD("class_d", R.string.class_d_title, R.string.class_d_description),
-        ClassE("class_e0", R.string.class_e_title, R.string.class_e_description),
-        HazardAreas("hazard_areas", R.string.hazard_areas_title, R.string.hazard_areas_description),
-        AerialRecreationalAreas("aerial_recreational_areas", R.string.aeriel_rec_title, R.string.aeriel_rec_description),
-        Cities("cities", R.string.cities_title, R.string.cities_description),
-        Custom("custom", R.string.custom_title, R.string.custom_description),
-        Prisons("prisons", R.string.prisons_title, R.string.prisons_description),
-        Universities("universities", R.string.universities_title, R.string.universities_description),
-        Other("aerial_recreational_areas,custom,hazard_areas,hospitals,power_plants,prisons,schools,universities,cities", R.string.other_cautionary_title, R.string.other_cautionary_description);
+        TFRS("tfrs", R.string.tile_layer_tfr_faa),
+        Wildfires("wildfires", R.string.tile_layer_wildfires),
+        Prohibited("sua_prohibited", R.string.tile_layer_prohibited),
+        Restricted("sua_restricted", R.string.tile_layer_restricted_airspace),
+        NationalParks("national_parks", R.string.tile_layer_national_parks),
+        NOAA("noaa", R.string.tile_layer_noaa),
+        Schools("schools", R.string.tile_layer_schools),
+        Hospitals("hospitals", R.string.tile_layer_hospitals),
+        Heliports("heliports", R.string.tile_layer_heliports),
+        PowerPlants("power_plants", R.string.tile_layer_power_plants),
+        AirportsCommercial("airports_commercial", R.string.tile_layer_airports),
+        AirportsRecreational("airports_recreational", R.string.tile_layer_airports),
+        AirportsCommercialPrivate("airports_commercial_private", R.string.tile_layer_private_airports),
+        AirportsRecreationalPrivate("airports_recreational_private", R.string.tile_layer_private_airports),
+        ClassB("class_b", R.string.tile_layer_class_b),
+        ClassC("class_c", R.string.tile_layer_class_c),
+        ClassD("class_d", R.string.tile_layer_class_d),
+        ClassE("class_e0", R.string.tile_layer_class_e),
+        HazardAreas("hazard_areas", R.string.tile_layer_hazard_areas),
+        AerialRecreationalAreas("aerial_recreational_areas", R.string.tile_layer_aerial_rec_areas),
+        Cities("cities", R.string.tile_layer_cities),
+        Custom("custom", R.string.tile_layer_custom),
+        Prisons("prisons", R.string.tile_layer_prisons),
+        Universities("universities", R.string.tile_layer_universities),
+        Other("aerial_recreational_areas,custom,hazard_areas,hospitals,power_plants,prisons,schools,universities,cities", R.string.tile_layer_other_cautionary_areas);
 
         private final String text;
         private final int title;
-        private final int description;
 
-        AirMapLayerType(String text, @StringRes int title, @StringRes int description) {
+        AirMapLayerType(String text, @StringRes int title) {
             this.text = text;
             this.title = title;
-            this.description = description;
         }
 
         @Override
@@ -59,10 +57,6 @@ public class MappingService extends BaseService {
 
         public int getTitle() {
             return title;
-        }
-
-        public int getDescription() {
-            return description;
         }
 
         public static AirMapLayerType fromString(String text) {
@@ -167,22 +161,22 @@ public class MappingService extends BaseService {
     }
 
     public enum AirMapAirspaceType {
-        Airport("airport", R.string.airport_title),
-        Heliport("heliport", R.string.heliport_title),
-        Park("park", R.string.park_title),
-        PowerPlant("power_plant", R.string.power_plant_title),
-        ControlledAirspace("controlled_airspace", R.string.controlled_airspace_title),
-        School("school", R.string.school_title),
-        SpecialUse("special_use_airspace", R.string.special_use_title),
-        TFR("tfr", R.string.tfr_title),
-        Wildfires("wildfire", R.string.wildfire_title),
-        Hospitals("hospital", R.string.hospital_title),
-        HazardArea("hazard_area", R.string.hazard_area_title),
-        RecreationalArea("recreational_area", R.string.aeriel_rec_title),
-        City("city", R.string.city_title),
-        Custom("custom", R.string.custom_title),
-        Prison("prison", R.string.prison_title),
-        University("university", R.string.university_title);
+        Airport("airport", R.string.airspace_type_airport),
+        Heliport("heliport", R.string.airspace_type_heliport),
+        Park("park", R.string.airspace_type_national_park),
+        PowerPlant("power_plant", R.string.airspace_type_power_plant),
+        ControlledAirspace("controlled_airspace", R.string.airspace_type_controlled),
+        School("school", R.string.airspace_type_school),
+        SpecialUse("special_use_airspace", R.string.airspace_type_special_use),
+        TFR("tfr", R.string.airspace_type_tfr_faa),
+        Wildfires("wildfire", R.string.airspace_type_wildfire),
+        Hospitals("hospital", R.string.airspace_type_hospital),
+        HazardArea("hazard_area", R.string.airspace_type_hazard_area),
+        RecreationalArea("recreational_area", R.string.airspace_type_aerial_rec_area),
+        City("city", R.string.airspace_type_city),
+        Custom("custom", R.string.airspace_type_custom),
+        Prison("prison", R.string.airspace_type_prison),
+        University("university", R.string.airspace_type_university);
 
         private final String text;
         private final int title;

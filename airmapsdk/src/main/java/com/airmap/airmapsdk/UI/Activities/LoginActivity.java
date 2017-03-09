@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         webView = (WebView) findViewById(R.id.web_view);
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
-        getSupportActionBar().setTitle(R.string.airmap_title_activity_login);
+        getSupportActionBar().setTitle(R.string.login);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         progressBar.setMax(100);
         webView.setWebViewClient(new WebViewClient() {
@@ -118,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
                                         });
                                     }
                                 })
-                                .setNegativeButton(R.string.ok, null)
+                                .setNegativeButton(android.R.string.ok, null)
                                 .show();
                     }
 

@@ -80,18 +80,15 @@ public class ReviewDetailsFragment extends Fragment {
         DateFormat dateFormat = Utils.getDateTimeFormat();
 
         if (flight.getGeometry() instanceof AirMapPoint) {
-            String radius = useMetric ? numberFormat.format(flight.getBuffer()) + " " + getString(R.string.meters) :
-                    numberFormat.format(metersToFeet(flight.getBuffer())) + " " + getString(R.string.feet);
-
+            String radius = Utils.getMeasurementText(flight.getBuffer(), useMetric);
             radiusTextView.setText(radius);
         } else {
             radiusContainer.setVisibility(View.GONE);
         }
 
-        String altitude = useMetric ? numberFormat.format(flight.getMaxAltitude()) + " " + getString(R.string.meters) :
-                numberFormat.format(metersToFeet(flight.getMaxAltitude())) + " " + getString(R.string.feet);
-
+        String altitude = Utils.getMeasurementText(flight.getMaxAltitude(), useMetric);
         altitudeTextView.setText(altitude);
+
         if (flight.getStartsAt() != null) {
             startsAtTextView.setText(dateFormat.format(flight.getStartsAt()));
         } else {
@@ -110,10 +107,9 @@ public class ReviewDetailsFragment extends Fragment {
         long difference = flight.getEndsAt().getTime() - flight.getStartsAt().getTime();
         int index = indexOfDurationPreset(difference);
         if (index != -1) {
-            return getString(getDurationPresets()[index].label);
+            return Utils.getDurationText(getActivity(), getDurationPresets()[index]);
         }
-        NumberFormat numberFormat = NumberFormat.getIntegerInstance();
-        return numberFormat.format(difference/1000) + " " + getString(R.string.seconds);
+        return Utils.getDurationText(getActivity(), difference);
     }
 
     private TextView getTextViewById(View view, @IdRes int id) {

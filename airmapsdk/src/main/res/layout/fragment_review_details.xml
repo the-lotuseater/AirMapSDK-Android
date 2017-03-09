@@ -63,7 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:text="@string/airmap_starts"
+                    android:text="@string/starts"
                     android:paddingEnd="16dp"
                     android:paddingStart="0dp"/>
 
@@ -127,7 +127,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:text="@string/airmap_public_flight"
+                    android:text="@string/airmap_share_my_flight"
                     android:paddingEnd="16dp"
                     android:paddingStart="0dp"/>
 

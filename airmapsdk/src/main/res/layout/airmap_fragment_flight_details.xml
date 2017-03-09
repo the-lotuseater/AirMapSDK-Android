@@ -41,7 +41,7 @@
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:textColor="@color/colorAccent"
-                        android:text="@string/flight_header"/>
+                        android:text="@string/flight_details" />
 
                 <RelativeLayout
                         android:layout_width="match_parent"
@@ -95,7 +95,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
-                            android:text="@string/airmap_starts"/>
+                            android:text="@string/starts"/>
 
                     <TextView
                             android:id="@+id/time_value"
@@ -159,7 +159,7 @@
                         android:paddingTop="8dp"
                         android:drawableRight="@drawable/ic_edit"
                         android:background="?attr/selectableItemBackground"
-                        android:text="@string/airmap_pilot_profile"/>
+                        android:text="@string/select_pilot_profile" />
 
                 <TextView
                         android:id="@+id/aircraft_label"
@@ -169,7 +169,7 @@
                         android:paddingBottom="8dp"
                         android:background="?attr/selectableItemBackground"
                         android:drawableRight="@drawable/ic_edit"
-                        android:text="@string/airmap_select_aircraft"/>
+                        android:text="@string/select_aircraft"/>
 
                 <View
                         android:layout_width="match_parent"
