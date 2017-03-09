@@ -1,7 +1,5 @@
 package com.airmap.airmapsdk;
 
-import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
-import com.airmap.airmapsdk.util.Utils;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -11,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -26,9 +23,10 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
-import com.airmap.airmapsdk.models.welcome.AirMapWelcome;
+import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.airmap.airmapsdk.ui.activities.WelcomeActivity;
 import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.Utils;
 
 import java.text.DateFormat;
 import java.util.ArrayList;

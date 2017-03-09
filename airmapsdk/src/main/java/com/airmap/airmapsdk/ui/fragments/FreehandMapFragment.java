@@ -83,6 +83,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -643,6 +644,15 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             map.setStyleUrl(url);
         }
         setupTabs();
+        map.setInfoWindowAdapter(new MapboxMap.InfoWindowAdapter() {
+            View view = new View(getContext());
+            @Nullable
+            @Override
+            public View getInfoWindow(@NonNull Marker marker) {
+                // This prevents an info window from popping up
+                return view;
+            }
+        });
         mapView.setOnTouchListener(new View.OnTouchListener() {
             //This onTouch code is a copy of the MapView#onSingleTapConfirmed code, except
             //I'm dragging instead of clicking, and it's being called for every touch event rather than just a tap
@@ -672,10 +682,15 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                             tapPoint.x + averageIconWidth / 2 + toleranceSides,
                             tapPoint.y + averageIconHeight / 2 + toleranceTopBottom);
                     try {
-                        Method method = mapView.getClass().getDeclaredMethod("getMarkersInRect", RectF.class); //Using reflection to access a Mapbox Package Private method
+//                        Method method = MapView.class.getDeclaredMethod("getMarkersInRect", RectF.class); //Using reflection to access a Mapbox Package Private method
+                        Field field = MapboxMap.class.getDeclaredField("annotationManager");
+                        field.setAccessible(true);
+                        Object annotationManager = field.get(map);
+                        Method method = annotationManager.getClass().getDeclaredMethod("getMarkersInRect", RectF.class);
                         method.setAccessible(true);
+
                         Marker newSelectedMarker = null;
-                        List<Marker> nearbyMarkers = (List<Marker>) method.invoke(mapView, tapRect);
+                        List<Marker> nearbyMarkers = (List<Marker>) method.invoke(annotationManager, tapRect);
                         List<Marker> selectedMarkers = map.getSelectedMarkers();
                         if (selectedMarkers.isEmpty() && nearbyMarkers != null && !nearbyMarkers.isEmpty()) {
                             Collections.sort(nearbyMarkers);
@@ -730,12 +745,12 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                         }
                     } catch (Exception e) {
                         //Probably a reflection error
-                        e.printStackTrace();
+                        Log.e(TAG, "Reflection error", e);
                     }
                 }
                 scratchpad.reset();
                 scratchpad.invalidate();
-                return false;
+                return true;
             }
         });
 
@@ -770,7 +785,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         }
 
         if (indexOfAnnotationToDrag == -1) {
-            Log.e(TAG, "indexOfAnnotationToDrag was -1???");
+            AirMapLog.e(TAG, "indexOfAnnotationToDrag was -1???");
             return;
         }
 

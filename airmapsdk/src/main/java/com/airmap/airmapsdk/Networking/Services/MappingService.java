@@ -2,6 +2,7 @@ package com.airmap.airmapsdk.networking.services;
 
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.text.TextUtils;
 
 import com.airmap.airmapsdk.R;
 
@@ -273,7 +274,7 @@ public class MappingService extends BaseService {
     }
 
     protected String getTileSourceUrl(@Nullable List<AirMapLayerType> layers, AirMapMapTheme theme) {
-        String tiles = (layers == null || layers.size() == 0) ? "_-_" : android.text.TextUtils.join(",", layers);
+        String tiles = (layers == null || layers.size() == 0) ? "_-_" : TextUtils.join(",", layers);
         return mapTilesBaseUrl + tiles + "?&theme=" + theme.toString() + "&apikey=" + AirMap.getInstance().getApiKey() + "&token=" + AirMap.getInstance().getApiKey();
     }
 }
