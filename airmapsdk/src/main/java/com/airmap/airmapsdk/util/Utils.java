@@ -274,6 +274,14 @@ public class Utils {
 
     }
 
+    public static String optString(JSONObject jsonObject, String key) {
+        if (jsonObject.isNull(key)) {
+            return null;
+        }
+
+        return jsonObject.optString(key);
+    }
+
     /**
      * Makes a polygon with many sides to simulate a circle
      *
