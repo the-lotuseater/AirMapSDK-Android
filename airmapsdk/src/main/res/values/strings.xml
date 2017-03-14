@@ -207,7 +207,10 @@
   <!-- Class = "UILabel"; text = "[You have selected 1 of 3 required permits]"; ObjectID = "duP-Ve-YRT"; -->
   <!--<string name="dup-ve-yrt.text">[You have selected 1 of 3 required permits]</string>-->
   <!-- This is an abbreviated or short format for how long the flight will be i.e. 30 mins or 2 hrs -->
-  <string name="duration_in_hours">%1$s hours</string>
+  <plurals name="duration_in_hours">
+    <item quantity="one">%1$s hour</item>
+    <item quantity="other">%1$s hours</item>
+  </plurals>
   <!-- This is an abbreviated or short format for how long the flight will be i.e. 30 mins or 2 hrs -->
   <string name="duration_in_minutes">%1$s mins</string>
   <!-- Class = "UILabel"; text = "[2016-12-31]"; ObjectID = "DuX-KA-s6d"; -->
