@@ -405,6 +405,7 @@
   <!--<string name="qbe-ul-p4j.text">[Status]</string>-->
   <!-- Class = "UILabel"; text = "[Country Name]"; ObjectID = "qF4-Xd-R4h"; -->
   <!--<string name="qf4-xd-r4h.text">[Country Name]</string>-->
+  <string name="read_full_rules">Read Full Rules</string>
   <string name="required_field">This is a required field</string>
   <string name="required_field_must_be_complete">All required fields must be completed to proceed.</string>
   <!-- Call to action row text for selecting a different permit than the one displayed above -->

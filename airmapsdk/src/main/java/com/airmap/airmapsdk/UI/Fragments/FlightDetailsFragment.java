@@ -96,7 +96,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     private MapView mapView;
     private TextView altitudeValueTextView;
     private SeekBar altitudeSeekBar;
-    private RelativeLayout startsAtTouchTarget;
+    private View startsAtTouchTarget;
     private TextView startsAtTextView;
     private TextView durationValueTextView;
     private SeekBar durationSeekBar;
@@ -183,7 +183,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         mapView = (MapView) view.findViewById(R.id.airmap_map);
         altitudeValueTextView = (TextView) view.findViewById(R.id.altitude_value);
         altitudeSeekBar = (SeekBar) view.findViewById(R.id.altitude_seekbar);
-        startsAtTouchTarget = (RelativeLayout) view.findViewById(R.id.date_time_picker_touch_target);
+        startsAtTouchTarget = view.findViewById(R.id.date_time_picker_touch_target);
         startsAtTextView = (TextView) view.findViewById(R.id.time_value);
         durationValueTextView = (TextView) view.findViewById(R.id.duration_value);
         durationSeekBar = (SeekBar) view.findViewById(R.id.duration_seekbar);
