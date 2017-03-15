@@ -1,3 +1,6 @@
+##`1.0.7 (3/14/17`
+* Updated AirMap Server Certificate for Certificate Pinning
+
 ##`1.0.6 (2/16/17)`
 * Added Telemetry support
 * Updated Advisory UI
