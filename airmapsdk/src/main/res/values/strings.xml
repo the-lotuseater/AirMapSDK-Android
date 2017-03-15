@@ -1,45 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <!-- Class = "UILabel"; text = "[Pilot Profile]"; ObjectID = "0ik-Ci-W3p"; -->
-  <!--<string name="0ik-ci-w3p.text">[Pilot Profile]</string>-->
+  <!-- <string name="0ik-Ci-W3p.text">[Pilot Profile]</string> -->
   <!-- Class = "UILabel"; text = "[Advisory Type]"; ObjectID = "10R-hU-bms"; -->
-  <!--<string name="10r-hu-bms.text">[Advisory Type]</string>-->
+  <!-- <string name="10R-hU-bms.text">[Advisory Type]</string> -->
   <!-- Class = "UIButton"; normalTitle = "End Flight"; ObjectID = "2Eq-Fz-bOO"; -->
   <string name="end_flight">End Flight</string>
   <!-- Class = "UIButton"; normalTitle = "Next"; ObjectID = "2jl-c2-qqx"; -->
-  <!--<string name="2jl-c2-qqx.normaltitle">Next</string>-->
+  <!-- <string name="2jl-c2-qqx.normalTitle">Next</string> -->
   <!-- Class = "UILabel"; text = "By providing your number, you agree to receive texts about your flights at this number. Carrier message & data rates may apply.\n\nAirMap will send you a text message when your digital notice has been successfully submitted.\n"; ObjectID = "2Na-rR-yZi"; -->
-  <string name="airmap_phone_number_disclaimer">By providing your number, you agree to receive texts about your flights at this number. Carrier message &amp; data rates may apply.\n\nAirMap will send you a text message when your digital notice has been successfully submitted.\n</string>
+  <string name="airmap_phone_number_disclaimer">By providing your number, you agree to receive texts about your flights at this number. Carrier message &amp; data rates may apply.
+
+AirMap will send you a text message when your digital notice has been successfully submitted.
+</string>
   <!-- Class = "UILabel"; text = "Digital Notice Accepted"; ObjectID = "39m-XX-eZ2"; -->
   <string name="airmap_digital_notice_accepted">Digital Notice Accepted</string>
   <!-- Class = "UILabel"; text = "[Make & Model]"; ObjectID = "3Xp-HW-KXR"; -->
-  <!--<string name="3xp-hw-kxr.text">[Make &amp; Model]</string>-->
+  <!-- <string name="3Xp-HW-KXR.text">[Make &amp; Model]</string> -->
   <!-- Class = "UINavigationItem"; title = "Phone Number Verification"; ObjectID = "4g7-2z-c9g"; -->
   <string name="phone_number_verification">Phone Number Verification</string>
   <!-- Class = "UIButton"; normalTitle = "Submit"; ObjectID = "4YZ-kG-zkZ"; -->
   <string name="submit">Submit</string>
   <!-- Class = "UILabel"; text = "[Label]"; ObjectID = "5Hx-9E-ZCg"; -->
-  <!--<string name="5hx-9e-zcg.text">[Label]</string>-->
+  <!-- <string name="5Hx-9E-ZCg.text">[Label]</string> -->
   <!-- Class = "UILabel"; text = "[Radius]"; ObjectID = "69c-Tr-wUG"; -->
-  <!--<string name="69c-tr-wug.text">[Radius]</string>-->
+  <!-- <string name="69c-Tr-wUG.text">[Radius]</string> -->
   <!-- Class = "UINavigationItem"; title = "Permits"; ObjectID = "747-Q2-1CI"; -->
   <string name="permits">Permits</string>
   <!-- Class = "UILabel"; text = "[Approved]"; ObjectID = "7jD-R2-IPn"; -->
-  <!--<string name="7jd-r2-ipn.text">[Approved]</string>-->
+  <!-- <string name="7jD-R2-IPn.text">[Approved]</string> -->
   <!-- Class = "UINavigationItem"; title = "Review Flight Plan"; ObjectID = "7qo-VN-M2p"; -->
-  <!--<string name="7qo-vn-m2p.title">Review Flight Plan</string>-->
+  <!-- <string name="7qo-VN-M2p.title">Review Flight Plan</string> -->
   <!-- Class = "UINavigationItem"; title = "Select Aircraft"; ObjectID = "7vR-GS-NPr"; -->
   <string name="select_aircraft">Select Aircraft</string>
   <!-- Class = "UILabel"; text = "[Advisory Name]"; ObjectID = "8DW-v6-ClH"; -->
-  <!--<string name="8dw-v6-clh.text">[Advisory Name]</string>-->
+  <!-- <string name="8DW-v6-ClH.text">[Advisory Name]</string> -->
   <!-- Class = "UINavigationItem"; title = "[Locality Name]"; ObjectID = "8Lr-SJ-VYN"; -->
-  <!--<string name="8lr-sj-vyn.title">[Locality Name]</string>-->
+  <!-- <string name="8Lr-SJ-VYN.title">[Locality Name]</string> -->
   <!-- Class = "UILabel"; text = "[Manufacturer Name]"; ObjectID = "8O4-aR-O35"; -->
-  <!--<string name="8o4-ar-o35.text">[Manufacturer Name]</string>-->
+  <!-- <string name="8O4-aR-O35.text">[Manufacturer Name]</string> -->
   <!-- Class = "UINavigationItem"; title = "Models"; ObjectID = "9xB-Yl-FrO"; -->
-  <!--<string name="9xb-yl-fro.title">Models</string>-->
+  <!-- <string name="9xB-Yl-FrO.title">Models</string> -->
   <!-- Class = "UINavigationItem"; title = "Manufacturers"; ObjectID = "a84-JL-ndb"; -->
-  <!--<string name="a84-jl-ndb.title">Manufacturers</string>-->
+  <!-- <string name="a84-JL-ndb.title">Manufacturers</string> -->
   <!-- Label for advisories that are stup to receive digital notice -->
   <string name="accepts_digital_notice">Accepts Digital Notice</string>
   <!-- Displayed when an advisory has not provided a contact phone -->
@@ -57,7 +60,7 @@
   <!-- Label for wildfire advisory cells where size is unknown -->
   <string name="unknown_size">Size Unknown</string>
   <!-- Call to action when a user has not selected an aircraft -->
-  <!--<string name="aircraft_select_aircraft">Select Aircraft</string>-->
+  <string name="aircraft_select_aircraft">Select Aircraft</string>
   <!-- Title to display for the view creating a new aircraft -->
   <string name="airmap_title_activity_create_aircraft">Create Aircraft</string>
   <!-- Title to display for the view when updating an existing aircraft -->
@@ -123,9 +126,9 @@
   <!-- Title for the row that shows the temporal validity or expiration of the permit -->
   <string name="available_permit_row_title_validity">Valid for</string>
   <!-- Value for when single use is false -->
-  <string name="no">No</string>
+  <string name="available_permit_row_value_single_use_false">No</string>
   <!-- Value for when single use is true -->
-  <string name="yes">Yes</string>
+  <string name="available_permit_row_value_single_use_true">Yes</string>
   <!-- Title for the Custom Properties section of the permit detail view. '*' denotes a required field -->
   <string name="available_permit_section_header_custom_properties">Form Fields (* Required)</string>
   <!-- Title for the Description section of the permit detail view -->
@@ -133,21 +136,21 @@
   <!-- Title for the Details section of the permit detail view -->
   <string name="permit_details">Details</string>
   <!-- Class = "UILabel"; text = "[Advisory Type]"; ObjectID = "b7c-LJ-jIt"; -->
-  <!--<string name="b7c-lj-jit.text">[Advisory Type]</string>-->
+  <!-- <string name="b7c-LJ-jIt.text">[Advisory Type]</string> -->
   <!-- Class = "UILabel"; text = "[Starts]"; ObjectID = "bbj-0V-59o"; -->
-  <!--<string name="bbj-0v-59o.text">[Starts]</string>-->
+  <!-- <string name="bbj-0V-59o.text">[Starts]</string> -->
   <!-- Class = "UITextView"; text = "[310-555-1212]"; ObjectID = "bBK-bB-q3L"; -->
-  <!--<string name="bbk-bb-q3l.text">[310-555-1212]</string>-->
+  <!-- <string name="bBK-bB-q3L.text">[310-555-1212]</string> -->
   <!-- Class = "UILabel"; text = "[Jurisdiction Description]"; ObjectID = "BkD-sA-FOI"; -->
-  <!--<string name="bkd-sa-foi.text">[Jurisdiction Description]</string>-->
+  <!-- <string name="BkD-sA-FOI.text">[Jurisdiction Description]</string> -->
   <!-- Class = "UITextField"; placeholder = "Nickname"; ObjectID = "blN-px-yT6"; -->
   <string name="airmap_nickname">Nickname</string>
   <!-- Class = "UILabel"; text = "[Advisory Type]"; ObjectID = "c1e-sI-VMa"; -->
-  <!--<string name="c1e-si-vma.text">[Advisory Type]</string>-->
+  <!-- <string name="c1e-sI-VMa.text">[Advisory Type]</string> -->
   <!-- Class = "UILabel"; text = "[Ends]"; ObjectID = "c21-8a-rg6"; -->
-  <!--<string name="c21-8a-rg6.text">[Ends]</string>-->
+  <!-- <string name="c21-8a-rg6.text">[Ends]</string> -->
   <!-- Class = "UILabel"; text = "[Advisory Name]"; ObjectID = "c94-NK-gnb"; -->
-  <!--<string name="c94-nk-gnb.text">[Advisory Name]</string>-->
+  <!-- <string name="c94-NK-gnb.text">[Advisory Name]</string> -->
   <!-- Missing from iOS -->
   <string name="call">Call</string>
   <!-- Abbreviation for East -->
@@ -183,44 +186,44 @@
   <!-- Abbreviation for West South West -->
   <string name="cardinal_direction_wsw">WSW</string>
   <!-- Class = "UILabel"; text = "[Tooltip informational stuff goes here.\nLine two details would be here.]"; ObjectID = "cgk-wh-wed"; -->
-  <!--<string name="cgk-wh-wed.text">[Tooltip informational stuff goes here.-->
-  <!--Line two details would be here.]</string>-->
+  <string name="tooltip_placeholder">[Tooltip informational stuff goes here.
+Line two details would be here.]</string>
   <!-- Class = "UILabel"; text = "[Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nisi orci, sodales quis tincidunt nec, fermentum quis tellus. Lorem ipsum dolor sit amet]"; ObjectID = "cOS-c4-QMl"; -->
-  <!--<string name="cos-c4-qml.text">[Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nisi orci, sodales quis tincidunt nec, fermentum quis tellus. Lorem ipsum dolor sit amet]</string>-->
+  <!-- <string name="cOS-c4-QMl.text">[Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nisi orci, sodales quis tincidunt nec, fermentum quis tellus. Lorem ipsum dolor sit amet]</string> -->
   <!-- Class = "UILabel"; text = "[AA1234567]"; ObjectID = "cPb-RR-ZAS"; -->
-  <!--<string name="cpb-rr-zas.text">[AA1234567]</string>-->
+  <!-- <string name="cPb-RR-ZAS.text">[AA1234567]</string> -->
   <!-- Class = "UILabel"; text = "[Advisory Name]"; ObjectID = "CTl-4E-bUm"; -->
-  <!--<string name="ctl-4e-bum.text">[Advisory Name]</string>-->
+  <!-- <string name="CTl-4E-bUm.text">[Advisory Name]</string> -->
   <!-- Class = "UILabel"; text = "[Existing Permit Title]"; ObjectID = "CZu-sO-cdt"; -->
-  <!--<string name="czu-so-cdt.text">[Existing Permit Title]</string>-->
+  <!-- <string name="CZu-sO-cdt.text">[Existing Permit Title]</string> -->
   <!-- Class = "UILabel"; text = "[Expires April 1, 2017]"; ObjectID = "d1t-kb-RTW"; -->
-  <!--<string name="d1t-kb-rtw.text">[Expires April 1, 2017]</string>-->
+  <!-- <string name="d1t-kb-RTW.text">[Expires April 1, 2017]</string> -->
   <!-- Class = "UINavigationItem"; title = "Select Country"; ObjectID = "dcW-Vd-KfC"; -->
-  <!--<string name="dcw-vd-kfc.title">Select Country</string>-->
+  <!-- <string name="dcW-Vd-KfC.title">Select Country</string> -->
   <!-- Class = "UITextField"; placeholder = "Code"; ObjectID = "dDO-AY-LlB"; -->
-  <!--<string name="ddo-ay-llb.placeholder">Code</string>-->
+  <!-- <string name="dDO-AY-LlB.placeholder">Code</string> -->
   <!-- Class = "UIButton"; normalTitle = "X"; ObjectID = "DEt-7p-6ih"; -->
-  <!--<string name="det-7p-6ih.normaltitle">X</string>-->
+  <!-- <string name="DEt-7p-6ih.normalTitle">X</string> -->
   <!-- Class = "UILabel"; text = "[Value]"; ObjectID = "Dnw-0q-e8Y"; -->
-  <!--<string name="dnw-0q-e8y.text">[Value]</string>-->
+  <!-- <string name="Dnw-0q-e8Y.text">[Value]</string> -->
   <string name="do_you_want_to_call">Do you want to call %1$s?</string>
   <!-- Class = "UILabel"; text = "[You have selected 1 of 3 required permits]"; ObjectID = "duP-Ve-YRT"; -->
-  <!--<string name="dup-ve-yrt.text">[You have selected 1 of 3 required permits]</string>-->
+  <!-- <string name="duP-Ve-YRT.text">[You have selected 1 of 3 required permits]</string> -->
   <!-- This is an abbreviated or short format for how long the flight will be i.e. 30 mins or 2 hrs -->
   <plurals name="duration_in_hours">
     <item quantity="one">%1$s hour</item>
     <item quantity="other">%1$s hours</item>
   </plurals>
   <!-- This is an abbreviated or short format for how long the flight will be i.e. 30 mins or 2 hrs -->
-  <string name="duration_in_minutes">%1$s mins</string>
+  <string name="duration_in_minutes">%1$d mins</string>
   <!-- Class = "UILabel"; text = "[2016-12-31]"; ObjectID = "DuX-KA-s6d"; -->
-  <!--<string name="dux-ka-s6d.text">[2016-12-31]</string>-->
+  <!-- <string name="DuX-KA-s6d.text">[2016-12-31]</string> -->
   <!-- Class = "UILabel"; text = "Starts"; ObjectID = "Dy4-Qg-lC0"; -->
   <string name="starts">Starts</string>
   <!-- Class = "UILabel"; text = "[My Drone]"; ObjectID = "EbB-bz-kAx"; -->
-  <!--<string name="ebb-bz-kax.text">[My Drone]</string>-->
+  <!-- <string name="EbB-bz-kAx.text">[My Drone]</string> -->
   <!-- Class = "UILabel"; text = "[Country Name]"; ObjectID = "EGv-95-foG"; -->
-  <!--<string name="egv-95-fog.text">[Country Name]</string>-->
+  <!-- <string name="EGv-95-foG.text">[Country Name]</string> -->
   <string name="email_verification_required">Email Verification Required</string>
   <string name="enter_verification_token">Enter the verification token that was sent to your phone number</string>
   <string name="error_creating_flight">Error creating flight</string>
@@ -241,9 +244,9 @@
   <string name="error_updating_profile">Error updating profile</string>
   <string name="error_verifying_number">Error verifying number</string>
   <!-- Class = "UILabel"; text = "[Make and Model]"; ObjectID = "eSj-Ew-X4F"; -->
-  <!--<string name="esj-ew-x4f.text">[Make and Model]</string>-->
+  <!-- <string name="eSj-Ew-X4F.text">[Make and Model]</string> -->
   <!-- Class = "UILabel"; text = "[Permit Description]"; ObjectID = "fGe-ct-6cG"; -->
-  <!--<string name="fge-ct-6cg.text">[Permit Description]</string>-->
+  <!-- <string name="fGe-ct-6cG.text">[Permit Description]</string> -->
   <!-- Label for text input button -->
   <string name="flight_data_cell_button_done">DONE</string>
   <!-- Label for start time when the start is immediate -->
@@ -296,82 +299,82 @@
   <!-- Class = "UIButton"; normalTitle = "Point"; ObjectID = "Fti-S4-xfH"; Note = "Label for button that changes flight geometry type to Point"; -->
   <string name="airmap_circle">Point</string>
   <!-- Class = "UILabel"; text = "[My Permit]"; ObjectID = "FUn-yd-J9S"; -->
-  <!--<string name="fun-yd-j9s.text">[My Permit]</string>-->
+  <!-- <string name="FUn-yd-J9S.text">[My Permit]</string> -->
   <!-- Class = "UILabel"; text = "[Status]"; ObjectID = "glK-3H-vJ9"; -->
-  <!--<string name="glk-3h-vj9.text">[Status]</string>-->
+  <!-- <string name="glK-3H-vJ9.text">[Status]</string> -->
   <!-- Class = "UILabel"; text = "[Organization]"; ObjectID = "Gpk-5A-j54"; -->
-  <!--<string name="gpk-5a-j54.text">[Organization]</string>-->
+  <!-- <string name="Gpk-5A-j54.text">[Organization]</string> -->
   <!-- Class = "UILabel"; text = "[Permit Description]"; ObjectID = "gtT-AB-6BD"; -->
-  <!--<string name="gtt-ab-6bd.text">[Permit Description]</string>-->
+  <!-- <string name="gtT-AB-6BD.text">[Permit Description]</string> -->
   <!-- Class = "UILabel"; text = "[Ends]"; ObjectID = "gX9-8x-5nK"; -->
-  <!--<string name="gx9-8x-5nk.text">[Ends]</string>-->
+  <!-- <string name="gX9-8x-5nK.text">[Ends]</string> -->
   <!-- Class = "UILabel"; text = "Operating in this flight area requires a permit from each of the following authorities:"; ObjectID = "HLI-qV-iML"; -->
   <string name="you_have_selected_permits_of_total_required">Operating in this flight area requires a permit from each of the following authorities:</string>
-  <!--Class = "UINavigationItem"; title = "Create Flight"; ObjectID = "HM6-qn-wuK";-->
+  <!-- Class = "UINavigationItem"; title = "Create Flight"; ObjectID = "HM6-qn-wuK"; -->
   <string name="airmap_title_activity_create_flight">Create Flight</string>
   <!-- Class = "UILabel"; text = "[My Drone Name]"; ObjectID = "hoG-X4-5p9"; -->
-  <!--<string name="hog-x4-5p9.text">[My Drone Name]</string>-->
+  <!-- <string name="hoG-X4-5p9.text">[My Drone Name]</string> -->
   <!-- Class = "UITextView"; text = "[310-555-1212]"; ObjectID = "hyU-kT-UVu"; -->
-  <!--<string name="hyu-kt-uvu.text">[310-555-1212]</string>-->
+  <!-- <string name="hyU-kT-UVu.text">[310-555-1212]</string> -->
   <!-- Class = "UILabel"; text = "[Advisory Type]"; ObjectID = "IA9-5u-IvP"; -->
-  <!--<string name="ia9-5u-ivp.text">[Advisory Type]</string>-->
+  <!-- <string name="IA9-5u-IvP.text">[Advisory Type]</string> -->
   <!-- Class = "UIButton"; normalTitle = "Path"; ObjectID = "IAP-O7-VzM"; -->
   <string name="airmap_path">Path</string>
   <!-- Class = "UILabel"; text = "[Existing Permit Title]"; ObjectID = "iDi-dr-PQg"; -->
-  <!--<string name="idi-dr-pqg.text">[Existing Permit Title]</string>-->
+  <!-- <string name="iDi-dr-PQg.text">[Existing Permit Title]</string> -->
   <!-- Class = "UILabel"; text = "[Advisory Type]"; ObjectID = "iLa-MC-tCU"; -->
-  <!--<string name="ila-mc-tcu.text">[Advisory Type]</string>-->
+  <!-- <string name="iLa-MC-tCU.text">[Advisory Type]</string> -->
   <!-- Class = "UILabel"; text = "[Student ID]"; ObjectID = "Iq8-jx-S7U"; -->
-  <!--<string name="iq8-jx-s7u.text">[Student ID]</string>-->
+  <!-- <string name="Iq8-jx-S7U.text">[Student ID]</string> -->
   <!-- Class = "UIButton"; normalTitle = "Done"; ObjectID = "Iz2-Va-oce"; -->
   <string name="done">Done</string>
   <!-- Class = "UILabel"; text = "[Select Aircraft]"; ObjectID = "JRY-fw-0ZI"; -->
-  <!--<string name="jry-fw-0zi.text">[Select Aircraft]</string>-->
+  <!-- <string name="JRY-fw-0ZI.text">[Select Aircraft]</string> -->
   <!-- Class = "UIButton"; normalTitle = "Save"; ObjectID = "K03-vU-4zj"; -->
-  <!--<string name="k03-vu-4zj.normaltitle">Save</string>-->
+  <!-- <string name="K03-vU-4zj.normalTitle">Save</string> -->
   <!-- Class = "UIButton"; normalTitle = "Save"; ObjectID = "kCX-rY-nIt"; -->
-  <!--<string name="kcx-ry-nit.normaltitle">Save</string>-->
+  <!-- <string name="kCX-rY-nIt.normalTitle">Save</string> -->
   <!-- Class = "UILabel"; text = "[Label]"; ObjectID = "kdR-Pf-MWO"; -->
-  <!--<string name="kdr-pf-mwo.text">[Label]</string>-->
+  <!-- <string name="kdR-Pf-MWO.text">[Label]</string> -->
   <!-- Class = "UITextView"; text = "[310-555-1212]"; ObjectID = "kly-En-8eF"; -->
-  <!--<string name="kly-en-8ef.text">[310-555-1212]</string>-->
+  <!-- <string name="kly-En-8eF.text">[310-555-1212]</string> -->
   <!-- Class = "UIButton"; normalTitle = "Next"; ObjectID = "kPh-hd-dib"; -->
-  <!--<string name="kph-hd-dib.normaltitle">Next</string>-->
+  <!-- <string name="kPh-hd-dib.normalTitle">Next</string> -->
   <!-- Class = "UITextField"; placeholder = "[Date]"; ObjectID = "kvr-OH-s5B"; -->
-  <!--<string name="kvr-oh-s5b.placeholder">[Date]</string>-->
+  <!-- <string name="kvr-OH-s5B.placeholder">[Date]</string> -->
   <!-- Class = "UILabel"; text = "[Jurisdiction]"; ObjectID = "lBk-bJ-aeJ"; -->
-  <!--<string name="lbk-bj-aej.text">[Jurisdiction]</string>-->
+  <!-- <string name="lBk-bJ-aeJ.text">[Jurisdiction]</string> -->
   <string name="learn_more">Learn More</string>
   <!-- Class = "UILabel"; text = "The following authorities in this area do not accept digital notice"; ObjectID = "lll-ta-VAP"; -->
   <string name="airmap_not_accept_notice">The following authorities in this area do not accept digital notice</string>
   <!-- Class = "UIButton"; normalTitle = "Submit"; ObjectID = "lre-WH-pt9"; -->
-  <!--<string name="lre-wh-pt9.normaltitle">Submit</string>-->
+  <!-- <string name="lre-WH-pt9.normalTitle">Submit</string> -->
   <!-- Class = "UILabel"; text = "[Starts]"; ObjectID = "lt3-RZ-VSF"; -->
-  <!--<string name="lt3-rz-vsf.text">[Starts]</string>-->
+  <!-- <string name="lt3-RZ-VSF.text">[Starts]</string> -->
   <!-- Class = "UILabel"; text = "[First Name Last Name]"; ObjectID = "LTQ-cw-ceU"; -->
-  <!--<string name="ltq-cw-ceu.text">[First Name Last Name]</string>-->
+  <!-- <string name="LTQ-cw-ceU.text">[First Name Last Name]</string> -->
   <!-- Class = "UILabel"; text = "[Organization Name]"; ObjectID = "LZm-0C-nto"; -->
-  <!--<string name="lzm-0c-nto.text">[Organization Name]</string>-->
+  <!-- <string name="LZm-0C-nto.text">[Organization Name]</string> -->
   <!-- Class = "UIButton"; normalTitle = "Save"; ObjectID = "mhb-zV-IBV"; -->
-  <!--<string name="mhb-zv-ibv.normaltitle">Save</string>-->
+  <!-- <string name="mhb-zV-IBV.normalTitle">Save</string> -->
   <!-- Class = "UINavigationItem"; title = "Verify Phone Number"; ObjectID = "MVj-Qg-sch"; -->
-  <!--<string name="mvj-qg-sch.title">Verify Phone Number</string>-->
+  <!-- <string name="MVj-Qg-sch.title">Verify Phone Number</string> -->
   <string name="na">N/A</string>
   <string name="no_dialer_found">No dialer found on device</string>
   <!-- Class = "UILabel"; text = "[Value]"; ObjectID = "nW1-yH-qKX"; -->
-  <!--<string name="nw1-yh-qkx.text">[Value]</string>-->
+  <!-- <string name="nW1-yH-qKX.text">[Value]</string> -->
   <!-- Class = "UILabel"; text = "[Permit Description]"; ObjectID = "o7r-Zk-B9n"; -->
-  <!--<string name="o7r-zk-b9n.text">[Permit Description]</string>-->
+  <!-- <string name="o7r-Zk-B9n.text">[Permit Description]</string> -->
   <string name="only_schedule_present_future">You can only schedule flights for the present or future</string>
   <!-- Class = "UILabel"; text = "[Tooltip informational stuff goes here.\nLine two details would be here.]"; ObjectID = "Owy-kW-lKA"; -->
-  <!--<string name="owy-kw-lka.text">[Tooltip informational stuff goes here.-->
-  <!--Line two details would be here.]</string>-->
+  <string name="tooltip_placeholder_2">[Tooltip informational stuff goes here.
+Line two details would be here.]</string>
   <!-- Class = "UILabel"; text = "[Advisory Name]"; ObjectID = "p1Q-Q9-g1r"; -->
-  <!--<string name="p1q-q9-g1r.text">[Advisory Name]</string>-->
+  <!-- <string name="p1Q-Q9-g1r.text">[Advisory Name]</string> -->
   <!-- Class = "UILabel"; text = "[Organization Name]"; ObjectID = "p6z-bB-c3R"; -->
-  <!--<string name="p6z-bb-c3r.text">[Organization Name]</string>-->
+  <!-- <string name="p6z-bB-c3R.text">[Organization Name]</string> -->
   <!-- Class = "UILabel"; text = "SMS Code"; ObjectID = "p8q-LE-2ew"; -->
-  <!--<string name="p8q-le-2ew.text">SMS Code</string>-->
+  <!-- <string name="p8q-LE-2ew.text">SMS Code</string> -->
   <string name="permit_status">Status: %1$s</string>
   <!-- Class = "UINavigationItem"; title = "Select Permit"; ObjectID = "pFU-ok-j6g"; -->
   <string name="select_a_permit">Select Permit</string>
@@ -380,7 +383,7 @@
   <!-- Table section title for the currently selected country -->
   <string name="phone_country_section_selected_country">Selected Country</string>
   <!-- Format for pilot permit expiration -->
-  <string name="pilot_permit_expiration_format">Expires: %1$s</string>
+  <string name="pilot_permit_expiration_format">Expires %$1@</string>
   <!-- Table row label for FAA registration number -->
   <string name="pilot_profile_faa_registration">FAA Registration Number</string>
   <!-- Label for the pilot profile email -->
@@ -390,7 +393,7 @@
   <!-- Label for the pilot profile last name -->
   <string name="last_name">Last Name</string>
   <!-- Label for the pilot profile phone -->
-  <!--<string name="phone_number">Phone</string>-->
+  <string name="pilot_profile_label_phone">Phone</string>
   <!-- Label for the pilot profile username -->
   <string name="pilot_profile_label_username">Username</string>
   <!-- Section header for the pilot profile additional info section -->
@@ -400,14 +403,14 @@
   <!-- Format for displaying a user's number of aircraft and flights -->
   <string name="pilot_profile_statistics_format">%1$s Aircraft, %2$s Flights</string>
   <!-- Class = "UILabel"; text = "[Unavailable Permit Title]"; ObjectID = "pOg-3O-fMT"; -->
-  <!--<string name="pog-3o-fmt.text">[Unavailable Permit Title]</string>-->
+  <!-- <string name="pOg-3O-fMT.text">[Unavailable Permit Title]</string> -->
   <string name="price_label">Price:\t\t</string>
-  <!--Class = "UINavigationItem"; title = "Pilot Profile"; ObjectID = "q0o-oq-I1W";-->
+  <!-- Class = "UINavigationItem"; title = "Pilot Profile"; ObjectID = "q0o-oq-I1W"; -->
   <string name="airmap_title_activity_profile">Pilot Profile</string>
   <!-- Class = "UILabel"; text = "[Status]"; ObjectID = "QBe-UL-P4j"; -->
-  <!--<string name="qbe-ul-p4j.text">[Status]</string>-->
+  <!-- <string name="QBe-UL-P4j.text">[Status]</string> -->
   <!-- Class = "UILabel"; text = "[Country Name]"; ObjectID = "qF4-Xd-R4h"; -->
-  <!--<string name="qf4-xd-r4h.text">[Country Name]</string>-->
+  <!-- <string name="qF4-Xd-R4h.text">[Country Name]</string> -->
   <string name="read_full_rules">Read Full Rules</string>
   <string name="required_field">This is a required field</string>
   <string name="required_field_must_be_complete">All required fields must be completed to proceed.</string>
@@ -456,19 +459,19 @@
   <!-- Title for the Review Flight, permits tab -->
   <string name="review_flight_plan_tab_title_permits">Permits</string>
   <!-- Class = "UILabel"; text = "[Organization Name]"; ObjectID = "rPi-lH-bxt"; -->
-  <!--<string name="rpi-lh-bxt.text">[Organization Name]</string>-->
+  <!-- <string name="rPi-lH-bxt.text">[Organization Name]</string> -->
   <!-- Title for the Local Rules view when a locality name is unavailable -->
   <string name="rules_generic_title">Locality Rules</string>
   <string name="rules_hint">Learn about federal, state, and local rules that may impact operations in this area</string>
   <!-- Class = "UIButton"; normalTitle = "Select Permit"; ObjectID = "RX7-4I-r3s"; -->
   <string name="airmap_select_permit">Select Permit</string>
   <!-- Class = "UINavigationItem"; title = "[Jurisdiction Name]"; ObjectID = "sek-Vd-dge"; -->
-  <!--<string name="sek-vd-dge.title">[Jurisdiction Name]</string>-->
+  <!-- <string name="sek-Vd-dge.title">[Jurisdiction Name]</string> -->
   <string name="select_manufacturer">Select Manufacturer</string>
   <string name="select_model">Select Model</string>
   <string name="sent_email">Sent email</string>
   <!-- Class = "UILabel"; text = "[Detail]"; ObjectID = "SFC-LA-Wgb"; -->
-  <!--<string name="sfc-la-wgb.text">[Detail]</string>-->
+  <!-- <string name="SFC-LA-Wgb.text">[Detail]</string> -->
   <!-- Description for status advisory color Green -->
   <string name="informational">Informational</string>
   <!-- Description for status advisory color Red -->
@@ -478,7 +481,7 @@
   <string name="successfully_updated">Successfully updated</string>
   <string name="successfully_verified_number">Successfully verified new number</string>
   <!-- Class = "UIButton"; normalTitle = "Next"; ObjectID = "tCa-zT-0iZ"; -->
-  <!--<string name="tca-zt-0iz.normaltitle">Next</string>-->
+  <!-- <string name="tCa-zT-0iZ.normalTitle">Next</string> -->
   <!-- Name for map layer Aerial Recreational Areas -->
   <string name="tile_layer_aerial_rec_areas">Aerial Recreational Areas</string>
   <!-- Name for map layer Commercial Airports -->
@@ -507,7 +510,6 @@
   <string name="tile_layer_national_parks">National Parks</string>
   <!-- Name for map layer NOAA Marine Protection Areas -->
   <string name="tile_layer_noaa">NOAA Marine Protection Areas</string>
-  <!-- Name for map layer Other Cautionary Areas -->
   <string name="tile_layer_other_cautionary_areas">Other Cautionary Areas</string>
   <!-- Name for map layer Power Plants -->
   <string name="tile_layer_power_plants">Power Plants</string>
@@ -542,56 +544,58 @@ Altitude %2$s
   <!-- Unit and format for displaying ground speed in meters per second -->
   <string name="units_ground_speed_unit_meters_per_second">%s m/s</string>
   <!-- Class = "UILabel"; text = "[3,000 ft]"; ObjectID = "uVU-1B-8kY"; -->
-  <!--<string name="uvu-1b-8ky.text">[3,000 ft]</string>-->
+  <!-- <string name="uVU-1B-8kY.text">[3,000 ft]</string> -->
   <!-- Class = "UINavigationItem"; title = "Permit"; ObjectID = "uxj-wa-owq"; -->
-  <!--<string name="uxj-wa-owq.title">Permit</string>-->
+  <!-- <string name="uxj-wa-owq.title">Permit</string> -->
   <!-- Class = "UILabel"; text = "[Available Permit Title]"; ObjectID = "uZ0-Sr-UGd"; -->
-  <!--<string name="uz0-sr-ugd.text">[Available Permit Title]</string>-->
+  <!-- <string name="uZ0-Sr-UGd.text">[Available Permit Title]</string> -->
   <!-- Class = "UIButton"; normalTitle = "Review"; ObjectID = "V59-8d-Sdh"; -->
   <string name="airmap_review">Review</string>
   <string name="validity_hours">%1$d hours</string>
   <string name="validity_label">Validity:\t</string>
   <string name="validity_minutes">%1$d minutes</string>
   <!-- Class = "UILabel"; text = "[0 Aircraft, 0 Flights]"; ObjectID = "Vcb-p8-zyI"; -->
-  <!--<string name="vcb-p8-zyi.text">[0 Aircraft, 0 Flights]</string>-->
+  <!-- <string name="Vcb-p8-zyI.text">[0 Aircraft, 0 Flights]</string> -->
   <string name="verify">Verify</string>
   <!-- Class = "UINavigationItem"; title = "Create Flight"; ObjectID = "ViV-2h-qM5"; -->
-  <!--<string name="viv-2h-qm5.title">Create Flight</string>-->
+  <!-- <string name="ViV-2h-qM5.title">Create Flight</string> -->
   <!-- Class = "UITextField"; placeholder = "Phone Number"; ObjectID = "vme-QM-SG8"; -->
   <string name="phone_number">Phone Number</string>
   <!-- Class = "UILabel"; text = "[Permit Description]"; ObjectID = "vzq-z0-kAV"; -->
-  <!--<string name="vzq-z0-kav.text">[Permit Description]</string>-->
+  <!-- <string name="vzq-z0-kAV.text">[Permit Description]</string> -->
   <!-- Class = "UILabel"; text = "[Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nisi orci, sodales quis tincidunt nec, fermentum quis tellus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nisi orci, sodales quis tincidunt nec, fermentum quis tellus.]"; ObjectID = "W6U-vB-sG6"; -->
-  <!--<string name="w6u-vb-sg6.text">[Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nisi orci, sodales quis tincidunt nec, fermentum quis tellus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nisi orci, sodales quis tincidunt nec, fermentum quis tellus.]</string>-->
+  <!-- <string name="W6U-vB-sG6.text">[Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nisi orci, sodales quis tincidunt nec, fermentum quis tellus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nisi orci, sodales quis tincidunt nec, fermentum quis tellus.]</string> -->
   <!-- Class = "UINavigationItem"; title = "FAQs"; ObjectID = "W7d-Gh-IMB"; -->
   <string name="faq">FAQs</string>
   <!-- Class = "UILabel"; text = "[Model Name]"; ObjectID = "weZ-wf-881"; -->
-  <!--<string name="wez-wf-881.text">[Model Name]</string>-->
+  <!-- <string name="weZ-wf-881.text">[Model Name]</string> -->
   <!-- Class = "UILabel"; text = "Email"; ObjectID = "WqY-Vy-gdV"; -->
-  <!--<string name="wqy-vy-gdv.text">Email</string>-->
+  <!-- <string name="WqY-Vy-gdV.text">Email</string> -->
   <!-- Class = "UITextView"; text = "[Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.]"; ObjectID = "WuW-jk-baQ"; -->
-  <!--<string name="wuw-jk-baq.text">[Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.]</string>-->
+  <!-- <string name="WuW-jk-baQ.text">[Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.]</string> -->
   <!-- Class = "UILabel"; text = "[Organization Name]"; ObjectID = "x15-bn-O0z"; -->
-  <!--<string name="x15-bn-o0z.text">[Organization Name]</string>-->
+  <!-- <string name="x15-bn-O0z.text">[Organization Name]</string> -->
   <!-- Class = "UILabel"; text = "Make & Model"; ObjectID = "XDN-d5-eoX"; -->
-  <!--<string name="xdn-d5-eox.text">Make &amp; Model</string>-->
+  <!-- <string name="XDN-d5-eoX.text">Make &amp; Model</string> -->
   <!-- Class = "UILabel"; text = "[Advisory Name]"; ObjectID = "Xnd-Po-Cjc"; -->
-  <!--<string name="xnd-po-cjc.text">[Advisory Name]</string>-->
+  <!-- <string name="Xnd-Po-Cjc.text">[Advisory Name]</string> -->
   <!-- Class = "UILabel"; text = "[Select a different permit]"; ObjectID = "yCT-dv-lwD"; -->
-  <!--<string name="yct-dv-lwd.text">[Select a different permit]</string>-->
+  <!-- <string name="yCT-dv-lwD.text">[Select a different permit]</string> -->
   <!-- Class = "UINavigationItem"; title = "Airspace Advisories"; ObjectID = "yk1-9H-q3n"; -->
   <string name="airmap_airspace_advisories">Airspace Advisories</string>
   <!--<string name="you_have_selected_permits_of_total_required">You have selected %1$d of %2$d permits required for this flight</string>-->
   <!-- Class = "UIButton"; normalTitle = "Area"; ObjectID = "Yyg-xF-uSz"; -->
   <string name="airmap_polygon">Area</string>
-   <!--Class = "UINavigationItem"; title = "Create Aircraft"; ObjectID = "Z9F-I6-niw";-->
+  <!-- Class = "UINavigationItem"; title = "Create Aircraft"; ObjectID = "Z9F-I6-niw"; -->
   <string name="create_aircraft">Create Aircraft</string>
   <!-- Class = "UILabel"; text = "[Label]"; ObjectID = "Zf8-fW-gj4"; -->
-  <!--<string name="zf8-fw-gj4.text">[Label]</string>-->
+  <!-- <string name="Zf8-fW-gj4.text">[Label]</string> -->
   <!-- Class = "UILabel"; text = "[Permit Organization]"; ObjectID = "ZFO-1v-zD5"; -->
-  <!--<string name="zfo-1v-zd5.text">[Permit Organization]</string>-->
+  <!-- <string name="ZFO-1v-zD5.text">[Permit Organization]</string> -->
   <!-- Class = "UILabel"; text = "[Title]"; ObjectID = "ZmL-4d-nlT"; -->
-  <!--<string name="zml-4d-nlt.text">[Title]</string>-->
+  <!-- <string name="ZmL-4d-nlT.text">[Title]</string> -->
   <!-- Class = "UILabel"; text = "Phone Number"; ObjectID = "zoD-a9-8h9"; -->
-  <!--<string name="zod-a9-8h9.text">Phone Number</string>-->
+  <!-- <string name="zoD-a9-8h9.text">Phone Number</string> -->
+  <string name="yes">Yes</string>
+  <string name="no">No</string>
 </resources>
