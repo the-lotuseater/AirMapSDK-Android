@@ -53,7 +53,7 @@ FLIGHT_PLAN_SECTION_HEADER_FLIGHT : flight_details
 FLIGHT_PLAN_SECTION_HEADER_SHARE : airmap_share_my_flight
 FLIGHT_PLAN_SECTION_HEADER_TIME : date_and_time
 Fti-S4-xfH.normalTitle : airmap_circle
-HLI-qV-iML.text : you_have_selected_permits_of_total_required
+HLI-qV-iML.text : requires_permits_from_authorities
 HM6-qn-wuK.title : airmap_title_activity_create_flight
 IAP-O7-VzM.normalTitle : airmap_path
 Iz2-Va-oce.normalTitle : done
@@ -74,12 +74,10 @@ STATUS_YELLOW_DESCRIPTION : advisories
 Uk3-p4-sdr.title : airmap_flight_notice
 V59-8d-Sdh.normalTitle : airmap_review
 vme-QM-SG8.placeholder : phone_number
-W7d-Gh-IMB.title : faq
+W7d-Gh-IMB.title : faqs
 yk1-9H-q3n.title : airmap_airspace_advisories
 Yyg-xF-uSz.normalTitle : airmap_polygon
 Z9F-I6-niw.title : create_aircraft
-cgk-wh-wed.text : tooltip_placeholder
-Owy-kW-lKA.text : tooltip_placeholder_2
 
 
 
