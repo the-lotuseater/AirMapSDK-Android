@@ -58,7 +58,7 @@ import com.airmap.airmapsdk.ui.adapters.AircraftAdapter;
 import com.airmap.airmapsdk.util.AnnotationsFactory;
 import com.airmap.airmapsdk.util.Constants;
 import com.airmap.airmapsdk.util.Utils;
-import com.mapbox.mapboxsdk.annotations.MultiPoint;
+import com.mapbox.mapboxsdk.annotations.BasePointCollection;
 import com.mapbox.mapboxsdk.annotations.Polygon;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.annotations.Polyline;
@@ -208,7 +208,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), MappingService.AirMapMapTheme.Standard);
             map.setStyleUrl(url);
             AirMapFlight flight = mListener.getFlight();
-            MultiPoint multiPoint;
+            BasePointCollection multiPoint;
             if (flight.getGeometry() instanceof AirMapPolygon) {
                 PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
                 PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();

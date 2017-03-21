@@ -39,7 +39,7 @@ import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.util.AnnotationsFactory;
-import com.mapbox.mapboxsdk.annotations.MultiPoint;
+import com.mapbox.mapboxsdk.annotations.BasePointCollection;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -229,7 +229,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
             String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), MappingService.AirMapMapTheme.Standard);
             map.setStyleUrl(url);
             AirMapFlight flight = mListener.getFlight();
-            MultiPoint multiPoint;
+            BasePointCollection multiPoint;
             if (flight.getGeometry() instanceof AirMapPolygon) {
                 PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
                 PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
