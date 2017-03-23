@@ -1,0 +1,112 @@
+2Eq-Fz-bOO.normalTitle : end_flight
+2Na-rR-yZi.text : airmap_phone_number_disclaimer
+39m-XX-eZ2.text : airmap_digital_notice_accepted
+4g7-2z-c9g.title : phone_number_verification
+4YZ-kG-zkZ.normalTitle : submit
+747-Q2-1CI.title : permits
+7vR-GS-NPr.title : select_aircraft
+ADVISORY_ACCEPTS_DIGITAL_NOTICE : accepts_digital_notice
+ADVISORY_PHONE_NOT_PROVIDED : no_known_number
+ADVISORY_TFR_ENDS_FORMAT : advisory_tfr_ends_format
+ADVISORY_TFR_PERMANENT : advisory_tfr_permanent
+ADVISORY_TFR_STARTS_FORMAT : airmap_starts
+ADVISORY_WILDFIRE_SIZE_FORMAT_ACRES : advisory_wildfire_size_format_acres
+ADVISORY_WILDFIRE_SIZE_FORMAT_HECTARES : advisory_wildfire_size_format_hectares
+ADVISORY_WILDFIRE_SIZE_UNKNOWN : unknown_size
+AIRCRAFT_SELECT_AIRCRAFT : aircraft_select_aircraft
+AIRCRAFT_TITLE_CREATE_NEW : airmap_title_activity_create_aircraft
+AIRCRAFT_TITLE_UPDATE_EXISTING : airmap_edit_aircraft
+AUTH_ERROR_ACCOUNT_BLACKLISTED : invalid_email_domain
+AUTH_ERROR_EMAIL_NEEDS_VERIFICATION_REQUIRED : verify_email_log_in_again
+AUTH_ERROR_UNAUTHORIZED : auth_error_unauthorized
+AUTH_FAILED_LOGIN_TITLE : auth_failed_login_title
+AVAILABLE_PERMITS_SECTION_HEADER_AVAILABLE : available_permits
+AVAILABLE_PERMITS_SECTION_HEADER_EXISTING : existing_permits
+AVAILABLE_PERMITS_SECTION_HEADER_UNAVAILABLE : unavailable_permits
+AVAILABLE_PERMITS_TABLE_HEADER : select_a_permit_description
+AVAILABLE_PERMITS_TABLE_HEADER_CONFLICTING_REQUIREMENTS : no_available_permits_for_flight
+AVAILABLE_PERMIT_ROW_TITLE_SINGLE_USE : single_use
+AVAILABLE_PERMIT_ROW_TITLE_VALIDITY : available_permit_row_title_validity
+AVAILABLE_PERMIT_SECTION_HEADER_CUSTOM_PROPERTIES : available_permit_section_header_custom_properties
+AVAILABLE_PERMIT_SECTION_HEADER_DESCRIPTION : description
+AVAILABLE_PERMIT_SECTION_HEADER_DETAILS : permit_details
+blN-px-yT6.placeholder : airmap_nickname
+Dy4-Qg-lC0.text : starts
+FLIGHT_DATA_CELL_NOW : now
+FLIGHT_DRAWING_RADIUS : airmap_buffer
+FLIGHT_DRAWING_TOOLTIP_CTA_DRAG_TO_MODIFY_GEOMETRY : airmap_done_drawing_tip
+FLIGHT_DRAWING_TOOLTIP_CTA_DRAG_TO_TRASH_TO_DELETE : airmap_delete_tip
+FLIGHT_DRAWING_TOOLTIP_CTA_DRAW_FREEHAND_AREA : airmap_draw_freehand_area
+FLIGHT_DRAWING_TOOLTIP_CTA_DRAW_FREEHAND_PATH : airmap_draw_freehand_path
+FLIGHT_DRAWING_TOOLTIP_CTA_TAP_ICON_TO_DRAW_AREA : airmap_freehand_tip_area
+FLIGHT_DRAWING_TOOLTIP_CTA_TAP_ICON_TO_DRAW_PATH : airmap_freehand_tip_path
+FLIGHT_DRAWING_TOOLTIP_ERROR_OVERLAPPING_PERMIT_AREAS : airmap_flight_area_overlap_permit_conflict
+FLIGHT_DRAWING_TOOLTIP_ERROR_SELF_INTERSECTING_GEOMETRY : airmap_error_overlap
+FLIGHT_DRAWING_WIDTH : airmap_width
+FLIGHT_PLAN_BUTTON_TITLE_NEXT : airmap_next
+FLIGHT_PLAN_BUTTON_TITLE_SAVE : airmap_save
+FLIGHT_PLAN_ROW_TITLE_ALTITUDE : airmap_max_altitude
+FLIGHT_PLAN_ROW_TITLE_DURATION : airmap_duration
+FLIGHT_PLAN_ROW_TITLE_PILOT : select_pilot_profile
+FLIGHT_PLAN_SECTION_HEADER_ASSOCIATED : pilot_and_aircraft_header
+FLIGHT_PLAN_SECTION_HEADER_FLIGHT : flight_details
+FLIGHT_PLAN_SECTION_HEADER_SHARE : airmap_share_my_flight
+FLIGHT_PLAN_SECTION_HEADER_TIME : date_and_time
+Fti-S4-xfH.normalTitle : airmap_circle
+HLI-qV-iML.text : requires_permits_from_authorities
+HM6-qn-wuK.title : airmap_title_activity_create_flight
+IAP-O7-VzM.normalTitle : airmap_path
+Iz2-Va-oce.normalTitle : done
+lll-ta-VAP.text : airmap_not_accept_notice
+pFU-ok-j6g.title : select_a_permit
+PILOT_PROFILE_LABEL_EMAIL : email
+PILOT_PROFILE_LABEL_FIRST_NAME : first_name
+PILOT_PROFILE_LABEL_LAST_NAME : last_name
+PILOT_PROFILE_SECTION_PERSONAL : airmap_personal_information
+q0o-oq-I1W.title : airmap_title_activity_profile
+REQUIRED_PERMITS_SELECT_DIFFERENT_PERMIT : airmap_select_different_permit
+REQUIRED_PERMITS_SELECT_PERMIT : airmap_select_a_permit
+REVIEW_FLIGHT_PLAN_DETAILS_ROW_TITLE_AIRCRAFT : airmap_aircraft_stats
+RX7-4I-r3s.normalTitle : airmap_select_permit
+STATUS_GREEN_DESCRIPTION : informational
+STATUS_RED_DESCRIPTION : flight_strictly_regulated
+STATUS_YELLOW_DESCRIPTION : advisories
+Uk3-p4-sdr.title : airmap_flight_notice
+V59-8d-Sdh.normalTitle : airmap_review
+vme-QM-SG8.placeholder : phone_number
+W7d-Gh-IMB.title : faqs
+yk1-9H-q3n.title : airmap_airspace_advisories
+Yyg-xF-uSz.normalTitle : airmap_polygon
+Z9F-I6-niw.title : create_aircraft
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

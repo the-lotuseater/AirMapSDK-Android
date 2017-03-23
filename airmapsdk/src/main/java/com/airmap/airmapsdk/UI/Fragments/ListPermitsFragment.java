@@ -151,7 +151,7 @@ public class ListPermitsFragment extends Fragment {
             Analytics.logEvent(Analytics.Page.PERMITS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.INFO_FAQ_BUTTON);
 
             Intent intent = new Intent(getActivity(), WebActivity.class);
-            intent.putExtra(Intent.EXTRA_TITLE, getString(R.string.faq));
+            intent.putExtra(Intent.EXTRA_TITLE, getString(R.string.faqs));
             intent.putExtra(Constants.URL_EXTRA, Constants.FAQ_PERMITS_URL);
             startActivity(intent);
             return true;

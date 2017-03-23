@@ -8,7 +8,10 @@ phraseapp:
         file_format: xml
   pull:
     targets:
-    - file: airmapsdk/src/main/res/values-<locale_code>/new-strings.xml
+    - file: airmapsdk/src/main/res/values-<locale_code>/translated-strings.xml
       params:
         file_format: xml
-        format_options: { convert_placeholder: true }
+        convert_emoji: true
+        format_options: 
+          convert_placeholder: true
+          escape_linebreaks: true

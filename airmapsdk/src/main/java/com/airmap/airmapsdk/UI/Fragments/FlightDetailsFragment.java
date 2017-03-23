@@ -96,7 +96,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     private MapView mapView;
     private TextView altitudeValueTextView;
     private SeekBar altitudeSeekBar;
-    private RelativeLayout startsAtTouchTarget;
+    private View startsAtTouchTarget;
     private TextView startsAtTextView;
     private TextView durationValueTextView;
     private SeekBar durationSeekBar;
@@ -183,7 +183,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         mapView = (MapView) view.findViewById(R.id.airmap_map);
         altitudeValueTextView = (TextView) view.findViewById(R.id.altitude_value);
         altitudeSeekBar = (SeekBar) view.findViewById(R.id.altitude_seekbar);
-        startsAtTouchTarget = (RelativeLayout) view.findViewById(R.id.date_time_picker_touch_target);
+        startsAtTouchTarget = view.findViewById(R.id.date_time_picker_touch_target);
         startsAtTextView = (TextView) view.findViewById(R.id.time_value);
         durationValueTextView = (TextView) view.findViewById(R.id.duration_value);
         durationSeekBar = (SeekBar) view.findViewById(R.id.duration_seekbar);
@@ -466,35 +466,42 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             public void onClick(View view) {
                 Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.SELECT_AIRCRAFT);
 
-                new AlertDialog.Builder(getContext())
-                        .setTitle(R.string.select_aircraft)
-                        .setAdapter(new AircraftAdapter(getContext(), aircraft), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int position) {
-                                if (aircraft.get(position).getAircraftId().equals("add_aircraft")) {
+                if (aircraft.isEmpty()) {
+                    Analytics.logEvent(Analytics.Page.SELECT_AIRCRAFT, Analytics.Action.tap, Analytics.Label.NEW_AIRCRAFT);
+
+                    Intent intent = new Intent(getContext(), CreateEditAircraftActivity.class);
+                    startActivityForResult(intent, REQUEST_CREATE_AIRCRAFT);
+                } else {
+                    new AlertDialog.Builder(getContext())
+                            .setTitle(R.string.select_aircraft)
+                            .setAdapter(new AircraftAdapter(getContext(), aircraft), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int position) {
+                                    if (aircraft.get(position).getAircraftId().equals("add_aircraft")) {
+                                        Analytics.logEvent(Analytics.Page.SELECT_AIRCRAFT, Analytics.Action.tap, Analytics.Label.NEW_AIRCRAFT);
+
+                                        Intent intent = new Intent(getContext(), CreateEditAircraftActivity.class);
+                                        startActivityForResult(intent, REQUEST_CREATE_AIRCRAFT);
+                                    } else {
+                                        if (mListener != null) {
+                                            mListener.getFlight().setAircraft(aircraft.get(position));
+                                            aircraftTextView.setText(aircraft.get(position).getNickname());
+                                        }
+                                    }
+                                    dialogInterface.dismiss();
+                                }
+                            })
+                            .setNeutralButton(R.string.create_aircraft, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
                                     Analytics.logEvent(Analytics.Page.SELECT_AIRCRAFT, Analytics.Action.tap, Analytics.Label.NEW_AIRCRAFT);
 
                                     Intent intent = new Intent(getContext(), CreateEditAircraftActivity.class);
                                     startActivityForResult(intent, REQUEST_CREATE_AIRCRAFT);
-                                } else {
-                                    if (mListener != null) {
-                                        mListener.getFlight().setAircraft(aircraft.get(position));
-                                        aircraftTextView.setText(aircraft.get(position).getNickname());
-                                    }
                                 }
-                                dialogInterface.dismiss();
-                            }
-                        })
-                        .setNeutralButton(R.string.create_aircraft, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Analytics.logEvent(Analytics.Page.SELECT_AIRCRAFT, Analytics.Action.tap, Analytics.Label.NEW_AIRCRAFT);
-
-                                Intent intent = new Intent(getContext(), CreateEditAircraftActivity.class);
-                                startActivityForResult(intent, REQUEST_CREATE_AIRCRAFT);
-                            }
-                        })
-                        .show();
+                            })
+                            .show();
+                }
             }
         });
     }

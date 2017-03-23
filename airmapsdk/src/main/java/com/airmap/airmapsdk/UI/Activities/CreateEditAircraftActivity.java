@@ -201,7 +201,7 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
                 @Override
                 public void onSuccess(AirMapAircraft response) {
                     Intent intent = new Intent();
-                    intent.putExtra(AIRCRAFT, response);
+                    intent.putExtra(AIRCRAFT, aircraftToEdit);
                     setResult(RESULT_OK, intent);
                     finish();
                 }

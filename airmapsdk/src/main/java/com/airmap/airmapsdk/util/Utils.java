@@ -178,7 +178,7 @@ public class Utils {
 
         if (timeInMillis >= oneHour) {
             double hours = timeInMillis / oneHour;
-            return context.getString(R.string.duration_in_hours, NumberFormat.getInstance(Locale.getDefault()).format(hours));
+            return context.getResources().getQuantityString(R.plurals.duration_in_hours, (int) Math.ceil(hours), NumberFormat.getInstance(Locale.getDefault()).format(hours));
         } else {
             double minutes = timeInMillis / oneMinute;
             return context.getString(R.string.duration_in_minutes, NumberFormat.getInstance(Locale.getDefault()).format(minutes));
