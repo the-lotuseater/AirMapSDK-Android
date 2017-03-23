@@ -2,10 +2,8 @@ package com.airmap.airmapsdk.util;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
-import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.util.TypedValue;
 
 import com.airmap.airmapsdk.AirMapException;
@@ -25,12 +23,8 @@ import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
-import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,7 +32,6 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
