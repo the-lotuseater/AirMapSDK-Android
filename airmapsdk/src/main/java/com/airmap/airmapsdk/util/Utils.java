@@ -304,6 +304,14 @@ public class Utils {
         return format.format(new CurrencyAmount(priceInUSD, Currency.getInstance("USD")));
     }
 
+    public static String optString(JSONObject jsonObject, String key) {
+        if (jsonObject.isNull(key)) {
+            return null;
+        }
+
+        return jsonObject.optString(key);
+    }
+
     /**
      * Makes a polygon with many sides to simulate a circle
      *

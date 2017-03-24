@@ -239,6 +239,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                cancelNetworkCalls();
                 clear();
 
                 String analyticsPage = Analytics.Page.POINT_CREATE_FLIGHT;
