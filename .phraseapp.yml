@@ -3,15 +3,27 @@ phraseapp:
   project_id: 8e1da11a577bc4eb2ca0a2b4011d165d
   push:
     sources:
-    - file: airmapsdk/src/main/res/values-<locale_code>/strings.xml
+    - file: airmapsdk/src/main/res/values-en/androidstrings.xml #android only
       params:
+        tags: "android"
         file_format: xml
+        locale_id: en
   pull:
     targets:
     - file: airmapsdk/src/main/res/values-<locale_code>/translated-strings.xml
       params:
+        tag: "ios"
         file_format: xml
         convert_emoji: true
         format_options: 
+          convert_placeholder: true
+          escape_linebreaks: true
+
+    - file: airmapsdk/src/main/res/values-<locale_code>/androidstrings.xml #android only
+      params:
+        tag: "android"
+        file_format: xml
+        convert_emoji: true
+        format_options:
           convert_placeholder: true
           escape_linebreaks: true

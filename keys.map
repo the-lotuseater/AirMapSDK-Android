@@ -1,10 +1,10 @@
-2Eq-Fz-bOO.normalTitle : end_flight
-2Na-rR-yZi.text : airmap_phone_number_disclaimer
-39m-XX-eZ2.text : airmap_digital_notice_accepted
-4g7-2z-c9g.title : phone_number_verification
-4YZ-kG-zkZ.normalTitle : submit
-747-Q2-1CI.title : permits
-7vR-GS-NPr.title : select_aircraft
+review_flight_plan_end_button : end_flight
+phone_verification_header : airmap_phone_number_disclaimer
+review_flight_plan_notice_header_notice_accepted : airmap_digital_notice_accepted
+phone_verification_title : phone_number_verification
+review_flight_plan_submit_button : submit
+required_permits_title : permits
+select_aircraft_title : select_aircraft
 ADVISORY_ACCEPTS_DIGITAL_NOTICE : accepts_digital_notice
 ADVISORY_PHONE_NOT_PROVIDED : no_known_number
 ADVISORY_TFR_ENDS_FORMAT : advisory_tfr_ends_format
@@ -30,8 +30,8 @@ AVAILABLE_PERMIT_ROW_TITLE_VALIDITY : available_permit_row_title_validity
 AVAILABLE_PERMIT_SECTION_HEADER_CUSTOM_PROPERTIES : available_permit_section_header_custom_properties
 AVAILABLE_PERMIT_SECTION_HEADER_DESCRIPTION : description
 AVAILABLE_PERMIT_SECTION_HEADER_DETAILS : permit_details
-blN-px-yT6.placeholder : airmap_nickname
-Dy4-Qg-lC0.text : starts
+create_aircraft_nickname : airmap_nickname
+flight_plan_row_title_start_time : starts
 FLIGHT_DATA_CELL_NOW : now
 FLIGHT_DRAWING_RADIUS : airmap_buffer
 FLIGHT_DRAWING_TOOLTIP_CTA_DRAG_TO_MODIFY_GEOMETRY : airmap_done_drawing_tip
@@ -52,13 +52,13 @@ FLIGHT_PLAN_SECTION_HEADER_ASSOCIATED : pilot_and_aircraft_header
 FLIGHT_PLAN_SECTION_HEADER_FLIGHT : flight_details
 FLIGHT_PLAN_SECTION_HEADER_SHARE : airmap_share_my_flight
 FLIGHT_PLAN_SECTION_HEADER_TIME : date_and_time
-Fti-S4-xfH.normalTitle : airmap_circle
-HLI-qV-iML.text : requires_permits_from_authorities
-HM6-qn-wuK.title : airmap_title_activity_create_flight
-IAP-O7-VzM.normalTitle : airmap_path
-Iz2-Va-oce.normalTitle : done
-lll-ta-VAP.text : airmap_not_accept_notice
-pFU-ok-j6g.title : select_a_permit
+flight_drawing_mode_point : airmap_circle
+required_permits_table_header : requires_permits_from_authorities
+review_flight_plan_details_title : airmap_title_activity_create_flight
+flight_drawing_mode_path : airmap_path
+permit_details_done_button : done
+review_flight_plan_notice_header_notice_not_accepted : airmap_not_accept_notice
+available_permits_title : select_a_permit
 PILOT_PROFILE_LABEL_EMAIL : email
 PILOT_PROFILE_LABEL_FIRST_NAME : first_name
 PILOT_PROFILE_LABEL_LAST_NAME : last_name
@@ -67,17 +67,17 @@ q0o-oq-I1W.title : airmap_title_activity_profile
 REQUIRED_PERMITS_SELECT_DIFFERENT_PERMIT : airmap_select_different_permit
 REQUIRED_PERMITS_SELECT_PERMIT : airmap_select_a_permit
 REVIEW_FLIGHT_PLAN_DETAILS_ROW_TITLE_AIRCRAFT : airmap_aircraft_stats
-RX7-4I-r3s.normalTitle : airmap_select_permit
+permit_details_select_permit_button : airmap_select_permit
 STATUS_GREEN_DESCRIPTION : informational
 STATUS_RED_DESCRIPTION : flight_strictly_regulated
 STATUS_YELLOW_DESCRIPTION : advisories
-Uk3-p4-sdr.title : airmap_flight_notice
-V59-8d-Sdh.normalTitle : airmap_review
+review_flight_plan_notice_title : airmap_flight_notice
+review_flight_plan_notice_review_buton : airmap_review
 vme-QM-SG8.placeholder : phone_number
-W7d-Gh-IMB.title : faqs
-yk1-9H-q3n.title : airmap_airspace_advisories
-Yyg-xF-uSz.normalTitle : airmap_polygon
-Z9F-I6-niw.title : create_aircraft
+faqs_title : faqs
+advisories_title : airmap_airspace_advisories
+flight_drawing_mode_area : airmap_polygon
+create_aircraft_title : create_aircraft
 
 
 
