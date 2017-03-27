@@ -18,6 +18,8 @@ public class MappingService extends BaseService {
     public enum AirMapLayerType implements Serializable {
         TFRS("tfrs", R.string.tile_layer_tfr_faa),
         Wildfires("wildfires", R.string.tile_layer_wildfires),
+        Fires("fires", R.string.tile_layer_fires),
+        Emergencies("emergencies", R.string.tile_layer_emergencies),
         Prohibited("sua_prohibited", R.string.tile_layer_prohibited),
         Restricted("sua_restricted", R.string.tile_layer_restricted_airspace),
         NationalParks("national_parks", R.string.tile_layer_national_parks),
@@ -65,6 +67,10 @@ public class MappingService extends BaseService {
                     return TFRS;
                 case "wildfires":
                     return Wildfires;
+                case "fires":
+                    return Fires;
+                case "emergencies":
+                    return Emergencies;
                 case "sua_prohibited":
                     return Prohibited;
                 case "sua_restricted":
@@ -121,6 +127,10 @@ public class MappingService extends BaseService {
                     return AirMapAirspaceType.TFR;
                 case Wildfires:
                     return AirMapAirspaceType.Wildfires;
+                case Fires:
+                    return AirMapAirspaceType.Fires;
+                case Emergencies:
+                    return AirMapAirspaceType.Emergencies;
                 case Prohibited:
                 case Restricted:
                     return AirMapAirspaceType.SpecialUse;
@@ -171,6 +181,8 @@ public class MappingService extends BaseService {
         SpecialUse("special_use_airspace", R.string.airspace_type_special_use),
         TFR("tfr", R.string.airspace_type_tfr_faa),
         Wildfires("wildfire", R.string.airspace_type_wildfire),
+        Fires("fire", R.string.airspace_type_fire),
+        Emergencies("emergency", R.string.airspace_type_emergency),
         Hospitals("hospital", R.string.airspace_type_hospital),
         HazardArea("hazard_area", R.string.airspace_type_hazard_area),
         RecreationalArea("recreational_area", R.string.airspace_type_aerial_rec_area),
@@ -216,6 +228,10 @@ public class MappingService extends BaseService {
                     return TFR;
                 case "wildfire":
                     return Wildfires;
+                case "fire":
+                    return Fires;
+                case "emergency":
+                    return Emergencies;
                 case "hospital":
                     return Hospitals;
                 case "hazard_area":
