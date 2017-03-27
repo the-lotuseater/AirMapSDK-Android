@@ -45,31 +45,28 @@
                         android:orientation="vertical"
                         android:padding="12dp">
 
-                    <TextView
-                            android:id="@+id/summary_text_view"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="14dp"
-                            android:textColor="@color/colorTextAndIcons"
-                            android:autoLink="all"/>
+                <TextView android:id="@+id/summary_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14dp"
+                    android:textColor="@color/colorTextAndIcons"
+                    android:autoLink="all" />
 
-                    <TextView
-                            android:id="@+id/link_text_view"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="8dp"
-                            android:autoLink="all"/>
+                <TextView android:id="@+id/link_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp"
+                    android:autoLink="all" />
 
-                    <Button
-                            style="?borderlessButtonStyle"
-                            android:id="@+id/read_full_button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="right"
-                            android:layout_marginTop="16dp"
-                            android:text="Read Full Rules"
-                            android:textColor="@color/colorAccent"/>
+                <Button style="?borderlessButtonStyle"
+                    android:id="@+id/read_full_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/read_full_rules"
+                    android:textColor="@color/colorAccent" />
 
                 </LinearLayout>
 

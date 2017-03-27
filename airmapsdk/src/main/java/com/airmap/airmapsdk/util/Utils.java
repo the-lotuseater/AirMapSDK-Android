@@ -2,7 +2,6 @@ package com.airmap.airmapsdk.util;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
-import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -14,6 +13,12 @@ import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
+import com.ibm.icu.text.MeasureFormat;
+import com.ibm.icu.text.NumberFormat;
+import com.ibm.icu.util.Currency;
+import com.ibm.icu.util.CurrencyAmount;
+import com.ibm.icu.util.Measure;
+import com.ibm.icu.util.MeasureUnit;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
@@ -27,7 +32,6 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +44,15 @@ import java.util.Locale;
 @SuppressWarnings("unused")
 public class Utils {
     public static final String REFRESH_TOKEN_KEY = "AIRMAP_SDK_REFRESH_TOKEN";
+
+    /** Return the value mapped by the given key, or {@code null} if not present or null. */
+    public static String optString(JSONObject json, String key) {
+        // http://code.google.com/p/android/issues/detail?id=13830
+        if (json.isNull(key))
+            return null;
+        else
+            return json.optString(key, null);
+    }
 
     public static Float dpToPixels(Context context, int dp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
@@ -72,7 +85,7 @@ public class Utils {
     }
 
     public static double metersToFeet(double meters) {
-        return meters * 3.2808;
+        return meters * 3.2808399;
     }
 
     public static DateFormat getDateTimeFormat() {
@@ -142,122 +155,135 @@ public class Utils {
     /**
      * @return Default duration presets when creating a flight
      */
-    public static StringNumberPair[] getDurationPresets() {
-        return new StringNumberPair[]{
-                //TODO: Use NumberFormat here instead of having hardcoded translations
-                new StringNumberPair(R.string.five_min, 5 * 60 * 1000L), //5 minutes in millis
-                new StringNumberPair(R.string.ten_min, 10 * 60 * 1000L),
-                new StringNumberPair(R.string.fifteen_min, 15 * 60 * 1000L),
-                new StringNumberPair(R.string.thirty_min, 30 * 60 * 1000L),
-                new StringNumberPair(R.string.forty_five_min, 45 * 60 * 1000L),
-                new StringNumberPair(R.string.one_hour, 60 * 60 * 1000L),
-                new StringNumberPair(R.string.one_half_hour, 90 * 60 * 1000L),
-                new StringNumberPair(R.string.two_hour, 120 * 60 * 1000L),
-                new StringNumberPair(R.string.two_half_hour, 150 * 60 * 1000L),
-                new StringNumberPair(R.string.three_hour, 180 * 60 * 1000L),
-                new StringNumberPair(R.string.three_half_hour, 210 * 60 * 1000L),
-                new StringNumberPair(R.string.four_hour, 240 * 60 * 1000L)
+    public static long[] getDurationPresets() {
+        return new long[]{
+                5 * 60 * 1000L, //5 minutes in millis
+                10 * 60 * 1000L,
+                15 * 60 * 1000L,
+                30 * 60 * 1000L,
+                45 * 60 * 1000L,
+                60 * 60 * 1000L,
+                90 * 60 * 1000L,
+                120 * 60 * 1000L,
+                150 * 60 * 1000L,
+                180 * 60 * 1000L,
+                210 * 60 * 1000L,
+                240 * 60 * 1000L
+        };
+    }
+
+    public static String getDurationText(Context context, long timeInMillis) {
+        double oneMinute = 60 * 1000;
+        double oneHour = 60 * oneMinute;
+
+        if (timeInMillis >= oneHour) {
+            double hours = timeInMillis / oneHour;
+            return context.getResources().getQuantityString(R.plurals.duration_in_hours, (int) Math.ceil(hours), NumberFormat.getInstance(Locale.getDefault()).format(hours));
+        } else {
+            double minutes = timeInMillis / oneMinute;
+            return context.getString(R.string.duration_in_minutes, NumberFormat.getInstance(Locale.getDefault()).format(minutes));
+        }
+    }
+
+    /**
+     * @return Default altitude presets when creating a flight
+     */
+    public static double[] getAltitudePresets() {
+        return new double[]{
+                feetToMeters(50),
+                feetToMeters(100),
+                feetToMeters(200),
+                feetToMeters(300),
+                feetToMeters(400)
         };
     }
 
     /**
      * @return Default altitude presets when creating a flight
      */
-    public static StringNumberPair[] getAltitudePresets() {
-        return new StringNumberPair[]{
-                //TODO: Use NumberFormat here instead of having hardcoded translations
-                new StringNumberPair(R.string.fifty_feet, feetToMeters(50)),
-                new StringNumberPair(R.string.one_hundred_feet, feetToMeters(100)),
-                new StringNumberPair(R.string.two_hundred_feet, feetToMeters(200)),
-                new StringNumberPair(R.string.three_hundred_feet, feetToMeters(300)),
-                new StringNumberPair(R.string.four_hundred_feet, feetToMeters(400))
-        };
-    }
-
-    /**
-     * @return Default altitude presets when creating a flight
-     */
-    public static StringNumberPair[] getAltitudePresetsMetric() {
-        //TODO: Use NumberFormat here instead of having hardcoded translations
-        return new StringNumberPair[]{
-                new StringNumberPair(R.string.fifteen_meters, 15),
-                new StringNumberPair(R.string.thirty_meters, 30),
-                new StringNumberPair(R.string.sixty_meters, 60),
-                new StringNumberPair(R.string.ninty_meters, 90),
-                new StringNumberPair(R.string.one_twenty_meters, 120)
+    public static double[] getAltitudePresetsMetric() {
+        return new double[]{
+                15,
+                30,
+                60,
+                90,
+                120
         };
     }
 
     /**
      * @return Default buffer presets when creating a flight
      */
-    public static StringNumberPair[] getBufferPresets() {
-        //TODO: Use NumberFormat here instead of having hardcoded translations
-        return new StringNumberPair[]{
-                new StringNumberPair(R.string.twenty_five_feet, feetToMeters(25)),
-                new StringNumberPair(R.string.fifty_feet, feetToMeters(50)),
-                new StringNumberPair(R.string.seventy_feet, feetToMeters(75)),
-                new StringNumberPair(R.string.hundred_feet, feetToMeters(100)),
-                new StringNumberPair(R.string.one_twenty_five_feet, feetToMeters(125)),
-                new StringNumberPair(R.string.one_fifty_feet, feetToMeters(150)),
-                new StringNumberPair(R.string.one_seventy_five_feet, feetToMeters(175)),
-                new StringNumberPair(R.string.two_hundred_feet, feetToMeters(200)),
-                new StringNumberPair(R.string.two_fifty_feet, feetToMeters(250)),
-                new StringNumberPair(R.string.three_hundred_feet, feetToMeters(300)),
-                new StringNumberPair(R.string.three_fifty_feet, feetToMeters(350)),
-                new StringNumberPair(R.string.four_hundred_feet, feetToMeters(400)),
-                new StringNumberPair(R.string.four_fifty_feet, feetToMeters(450)),
-                new StringNumberPair(R.string.five_hundred_feet, feetToMeters(500)),
-                new StringNumberPair(R.string.six_hundred, feetToMeters(600)),
-                new StringNumberPair(R.string.seven_hundred, feetToMeters(700)),
-                new StringNumberPair(R.string.eight_hundred, feetToMeters(800)),
-                new StringNumberPair(R.string.nine_hundred_feet, feetToMeters(900)),
-                new StringNumberPair(R.string.one_thousand_feet, feetToMeters(1000)),
-                new StringNumberPair(R.string.twelve_fifty_feet, feetToMeters(1250)),
-                new StringNumberPair(R.string.fifteen_hundred_feet, feetToMeters(1500)),
-                new StringNumberPair(R.string.seventeen_fifty_feet, feetToMeters(1750)),
-                new StringNumberPair(R.string.two_thousand_feet, feetToMeters(2000)),
-                new StringNumberPair(R.string.twenty_five_hundred, feetToMeters(2500)),
-                new StringNumberPair(R.string.three_thousand_feet, feetToMeters(3000))
+    public static double[] getBufferPresets() {
+        return new double[]{
+                feetToMeters(25),
+                feetToMeters(50),
+                feetToMeters(75),
+                feetToMeters(100),
+                feetToMeters(125),
+                feetToMeters(150),
+                feetToMeters(175),
+                feetToMeters(200),
+                feetToMeters(250),
+                feetToMeters(300),
+                feetToMeters(350),
+                feetToMeters(400),
+                feetToMeters(450),
+                feetToMeters(500),
+                feetToMeters(600),
+                feetToMeters(700),
+                feetToMeters(800),
+                feetToMeters(900),
+                feetToMeters(1000),
+                feetToMeters(1250),
+                feetToMeters(1500),
+                feetToMeters(1750),
+                feetToMeters(2000),
+                feetToMeters(2500),
+                feetToMeters(3000)
         };
     }
 
     /**
      * @return Default buffer presets when creating a flight
      */
-    public static StringNumberPair[] getBufferPresetsMetric() {
-        //TODO: Use NumberFormat here instead of having hardcoded translations
-        return new StringNumberPair[]{
-                new StringNumberPair(R.string.ten_meters, 10),
-                new StringNumberPair(R.string.fifteen_meters, 15),
-                new StringNumberPair(R.string.twenty_meters, 20),
-                new StringNumberPair(R.string.twenty_five_meters, 25),
-                new StringNumberPair(R.string.thirty_meters, 30),
-                new StringNumberPair(R.string.fifty_meters, 50),
-                new StringNumberPair(R.string.sixty_meters, 60),
-                new StringNumberPair(R.string.seventy_five_meters, 75),
-                new StringNumberPair(R.string.one_hundred_meters, 100),
-                new StringNumberPair(R.string.one_twenty_meters, 120),
-                new StringNumberPair(R.string.one_fifty_meters, 150),
-                new StringNumberPair(R.string.one_seventy_five_meters, 175),
-                new StringNumberPair(R.string.two_hundred_meters, 200),
-                new StringNumberPair(R.string.two_twenty_five_meters, 225),
-                new StringNumberPair(R.string.two_fifty_meters, 250),
-                new StringNumberPair(R.string.two_seventy_five_meters, 275),
-                new StringNumberPair(R.string.three_hundred_meters, 300),
-                new StringNumberPair(R.string.three_fifty_meters, 350),
-                new StringNumberPair(R.string.four_hundred_meters, 400),
-                new StringNumberPair(R.string.five_hundred_meters, 500),
-                new StringNumberPair(R.string.six_hundred_meters, 600),
-                new StringNumberPair(R.string.seven_fifty_meters, 750),
-                new StringNumberPair(R.string.one_thousand_meters, 1000)
+    public static double[] getBufferPresetsMetric() {
+        return new double[]{
+                10,
+                15,
+                20,
+                25,
+                30,
+                50,
+                60,
+                75,
+                100,
+                120,
+                150,
+                175,
+                200,
+                225,
+                250,
+                275,
+                300,
+                350,
+                400,
+                500,
+                600,
+                750,
+                1000
         };
     }
 
-    public static int indexOfMeterPreset(double meters, StringNumberPair[] pairs) {
-        for (int i = 0; i < pairs.length; i++) {
-            StringNumberPair pair = pairs[i];
-            if (pair.value.doubleValue() == meters) {
+    public static String getMeasurementText(double bufferInMeters, boolean useMetric) {
+        MeasureFormat format = MeasureFormat.getInstance(Locale.getDefault(), MeasureFormat.FormatWidth.SHORT);
+        double buffer = useMetric ? bufferInMeters : Math.round(metersToFeet(bufferInMeters));
+        return format.format(new Measure(buffer, useMetric ? MeasureUnit.METER : MeasureUnit.FOOT));
+    }
+
+    public static int indexOfMeterPreset(double meters, double[] presets) {
+        for (int i = 0; i < presets.length; i++) {
+            if (presets[i] == meters) {
                 return i;
             }
         }
@@ -266,31 +292,16 @@ public class Utils {
 
     public static int indexOfDurationPreset(long millis) {
         for (int i = 0; i < getDurationPresets().length; i++) {
-            StringNumberPair pair = getDurationPresets()[i];
-            if (pair.value.longValue() == millis) {
+            if (getDurationPresets()[i] == millis) {
                 return i;
             }
         }
         return -1;
     }
 
-    /**
-     * Pair of String and a Number
-     */
-    public static class StringNumberPair {
-
-        public StringNumberPair(@StringRes int label, long value) {
-            this.label = label;
-            this.value = new BigDecimal(value);
-        }
-
-        public StringNumberPair(@StringRes int label, double value) {
-            this.label = label;
-            this.value = new BigDecimal(value);
-        }
-
-        @StringRes public int label;
-        public BigDecimal value;
+    public static String getPriceText(double priceInUSD) {
+        NumberFormat format = NumberFormat.getCurrencyInstance(Locale.getDefault());
+        return format.format(new CurrencyAmount(priceInUSD, Currency.getInstance("USD")));
     }
 
     /**

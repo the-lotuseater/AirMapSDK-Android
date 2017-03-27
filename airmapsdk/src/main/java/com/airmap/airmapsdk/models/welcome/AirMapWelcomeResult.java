@@ -1,6 +1,7 @@
 package com.airmap.airmapsdk.models.welcome;
 
 import com.airmap.airmapsdk.models.AirMapBaseModel;
+import com.airmap.airmapsdk.util.Utils;
 
 import org.json.JSONObject;
 
@@ -37,9 +38,9 @@ public class AirMapWelcomeResult implements Serializable, AirMapBaseModel {
             setId(json.optString("id"));
             setJurisdictionName(json.optString("jurisdiction_name"));
             setJurisdictionType(json.optString("jurisdiction_type"));
-            setText(json.optString("text"));
-            setSummary(json.optString("summary"));
-            setUrl(json.optString("url"));
+            setText(Utils.optString(json, "text"));
+            setSummary(Utils.optString(json, "summary"));
+            setUrl(Utils.optString(json, "url"));
             setLastUpdated(getDateFromIso8601String(json.optString("last_updated")));
         }
         return this;

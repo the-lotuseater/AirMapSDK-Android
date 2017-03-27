@@ -11,7 +11,7 @@ class BaseService {
 
     //URLs should end with a /
     //TODO: Change all the debug servers to production upon release
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     //Base Urls
     protected static final String baseUrl = "https://api.airmap.com/";
@@ -78,5 +78,5 @@ class BaseService {
     protected static final int telemetryPort = 16060;
 
     //Welcome
-    protected static final String welcomeBaseUrl = baseUrl + "rules/stage/locale/";
+    protected static final String welcomeBaseUrl = DEBUG ? baseUrl + "rules/stage/locale/" : baseUrl + "rules/v1/locale";
 }
