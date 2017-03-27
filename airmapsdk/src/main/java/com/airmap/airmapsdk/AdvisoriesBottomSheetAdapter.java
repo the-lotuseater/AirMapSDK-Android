@@ -339,7 +339,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
 
     private void onBindEmergencyViewHolder(VHEmergency holder, AirMapStatusAdvisory advisory) {
         holder.colorView.setBackgroundColor(getColor(advisory.getColor()));
-        holder.nameTextView.setText(R.string.airspace_type_emergency);
+        holder.nameTextView.setText(R.string.tile_layer_emergencies);
 
         String city = advisory.getCity() + ", " + (TextUtils.isEmpty(advisory.getState()) ? advisory.getCountry() : advisory.getState());
         holder.description1TextView.setText(TextUtils.isEmpty(advisory.getCity()) ? advisory.getName() : city);
