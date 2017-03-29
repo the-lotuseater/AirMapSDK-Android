@@ -53,7 +53,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.airmap.airmapsdk.R.id.phone;
 import static com.airmap.airmapsdk.util.Utils.dpToPixels;
 
 /**
@@ -213,8 +212,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                         Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-                AirMapLog.e("AirMapReviewFlight", e.getMessage());
-                e.printStackTrace();
+                AirMapLog.e("AirMapReviewFlight", e.getMessage(), e);
             }
         });
     }
@@ -361,7 +359,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
             }
         };
         final TextInputLayout phoneLayout = new TextInputLayout(getContext()); //The phone EditText
-        phoneLayout.setHint("Phone Number");
+        phoneLayout.setHint(getString(R.string.phone_number));
         TextInputEditText editText = new TextInputEditText(getContext());
         editText.setInputType(EditorInfo.TYPE_CLASS_PHONE);
         editText.setMaxLines(1);
@@ -371,10 +369,10 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
         phoneLayout.setPadding(dpAsPixels, dpAsPixels, dpAsPixels, 0);
         final AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setMessage(R.string.airmap_phone_number_disclaimer)
-                .setTitle("Phone Number")
+                .setTitle(getString(R.string.phone_number))
                 .setView(phoneLayout)
-                .setNegativeButton("Cancel", dismissOnClickListener)
-                .setPositiveButton("Submit", new DialogInterface.OnClickListener() { //Display dialog to enter the verification token
+                .setNegativeButton(android.R.string.cancel, dismissOnClickListener)
+                .setPositiveButton(R.string.submit, new DialogInterface.OnClickListener() { //Display dialog to enter the verification token
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         onSubmitPhoneNumber(phoneLayout);
@@ -450,8 +448,8 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
             public void run() {
                 final AlertDialog dialog = new AlertDialog.Builder(getContext())
                         .setView(verifyLayout)
-                        .setMessage("Enter the verification token that was sent to your phone number")
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        .setMessage(R.string.enter_verification_token)
+                        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int i) {
                                 dialog.dismiss();
@@ -464,7 +462,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                                 });
                             }
                         })
-                        .setPositiveButton("Verify", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.verify, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(final DialogInterface dialog, int which) {
                                 onSubmitVerificationToken(verifyLayout);
@@ -491,13 +489,13 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
         AirMap.verifyPhoneToken(verifyLayout.getEditText().getText().toString(), new AirMapCallback<Void>() {
             @Override
             public void onSuccess(Void response) {
-                toast("Successfully verified new number");
+                toast(getString(R.string.successfully_verified_number));
                 doSubmitFlight();
             }
 
             @Override
             public void onError(AirMapException e) {
-                toast("Error verifying number");
+                toast(getString(R.string.error_verifying_number));
                 e.printStackTrace();
                 submitButton.post(new Runnable() {
                     @Override
@@ -567,13 +565,13 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
         public CharSequence getPageTitle(int position) {
             Fragment fragment = getItem(position);
             if (fragment instanceof ReviewDetailsFragment) {
-                return "Flight Details";
+                return getString(R.string.flight_details);
             } else if (fragment instanceof ReviewPermitsFragment) {
-                return "Permits";
+                return getString(R.string.permits);
             } else if (fragment instanceof ReviewNoticeFragment) {
-                return "Flight Notice";
+                return getString(R.string.review_flight_plan_tab_title_digital_notice);
             } else {
-                return "Review";
+                return getString(R.string.airmap_review);
             }
         }
     }

@@ -1,9 +1,7 @@
 package com.airmap.airmapsdk.ui.adapters;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,14 +12,14 @@ import android.widget.TextView;
 
 import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.util.Utils;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.status.AirMapStatusPermits;
 import com.airmap.airmapsdk.ui.activities.CustomPropertiesActivity;
 import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.Utils;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,20 +34,20 @@ import java.util.Set;
  */
 public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int HEADER_VIEW_TYPE = 0;
-    private static final int PERMIT_VIEW_TYPE = 1;
-    private static final int INSTRUCTIONS_VIEW_TYPE = 2;
+    public final int HEADER_VIEW_TYPE = 0;
+    public final int PERMIT_VIEW_TYPE = 1;
+    public final int INSTRUCTIONS_VIEW_TYPE = 2;
 
     private Activity activity;
     private List permitsAndHeadersList;
     private Set<String> applicablePermitIds;
     private Map<String, AirMapPilotPermit> walletPermitsMap;
-    private SimpleDateFormat dateFormat;
+    private DateFormat dateFormat;
 
     public SelectPermitsAdapter(Activity activity, AirMapStatusPermits statusPermits, List<AirMapPilotPermit> permitsFromWallet) {
         this.activity = activity;
 
-        dateFormat = new SimpleDateFormat("M/d/yyyy");
+        dateFormat = Utils.getDateTimeFormat();
 
         permitsAndHeadersList = new ArrayList<>();
         applicablePermitIds = new HashSet<>();
@@ -91,19 +89,19 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         // add Existing Permits header and section
         if (!existingPermits.isEmpty()) {
-            permitsAndHeadersList.add(new Header("Existing Permits"));
+            permitsAndHeadersList.add(new Header(activity.getString(R.string.existing_permits)));
             permitsAndHeadersList.addAll(existingPermits);
         }
 
         // add Other Available Permits
         if (!otherAvailablePermits.isEmpty()) {
-            permitsAndHeadersList.add(new Header("Available Permits"));
+            permitsAndHeadersList.add(new Header(activity.getString(R.string.available_permits)));
             permitsAndHeadersList.addAll(otherAvailablePermits);
         }
 
         // add Non-Available Permits header and section
         if (!nonAvailablePermits.isEmpty()) {
-            permitsAndHeadersList.add(new Header("Unavailable Permits"));
+            permitsAndHeadersList.add(new Header(activity.getString(R.string.unavailable_permits)));
             permitsAndHeadersList.addAll(nonAvailablePermits);
         }
     }
@@ -132,8 +130,8 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof InstructionsViewHolder) {
             final InstructionsViewHolder holder = (InstructionsViewHolder) viewHolder;
-            holder.titleTextView.setText(R.string.select_a_permit_title);
-            holder.descriptionTextView.setText(applicablePermitIds.size() == 1 ? R.string.select_a_permit_description : R.string.select_a_permit_description_multiple);
+            holder.titleTextView.setText(R.string.select_a_permit);
+            holder.descriptionTextView.setText(R.string.you_have_selected_permits_of_total_required);
         } else if (viewHolder instanceof HeaderViewHolder) {
             final HeaderViewHolder holder = (HeaderViewHolder) viewHolder;
             holder.titleTextView.setText(((Header) getItem(position)).name);
@@ -148,10 +146,12 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
             if (walletPermit != null && (walletPermit.getStatus() == AirMapPilotPermit.PermitStatus.Accepted || walletPermit.getStatus() == AirMapPilotPermit.PermitStatus.Pending)
                     && (walletPermit.getExpiresAt() == null || walletPermit.getExpiresAt().after(new Date()))) {
                 holder.iconImageView.setVisibility(View.VISIBLE);
-                holder.statusTextView.setText(activity.getString(R.string.permit_status, Utils.titleCase(walletPermit.getStatus().toString())));
+                if (activity != null) {
+                    holder.statusTextView.setText(activity.getString(R.string.permit_status, Utils.titleCase(walletPermit.getStatus().toString())));
+                    holder.expirationTextView.setText(activity.getString(R.string.pilot_permit_expiration_format,
+                            walletPermit.getExpiresAt() != null ? dateFormat.format(walletPermit.getExpiresAt()) : activity.getString(R.string.na)));
+                }
                 holder.statusTextView.setVisibility(View.VISIBLE);
-                holder.expirationTextView.setText(activity.getString(R.string.permit_expiration,
-                        walletPermit.getExpiresAt() != null ? dateFormat.format(walletPermit.getExpiresAt()) : "N/A"));
                 holder.expirationTextView.setVisibility(View.VISIBLE);
             } else {
                 holder.iconImageView.setVisibility(View.GONE);
@@ -229,7 +229,7 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    class Header {
+    public class Header {
         public final String name;
 
         public Header(String name) {
@@ -237,7 +237,7 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    class PermitViewHolder extends RecyclerView.ViewHolder {
+    public class PermitViewHolder extends RecyclerView.ViewHolder {
 
         public View cardView;
         public ImageView iconImageView;
@@ -246,7 +246,7 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         public TextView statusTextView;
         public TextView expirationTextView;
 
-        public PermitViewHolder(View itemView) {
+        PermitViewHolder(View itemView) {
             super(itemView);
 
             cardView = itemView.findViewById(R.id.card_view);
@@ -258,20 +258,20 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    class HeaderViewHolder extends RecyclerView.ViewHolder {
+    public class HeaderViewHolder extends RecyclerView.ViewHolder {
         public TextView titleTextView;
 
-        public HeaderViewHolder(View itemView) {
+        HeaderViewHolder(View itemView) {
             super(itemView);
             titleTextView = (TextView) itemView.findViewById(R.id.header_text_view);
         }
     }
 
-    class InstructionsViewHolder extends RecyclerView.ViewHolder {
+    public class InstructionsViewHolder extends RecyclerView.ViewHolder {
         public TextView titleTextView;
         public TextView descriptionTextView;
 
-        public InstructionsViewHolder(View itemView) {
+        InstructionsViewHolder(View itemView) {
             super(itemView);
             titleTextView = (TextView) itemView.findViewById(R.id.title_text_view);
             descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);

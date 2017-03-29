@@ -227,10 +227,10 @@ public class CreateFlightActivity extends AppCompatActivity implements
                     getTabLayout().setVisibility(View.VISIBLE);
                     invalidateFurtherFragments(0);
                 } else if (fragment instanceof FlightDetailsFragment) {
-                    getSupportActionBar().setTitle(R.string.airmap_flight_details);
+                    getSupportActionBar().setTitle(R.string.flight_details);
                     getTabLayout().setVisibility(View.GONE);
                 } else if (fragment instanceof ListPermitsFragment) {
-                    getSupportActionBar().setTitle(R.string.airmap_permits);
+                    getSupportActionBar().setTitle(R.string.permits);
                     getTabLayout().setVisibility(View.GONE);
                 } else if (fragment instanceof FlightNoticeFragment) {
                     getSupportActionBar().setTitle(R.string.airmap_flight_notice);
@@ -254,13 +254,6 @@ public class CreateFlightActivity extends AppCompatActivity implements
             }
         });
 
-    }
-
-    @Override
-    public void showDecisionFlow(final AirMapStatusPermits permit) {
-        Intent intent = new Intent(this, DecisionFlowActivity.class);
-        intent.putExtra(DecisionFlowActivity.ARG_PERMIT, permit);
-        startActivityForResult(intent, REQUEST_DECISION_FLOW);
     }
 
     @Override
@@ -306,7 +299,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
 
     @Override
     public void bottomSheetOpened() {
-        getSupportActionBar().setTitle(R.string.R_string_airmap_airspace_advisories);
+        getSupportActionBar().setTitle(R.string.airmap_airspace_advisories);
 //        getTabLayout().setVisibility(View.GONE); //This causes wonky behavior
     }
 
@@ -415,7 +408,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(CreateFlightActivity.this, "Error getting Permit Wallet", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CreateFlightActivity.this, R.string.error_getting_wallet, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

@@ -2,13 +2,11 @@ package com.airmap.airmapsdk.ui.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieManager;
@@ -22,13 +20,13 @@ import android.widget.Toast;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.Auth;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.util.PreferenceUtils;
-import com.airmap.airmapsdk.util.SecuredPreferenceException;
-import com.airmap.airmapsdk.util.Utils;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.util.PreferenceUtils;
+import com.airmap.airmapsdk.util.SecuredPreferenceException;
+import com.airmap.airmapsdk.util.Utils;
 
 import java.io.IOException;
 
@@ -55,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         webView = (WebView) findViewById(R.id.web_view);
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
-        getSupportActionBar().setTitle(R.string.airmap_title_activity_login);
+        getSupportActionBar().setTitle(R.string.login);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         progressBar.setMax(100);
         webView.setWebViewClient(new WebViewClient() {
@@ -97,30 +95,30 @@ public class LoginActivity extends AppCompatActivity {
                     public void onEmailVerificationNeeded(final String resendLink) {
                         // redirect to login
                         webView.loadUrl(Auth.getLoginUrl());
-                        new AlertDialog.Builder(LoginActivity.this).setTitle("Email Verification Required")
-                                .setMessage("Please verify your email and log in again")
-                                .setPositiveButton("Resend Email", new DialogInterface.OnClickListener() {
+                        new AlertDialog.Builder(LoginActivity.this).setTitle(R.string.email_verification_required)
+                                .setMessage(R.string.verify_email_log_in_again)
+                                .setPositiveButton(R.string.resend_email, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         OkHttpClient client = new OkHttpClient();
                                         client.newCall(new Request.Builder().get().url(resendLink).build()).enqueue(new Callback() {
                                             @Override
                                             public void onFailure(Call call, IOException e) {
-                                                toast("Error re-sending verification email");
+                                                toast(getString(R.string.error_resending_email));
                                             }
 
                                             @Override
                                             public void onResponse(Call call, Response response) throws IOException {
                                                 if (response.isSuccessful()) {
-                                                    toast("Sent email");
+                                                    toast(getString(R.string.sent_email));
                                                 } else {
-                                                    toast("Error re-sending verification email");
+                                                    toast(getString(R.string.error_resending_email));
                                                 }
                                             }
                                         });
                                     }
                                 })
-                                .setNegativeButton("Ok", null)
+                                .setNegativeButton(android.R.string.ok, null)
                                 .show();
                     }
 
@@ -128,7 +126,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onErrorDomainBlackList() {
                         // show toast, then reload login url
                         webView.loadUrl(Auth.getLoginUrl());
-                        Toast.makeText(LoginActivity.this, "Invalid Email Domain. Please Sign-Up using a different email address.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this, R.string.invalid_email_domain, Toast.LENGTH_LONG).show();
                     }
 
                     @Override

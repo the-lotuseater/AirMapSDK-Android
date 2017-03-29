@@ -1,22 +1,26 @@
 package com.airmap.airmapsdk.ui.fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.shapes.AirMapPoint;
+import com.airmap.airmapsdk.util.Constants;
 import com.airmap.airmapsdk.util.Utils;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import static com.airmap.airmapsdk.util.Utils.getDurationPresets;
 import static com.airmap.airmapsdk.util.Utils.indexOfDurationPreset;
@@ -35,7 +39,8 @@ public class ReviewDetailsFragment extends Fragment {
     private TextView startsAtTextView;
     private TextView durationTextView;
     private TextView aircraftTextView;
-    private TextView publicFlightTextView;
+    private View publicFlightView;
+    private View infoButton;
     private LinearLayout radiusContainer;
     private LinearLayout aircraftContainer;
 
@@ -70,32 +75,30 @@ public class ReviewDetailsFragment extends Fragment {
         startsAtTextView = getTextViewById(view, R.id.starts_at_value);
         durationTextView = getTextViewById(view, R.id.duration_value);
         aircraftTextView = getTextViewById(view, R.id.aircraft_value);
-        publicFlightTextView = getTextViewById(view, R.id.public_flight_value);
+        publicFlightView = view.findViewById(R.id.public_flight_view);
+        infoButton = view.findViewById(R.id.airmap_info_button);
         radiusContainer = (LinearLayout) view.findViewById(R.id.radius_container);
         aircraftContainer = (LinearLayout) view.findViewById(R.id.aircraft_container);
     }
 
     private void populateViews() {
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
+        NumberFormat numberFormat = NumberFormat.getIntegerInstance();
+        DateFormat dateFormat = Utils.getDateTimeFormat();
 
         if (flight.getGeometry() instanceof AirMapPoint) {
-            String radius = useMetric ? String.format(Locale.US, "%d m", Math.round(flight.getBuffer())) :
-                    String.format(Locale.US, "%d ft", Math.round(metersToFeet(flight.getBuffer())));
-
+            String radius = Utils.getMeasurementText(flight.getBuffer(), useMetric);
             radiusTextView.setText(radius);
         } else {
             radiusContainer.setVisibility(View.GONE);
         }
 
-
-        String altitude = useMetric ? String.format(Locale.US, "%d m", Math.round(flight.getMaxAltitude())) :
-                String.format(Locale.US, "%d ft", Math.round(metersToFeet(flight.getMaxAltitude())));
-
+        String altitude = Utils.getMeasurementText(flight.getMaxAltitude(), useMetric);
         altitudeTextView.setText(altitude);
+
         if (flight.getStartsAt() != null) {
-            startsAtTextView.setText(format.format(flight.getStartsAt()));
+            startsAtTextView.setText(dateFormat.format(flight.getStartsAt()));
         } else {
-            startsAtTextView.setText(format.format(new Date()));
+            startsAtTextView.setText(dateFormat.format(new Date()));
         }
         durationTextView.setText(getDurationText());
         if (flight.getAircraft() != null) {
@@ -103,16 +106,25 @@ public class ReviewDetailsFragment extends Fragment {
         } else {
             aircraftContainer.setVisibility(View.GONE);
         }
-        publicFlightTextView.setText(flight.isPublic() ? "Yes" : "No");
+        publicFlightView.setVisibility(flight.isPublic() ? View.VISIBLE : View.GONE);
+
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(Constants.INFO_URL));
+                startActivity(intent);
+            }
+        });
     }
 
     public String getDurationText() {
         long difference = flight.getEndsAt().getTime() - flight.getStartsAt().getTime();
         int index = indexOfDurationPreset(difference);
         if (index != -1) {
-            return getDurationPresets()[index].label;
+            return Utils.getDurationText(getActivity(), getDurationPresets()[index]);
         }
-        return String.format(Locale.US, "%d seconds", difference / 1000);
+        return Utils.getDurationText(getActivity(), difference);
     }
 
     private TextView getTextViewById(View view, @IdRes int id) {

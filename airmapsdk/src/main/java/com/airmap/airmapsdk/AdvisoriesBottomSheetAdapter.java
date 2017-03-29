@@ -1,6 +1,8 @@
 package com.airmap.airmapsdk;
 
 import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
+import com.airmap.airmapsdk.networking.services.MappingService;
+import com.airmap.airmapsdk.util.Utils;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -29,7 +31,7 @@ import com.airmap.airmapsdk.models.welcome.AirMapWelcome;
 import com.airmap.airmapsdk.ui.activities.WelcomeActivity;
 import com.airmap.airmapsdk.util.Constants;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -47,6 +49,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     private static final int TYPE_TFR = 2;
     private static final int TYPE_WILDFIRE = 3;
     private static final int TYPE_WELCOME = 4;
+    private static final int TYPE_EMERGENCY = 5;
 
     private static final String HEADER_STRING = "header";
 
@@ -57,6 +60,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     private List<AirMapStatusAdvisory> advisories = new ArrayList<>();
     private Map<String, String> organizationsMap;
     private Context context;
+    private DateFormat dateFormat;
 
     private ArrayList<AirMapWelcomeResult> welcomeData;
     private String welcomeCity;
@@ -64,6 +68,8 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
 
     public AdvisoriesBottomSheetAdapter(Context context, Map<String, List<AirMapStatusAdvisory>> data, Map<String, String> organizations) {
         this.context = context;
+        this.dateFormat = Utils.getDateTimeFormat();
+
         RED_TITLE = context.getString(R.string.flight_strictly_regulated);
         YELLOW_TITLE = context.getString(R.string.advisories);
         GREEN_TITLE = context.getString(R.string.informational);
@@ -167,6 +173,9 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
         } else if (viewType == TYPE_WILDFIRE) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bottom_sheet_wildfire_item, parent, false);
             return new VHWildfire(view);
+        } else if (viewType == TYPE_EMERGENCY) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bottom_sheet_list_item, parent, false);
+            return new VHEmergency(view);
         }
         return null;
     }
@@ -185,6 +194,8 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
                 onBindTfrViewHolder((VHTfr) holder, advisory);
             } else if (holder instanceof VHWildfire) {
                 onBindWildfireViewHolder((VHWildfire) holder, advisory);
+            } else if (holder instanceof VHEmergency) {
+                onBindEmergencyViewHolder((VHEmergency) holder, advisory);
             }
         }
     }
@@ -244,7 +255,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
                     public void onClick(View v) {
                         new AlertDialog.Builder(holder.itemView.getContext())
                                 .setTitle(advisory.getName())
-                                .setMessage(String.format(Locale.getDefault(), "Do you want to call %s?", advisory.getName()))
+                                .setMessage(context.getString(R.string.do_you_want_to_call, advisory.getName()))
                                 .setPositiveButton(R.string.call, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -256,7 +267,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
                                             holder.description2TextView.post(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    Toast.makeText(context, "No dialer found on device", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, R.string.no_dialer_found, Toast.LENGTH_SHORT).show();
                                                 }
                                             });
                                         }
@@ -285,7 +296,6 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     private void onBindTfrViewHolder(final VHTfr holder, final AirMapStatusAdvisory advisory) {
         holder.colorView.setBackgroundColor(getColor(advisory.getColor()));
         holder.nameTextView.setText(advisory.getName());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy, hh:mm a", Locale.US);
         StringBuilder builder = new StringBuilder();
         if (advisory.getTfrProperties().getStartTime() != null) {
             builder.append(dateFormat.format(advisory.getTfrProperties().getStartTime()));
@@ -321,9 +331,19 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     private void onBindWildfireViewHolder(VHWildfire holder, AirMapStatusAdvisory advisory) {
         int size = advisory.getWildfireProperties().getSize();
         holder.colorView.setBackgroundColor(getColor(advisory.getColor()));
-        holder.nameTextView.setText(advisory.getName());
+        holder.nameTextView.setText(advisory.getType() == MappingService.AirMapAirspaceType.Wildfires ? R.string.airspace_type_wildfire : R.string.airspace_type_fire);
         String unknownSize = holder.itemView.getContext().getString(R.string.unknown_size);
-        holder.sizeTextView.setText(advisory.getType().getTitle() + " - " + (size == -1 ? unknownSize : String.format(Locale.US, "%d acres", size)));
+        String dateEffective = Utils.getDateTimeFormat().format(advisory.getWildfireProperties().getEffectiveDate());
+        holder.sizeTextView.setText(dateEffective + " - " + (size == -1 ? unknownSize : String.format(Locale.US, "%d acres", size)));
+    }
+
+    private void onBindEmergencyViewHolder(VHEmergency holder, AirMapStatusAdvisory advisory) {
+        holder.colorView.setBackgroundColor(getColor(advisory.getColor()));
+        holder.nameTextView.setText(R.string.tile_layer_emergencies);
+
+        String city = advisory.getCity() + ", " + (TextUtils.isEmpty(advisory.getState()) ? advisory.getCountry() : advisory.getState());
+        holder.description1TextView.setText(TextUtils.isEmpty(advisory.getCity()) ? advisory.getName() : city);
+        holder.description1TextView.setVisibility(View.VISIBLE);
     }
 
     private String formatPhoneNumber(String number) {
@@ -359,12 +379,19 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
         AirMapStatusAdvisory advisory = getItem(position);
         if (advisory.getId().equals(HEADER_STRING)) {
             return TYPE_HEADER;
-        } else if (advisory.getTfrProperties() != null) {
-            return TYPE_TFR;
-        } else if (advisory.getWildfireProperties() != null) {
-            return TYPE_WILDFIRE;
+        } else {
+            switch (advisory.getType()) {
+                case TFR:
+                    return TYPE_TFR;
+                case Wildfires:
+                case Fires:
+                    return TYPE_WILDFIRE;
+                case Emergencies:
+                    return TYPE_EMERGENCY;
+                default:
+                    return TYPE_NORMAL;
+            }
         }
-        return TYPE_NORMAL;
     }
 
     private int getColor(AirMapStatus.StatusColor statusColor) {
@@ -453,6 +480,23 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
             colorView = itemView.findViewById(R.id.color_bar);
             nameTextView = (TextView) itemView.findViewById(R.id.name);
             sizeTextView = (TextView) itemView.findViewById(R.id.size);
+        }
+
+    }
+
+    public class VHEmergency extends RecyclerView.ViewHolder {
+        View colorView;
+        TextView nameTextView;
+        TextView description1TextView;
+        TextView description2TextView;
+
+        public VHEmergency(View itemView) {
+            super(itemView);
+
+            colorView = itemView.findViewById(R.id.color_bar);
+            nameTextView = (TextView) itemView.findViewById(R.id.name);
+            description1TextView = (TextView) itemView.findViewById(R.id.organization);
+            description2TextView = (TextView) itemView.findViewById(R.id.phone);
         }
 
     }

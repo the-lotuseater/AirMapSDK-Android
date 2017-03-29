@@ -9,7 +9,7 @@
             android:id="@+id/color_bar"
             android:layout_width="12dp"
             android:layout_height="56dp"
-            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
             android:layout_gravity="center_vertical"/>
 
     <LinearLayout
@@ -17,7 +17,8 @@
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:paddingRight="16dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="0dp"
             android:orientation="vertical">
 
         <TextView

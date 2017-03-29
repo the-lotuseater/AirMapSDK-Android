@@ -9,11 +9,11 @@
         android:layout_above="@+id/next_button"
         android:orientation="vertical">
 
-    <android.support.v7.widget.SwitchCompat
+    <TextView
             android:id="@+id/submit_notice_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/airmap_submit_digital_notice"
+            android:text="@string/airmap_digital_notice_accepted"
             android:textStyle="bold"
             android:checked="true"/>
 

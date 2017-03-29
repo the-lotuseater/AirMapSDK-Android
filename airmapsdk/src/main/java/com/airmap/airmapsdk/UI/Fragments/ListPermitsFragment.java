@@ -15,16 +15,15 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.airmap.airmapsdk.Analytics;
+import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.status.AirMapStatusPermits;
-import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.ui.activities.WebActivity;
 import com.airmap.airmapsdk.ui.adapters.PermitsAdapter;
 import com.airmap.airmapsdk.util.Constants;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class ListPermitsFragment extends Fragment {
 
@@ -113,8 +112,7 @@ public class ListPermitsFragment extends Fragment {
             }
         }
 
-        String template = "You have selected %d of %d permits required for this flight";
-        String summary = String.format(Locale.US, template, adapter.getSelectedPermits().size(), adapter.getItemCount());
+        String summary = getString(R.string.you_have_selected_permits_of_total_required, adapter.getSelectedPermits().size(), adapter.getItemCount());
         summaryTextView.setText(summary);
     }
 
@@ -153,7 +151,7 @@ public class ListPermitsFragment extends Fragment {
             Analytics.logEvent(Analytics.Page.PERMITS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.INFO_FAQ_BUTTON);
 
             Intent intent = new Intent(getActivity(), WebActivity.class);
-            intent.putExtra(Intent.EXTRA_TITLE, getString(R.string.faq));
+            intent.putExtra(Intent.EXTRA_TITLE, getString(R.string.faqs));
             intent.putExtra(Constants.URL_EXTRA, Constants.FAQ_PERMITS_URL);
             startActivity(intent);
             return true;
@@ -170,8 +168,6 @@ public class ListPermitsFragment extends Fragment {
         ArrayList<AirMapPilotPermit> getPermitsFromWallet();
 
         ArrayList<AirMapAvailablePermit> getPermitsToShowInReview();
-
-        void showDecisionFlow(AirMapStatusPermits permit);
 
         void selectPermit(AirMapStatusPermits permit);
 
