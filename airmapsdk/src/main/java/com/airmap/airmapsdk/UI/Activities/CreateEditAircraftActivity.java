@@ -3,6 +3,7 @@ package com.airmap.airmapsdk.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -34,6 +35,7 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
     public static final String AIRCRAFT = "aircraft";
 
     private Toolbar toolbar;
+    private TextInputLayout nicknameTextInputLayout;
     private EditText nicknameEditText;
     private Spinner manufacturerSpinner;
     private Spinner modelSpinner;
@@ -64,7 +66,7 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
         AirMap.getManufacturers(new AirMapCallback<List<AirMapAircraftManufacturer>>() {
             @Override
             public void onSuccess(final List<AirMapAircraftManufacturer> response) {
-                response.add(0, new AirMapAircraftManufacturer().setId("select_manufacturer").setName("Select Manufacturer"));
+                response.add(0, new AirMapAircraftManufacturer().setId("select_manufacturer").setName(getString(R.string.select_manufacturer)));
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -75,7 +77,7 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
 
             @Override
             public void onError(AirMapException e) {
-                toast("Error getting manufacturers");
+                toast(getString(R.string.error_getting_mfrs));
             }
         });
         modelSpinner.setVisibility(View.GONE);
@@ -102,7 +104,7 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                response.add(0, new AirMapAircraftModel().setModelId("select_model").setName("Select Model").setManufacturer(new AirMapAircraftManufacturer().setName("")));
+                                response.add(0, new AirMapAircraftModel().setModelId("select_model").setName(getString(R.string.select_model)).setManufacturer(new AirMapAircraftManufacturer().setName("")));
                                 modelSpinner.setAdapter(new ArrayAdapter<>(CreateEditAircraftActivity.this, android.R.layout.simple_spinner_dropdown_item, response));
                                 modelSpinner.setVisibility(View.VISIBLE);
                                 modelSpinner.setOnTouchListener(new View.OnTouchListener() {
@@ -138,7 +140,7 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
                     public void onError(AirMapException e) {
                         e.printStackTrace();
                         Log.e("CreateAircraftActivity", e.getMessage());
-                        toast("Error retrieving models for selected manufacturer");
+                        toast(getString(R.string.error_models_for_mfrs));
                     }
                 });
             }
@@ -180,6 +182,7 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
 
     private void initializeViews() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        nicknameTextInputLayout = (TextInputLayout) findViewById(R.id.nickname_text_input_layout);
         nicknameEditText = (EditText) findViewById(R.id.nickname);
         saveButton = (Button) findViewById(R.id.save);
         manufacturerSpinner = (Spinner) findViewById(R.id.manufacturer);
@@ -197,7 +200,6 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
             AirMap.updateAircraft(aircraftToEdit, new AirMapCallback<AirMapAircraft>() {
                 @Override
                 public void onSuccess(AirMapAircraft response) {
-                    toast("Successfully edited aircraft");
                     Intent intent = new Intent();
                     intent.putExtra(AIRCRAFT, aircraftToEdit);
                     setResult(RESULT_OK, intent);
@@ -213,21 +215,31 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
         } else {
             Analytics.logEvent(Analytics.Page.CREATE_AIRCRAFT, Analytics.Action.tap, Analytics.Label.SAVE);
 
+            boolean incomplete = false;
             if (nickname.isEmpty()) {
-                Toast.makeText(CreateEditAircraftActivity.this, "Please enter a nickname", Toast.LENGTH_SHORT).show();
-                return;
+                nicknameTextInputLayout.setHintTextAppearance(R.style.AppTheme_TextErrorAppearance);
+                incomplete = true;
+            } else {
+                nicknameTextInputLayout.setHintTextAppearance(R.style.AppTheme_TextHintAppearance);
             }
+
             AirMapAircraft aircraft = new AirMapAircraft();
             AirMapAircraftModel model = (AirMapAircraftModel) modelSpinner.getSelectedItem();
+
             if (model == null || model.getModelId().equals("select_model")) {
-                Toast.makeText(CreateEditAircraftActivity.this, "Please select a model", Toast.LENGTH_SHORT).show();
+                incomplete = true;
+                toast(getString(R.string.select_model));
+            }
+
+            // user needs
+            if (incomplete) {
                 return;
             }
+
             aircraft.setModel(model).setNickname(nickname);
             AirMap.createAircraft(aircraft, new AirMapCallback<AirMapAircraft>() {
                 @Override
                 public void onSuccess(AirMapAircraft response) {
-                    toast("Successfully created aircraft");
                     Intent intent = new Intent();
                     intent.putExtra(AIRCRAFT, response);
                     setResult(RESULT_OK, intent);

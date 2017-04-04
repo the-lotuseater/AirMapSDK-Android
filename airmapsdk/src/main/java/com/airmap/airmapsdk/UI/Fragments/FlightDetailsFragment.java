@@ -56,6 +56,7 @@ import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
 import com.airmap.airmapsdk.ui.activities.ProfileActivity;
 import com.airmap.airmapsdk.ui.adapters.AircraftAdapter;
 import com.airmap.airmapsdk.util.AnnotationsFactory;
+import com.airmap.airmapsdk.util.Constants;
 import com.airmap.airmapsdk.util.Utils;
 import com.mapbox.mapboxsdk.annotations.MultiPoint;
 import com.mapbox.mapboxsdk.annotations.Polygon;
@@ -69,13 +70,12 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import static com.airmap.airmapsdk.util.Utils.getDurationPresets;
@@ -96,7 +96,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     private MapView mapView;
     private TextView altitudeValueTextView;
     private SeekBar altitudeSeekBar;
-    private RelativeLayout startsAtTouchTarget;
+    private View startsAtTouchTarget;
     private TextView startsAtTextView;
     private TextView durationValueTextView;
     private SeekBar durationSeekBar;
@@ -170,9 +170,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url = "https://cdn.airmap.io/static/webviews/faq.html#let-others-know";
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(url));
+                intent.setData(Uri.parse(Constants.INFO_URL));
                 startActivity(intent);
 
             }
@@ -184,7 +183,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         mapView = (MapView) view.findViewById(R.id.airmap_map);
         altitudeValueTextView = (TextView) view.findViewById(R.id.altitude_value);
         altitudeSeekBar = (SeekBar) view.findViewById(R.id.altitude_seekbar);
-        startsAtTouchTarget = (RelativeLayout) view.findViewById(R.id.date_time_picker_touch_target);
+        startsAtTouchTarget = view.findViewById(R.id.date_time_picker_touch_target);
         startsAtTextView = (TextView) view.findViewById(R.id.time_value);
         durationValueTextView = (TextView) view.findViewById(R.id.duration_value);
         durationSeekBar = (SeekBar) view.findViewById(R.id.duration_seekbar);
@@ -332,10 +331,13 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                     altitudeSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener() {
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                            altitudeValueTextView.setText(getAltitudePresets()[progress].label);
-                            mListener.getFlight().setMaxAltitude(getAltitudePresets()[altitudeSeekBar.getProgress()].value.doubleValue());
+                            double altitude = getAltitudePresets()[altitudeSeekBar.getProgress()];
+                            String altitudeText = Utils.getMeasurementText(altitude, Utils.useMetric(getActivity()));
 
-                            Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.ALTITUDE_SLIDER, getAltitudePresets()[progress].value.intValue());
+                            altitudeValueTextView.setText(altitudeText);
+                            mListener.getFlight().setMaxAltitude(altitude);
+
+                            Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.ALTITUDE_SLIDER, (int) getAltitudePresets()[progress]);
                         }
                     });
                     altitudeSeekBar.setMax(getAltitudePresets().length - 1);
@@ -356,8 +358,10 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                     durationSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener() {
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                            durationValueTextView.setText(getDurationPresets()[progress].label);
-                            Date endsAt = new Date(mListener.getFlight().getStartsAt().getTime() + getDurationPresets()[durationSeekBar.getProgress()].value.longValue());
+                            long duration = getDurationPresets()[progress];
+                            String durationText = Utils.getDurationText(getActivity(), duration);
+                            durationValueTextView.setText(durationText);
+                            Date endsAt = new Date(mListener.getFlight().getStartsAt().getTime() + duration);
                             mListener.getFlight().setEndsAt(endsAt);
 
                             Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.FLIGHT_END_TIME);
@@ -393,15 +397,19 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
                                 // don't allow the user to pick a time in the past
                                 if (flightDate.getTime().before(new Date())) {
-                                    Toast.makeText(getActivity(), "You can only schedule flights for the present or future", Toast.LENGTH_SHORT).show();
+                                    if (getActivity() != null) {
+                                        Toast.makeText(getActivity(), R.string.only_schedule_present_future, Toast.LENGTH_SHORT).show();
+                                    }
                                     flightDate.setTime(new Date());
                                 }
 
-                                mListener.getFlight().setStartsAt(flightDate.getTime());
-                                Date correctedEndTime = new Date(flightDate.getTime().getTime() + getDurationPresets()[durationSeekBar.getProgress()].value.longValue());
-                                mListener.getFlight().setEndsAt(correctedEndTime);
-                                updateStartsAtTextView();
-                                mListener.flightChanged();
+                                if (mListener != null) {
+                                    mListener.getFlight().setStartsAt(flightDate.getTime());
+                                    Date correctedEndTime = new Date(flightDate.getTime().getTime() + getDurationPresets()[durationSeekBar.getProgress()]);
+                                    mListener.getFlight().setEndsAt(correctedEndTime);
+                                    updateStartsAtTextView();
+                                    mListener.flightChanged();
+                                }
                             }
                         }, nowHour, nowMinute, false).show();
                         updateSaveNextButtonText();
@@ -419,14 +427,17 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void updateStartsAtTextView() {
+        if (mListener == null) {
+            return;
+        }
         Date now = new Date();
         if (mListener.getFlight().getStartsAt() == null) {
             mListener.getFlight().setStartsAt(now);
         }
 
-        SimpleDateFormat format = new SimpleDateFormat("M/d/yy h:mm a", Locale.US);
+        DateFormat format = Utils.getDateTimeFormat();
         Date date = mListener.getFlight().getStartsAt();
-        startsAtTextView.setText(now.after(date) || now.equals(date) ? "Now" : format.format(date));
+        startsAtTextView.setText(now.after(date) || now.equals(date) ? getString(R.string.now) : format.format(date));
     }
 
     private void setupAircraftDialog() {
@@ -440,7 +451,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 if (response == null) {
                     response = new ArrayList<>();
                 }
-                response.add(new AirMapAircraft().setAircraftId("add_aircraft").setNickname("+ Add Aircraft").setModel(new AirMapAircraftModel().setName("").setManufacturer(new AirMapAircraftManufacturer().setName(""))));
+//                response.add(new AirMapAircraft().setAircraftId("add_aircraft").setNickname(getString(R.string.add_aircraft_action)).setModel(new AirMapAircraftModel().setName("").setManufacturer(new AirMapAircraftManufacturer().setName(""))));
                 aircraft = response;
             }
 
@@ -455,24 +466,42 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             public void onClick(View view) {
                 Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.SELECT_AIRCRAFT);
 
-                new AlertDialog.Builder(getContext())
-                        .setTitle("Select Aircraft")
-                        .setAdapter(new AircraftAdapter(getContext(), aircraft), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int position) {
-                                if (aircraft.get(position).getAircraftId().equals("add_aircraft")) {
+                if (aircraft.isEmpty()) {
+                    Analytics.logEvent(Analytics.Page.SELECT_AIRCRAFT, Analytics.Action.tap, Analytics.Label.NEW_AIRCRAFT);
+
+                    Intent intent = new Intent(getContext(), CreateEditAircraftActivity.class);
+                    startActivityForResult(intent, REQUEST_CREATE_AIRCRAFT);
+                } else {
+                    new AlertDialog.Builder(getContext())
+                            .setTitle(R.string.select_aircraft)
+                            .setAdapter(new AircraftAdapter(getContext(), aircraft), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int position) {
+                                    if (aircraft.get(position).getAircraftId().equals("add_aircraft")) {
+                                        Analytics.logEvent(Analytics.Page.SELECT_AIRCRAFT, Analytics.Action.tap, Analytics.Label.NEW_AIRCRAFT);
+
+                                        Intent intent = new Intent(getContext(), CreateEditAircraftActivity.class);
+                                        startActivityForResult(intent, REQUEST_CREATE_AIRCRAFT);
+                                    } else {
+                                        if (mListener != null) {
+                                            mListener.getFlight().setAircraft(aircraft.get(position));
+                                            aircraftTextView.setText(aircraft.get(position).getNickname());
+                                        }
+                                    }
+                                    dialogInterface.dismiss();
+                                }
+                            })
+                            .setNeutralButton(R.string.create_aircraft, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
                                     Analytics.logEvent(Analytics.Page.SELECT_AIRCRAFT, Analytics.Action.tap, Analytics.Label.NEW_AIRCRAFT);
 
                                     Intent intent = new Intent(getContext(), CreateEditAircraftActivity.class);
                                     startActivityForResult(intent, REQUEST_CREATE_AIRCRAFT);
-                                } else {
-                                    mListener.getFlight().setAircraft(aircraft.get(position));
-                                    aircraftTextView.setText(aircraft.get(position).getNickname());
                                 }
-                                dialogInterface.dismiss();
-                            }
-                        })
-                        .show();
+                            })
+                            .show();
+                }
             }
         });
     }
@@ -486,7 +515,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 }
 
                 hideProgressBar();
-                mListener.flightDetailsSaveClicked(response);
+                if (mListener != null) {
+                    mListener.flightDetailsSaveClicked(response);
+                }
             }
 
             @Override
@@ -500,7 +531,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 saveNextButton.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getContext(), "Error creating flight", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.error_creating_flight, Toast.LENGTH_SHORT).show();
                     }
                 });
                 e.printStackTrace();
@@ -520,7 +551,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
                 hideProgressBar();
                 latestStatus = response;
-                mListener.flightDetailsNextClicked(response);
+                if (mListener != null) {
+                    mListener.flightDetailsNextClicked(response);
+                }
             }
 
             @Override
@@ -533,7 +566,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                 saveNextButton.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        if (getContext() != null) {
+                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }
@@ -549,6 +584,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void updateSaveNextButtonText() {
+        if (mListener == null) {
+            return;
+        }
         AirMapFlight flight = mListener.getFlight();
         AirMapCallback<AirMapStatus> callback = new AirMapCallback<AirMapStatus>() {
             @Override
@@ -599,12 +637,14 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
                 // tell the user if conflicting permits
                 if (requiresPermit && (latestStatus.getApplicablePermits() == null || latestStatus.getApplicablePermits().isEmpty())) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getActivity(), "Flight area cannot overlap with conflicting permit requirements", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getActivity(), R.string.no_available_permits_for_flight, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
                 }
             }
 
@@ -640,7 +680,9 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         progressBarContainer.post(new Runnable() {
             @Override
             public void run() {
-                progressBarContainer.setVisibility(View.GONE);
+                if (progressBarContainer != null) {
+                    progressBarContainer.setVisibility(View.GONE);
+                }
             }
         });
     }
@@ -845,7 +887,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
-    private Utils.StringNumberPair[] getAltitudePresets() {
+    private double[] getAltitudePresets() {
         if (useMetric) {
             return Utils.getAltitudePresetsMetric();
         }

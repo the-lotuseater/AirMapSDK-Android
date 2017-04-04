@@ -15,6 +15,7 @@ public class Constants {
     public static final String CITY_EXTRA = "city_extra";
 
     public static final String FAQ_PERMITS_URL = "https://cdn.airmap.io/static/webviews/faq.html#permit-what";
+    public static final String INFO_URL = "https://cdn.airmap.io/static/webviews/faq.html#let-others-know";
 
     public static final String MEASUREMENT_SYSTEM = "measurement_system";
     public static final String IMPERIAL_SYSTEM = "imperial_system";

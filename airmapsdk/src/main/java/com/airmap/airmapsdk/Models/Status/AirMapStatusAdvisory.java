@@ -5,6 +5,7 @@ import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.status.properties.AirMapAirportProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapControlledAirspaceProperties;
+import com.airmap.airmapsdk.models.status.properties.AirMapEmergencyProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapHeliportProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapParkProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapPowerPlantProperties;
@@ -55,6 +56,7 @@ public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
     private AirMapSpecialUseProperties specialUseProperties;
     private AirMapTfrProperties tfrProperties;
     private AirMapWildfireProperties wildfireProperties;
+    private AirMapEmergencyProperties emergencyProperties;
 
     /**
      * Initialize an AirMapStatusAdvisory from JSON
@@ -123,10 +125,12 @@ public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
                 setSchoolProperties(new AirMapSchoolProperties(properties));
             } else if (type == MappingService.AirMapAirspaceType.TFR) {
                 setTfrProperties(new AirMapTfrProperties(properties));
-            } else if (type == MappingService.AirMapAirspaceType.Wildfires) {
+            } else if (type == MappingService.AirMapAirspaceType.Wildfires || type == MappingService.AirMapAirspaceType.Fires) {
                 setWildfireProperties(new AirMapWildfireProperties(properties));
             } else if (type == MappingService.AirMapAirspaceType.Heliport) {
                 setHeliportProperties(new AirMapHeliportProperties(properties));
+            } else if (type == MappingService.AirMapAirspaceType.Emergencies) {
+                setEmergencyProperties(new AirMapEmergencyProperties(properties));
             }
         }
         return this;
@@ -309,6 +313,15 @@ public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
 
     public AirMapStatusAdvisory setWildfireProperties(AirMapWildfireProperties wildfireProperties) {
         this.wildfireProperties = wildfireProperties;
+        return this;
+    }
+
+    public AirMapEmergencyProperties getEmergencyProperties() {
+        return emergencyProperties;
+    }
+
+    public AirMapStatusAdvisory setEmergencyProperties(AirMapEmergencyProperties emergencyProperties) {
+        this.emergencyProperties = emergencyProperties;
         return this;
     }
 

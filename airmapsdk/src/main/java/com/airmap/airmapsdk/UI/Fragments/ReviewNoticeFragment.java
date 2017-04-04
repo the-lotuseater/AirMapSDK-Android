@@ -42,7 +42,7 @@ public class ReviewNoticeFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private SwitchCompat submitNoticeSwitch;
+    private TextView submitNoticeSwitch;
     private ListView digitalNoticeListView;
     private TextView notDigitalLabelTextView;
     private ListView notDigitalNoticeListView;
@@ -76,18 +76,11 @@ public class ReviewNoticeFragment extends Fragment {
         getNotices();
         setupDigitalNoticeList();
         setupNotDigitalNoticeList();
-        submitNoticeSwitch.setChecked(getArguments().getBoolean(ARG_NOTICE, true));
-        submitNoticeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mListener.getFlight().setNotify(isChecked);
-            }
-        });
         return view;
     }
 
     private void initializeViews(View view) {
-        submitNoticeSwitch = (SwitchCompat) view.findViewById(R.id.submit_notice_switch);
+        submitNoticeSwitch = (TextView) view.findViewById(R.id.submit_notice_switch);
         digitalNoticeListView = (ListView) view.findViewById(R.id.digital_notice_list);
         notDigitalLabelTextView = (TextView) view.findViewById(R.id.not_digital_label);
         notDigitalNoticeListView = (ListView) view.findViewById(R.id.not_digital_list);
@@ -151,7 +144,7 @@ public class ReviewNoticeFragment extends Fragment {
                 map.put("name", notDigitalNoticeNames.get(i));
                 String number = notDigitalNotices.get(i).getPhoneNumber();
                 if (number == null || number.length() < 10) {
-                    number = "No Known Phone Number";
+                    number = getString(R.string.no_known_number);
                 }
                 map.put("phone", number);
                 list.add(map);

@@ -1,14 +1,15 @@
 package com.airmap.airmapsdk.networking.services;
 
+import com.google.protobuf.Message;
+
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import android.util.Log;
 
 import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.models.Telemetry;
 import com.airmap.airmapsdk.models.comm.AirMapComm;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
-import com.airmap.airmapsdk.models.Telemetry;
-import com.google.protobuf.Message;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -38,6 +39,7 @@ import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Actions;
 import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
@@ -219,7 +221,12 @@ public class TelemetryService extends BaseService {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
+                .subscribe(Actions.empty(), new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Log.e(TAG, "latestMessages Error", throwable);
+                    }
+                });
 
     }
 

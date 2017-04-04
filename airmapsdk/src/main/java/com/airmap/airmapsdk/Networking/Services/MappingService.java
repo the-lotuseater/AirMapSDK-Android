@@ -1,6 +1,9 @@
 package com.airmap.airmapsdk.networking.services;
 
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+
+import com.airmap.airmapsdk.R;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,41 +16,40 @@ import java.util.List;
 public class MappingService extends BaseService {
 
     public enum AirMapLayerType implements Serializable {
-        TFRS("tfrs", "Temporary Flight Restrictions", "Temporary flight restriction"),
-        Wildfires("wildfires", "Wildfires", "Wildfires"),
-        Prohibited("sua_prohibited", "Prohibited Area", "Prohibited airspace"),
-        Restricted("sua_restricted", "Restricted Area", "Restricted airspace"),
-        NationalParks("national_parks", "National Park", "National park"),
-        NOAA("noaa", "NOAA", "NOAA marine protection area"),
-        Schools("schools", "School", "School"),
-        Hospitals("hospitals", "Hospital", "Hospital"),
-        Heliports("heliports", "Heliport", "Heliport"),
-        PowerPlants("power_plants", "Power Plant", "Power plant"),
-        AirportsCommercial("airports_commercial,airports_commercial_private", "Airport", "Airport"),
-        AirportsRecreational("airports_recreational,airports_recreational_private", "Airport", "Airport"),
-        AirportsCommercialPrivate("airports_commercial_private", "Private Airport", "Private airport"),
-        AirportsRecreationalPrivate("airports_recreational_private", "Private Airport", "Private airport"),
-        ClassB("class_b", "Class B Airspace", "Class B controlled airspace"),
-        ClassC("class_c", "Class C Airspace", "Class C controlled airspace"),
-        ClassD("class_d", "Class D Airspace", "Class D controlled airspace"),
-        ClassE("class_e0", "Class E Airspace", "Class E controlled airspace to the surface"),
-        EssentialAirspace("class_b,class_c,class_d,class_e0", "Essential Airspace (B, C, D & E)", "Essential airspace (B, C, D & E)"),
-        HazardAreas("hazard_areas", "Hazard Areas", "Hazard areas"),
-        AerialRecreationalAreas("aerial_recreational_areas", "Aerial Recreational Areas", "Aerial recreational areas"),
-        Cities("cities", "Cities", "Cities"),
-        Custom("custom", "Custom", "Custom"),
-        Prisons("prisons", "Prisons", "Prisons"),
-        Universities("universities", "Universities", "Universities"),
-        Other("aerial_recreational_areas,custom,hazard_areas,hospitals,power_plants,prisons,schools,universities,cities", "Other Cautionary Areas", "Other (Hospitals, Power Plants, Schools, etc");
+        TFRS("tfrs", R.string.tile_layer_tfr_faa),
+        Wildfires("wildfires", R.string.tile_layer_wildfires),
+        Fires("fires", R.string.tile_layer_fires),
+        Emergencies("emergencies", R.string.tile_layer_emergencies),
+        Prohibited("sua_prohibited", R.string.tile_layer_prohibited),
+        Restricted("sua_restricted", R.string.tile_layer_restricted_airspace),
+        NationalParks("national_parks", R.string.tile_layer_national_parks),
+        NOAA("noaa", R.string.tile_layer_noaa),
+        Schools("schools", R.string.tile_layer_schools),
+        Hospitals("hospitals", R.string.tile_layer_hospitals),
+        Heliports("heliports", R.string.tile_layer_heliports),
+        PowerPlants("power_plants", R.string.tile_layer_power_plants),
+        AirportsCommercial("airports_commercial,airports_commercial_private", R.string.tile_layer_airports),
+        AirportsRecreational("airports_recreational,airports_recreational_private", R.string.tile_layer_airports),
+        AirportsCommercialPrivate("airports_commercial_private", R.string.tile_layer_private_airports),
+        AirportsRecreationalPrivate("airports_recreational_private", R.string.tile_layer_private_airports),
+        ClassB("class_b", R.string.tile_layer_class_b),
+        ClassC("class_c", R.string.tile_layer_class_c),
+        ClassD("class_d", R.string.tile_layer_class_d),
+        ClassE("class_e0", R.string.tile_layer_class_e),
+        HazardAreas("hazard_areas", R.string.tile_layer_hazard_areas),
+        AerialRecreationalAreas("aerial_recreational_areas", R.string.tile_layer_aerial_rec_areas),
+        Cities("cities", R.string.tile_layer_cities),
+        Custom("custom", R.string.tile_layer_custom),
+        Prisons("prisons", R.string.tile_layer_prisons),
+        Universities("universities", R.string.tile_layer_universities),
+        Other("aerial_recreational_areas,custom,hazard_areas,hospitals,power_plants,prisons,schools,universities,cities", R.string.tile_layer_other_cautionary_areas);
 
         private final String text;
-        private final String title;
-        private final String description;
+        private final int title;
 
-        AirMapLayerType(String text, String title, String description) {
+        AirMapLayerType(String text, @StringRes int title) {
             this.text = text;
             this.title = title;
-            this.description = description;
         }
 
         @Override
@@ -55,12 +57,8 @@ public class MappingService extends BaseService {
             return text;
         }
 
-        public String getTitle() {
+        public int getTitle() {
             return title;
-        }
-
-        public String getDescription() {
-            return description;
         }
 
         public static AirMapLayerType fromString(String text) {
@@ -69,6 +67,10 @@ public class MappingService extends BaseService {
                     return TFRS;
                 case "wildfires":
                     return Wildfires;
+                case "fires":
+                    return Fires;
+                case "emergencies":
+                    return Emergencies;
                 case "sua_prohibited":
                     return Prohibited;
                 case "sua_restricted":
@@ -102,8 +104,6 @@ public class MappingService extends BaseService {
                     return ClassD;
                 case "class_e0":
                     return ClassE;
-                case "class_b,class_c,class_d,class_e0":
-                    return EssentialAirspace;
                 case "hazard_areas":
                     return HazardAreas;
                 case "aerial_recreational_areas":
@@ -127,6 +127,10 @@ public class MappingService extends BaseService {
                     return AirMapAirspaceType.TFR;
                 case Wildfires:
                     return AirMapAirspaceType.Wildfires;
+                case Fires:
+                    return AirMapAirspaceType.Fires;
+                case Emergencies:
+                    return AirMapAirspaceType.Emergencies;
                 case Prohibited:
                 case Restricted:
                     return AirMapAirspaceType.SpecialUse;
@@ -149,7 +153,6 @@ public class MappingService extends BaseService {
                 case ClassC:
                 case ClassD:
                 case ClassE:
-                case EssentialAirspace:
                     return AirMapAirspaceType.ControlledAirspace;
                 case HazardAreas:
                     return AirMapAirspaceType.HazardArea;
@@ -169,27 +172,29 @@ public class MappingService extends BaseService {
     }
 
     public enum AirMapAirspaceType {
-        Airport("airport", "Airport"),
-        Heliport("heliport", "Heliport"),
-        Park("park", "Park"),
-        PowerPlant("power_plant", "Power Plant"),
-        ControlledAirspace("controlled_airspace", "Controlled Airspace"),
-        School("school", "School"),
-        SpecialUse("special_use_airspace", "Special Use Airspace"),
-        TFR("tfr", "TFR"),
-        Wildfires("wildfire", "Wildfire"),
-        Hospitals("hospital", "Hospital"),
-        HazardArea("hazard_area", "Hazard Area"),
-        RecreationalArea("recreational_area", "Aerial Recreational Area"),
-        City("city", "City"),
-        Custom("custom", "Custom"),
-        Prison("prison", "Prison"),
-        University("university", "University");
+        Airport("airport", R.string.airspace_type_airport),
+        Heliport("heliport", R.string.airspace_type_heliport),
+        Park("park", R.string.airspace_type_national_park),
+        PowerPlant("power_plant", R.string.airspace_type_power_plant),
+        ControlledAirspace("controlled_airspace", R.string.airspace_type_controlled),
+        School("school", R.string.airspace_type_school),
+        SpecialUse("special_use_airspace", R.string.airspace_type_special_use),
+        TFR("tfr", R.string.airspace_type_tfr_faa),
+        Wildfires("wildfire", R.string.airspace_type_wildfire),
+        Fires("fire", R.string.airspace_type_fire),
+        Emergencies("emergency", R.string.airspace_type_emergency),
+        Hospitals("hospital", R.string.airspace_type_hospital),
+        HazardArea("hazard_area", R.string.airspace_type_hazard_area),
+        RecreationalArea("recreational_area", R.string.airspace_type_aerial_rec_area),
+        City("city", R.string.airspace_type_city),
+        Custom("custom", R.string.airspace_type_custom),
+        Prison("prison", R.string.airspace_type_prison),
+        University("university", R.string.airspace_type_university);
 
         private final String text;
-        private final String title;
+        private final int title;
 
-        AirMapAirspaceType(String text, String title) {
+        AirMapAirspaceType(String text, @StringRes int title) {
             this.text = text;
             this.title = title;
         }
@@ -199,7 +204,7 @@ public class MappingService extends BaseService {
             return text;
         }
 
-        public String getTitle() {
+        public int getTitle() {
             return title;
         }
 
@@ -223,6 +228,10 @@ public class MappingService extends BaseService {
                     return TFR;
                 case "wildfire":
                     return Wildfires;
+                case "fire":
+                    return Fires;
+                case "emergency":
+                    return Emergencies;
                 case "hospital":
                     return Hospitals;
                 case "hazard_area":
