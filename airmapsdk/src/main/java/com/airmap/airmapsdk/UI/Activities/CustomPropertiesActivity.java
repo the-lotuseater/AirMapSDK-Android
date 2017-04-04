@@ -103,7 +103,7 @@ public class CustomPropertiesActivity extends AppCompatActivity {
         progressBarContainer = (FrameLayout) findViewById(R.id.progress_bar_container);
 
         descriptionTextView.setText(availablePermit.getDescription());
-        priceTextView.setText(availablePermit.getPrice() == 0 ? getString(R.string.free) : getString(R.string.price, String.format("%.2f", availablePermit.getPrice())));
+        priceTextView.setText(availablePermit.getPrice() == 0 ? getString(R.string.free) : Utils.getPriceText(availablePermit.getPrice()));
         if (availablePermit.isSingleUse()) {
             validityTextView.setText(R.string.single_use);
         } else if (availablePermit.getValidFor() > 0) {

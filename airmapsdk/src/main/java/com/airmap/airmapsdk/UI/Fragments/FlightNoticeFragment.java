@@ -37,7 +37,7 @@ public class FlightNoticeFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private SwitchCompat submitNoticeSwitch;
+    private TextView submitNoticeSwitch;
     private ListView digitalNoticeListView;
     private TextView notDigitalLabelTextView;
     private ListView notDigitalNoticeListView;
@@ -74,18 +74,11 @@ public class FlightNoticeFragment extends Fragment {
                 onNextButton();
             }
         });
-        submitNoticeSwitch.setChecked(mListener.getFlight().shouldNotify());
-        submitNoticeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mListener.getFlight().setNotify(isChecked);
-            }
-        });
         return view;
     }
 
     private void initializeViews(View view) {
-        submitNoticeSwitch = (SwitchCompat) view.findViewById(R.id.submit_notice_switch);
+        submitNoticeSwitch = (TextView) view.findViewById(R.id.submit_notice_switch);
         digitalNoticeListView = (ListView) view.findViewById(R.id.digital_notice_list);
         notDigitalLabelTextView = (TextView) view.findViewById(R.id.not_digital_label);
         notDigitalNoticeListView = (ListView) view.findViewById(R.id.not_digital_list);
@@ -128,6 +121,8 @@ public class FlightNoticeFragment extends Fragment {
         if (digitalNotices.size() == 0) {
             submitNoticeSwitch.setVisibility(View.GONE);
             mListener.getFlight().setNotify(false);
+        } else {
+            mListener.getFlight().setNotify(true);
         }
     }
 

@@ -49,7 +49,7 @@ public class PilotProfileActivity extends AppCompatActivity {
         initializeViews();
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
-        getSupportActionBar().setTitle(R.string.airmap_pilot_profile);
+        getSupportActionBar().setTitle(R.string.airmap_title_activity_profile);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         String pilotId = getIntent().getStringExtra(ARG_PILOT_ID);
         if (pilotId == null || pilotId.isEmpty()) {

@@ -40,7 +40,7 @@
                 android:paddingRight="12dp"
                 android:gravity="start|center_vertical"
                 android:background="?selectableItemBackground"
-                tools:text="Select Permit"/>
+                android:text="@string/airmap_select_permit"/>
 
     </LinearLayout>
 

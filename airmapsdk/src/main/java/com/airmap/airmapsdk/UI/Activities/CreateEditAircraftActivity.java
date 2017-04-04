@@ -3,6 +3,7 @@ package com.airmap.airmapsdk.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -34,6 +35,7 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
     public static final String AIRCRAFT = "aircraft";
 
     private Toolbar toolbar;
+    private TextInputLayout nicknameTextInputLayout;
     private EditText nicknameEditText;
     private Spinner manufacturerSpinner;
     private Spinner modelSpinner;
@@ -180,6 +182,7 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
 
     private void initializeViews() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        nicknameTextInputLayout = (TextInputLayout) findViewById(R.id.nickname_text_input_layout);
         nicknameEditText = (EditText) findViewById(R.id.nickname);
         saveButton = (Button) findViewById(R.id.save);
         manufacturerSpinner = (Spinner) findViewById(R.id.manufacturer);
@@ -197,9 +200,8 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
             AirMap.updateAircraft(aircraftToEdit, new AirMapCallback<AirMapAircraft>() {
                 @Override
                 public void onSuccess(AirMapAircraft response) {
-                    toast(getString(R.string.success_edit_aircraft));
                     Intent intent = new Intent();
-                    intent.putExtra(AIRCRAFT, response);
+                    intent.putExtra(AIRCRAFT, aircraftToEdit);
                     setResult(RESULT_OK, intent);
                     finish();
                 }
@@ -213,21 +215,31 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
         } else {
             Analytics.logEvent(Analytics.Page.CREATE_AIRCRAFT, Analytics.Action.tap, Analytics.Label.SAVE);
 
+            boolean incomplete = false;
             if (nickname.isEmpty()) {
-                Toast.makeText(CreateEditAircraftActivity.this, R.string.please_enter_nickname, Toast.LENGTH_SHORT).show();
-                return;
+                nicknameTextInputLayout.setHintTextAppearance(R.style.AppTheme_TextErrorAppearance);
+                incomplete = true;
+            } else {
+                nicknameTextInputLayout.setHintTextAppearance(R.style.AppTheme_TextHintAppearance);
             }
+
             AirMapAircraft aircraft = new AirMapAircraft();
             AirMapAircraftModel model = (AirMapAircraftModel) modelSpinner.getSelectedItem();
+
             if (model == null || model.getModelId().equals("select_model")) {
-                Toast.makeText(CreateEditAircraftActivity.this, R.string.please_select_a_model, Toast.LENGTH_SHORT).show();
+                incomplete = true;
+                toast(getString(R.string.select_model));
+            }
+
+            // user needs
+            if (incomplete) {
                 return;
             }
+
             aircraft.setModel(model).setNickname(nickname);
             AirMap.createAircraft(aircraft, new AirMapCallback<AirMapAircraft>() {
                 @Override
                 public void onSuccess(AirMapAircraft response) {
-                    toast(getString(R.string.success_create_aircraft));
                     Intent intent = new Intent();
                     intent.putExtra(AIRCRAFT, response);
                     setResult(RESULT_OK, intent);
