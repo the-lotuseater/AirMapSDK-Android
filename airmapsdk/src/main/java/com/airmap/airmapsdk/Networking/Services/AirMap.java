@@ -28,7 +28,6 @@ import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapTrafficListener;
 import com.airmap.airmapsdk.networking.callbacks.LoginListener;
-import com.airmap.airmapsdk.networking.callbacks.RefreshTokenListener;
 import com.airmap.airmapsdk.ui.activities.CreateEditAircraftActivity;
 import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
 import com.airmap.airmapsdk.ui.activities.LoginActivity;
@@ -425,10 +424,10 @@ public class AirMap {
     /**
      * Refreshes the pilot's authentication token
      *
-     * @param listener The callback that is invoked on success or error
+     * @param callback The callback that is invoked on success or error
      */
-    public static void refreshAccessToken(@Nullable RefreshTokenListener listener) {
-        Auth.refreshAccessToken(getInstance().getContext(), listener);
+    public static void refreshAccessToken(@Nullable AirMapCallback<Void> callback) {
+        Auth.refreshAccessToken(getInstance().getContext(), callback);
     }
 
     /**
