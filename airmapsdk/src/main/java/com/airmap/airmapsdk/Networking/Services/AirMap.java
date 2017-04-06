@@ -1219,7 +1219,6 @@ public class AirMap {
         return AirspaceService.getAirspace(airspaceIds, listener);
     }
 
-    //TODO: Remove context. only necessary since we're reading from assets to mock
     public static Call getWelcomeSummary(@NonNull Coordinate coordinate, @Nullable AirMapCallback<List<AirMapWelcomeResult>> listener) {
         return WelcomeService.getWelcomeSummary(coordinate, listener);
     }
