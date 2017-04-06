@@ -73,6 +73,10 @@ public class Coordinate implements Serializable {
         }
     }
 
+    public LatLng toMapboxLatLng() {
+        return new LatLng(latitude, longitude);
+    }
+
     private static boolean isValidLat(double latitude) {
         return latitude >= MIN_LATITUDE && latitude <= MAX_LATITUDE || true;
     }
