@@ -24,7 +24,6 @@ import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
-import com.airmap.airmapsdk.models.welcome.AirMapWelcome;
 import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapTrafficListener;
@@ -226,7 +225,7 @@ public class AirMap {
      *
      * @param jwt The JWT Auth Token
      */
-    private void decodeToken(String jwt) {
+    private static void decodeToken(String jwt) {
         JwtConsumer consumer = new JwtConsumerBuilder()
                 .setSkipAllValidators()
                 .setDisableRequireSignature()
@@ -246,7 +245,7 @@ public class AirMap {
      *
      * @param auth The new auth token
      */
-    public void setAuthToken(String auth) {
+    public static void setAuthToken(String auth) {
         authToken = auth;
         client.setAuthToken(authToken);
         getAirMapTrafficService().setAuthToken(auth);
@@ -273,14 +272,14 @@ public class AirMap {
     /**
      * @return the authToken
      */
-    protected String getAuthToken() {
+    public static String getAuthToken() {
         return authToken;
     }
 
     /**
      * @return the API key
      */
-    protected String getApiKey() {
+    public static String getApiKey() {
         return apiKey;
     }
 
@@ -430,6 +429,14 @@ public class AirMap {
      */
     public static void refreshAccessToken(@Nullable RefreshTokenListener listener) {
         Auth.refreshAccessToken(getInstance().getContext(), listener);
+    }
+
+    /**
+     * Logs in anonymously. The auth token of the anonymous user can be obtained, if required,
+     * through {@link AirMap#getAuthToken()}
+     */
+    public static void performAnonymousLogin(@NonNull String userId, @Nullable AirMapCallback<Void> callback) {
+        AuthService.performAnonymousLogin(userId, callback);
     }
 
     //Aircraft

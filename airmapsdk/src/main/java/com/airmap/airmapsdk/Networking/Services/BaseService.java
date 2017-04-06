@@ -11,7 +11,7 @@ class BaseService {
 
     //URLs should end with a /
     //TODO: Change all the debug servers to production upon release
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     //Base Urls
     protected static final String baseUrl = "https://api.airmap.com/";
@@ -79,4 +79,9 @@ class BaseService {
 
     //Welcome
     protected static final String welcomeBaseUrl = DEBUG ? baseUrl + "rules/stage/locale/" : baseUrl + "rules/v1/locale";
+
+    //Auth
+    protected static final String authVersion = DEBUG ? Utils.getDebugUrl() : "v1/";
+    protected static final String authBaseUrl = baseUrl + "auth/" + authVersion;
+    protected static final String anonymousLoginUrl = authBaseUrl + "anonymous/token";
 }
