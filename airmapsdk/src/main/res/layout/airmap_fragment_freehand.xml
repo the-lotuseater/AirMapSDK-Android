@@ -20,7 +20,6 @@
                 android:layout_above="@+id/next_button"
                 app:mapbox_cameraZoom="14"
                 app:mapbox_cameraZoomMin="8"
-                app:mapbox_cameraZoomMax="22"
                 app:mapbox_uiRotateGestures="false"
                 app:mapbox_uiTiltGestures="false"
                 app:mapbox_uiCompass="false"

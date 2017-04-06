@@ -137,7 +137,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     private CoordinatorLayout bottomSheetLayout;
     private RecyclerView recyclerView;
 
-    private BottomSheetBehavior bottomSheetBehavior;
+    private BottomSheetBehavior<CoordinatorLayout> bottomSheetBehavior;
 
     private MapboxMap map;
 
@@ -633,6 +633,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onMapReady(MapboxMap mapboxMap) {
         map = mapboxMap;
+        map.setMinZoomPreference(8);
         map.setOnCameraChangeListener(this);
         map.setOnMarkerClickListener(new MapboxMap.OnMarkerClickListener() {
             @Override
@@ -645,25 +646,30 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             map.setStyleUrl(url);
         }
         setupTabs();
-        map.setInfoWindowAdapter(new MapboxMap.InfoWindowAdapter() {
-            View view = new View(getContext());
 
-            @Nullable
-            @Override
-            public View getInfoWindow(@NonNull Marker marker) {
-                // This prevents an info window from popping up
-                return view;
-            }
-        });
+        Object annotationManager = null;
+        Method method = null; //Using reflection to access a Mapbox Package Private method
+        try {
+            Field field = MapboxMap.class.getDeclaredField("annotationManager");
+            field.setAccessible(true);
+            annotationManager = field.get(map);
+            method = annotationManager.getClass().getDeclaredMethod("getMarkersInRect", RectF.class);
+            method.setAccessible(true);
+        } catch (Exception e) {
+            Log.e(TAG, "Reflection error", e);
+        }
+
+        final Method finalMethod = method;
+        final Object finalAnnotationManager = annotationManager;
         mapView.setOnTouchListener(new View.OnTouchListener() {
-            //This onTouch code is a copy of the MapView#onSingleTapConfirmed code, except
+            //This onTouch code is a copy of the AnnotationManager#onTap code, except
             //I'm dragging instead of clicking, and it's being called for every touch event rather than just a tap
-            //It also simplifies some of the selection logic
+            //This code also makes some simplifications to the selection logic
 
             //If dragging ever stops working, this is the first place to look
-            //The onTouch is based on MapView#onSingleTapConfirmed
+            //The onTouch is based on AnnotationManager#onTap
             //Look for any changes in that function, and make those changes here too
-            //Also need to look at MapView#getMarkersInRect, which is how I'm getting closeby markers right now
+            //Also need to look at AnnotationManager#getMarkersInRect, which is how I'm getting close-by markers right now
             //It might end up getting renamed, something about it may change, which won't be apparent since right now it uses reflection to be invoked
 
             @Override
@@ -672,7 +678,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     if (event.getPointerCount() > 1) {
                         scratchpad.reset();
                         scratchpad.invalidate();
-                        return true; //Don't drag if there are multiple fingers on screen
+                        return false; //Don't drag if there are multiple fingers on screen
                     }
                     PointF tapPoint = new PointF(event.getX(), event.getY());
                     float toleranceSides = 4 * screenDensity;
@@ -684,15 +690,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                             tapPoint.x + averageIconWidth / 2 + toleranceSides,
                             tapPoint.y + averageIconHeight / 2 + toleranceTopBottom);
                     try {
-//                        Method method = MapView.class.getDeclaredMethod("getMarkersInRect", RectF.class); //Using reflection to access a Mapbox Package Private method
-                        Field field = MapboxMap.class.getDeclaredField("annotationManager");
-                        field.setAccessible(true);
-                        Object annotationManager = field.get(map);
-                        Method method = annotationManager.getClass().getDeclaredMethod("getMarkersInRect", RectF.class);
-                        method.setAccessible(true);
-
                         Marker newSelectedMarker = null;
-                        List<Marker> nearbyMarkers = (List<Marker>) method.invoke(annotationManager, tapRect);
+                        List<Marker> nearbyMarkers = (List<Marker>) finalMethod.invoke(finalAnnotationManager, tapRect);
                         List<Marker> selectedMarkers = map.getSelectedMarkers();
                         if (selectedMarkers.isEmpty() && nearbyMarkers != null && !nearbyMarkers.isEmpty()) {
                             Collections.sort(nearbyMarkers);
@@ -739,6 +738,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                             //Trying to put most logic in the drag() function, this is pretty messy already
                             boolean isMidpoint = midpoints.contains(newSelectedMarker);
                             map.selectMarker(newSelectedMarker); //Use the marker selection state to prevent selecting another marker when dragging over it
+                            newSelectedMarker.hideInfoWindow();
                             drag(isMidpoint ? midpoints.indexOf(newSelectedMarker) : corners.indexOf(newSelectedMarker), map.getProjection().fromScreenLocation(tapPoint), isMidpoint, doneDragging, deletePoint);
                             if (doneDragging) {
                                 map.deselectMarker(newSelectedMarker);
@@ -752,7 +752,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                 }
                 scratchpad.reset();
                 scratchpad.invalidate();
-                return true;
+                return false;
             }
         });
 
@@ -766,7 +766,6 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                                 .build()), new MapboxMap.CancelableCallback() {
                     @Override
                     public void onCancel() {
-
                     }
 
                     @Override
@@ -774,18 +773,6 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                         showSeekBarForCircle(); //Now circle will show at right place initially
                     }
                 });
-
-//                map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(coordinate.getLatitude(), coordinate.getLongitude())), new MapboxMap.CancelableCallback() {
-//                    @Override
-//                    public void onCancel() {
-//
-//                    }
-//
-//                    @Override
-//                    public void onFinish() {
-//                        showSeekBarForCircle(); //Now circle will show at right place initially
-//                    }
-//                });
             }
         }
     }
@@ -802,13 +789,8 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             intersection.setVisible(false); //Never want to show intersections when dragging another marker
         }
 
-        if (indexOfAnnotationToDrag == -1) {
-            AirMapLog.e(TAG, "indexOfAnnotationToDrag was -1???");
-            return;
-        }
-
         if (tabLayout.getSelectedTabPosition() == INDEX_OF_CIRCLE_TAB) {
-            dragCircle(indexOfAnnotationToDrag, newLocation, doneDragging);
+            dragCircle(newLocation, doneDragging);
         } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_PATH_TAB) {
             dragPointOnLine(indexOfAnnotationToDrag, newLocation, isMidpoint, doneDragging, deletePoint);
         } else if (tabLayout.getSelectedTabPosition() == INDEX_OF_POLYGON_TAB) {
@@ -821,21 +803,19 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
-    private void dragCircle(int indexOfAnnotationToDrag, LatLng newLocation, boolean doneDragging) {
+    private void dragCircle(LatLng newLocation, boolean doneDragging) {
         map.removeAnnotation(circleContainer.circle);
         map.removeAnnotation(circleContainer.outline);
-        corners.get(indexOfAnnotationToDrag).setPosition(newLocation); //Move the center point
+        corners.get(0).setPosition(newLocation); //Move the center point
         double radius = Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[seekBar.getProgress()] : getBufferPresets()[seekBar.getProgress()]; //Move the circle polygon
         List<LatLng> circlePoints = mListener.getAnnotationsFactory().polygonCircleForCoordinate(newLocation, radius);
-        PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0));
         circleContainer.circle = map.addPolygon(mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(circlePoints));
-        circleContainer.outline = map.addPolyline(polylineOptions);
+        circleContainer.outline = map.addPolyline(mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0)));
         circleContainer.radius = radius;
         circleContainer.center = newLocation;
         if (doneDragging) {
             zoomToCircle();
             checkCircleStatus();
-
             Analytics.logEvent(Analytics.Page.POINT_CREATE_FLIGHT, Analytics.Action.drag, Analytics.Label.DRAG_POINT);
         }
     }

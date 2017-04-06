@@ -61,8 +61,9 @@ public class Scratchpad extends View {
 
     public void dragTo(PointF start, PointF middle, PointF end) {
         reset();
-        path.moveTo(start.x, start.y);
-        path.lineTo(middle.x, middle.y);
+        path.moveTo(middle.x, middle.y);
+        path.lineTo(start.x, start.y);
+        path.moveTo(middle.x, middle.y);
         path.lineTo(end.x, end.y);
         canvas.drawPath(path, paint);
         invalidate();

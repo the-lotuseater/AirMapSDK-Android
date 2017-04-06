@@ -103,7 +103,7 @@ public class AnnotationsFactory {
 
     //Emulate a circle as a polygon with a bunch of sides
     public ArrayList<LatLng> polygonCircleForCoordinate(LatLng location, double radius) {
-        int degreesBetweenPoints = 2;
+        int degreesBetweenPoints = 8;
         int numberOfPoints = (int) Math.floor(360 / degreesBetweenPoints);
         double distRadians = radius / 6371000.0; // earth radius in meters
         double centerLatRadians = location.getLatitude() * Math.PI / 180;
