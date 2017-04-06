@@ -56,7 +56,7 @@ class BaseService {
     protected static final String pilotVerifyUrl = pilotByIdUrl + "phone/verify_token/"; //Replace %s with id using String.format
 
     //Status
-    protected static final String statusVersion = DEBUG ? "stage/" : "alpha/";
+    protected static final String statusVersion = DEBUG ? Utils.getDebugUrl() : "alpha/";
     protected static final String statusBaseUrl = baseUrl + "status/" + statusVersion;
     protected static final String statusPointUrl = statusBaseUrl + "point/";
     protected static final String statusPathUrl = statusBaseUrl + "path/";
@@ -74,11 +74,13 @@ class BaseService {
     protected static final String situationalAwarenessChannel = "uav/traffic/sa/%s"; //Replace %s with id using String.format
 
     //Telemetry
-    protected static final String telemetryBaseUrl = DEBUG ? "api-udp-telemetry.stage.airmap.com" : "api-udp-telemetry.prod.airmap.com";
+    protected static final String telemetryBaseUrl = DEBUG ? Utils.getTelemetryDebugUrl() : "api-udp-telemetry.prod.airmap.com";
     protected static final int telemetryPort = 16060;
 
     //Welcome
-    protected static final String welcomeBaseUrl = DEBUG ? baseUrl + "rules/stage/locale/" : baseUrl + "rules/v1/locale";
+    protected static final String welcomeVersion = DEBUG ? Utils.getDebugUrl() : "v1/";
+    protected static final String welcomeBaseUrl = baseUrl + "rules/" + welcomeVersion;
+    protected static final String welcomeUrl = welcomeBaseUrl + "locale/";
 
     //Auth
     protected static final String authVersion = DEBUG ? Utils.getDebugUrl() : "v1/";
