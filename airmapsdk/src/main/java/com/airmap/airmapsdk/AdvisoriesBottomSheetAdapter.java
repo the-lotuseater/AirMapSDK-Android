@@ -1,8 +1,5 @@
 package com.airmap.airmapsdk;
 
-import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
-import com.airmap.airmapsdk.networking.services.MappingService;
-import com.airmap.airmapsdk.util.Utils;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -27,6 +24,7 @@ import android.widget.Toast;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
+import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.ui.activities.WelcomeActivity;
 import com.airmap.airmapsdk.util.Constants;
 import com.airmap.airmapsdk.util.Utils;

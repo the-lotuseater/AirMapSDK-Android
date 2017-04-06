@@ -40,11 +40,11 @@ public class WelcomeDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-//        summaryTextView = (TextView) findViewById(R.id.summary_text_view);
-//        linkTextView = (TextView) findViewById(R.id.link_text_view);
+        summaryTextView = (TextView) findViewById(R.id.summary_text_view);
+        linkTextView = (TextView) findViewById(R.id.link_text_view);
         moreButton = (Button) findViewById(R.id.read_full_button);
 
-//        summaryTextView.setText(welcomeResult.getText());
+        summaryTextView.setText(welcomeResult.getText());
 
         if (TextUtils.isEmpty(welcomeResult.getUrl())) {
             linkTextView.setVisibility(View.GONE);
