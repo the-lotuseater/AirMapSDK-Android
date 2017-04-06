@@ -24,7 +24,6 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -35,8 +34,6 @@ import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
-import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
-import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
 import com.airmap.airmapsdk.models.airspace.AirMapAirspace;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
@@ -58,7 +55,7 @@ import com.airmap.airmapsdk.ui.adapters.AircraftAdapter;
 import com.airmap.airmapsdk.util.AnnotationsFactory;
 import com.airmap.airmapsdk.util.Constants;
 import com.airmap.airmapsdk.util.Utils;
-import com.mapbox.mapboxsdk.annotations.MultiPoint;
+import com.mapbox.mapboxsdk.annotations.BasePointCollection;
 import com.mapbox.mapboxsdk.annotations.Polygon;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.annotations.Polyline;
@@ -196,8 +193,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void setupMap(Bundle savedInstanceState) {
-        mapView.getMapAsync(this);
         mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
     }
 
     @Override
@@ -208,7 +205,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), MappingService.AirMapMapTheme.Standard);
             map.setStyleUrl(url);
             AirMapFlight flight = mListener.getFlight();
-            MultiPoint multiPoint;
+            BasePointCollection basePointCollection;
             if (flight.getGeometry() instanceof AirMapPolygon) {
                 PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
                 PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
@@ -217,19 +214,19 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                     polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                 }
                 map.addPolygon(polygonOptions);
-                multiPoint = map.addPolyline(polylineOptions.add(polylineOptions.getPoints().get(0)));
+                basePointCollection = map.addPolyline(polylineOptions.add(polylineOptions.getPoints().get(0)));
             } else if (flight.getGeometry() instanceof AirMapPath) {
                 PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
                 for (Coordinate coordinate : ((AirMapPath) flight.getGeometry()).getCoordinates()) {
                     polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                 }
-                multiPoint = map.addPolyline(polylineOptions);
+                basePointCollection = map.addPolyline(polylineOptions);
             } else {
                 List<LatLng> circlePoints = mListener.getAnnotationsFactory().polygonCircleForCoordinate(new LatLng(flight.getCoordinate().getLatitude(), flight.getCoordinate().getLongitude()), flight.getBuffer());
                 map.addPolygon(mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(circlePoints));
-                multiPoint = map.addPolyline(mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0)));
+                basePointCollection = map.addPolyline(mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0)));
             }
-            LatLngBounds bounds = new LatLngBounds.Builder().includes(multiPoint.getPoints()).build();
+            LatLngBounds bounds = new LatLngBounds.Builder().includes(basePointCollection.getPoints()).build();
             map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
 
             // draw polygons for advisories with permits (green if user has permit, yellow otherwise)

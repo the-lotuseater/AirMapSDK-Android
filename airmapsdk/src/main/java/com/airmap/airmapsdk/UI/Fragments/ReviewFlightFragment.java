@@ -39,7 +39,7 @@ import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.util.AnnotationsFactory;
-import com.mapbox.mapboxsdk.annotations.MultiPoint;
+import com.mapbox.mapboxsdk.annotations.BasePointCollection;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -229,7 +229,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
             String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), MappingService.AirMapMapTheme.Standard);
             map.setStyleUrl(url);
             AirMapFlight flight = mListener.getFlight();
-            MultiPoint multiPoint;
+            BasePointCollection basePointCollection;
             if (flight.getGeometry() instanceof AirMapPolygon) {
                 PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
                 PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
@@ -238,7 +238,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                     polylineOptions.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()));
                 }
                 map.addPolygon(polygonOptions);
-                multiPoint = map.addPolyline(polylineOptions.add(polylineOptions.getPoints().get(0)));
+                basePointCollection = map.addPolyline(polylineOptions.add(polylineOptions.getPoints().get(0)));
             } else if (flight.getGeometry() instanceof AirMapPath) {
                 PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
                 for (Coordinate coordinate : ((AirMapPath) flight.getGeometry()).getCoordinates()) {
@@ -252,13 +252,13 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                     }
                 }
 
-                multiPoint = map.addPolyline(polylineOptions);
+                basePointCollection = map.addPolyline(polylineOptions);
             } else {
                 List<LatLng> circlePoints = mListener.getAnnotationsFactory().polygonCircleForCoordinate(new LatLng(flight.getCoordinate().getLatitude(), flight.getCoordinate().getLongitude()), flight.getBuffer());
                 map.addPolygon(mListener.getAnnotationsFactory().getDefaultPolygonOptions().addAll(circlePoints));
-                multiPoint = map.addPolyline(mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0)));
+                basePointCollection = map.addPolyline(mListener.getAnnotationsFactory().getDefaultPolylineOptions().addAll(circlePoints).add(circlePoints.get(0)));
             }
-            LatLngBounds bounds = new LatLngBounds.Builder().includes(multiPoint.getPoints()).build();
+            LatLngBounds bounds = new LatLngBounds.Builder().includes(basePointCollection.getPoints()).build();
             map.easeCamera(CameraUpdateFactory.newLatLngBounds(bounds, dpToPixels(getActivity(), 20).intValue()));
         }
     }

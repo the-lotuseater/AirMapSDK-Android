@@ -647,6 +647,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         setupTabs();
         map.setInfoWindowAdapter(new MapboxMap.InfoWindowAdapter() {
             View view = new View(getContext());
+
             @Nullable
             @Override
             public View getInfoWindow(@NonNull Marker marker) {
@@ -671,7 +672,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                     if (event.getPointerCount() > 1) {
                         scratchpad.reset();
                         scratchpad.invalidate();
-                        return false; //Don't drag if there are multiple fingers on screen
+                        return true; //Don't drag if there are multiple fingers on screen
                     }
                     PointF tapPoint = new PointF(event.getX(), event.getY());
                     float toleranceSides = 4 * screenDensity;
@@ -758,7 +759,11 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         if (getArguments() != null) {
             Coordinate coordinate = (Coordinate) getArguments().getSerializable(CreateFlightActivity.COORDINATE);
             if (coordinate != null) {
-                map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(coordinate.getLatitude(), coordinate.getLongitude())), new MapboxMap.CancelableCallback() {
+                map.animateCamera(CameraUpdateFactory.newCameraPosition(
+                        new CameraPosition.Builder()
+                                .target(coordinate.toMapboxLatLng())
+                                .zoom(13)
+                                .build()), new MapboxMap.CancelableCallback() {
                     @Override
                     public void onCancel() {
 
@@ -769,6 +774,18 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                         showSeekBarForCircle(); //Now circle will show at right place initially
                     }
                 });
+
+//                map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(coordinate.getLatitude(), coordinate.getLongitude())), new MapboxMap.CancelableCallback() {
+//                    @Override
+//                    public void onCancel() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onFinish() {
+//                        showSeekBarForCircle(); //Now circle will show at right place initially
+//                    }
+//                });
             }
         }
     }
@@ -967,7 +984,6 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 double bufferPreset = Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[progress] : getBufferPresets()[progress];
-                Log.e(TAG, "buffer preset");
                 String bufferText = Utils.getMeasurementText(bufferPreset, Utils.useMetric(getActivity()));
                 seekBarValueTextView.setText(bufferText);
                 drawCircle(circleContainer.center, bufferPreset);
