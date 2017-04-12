@@ -18,13 +18,17 @@ import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
 import com.airmap.airmapsdk.models.airspace.AirMapAirspace;
+import com.airmap.airmapsdk.models.airspace.AirMapAirspaceAdvisoryStatus;
 import com.airmap.airmapsdk.models.comm.AirMapComm;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
+import com.airmap.airmapsdk.models.rules.AirMapRule;
+import com.airmap.airmapsdk.models.rules.AirMapRuleset;
+import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
-import com.airmap.airmapsdk.models.welcome.AirMapWelcome;
+import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapTrafficListener;
@@ -52,6 +56,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 
@@ -1192,6 +1197,18 @@ public class AirMap {
     }
 
     /**
+     * Get weather from status based on a Point and Radius
+     *
+     * @param coordinate   The coordinate of the flight
+     * @param buffer       Number of meters to buffer a flight (the radius of the flight)
+     * @param callback     The callback that is invoked on success or error
+     */
+    public static Call checkWeather(@NonNull Coordinate coordinate, @Nullable Double buffer,
+                                       @Nullable AirMapCallback<AirMapStatus> callback) {
+        return StatusService.checkWeather(coordinate, buffer, callback);
+    }
+
+    /**
      * Get an airspace by its ID
      *
      * @param airspaceId The ID of the airspace to get
@@ -1213,9 +1230,25 @@ public class AirMap {
         return AirspaceService.getAirspace(airspaceIds, listener);
     }
 
-    //TODO: Remove context. only necessary since we're reading from assets to mock
+    public static Call getRulesets(@NonNull Coordinate coordinate, @Nullable AirMapCallback<List<AirMapRuleset>> listener) {
+        return RulesService.getRulesets(coordinate, listener);
+    }
+
+    public static Call getRules(@NonNull String rulesetId, @Nullable AirMapCallback<AirMapRuleset> listener) {
+        return RulesService.getRules(rulesetId, listener);
+    }
+
+    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull List<Coordinate> geometry, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+        List<String> rulesetIds = new ArrayList<>();
+        for (AirMapRuleset ruleset : rulesets) {
+            rulesetIds.add(ruleset.getId());
+        }
+
+        return RulesService.getAdvisories(rulesetIds, geometry, flightFeatures, listener);
+    }
+
     public static Call getWelcomeSummary(@NonNull Coordinate coordinate, @Nullable AirMapCallback<List<AirMapWelcomeResult>> listener) {
-        return WelcomeService.getWelcomeSummary(coordinate, listener);
+        return RulesService.getWelcomeSummary(coordinate, listener);
     }
 
     /**

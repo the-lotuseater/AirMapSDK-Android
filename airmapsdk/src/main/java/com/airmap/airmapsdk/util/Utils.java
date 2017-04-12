@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -360,6 +361,16 @@ public class Utils {
             result = bis.read();
         }
         return buf.toString();
+    }
+
+    /**
+     * Formats a list of Coordinates into WKT format
+     *
+     * @param coordinates The list of coordinates to include in the result
+     * @return A WKT formatted string of coordinates
+     */
+    public static String makeGeoString(List<Coordinate> coordinates) {
+        return TextUtils.join(",", coordinates);
     }
 
     public static String getMapboxApiKey() {

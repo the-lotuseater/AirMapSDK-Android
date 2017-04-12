@@ -60,4 +60,6 @@
     </plurals>
 
     <string name="duration_in_minutes">%1$s mins</string>
+
+    <string name="no_advisories">No Advisories</string>
 </resources>
