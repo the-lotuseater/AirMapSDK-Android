@@ -26,7 +26,7 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public class AirMapStatus implements Serializable, AirMapBaseModel {
     public enum StatusColor {
-        Red("red"), Yellow("yellow"), Green("green");
+        Red("red"), Yellow("yellow"), Green("green"), Orange("orange");
 
         private final String text;
 
@@ -47,11 +47,26 @@ public class AirMapStatus implements Serializable, AirMapBaseModel {
                     return Yellow;
                 case "green":
                     return Green;
+                case "orange":
+                    return Orange;
                 default:
                     return null;
             }
         }
 
+        public int intValue() {
+            switch (this) {
+                case Red:
+                    return 4;
+                case Orange:
+                    return 3;
+                case Yellow:
+                    return 2;
+                default:
+                case Green:
+                    return 1;
+            }
+        }
     }
 
     private StatusColor advisoryColor;

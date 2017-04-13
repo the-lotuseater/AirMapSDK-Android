@@ -7,6 +7,7 @@ import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.GenericOkHttpCallback;
+import com.airmap.airmapsdk.util.Utils;
 
 import java.util.Date;
 import java.util.List;
@@ -63,7 +64,7 @@ class StatusService extends BaseService {
                                        AirMapCallback<AirMapStatus> listener) {
         String url = statusPathUrl;
         Map<String, String> params = AirMapStatus.getAsParams(takeOffPoint, types, ignoredTypes, weather, date);
-        params.put("geometry", "LINESTRING(" + makeGeoString(path) + ")");
+        params.put("geometry", "LINESTRING(" + Utils.makeGeoString(path) + ")");
         params.put("buffer", String.valueOf(buffer));
         return AirMap.getClient().get(url, params, new GenericOkHttpCallback(listener, AirMapStatus.class));
     }
@@ -85,17 +86,24 @@ class StatusService extends BaseService {
                                     AirMapCallback<AirMapStatus> listener) {
         String url = statusPolygonUrl;
         Map<String, String> params = AirMapStatus.getAsParams(takeOffPoint, types, ignoredTypes, weather, date);
-        params.put("geometry", "POLYGON(" + makeGeoString(geometry) + ")");
+        params.put("geometry", "POLYGON(" + Utils.makeGeoString(geometry) + ")");
         return AirMap.getClient().get(url, params, new GenericOkHttpCallback(listener, AirMapStatus.class));
     }
 
     /**
-     * Formats a list of Coordinates into WKT format
+     * Get a flight status based on a Point and Radius based flight
      *
-     * @param coordinates The list of coordinates to include in the result
-     * @return A WKT formatted string of coordinates
+     * @param coordinate   The center coordinate of the flight
+     * @param buffer       Number of meters to buffer a flight (the radius of the flight)
+     * @param listener     The callback that is invoked on success or error
      */
-    private static String makeGeoString(List<Coordinate> coordinates) {
-        return TextUtils.join(",", coordinates);
+    public static Call checkWeather(Coordinate coordinate, @Nullable Double buffer,
+                                       AirMapCallback<AirMapStatus> listener) {
+        String url = statusPointUrl;
+        Map<String, String> params = AirMapStatus.getAsParams(coordinate, null, null, true, new Date());
+        if (buffer != null) {
+            params.put("buffer", String.valueOf(buffer));
+        }
+        return AirMap.getClient().get(url, params, new GenericOkHttpCallback(listener, AirMapStatus.class));
     }
 }

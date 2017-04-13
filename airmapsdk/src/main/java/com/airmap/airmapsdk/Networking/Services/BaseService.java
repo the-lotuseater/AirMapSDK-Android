@@ -77,13 +77,15 @@ class BaseService {
     protected static final String telemetryBaseUrl = DEBUG ? Utils.getTelemetryDebugUrl() : "api-udp-telemetry.prod.airmap.com";
     protected static final int telemetryPort = 16060;
 
-    //Welcome
-    protected static final String welcomeVersion = DEBUG ? Utils.getDebugUrl() : "v1/";
-    protected static final String welcomeBaseUrl = baseUrl + "rules/" + welcomeVersion;
-    protected static final String welcomeUrl = welcomeBaseUrl + "locale/";
-
     //Auth
     protected static final String authVersion = DEBUG ? Utils.getDebugUrl() : "v1/";
     protected static final String authBaseUrl = baseUrl + "auth/" + authVersion;
     protected static final String anonymousLoginUrl = authBaseUrl + "anonymous/token";
+
+    //Rules
+    protected static final String rulesetsVersion = DEBUG ? Utils.getDebugUrl() : "v2/";
+    protected static final String rulesetsBaseUrl = baseUrl + "rules/" + rulesetsVersion;
+    protected static final String welcomeBaseUrl = DEBUG ? baseUrl + "rules/stage/locale/" : baseUrl + "rules/v1/locale";
+    protected static final String rulesByIdUrl = rulesetsBaseUrl + "%s/"; //Replace %s with id using String.format
+    protected static final String advisoriesUrl = baseUrl + "advisory/" + rulesetsVersion + "airspace";
 }
