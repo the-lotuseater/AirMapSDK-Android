@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         clearCookies();
 
-                        AirMap.getInstance().setAuthToken(authCredential.getAccessToken());
+                        AirMap.setAuthToken(authCredential.getAccessToken());
                         AirMap.getPilot(new AirMapCallback<AirMapPilot>() {
                             @Override
                             public void onSuccess(AirMapPilot response) {

@@ -642,7 +642,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             }
         });
         if (mListener != null) {
-            String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), MappingService.AirMapMapTheme.Standard);
+            String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), mListener.getMapTheme());
             map.setStyleUrl(url);
         }
         setupTabs();
@@ -1673,5 +1673,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         TabLayout getTabLayout();
 
         AnnotationsFactory getAnnotationsFactory();
+
+        MappingService.AirMapMapTheme getMapTheme();
     }
 }

@@ -61,6 +61,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setSupportActionBar(toolbar);
         //AirMap.init is called in the onCreate of MyApplication
         AirMap.showLogin(this, REQUEST_LOGIN); //Show the login screen and have the user log in
+
+        //Anonymous login
+//        AirMap.performAnonymousLogin("vansh", new AirMapCallback<Void>() {
+//            @Override
+//            public void onSuccess(Void response) {
+//                Log.v("Anon Login", "Token is: " + AirMap.getAuthToken());
+//            }
+//
+//            @Override
+//            public void onError(AirMapException e) {
+//                Log.e("Anon Login", e.getDetailedMessage(), e);
+//            }
+//        });
         mapView = (MapView) findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);

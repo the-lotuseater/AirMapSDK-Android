@@ -226,7 +226,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     public void onMapReady(MapboxMap mapboxMap) {
         map = mapboxMap;
         if (mListener != null) {
-            String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), MappingService.AirMapMapTheme.Standard);
+            String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), mListener.getMapTheme());
             map.setStyleUrl(url);
             AirMapFlight flight = mListener.getFlight();
             BasePointCollection basePointCollection;
@@ -553,6 +553,8 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
         List<LatLng>[] getPathBuffers();
 
         List<MappingService.AirMapLayerType> getMapLayers();
+
+        MappingService.AirMapMapTheme getMapTheme();
     }
 
     private class SectionsPagerAdapter extends FragmentStatePagerAdapter {

@@ -3,11 +3,11 @@ package com.airmap.airmapsdk;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-import android.util.Log;
 
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
-import com.airmap.airmapsdk.networking.callbacks.RefreshTokenListener;
 import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.networking.services.AuthService;
 import com.airmap.airmapsdk.util.PreferenceUtils;
 import com.airmap.airmapsdk.util.SecuredPreferenceException;
 import com.airmap.airmapsdk.util.Utils;
@@ -20,18 +20,12 @@ import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Date;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * Created by Vansh Gandhi on 8/10/16.
@@ -134,7 +128,7 @@ public class Auth {
 
         AuthCredential authCredentials = authCredentialsFromUrl(url);
         if (authCredentials != null) {
-            AirMap.getInstance().setAuthToken(authCredentials.getAccessToken());
+            AirMap.setAuthToken(authCredentials.getAccessToken());
             if (authCredentials.getRefreshToken() != null && !authCredentials.getRefreshToken().isEmpty()) {
                 try {
                     PreferenceUtils.getPreferences(context).edit()
@@ -154,7 +148,7 @@ public class Auth {
     /**
      * Refreshes the saved access token
      */
-    public static void refreshAccessToken(final Context context, final RefreshTokenListener listener) {
+    public static void refreshAccessToken(final Context context, final AirMapCallback<Void> callback) {
         AirMapLog.i("AuthServices", "Trying to refresh token");
 
         String refreshToken = null;
@@ -167,53 +161,13 @@ public class Auth {
 
         // return if refresh token is empty
         if (TextUtils.isEmpty(refreshToken)) {
-            if (listener != null) {
-                listener.onError(new AirMapException("Invalid Refresh Token"));
+            if (callback != null) {
+                callback.onError(new AirMapException("Invalid Refresh Token"));
             }
             return;
         }
 
-        OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://sso.airmap.io/delegation").newBuilder();
-        urlBuilder.addQueryParameter("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
-        urlBuilder.addQueryParameter("api_type", "app");
-        urlBuilder.addQueryParameter("client_id", Utils.getClientId());
-        urlBuilder.addQueryParameter("refresh_token", refreshToken);
-        String url = urlBuilder.build().toString();
-
-        Request request = new Request.Builder()
-                .get()
-                .url(url)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                AirMapLog.e("AuthServices", e.getMessage());
-                if (listener != null) {
-                    listener.onError(new AirMapException(e.getMessage()));
-                }
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                try {
-                    String json = response.body().string();
-                    response.body().close();
-                    JSONObject jsonObject = new JSONObject(json);
-                    String idToken = jsonObject.getString("id_token");
-                    AirMap.getInstance().setAuthToken(idToken);
-                    if (listener != null) {
-                        listener.onSuccess();
-                    }
-                } catch (JSONException e) {
-                    AirMapLog.e("AuthServices", e.getMessage());
-                    if (listener != null) {
-                        listener.onError(new AirMapException(response.code(), e.getMessage()));
-                    }
-                }
-            }
-        });
+        AuthService.refreshAccessToken(refreshToken, callback);
     }
 
     /**
