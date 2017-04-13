@@ -27,9 +27,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:rotate_enabled="false"
-            app:tilt_enabled="false"
-            app:compass_enabled="false"/>
+            app:mapbox_uiRotateGestures="false"
+            app:mapbox_uiTiltGestures="false"
+            app:mapbox_uiCompass="false"/>
 
     <android.support.design.widget.FloatingActionButton
             android:id="@+id/traffic_fab"
