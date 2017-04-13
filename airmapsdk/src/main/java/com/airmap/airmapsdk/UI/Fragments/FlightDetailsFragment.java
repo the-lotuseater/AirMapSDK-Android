@@ -24,7 +24,6 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -35,8 +34,6 @@ import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
-import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
-import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
 import com.airmap.airmapsdk.models.airspace.AirMapAirspace;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
@@ -205,7 +202,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         map = mapboxMap;
 
         if (mListener != null && isFragmentActive()) {
-            String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), MappingService.AirMapMapTheme.Standard);
+            String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), mListener.getMapTheme());
             map.setStyleUrl(url);
             AirMapFlight flight = mListener.getFlight();
             MultiPoint multiPoint;
@@ -1009,5 +1006,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
         List<LatLng>[] getPathBuffers();
 
         List<MappingService.AirMapLayerType> getMapLayers();
+
+        MappingService.AirMapMapTheme getMapTheme();
     }
 }
