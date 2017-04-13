@@ -60,6 +60,7 @@ public class AdvisoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public AdvisoriesAdapter(Context context, List<AirMapAdvisory> data) {
         this.context = context;
+        this.advisories = data;
         this.dateFormat = Utils.getDateTimeFormat();
 
         sort();
@@ -137,6 +138,10 @@ public class AdvisoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private void sort() {
+        if (advisories == null || advisories.isEmpty()) {
+            return;
+        }
+
         Collections.sort(advisories, new Comparator<AirMapAdvisory>() {
             @Override
             public int compare(AirMapAdvisory o1, AirMapAdvisory o2) {
@@ -254,18 +259,17 @@ public class AdvisoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         holder.colorView.setBackgroundColor(getColor(advisory.getColor()));
         holder.nameTextView.setText(advisory.getName());
         StringBuilder builder = new StringBuilder();
-//        if (advisory.getTfrProperties().getStartTime() != null) {
-//            builder.append(dateFormat.format(advisory.getTfrProperties().getStartTime()));
-//        }
-//        if (advisory.getTfrProperties().getEndTime() != null) {
-//            if (builder.length() != 0) { //Only add dash if we added a start time
-//                builder.append(" - ");
-//            }
-//            builder.append(dateFormat.format(advisory.getTfrProperties().getEndTime()));
-//        }
+        if (advisory.getTfrProperties().getStartTime() != null) {
+            builder.append(dateFormat.format(advisory.getTfrProperties().getStartTime()));
+        }
+        if (advisory.getTfrProperties().getEndTime() != null) {
+            if (builder.length() != 0) { //Only add dash if we added a start time
+                builder.append(" - ");
+            }
+            builder.append(dateFormat.format(advisory.getTfrProperties().getEndTime()));
+        }
         holder.dateTextView.setText(builder.toString());
-        String url = null;
-//        String url = advisory.getTfrProperties().getUrl();
+        String url = advisory.getTfrProperties().getUrl();
         if (url != null && !url.isEmpty()) {
             holder.urlTextView.setText(url);
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -273,8 +277,8 @@ public class AdvisoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 public void onClick(View view) {
                     Analytics.logEvent(Analytics.Page.ADVISORIES, Analytics.Action.tap, Analytics.Label.TFR_DETAILS);
 
-//                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(advisory.getTfrProperties().getUrl()));
-//                    holder.itemView.getContext().startActivity(intent);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(advisory.getTfrProperties().getUrl()));
+                    holder.itemView.getContext().startActivity(intent);
                 }
             });
             holder.urlTextView.setVisibility(View.VISIBLE);
@@ -287,12 +291,12 @@ public class AdvisoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private void onBindWildfireViewHolder(VHWildfire holder, AirMapAdvisory advisory) {
-//        int size = advisory.getWildfireProperties().getSize();
+        int size = advisory.getWildfireProperties().getSize();
         holder.colorView.setBackgroundColor(getColor(advisory.getColor()));
         holder.nameTextView.setText(advisory.getType() == MappingService.AirMapAirspaceType.Wildfires ? R.string.airspace_type_wildfire : R.string.airspace_type_fire);
         String unknownSize = holder.itemView.getContext().getString(R.string.unknown_size);
-//        String dateEffective = Utils.getDateTimeFormat().format(advisory.getWildfireProperties().getEffectiveDate());
-//        holder.sizeTextView.setText(dateEffective + " - " + (size == -1 ? unknownSize : String.format(Locale.US, "%d acres", size)));
+        String dateEffective = Utils.getDateTimeFormat().format(advisory.getWildfireProperties().getEffectiveDate());
+        holder.sizeTextView.setText(dateEffective + " - " + (size == -1 ? unknownSize : String.format(Locale.US, "%d acres", size)));
     }
 
     private void onBindEmergencyViewHolder(VHEmergency holder, AirMapAdvisory advisory) {
@@ -371,23 +375,23 @@ public class AdvisoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return context.getString(R.string.no_advisories);
     }
 
-    public class VHHeader extends RecyclerView.ViewHolder {
+    private class VHHeader extends RecyclerView.ViewHolder {
         TextView headerTextView;
 
-        public VHHeader(View itemView) {
+        VHHeader(View itemView) {
             super(itemView);
 
             headerTextView = (TextView) itemView.findViewById(R.id.header);
         }
     }
 
-    public class VHItem extends RecyclerView.ViewHolder {
+    private class VHItem extends RecyclerView.ViewHolder {
         View colorView;
         TextView nameTextView;
         TextView description1TextView;
         TextView description2TextView;
 
-        public VHItem(View itemView) {
+        VHItem(View itemView) {
             super(itemView);
 
             colorView = itemView.findViewById(R.id.color_bar);
@@ -398,13 +402,13 @@ public class AdvisoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     }
 
-    public class VHTfr extends RecyclerView.ViewHolder {
+    private class VHTfr extends RecyclerView.ViewHolder {
         View colorView;
         TextView nameTextView;
         TextView dateTextView;
         TextView urlTextView;
 
-        public VHTfr(View itemView) {
+        VHTfr(View itemView) {
             super(itemView);
 
             colorView = itemView.findViewById(R.id.color_bar);
@@ -415,12 +419,12 @@ public class AdvisoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     }
 
-    public class VHWildfire extends RecyclerView.ViewHolder {
+    private class VHWildfire extends RecyclerView.ViewHolder {
         View colorView;
         TextView nameTextView;
         TextView sizeTextView;
 
-        public VHWildfire(View itemView) {
+        VHWildfire(View itemView) {
             super(itemView);
 
             colorView = itemView.findViewById(R.id.color_bar);
@@ -430,13 +434,13 @@ public class AdvisoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     }
 
-    public class VHEmergency extends RecyclerView.ViewHolder {
+    private class VHEmergency extends RecyclerView.ViewHolder {
         View colorView;
         TextView nameTextView;
         TextView description1TextView;
         TextView description2TextView;
 
-        public VHEmergency(View itemView) {
+        VHEmergency(View itemView) {
             super(itemView);
 
             colorView = itemView.findViewById(R.id.color_bar);
