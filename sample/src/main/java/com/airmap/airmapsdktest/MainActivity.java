@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -239,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     @Override
     public void onMapLongClick(@NonNull LatLng point) {
-        AirMap.createFlight(this, REQUEST_FLIGHT, getCoordinateFromLatLng(point), null, null); //The created flight will be returned in onActivityResult
+        AirMap.createFlight(this, REQUEST_FLIGHT, getCoordinateFromLatLng(point), null, null, null); //The created flight will be returned in onActivityResult
     }
 
 
@@ -260,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else if (traffic.getTrafficType() == AirMapTraffic.TrafficType.SituationalAwareness) {
             id = getResources().getIdentifier("sa_traffic_marker_icon_" + directionFromBearing(traffic.getTrueHeading()), "drawable", "com.airmap.airmapsdktest");
         }
-        return factory.fromDrawable(ContextCompat.getDrawable(this, id));
+        return factory.fromResource(id);
     }
 
     /**
