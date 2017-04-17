@@ -21,7 +21,7 @@ Start by adding the Android SDK to your project:
 
 * Add 
 ```groovy
-compile('com.airmap.sdk:airmapsdk:1.0.6')
+compile('com.airmap.sdk:airmapsdk:1.0.8')
 ``` 
 
 to your module level `build.gradle` file
