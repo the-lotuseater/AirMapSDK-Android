@@ -1,6 +1,7 @@
 package com.airmap.airmapsdk.networking.services;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
@@ -460,7 +461,7 @@ public class TrafficService extends BaseService {
         @Override
         public void messageArrived(String topic, MqttMessage message) throws Exception {
             String messageString = message.toString();
-            System.out.println("TrafficService: " + messageString);
+            Log.d("Traffic Service", "Topic: " + topic + " message: " + messageString);
             if (topic.contains("/alert/")) {
                 receivedTraffic(messageString, AirMapTraffic.TrafficType.Alert);
             } else if (topic.contains("/sa/")) {
