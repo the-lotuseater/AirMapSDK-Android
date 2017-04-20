@@ -62,4 +62,8 @@
     <string name="duration_in_minutes">%1$s mins</string>
 
     <string name="no_advisories">No Advisories</string>
+
+    <string name="pick_one">Pick One</string>
+    <string name="optional">Optional</string>
+    <string name="required">Required</string>
 </resources>

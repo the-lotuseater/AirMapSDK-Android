@@ -1,9 +1,11 @@
 package com.airmap.airmapsdk.models.rules;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.util.Utils;
 
@@ -54,6 +56,19 @@ public class AirMapRuleset implements Serializable, AirMapBaseModel, Comparable 
                 return 1;
             } else {
                 return 0;
+            }
+        }
+
+        public @StringRes int getTitle() {
+            switch(this) {
+                case PickOne:
+                    return R.string.pick_one;
+                case Optional:
+                    return R.string.optional;
+                case Required:
+                    return R.string.required;
+                default:
+                    return -1;
             }
         }
     }

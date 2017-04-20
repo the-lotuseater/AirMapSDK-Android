@@ -50,6 +50,23 @@ public class AirMapJurisdiction implements Serializable, AirMapBaseModel {
             return text;
         }
 
+        public int intValue() {
+            switch (text.toLowerCase()) {
+                case "federal":
+                case "national":
+                    return 5;
+                case "state":
+                    return 4;
+                case "county":
+                    return 3;
+                case "city":
+                    return 2;
+                case "local":
+                    return 1;
+                default:
+                    return 0;
+            }
+        }
     }
 
     private int id;
@@ -112,5 +129,10 @@ public class AirMapJurisdiction implements Serializable, AirMapBaseModel {
 
     public void setRegion(RegionCategory region) {
         this.region = region;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof AirMapJurisdiction && ((AirMapJurisdiction) o).id == this.id;
     }
 }
