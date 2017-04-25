@@ -4,10 +4,24 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.text.TextUtils;
 
+import com.airmap.airmapsdk.AirMapException;
+import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.models.flight.AirMapFlight;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.callbacks.GenericOkHttpCallback;
+import com.airmap.airmapsdk.util.Utils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 /**
  * Created by Vansh Gandhi on 7/7/16.
@@ -287,5 +301,47 @@ public class MappingService extends BaseService {
     protected String getTileSourceUrl(@Nullable List<AirMapLayerType> layers, AirMapMapTheme theme) {
         String tiles = (layers == null || layers.size() == 0) ? "_-_" : TextUtils.join(",", layers);
         return mapTilesBaseUrl + tiles + "?&theme=" + theme.toString() + "&apikey=" + AirMap.getInstance().getApiKey() + "&token=" + AirMap.getInstance().getApiKey();
+    }
+
+    protected String getJurisdictionsTileUrlTemplate() {
+        return "http://ec2-54-200-159-247.us-west-2.compute.amazonaws.com:3000/type/base-jurisdiction/{z}/{x}/{y}";
+    }
+
+    protected String getRulesetTileUrlTemplate(String rulesetId, List<String> layers) {
+        return "http://ec2-54-200-159-247.us-west-2.compute.amazonaws.com:3000/" + rulesetId + "/" + TextUtils.join(",", layers) + "/{z}/{x}/{y}";
+    }
+
+    protected String getStylesUrl() {
+        return "https://cdn.airmap.com/static/map-styles/0.2.0/styles.json";
+    }
+
+    protected void getStylesJson(final AirMapCallback<JSONObject> listener) {
+        AirMap.getClient().get(getStylesUrl(), new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                listener.onError(new AirMapException(e.getMessage()));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String jsonString;
+                try {
+                    jsonString = response.body().string();
+                } catch (IOException e) {
+                    Utils.error(listener, e);
+                    return;
+                }
+                response.body().close();
+                JSONObject result = null;
+                try {
+                    result = new JSONObject(jsonString);
+                    listener.onSuccess(result);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    AirMapLog.e("AirMapCallback", jsonString);
+                    listener.onError(new AirMapException(e.getMessage()));
+                }
+            }
+        });
     }
 }

@@ -1282,6 +1282,22 @@ public class AirMap {
         return airMapMapMappingService.getTileSourceUrl(layers, theme);
     }
 
+    public static String getMapStylesUrl() {
+        return airMapMapMappingService.getStylesUrl();
+    }
+
+    public static String getJurisdictionsTileUrlTemplate() {
+        return airMapMapMappingService.getJurisdictionsTileUrlTemplate();
+    }
+
+    public static String getRulesetTileUrlTemplate(String rulesetId, List<String> layers) {
+        return airMapMapMappingService.getRulesetTileUrlTemplate(rulesetId, layers);
+    }
+
+    public static void getMapStylesJson(AirMapCallback<JSONObject> listener) {
+        airMapMapMappingService.getStylesJson(listener);
+    }
+
     /**
      * Starts the Traffic Alerts service to receive traffic alerts for the current active flight
      *
