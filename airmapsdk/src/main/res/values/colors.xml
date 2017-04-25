@@ -5,9 +5,6 @@
     <color name="colorPrimaryDark">#19202b</color>
     <color name="colorAccent">#13A4FA</color>
     <color name="colorTextAndIcons">#FFFFFF</color>
-    <color name="airmap_red">#FF0000</color>
-    <color name="airmap_yellow">#ffeb3b</color>
-    <color name="airmap_green">#7ED321</color>
     <color name="airmap_colorFill">#B8E1E3</color>
     <color name="airmap_tipBackground">#d519202b</color>
     <color name="airmap_errorTipBackground">#c8d50000</color>
@@ -21,5 +18,9 @@
     <color name="yellow">#ffeb3b</color>
     <color name="redDark">#D32F2F</color>
     <color name="red">#FF0000</color>
-    <color name="orange">#FF8C00</color>
+
+    <color name="status_red">#FF0000</color>
+    <color name="status_yellow">#ffeb3b</color>
+    <color name="status_green">#7ED321</color>
+    <color name="status_orange">#FF8C00</color>
 </resources>

@@ -95,6 +95,7 @@ import java.util.Map;
 import okhttp3.Call;
 
 import static com.airmap.airmapsdk.models.status.AirMapStatus.StatusColor.Green;
+import static com.airmap.airmapsdk.models.status.AirMapStatus.StatusColor.Orange;
 import static com.airmap.airmapsdk.models.status.AirMapStatus.StatusColor.Yellow;
 import static com.airmap.airmapsdk.util.PointMath.distanceBetween;
 import static com.airmap.airmapsdk.util.Utils.getBufferPresets;
@@ -1442,16 +1443,20 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             final int color;
             switch (statusColor) {
                 case Red:
-                    color = ContextCompat.getColor(getActivity(), R.color.airmap_red);
+                    color = ContextCompat.getColor(getActivity(), R.color.status_red);
+                    polygonOptions.alpha(0.6f);
+                    break;
+                case Orange:
+                    color = ContextCompat.getColor(getActivity(), R.color.status_orange);
                     polygonOptions.alpha(0.6f);
                     break;
                 case Yellow:
-                    color = ContextCompat.getColor(getActivity(), R.color.airmap_yellow);
+                    color = ContextCompat.getColor(getActivity(), R.color.status_yellow);
                     polygonOptions.alpha(0.6f);
                     break;
                 default:
                 case Green:
-                    color = ContextCompat.getColor(getActivity(), R.color.airmap_green);
+                    color = ContextCompat.getColor(getActivity(), R.color.status_green);
                     polygonOptions.alpha(0.6f);
                     break;
             }
@@ -1547,11 +1552,13 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             final int textAndIconColor = color == Yellow ? Color.BLACK : Color.WHITE;
             final int buttonColor;
             if (color == AirMapStatus.StatusColor.Red) {
-                buttonColor = ContextCompat.getColor(getActivity(), R.color.airmap_red);
+                buttonColor = ContextCompat.getColor(getActivity(), R.color.status_red);
+            } else if (color == Orange) {
+                buttonColor = ContextCompat.getColor(getActivity(), R.color.status_orange);
             } else if (color == Yellow) {
-                buttonColor = ContextCompat.getColor(getActivity(), R.color.airmap_yellow);
+                buttonColor = ContextCompat.getColor(getActivity(), R.color.status_yellow);
             } else if (color == Green) {
-                buttonColor = ContextCompat.getColor(getActivity(), R.color.airmap_green);
+                buttonColor = ContextCompat.getColor(getActivity(), R.color.status_green);
             } else {
                 buttonColor = ContextCompat.getColor(getActivity(), R.color.colorPrimary);
             }

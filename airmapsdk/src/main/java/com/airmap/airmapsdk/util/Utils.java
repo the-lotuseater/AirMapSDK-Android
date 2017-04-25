@@ -339,11 +339,13 @@ public class Utils {
         if (latestStatus != null) {
             AirMapStatus.StatusColor statusColor = latestStatus.getAdvisoryColor();
             if (statusColor == AirMapStatus.StatusColor.Red) {
-                color = ContextCompat.getColor(context, R.color.airmap_red);
+                color = ContextCompat.getColor(context, R.color.status_red);
+            } else if (statusColor == AirMapStatus.StatusColor.Orange) {
+                color = ContextCompat.getColor(context, R.color.status_orange);
             } else if (statusColor == AirMapStatus.StatusColor.Yellow) {
-                color = ContextCompat.getColor(context, R.color.airmap_yellow);
+                color = ContextCompat.getColor(context, R.color.status_yellow);
             } else if (statusColor == AirMapStatus.StatusColor.Green) {
-                color = ContextCompat.getColor(context, R.color.airmap_green);
+                color = ContextCompat.getColor(context, R.color.status_green);
             }
         } else {
             color = 0x1E88E5;

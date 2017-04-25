@@ -806,18 +806,22 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             int color;
             switch (statusColor) {
                 case Red: {
-                    color = getResources().getColor(R.color.airmap_red);
+                    color = getResources().getColor(R.color.status_red);
                     polygonOptions.alpha(0.6f);
                     break;
                 }
+                case Orange:
+                    color = getResources().getColor(R.color.status_orange);
+                    polygonOptions.alpha(0.6f);
+                    break;
                 case Yellow: {
-                    color = getResources().getColor(R.color.airmap_yellow);
+                    color = getResources().getColor(R.color.status_yellow);
                     polygonOptions.alpha(0.6f);
                     break;
                 }
                 default:
                 case Green: {
-                    color = getResources().getColor(R.color.airmap_green);
+                    color = getResources().getColor(R.color.status_green);
                     polygonOptions.alpha(0.6f);
                     break;
                 }

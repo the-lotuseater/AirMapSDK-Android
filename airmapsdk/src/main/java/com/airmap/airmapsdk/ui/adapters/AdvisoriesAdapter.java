@@ -353,21 +353,7 @@ public class AdvisoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private int getColor(AirMapStatus.StatusColor statusColor) {
-        switch (statusColor) {
-            case Red: {
-                return ContextCompat.getColor(context, R.color.red);
-            }
-            case Orange: {
-                return ContextCompat.getColor(context, R.color.orange);
-            }
-            case Yellow: {
-                return ContextCompat.getColor(context, R.color.yellow);
-            }
-            case Green:
-            default: {
-                return ContextCompat.getColor(context, R.color.green);
-            }
-        }
+        return ContextCompat.getColor(context, statusColor.getColorRes());
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.airmap.airmapsdk.models.status;
 
+import android.support.annotation.ColorRes;
 import android.text.TextUtils;
 
+import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
@@ -65,6 +67,20 @@ public class AirMapStatus implements Serializable, AirMapBaseModel {
                 default:
                 case Green:
                     return 1;
+            }
+        }
+
+        public @ColorRes int getColorRes() {
+            switch (this) {
+                case Red:
+                    return R.color.status_red;
+                case Orange:
+                    return R.color.status_orange;
+                case Yellow:
+                    return R.color.status_yellow;
+                default:
+                case Green:
+                    return R.color.status_green;
             }
         }
     }

@@ -62,7 +62,7 @@ public class AnnotationsFactory {
 
     private PolygonOptions getDefaultRedPolygonOptions() {
         PolygonOptions options = new PolygonOptions();
-        options.fillColor(ContextCompat.getColor(context, R.color.airmap_red));
+        options.fillColor(ContextCompat.getColor(context, R.color.status_red));
         options.alpha(0.66f);
         return options;
     }
