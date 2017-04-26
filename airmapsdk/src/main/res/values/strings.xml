@@ -396,6 +396,7 @@
   <string name="tile_layer_tfr_faa">Temporary Flight Restrictions</string>
   <!-- Name for map layer Universities -->
   <string name="tile_layer_universities">Universities</string>
+
   <!-- Format for traffic alerts. 1) aircraft id, 2) altitude, 3) distance, 4) direction, 5) time -->
   <string name="traffic_alert_with_aircraft_id_and_distance_format">Traffic %1$s\nAltitude %2$s\n%3$s %4$s %5$s</string>
   <!-- Format for traffic alerts. 1) aircraft id, 2) altitude, 3) ground speed -->

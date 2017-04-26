@@ -57,6 +57,7 @@ public class MappingService extends BaseService {
         Custom("custom", R.string.tile_layer_custom),
         Prisons("prisons", R.string.tile_layer_prisons),
         Universities("universities", R.string.tile_layer_universities),
+        SeaplaneBase("seaplane_base", R.string.tile_layer_seaplane_base),
         Other("aerial_recreational_areas,custom,hazard_areas,hospitals,power_plants,prisons,schools,universities,cities", R.string.tile_layer_other_cautionary_areas);
 
         private final String text;
@@ -131,6 +132,8 @@ public class MappingService extends BaseService {
                     return Prisons;
                 case "universities":
                     return Universities;
+                case "seaplane_base":
+                    return SeaplaneBase;
                 default:
                     return null;
             }
@@ -146,6 +149,7 @@ public class MappingService extends BaseService {
                     return AirMapAirspaceType.Fires;
                 case Emergencies:
                     return AirMapAirspaceType.Emergencies;
+                case SeaplaneBase:
                 case Prohibited:
                 case Restricted:
                     return AirMapAirspaceType.SpecialUse;
@@ -194,6 +198,7 @@ public class MappingService extends BaseService {
         ControlledAirspace("controlled_airspace", R.string.airspace_type_controlled),
         School("school", R.string.airspace_type_school),
         SpecialUse("special_use_airspace", R.string.airspace_type_special_use),
+        SeaplaneBase("seaplane_base", R.string.airspace_type_seaplane_base),
         TFR("tfr", R.string.airspace_type_tfr_faa),
         Wildfires("wildfire", R.string.airspace_type_wildfire),
         Fires("fire", R.string.airspace_type_fire),
@@ -261,6 +266,8 @@ public class MappingService extends BaseService {
                     return Prison;
                 case "university":
                     return University;
+                case "seaplane_base":
+                    return SeaplaneBase;
             }
             return null;
         }

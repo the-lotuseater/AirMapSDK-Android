@@ -218,6 +218,11 @@ public class AirMapRuleset implements Serializable, AirMapBaseModel, Comparable 
     }
 
     @Override
+    public String toString() {
+        return "Ruleset id: " + id + " name: " + name;
+    }
+
+    @Override
     public boolean equals(Object o) {
         return o != null && o instanceof AirMapRuleset && ((AirMapRuleset) o).getId().equals(this.getId());
     }

@@ -66,4 +66,7 @@
     <string name="pick_one">Pick One</string>
     <string name="optional">Optional</string>
     <string name="required">Required</string>
+
+    <string name="tile_layer_seaplane_base">Seaplane Base</string>
+    <string name="airspace_type_seaplane_base">Seaplane Base</string>
 </resources>

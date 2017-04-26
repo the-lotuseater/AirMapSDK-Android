@@ -329,7 +329,7 @@ public class AdvisoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        return advisories.size();
+        return advisories != null ? advisories.size() : 0;
     }
 
     @Override

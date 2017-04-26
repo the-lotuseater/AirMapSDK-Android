@@ -93,47 +93,49 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
             }
             setLastUpdated(getDateFromIso8601String(json.optString("last_updated")));
 
-            JSONObject properties = json.optJSONObject("properties");
-            switch (type) {
-                case Airport: {
-                    setAirportProperties(new AirMapAirportProperties(properties));
-                    break;
-                }
-                case Park: {
-                    setParkProperties(new AirMapParkProperties(properties));
-                    break;
-                }
-                case SpecialUse: {
-                    setSpecialUseProperties(new AirMapSpecialUseProperties(properties));
-                    break;
-                }
-                case PowerPlant: {
-                    setPowerPlantProperties(new AirMapPowerPlantProperties(properties));
-                    break;
-                }
-                case ControlledAirspace: {
-                    setControlledAirspaceProperties(new AirMapControlledAirspaceProperties(properties));
-                    break;
-                }
-                case School: {
-                    setSchoolProperties(new AirMapSchoolProperties(properties));
-                    break;
-                }
-                case TFR: {
-                    setTfrProperties(new AirMapTfrProperties(properties));
-                    break;
-                }
-                case Fires: {
-                    setWildfireProperties(new AirMapWildfireProperties(properties));
-                    break;
-                }
-                case Heliport: {
-                    setHeliportProperties(new AirMapHeliportProperties(properties));
-                    break;
-                }
-                case Emergencies: {
-                    setEmergencyProperties(new AirMapEmergencyProperties(properties));
-                    break;
+            if (type != null) {
+                JSONObject properties = json.optJSONObject("properties");
+                switch (type) {
+                    case Airport: {
+                        setAirportProperties(new AirMapAirportProperties(properties));
+                        break;
+                    }
+                    case Park: {
+                        setParkProperties(new AirMapParkProperties(properties));
+                        break;
+                    }
+                    case SpecialUse: {
+                        setSpecialUseProperties(new AirMapSpecialUseProperties(properties));
+                        break;
+                    }
+                    case PowerPlant: {
+                        setPowerPlantProperties(new AirMapPowerPlantProperties(properties));
+                        break;
+                    }
+                    case ControlledAirspace: {
+                        setControlledAirspaceProperties(new AirMapControlledAirspaceProperties(properties));
+                        break;
+                    }
+                    case School: {
+                        setSchoolProperties(new AirMapSchoolProperties(properties));
+                        break;
+                    }
+                    case TFR: {
+                        setTfrProperties(new AirMapTfrProperties(properties));
+                        break;
+                    }
+                    case Fires: {
+                        setWildfireProperties(new AirMapWildfireProperties(properties));
+                        break;
+                    }
+                    case Heliport: {
+                        setHeliportProperties(new AirMapHeliportProperties(properties));
+                        break;
+                    }
+                    case Emergencies: {
+                        setEmergencyProperties(new AirMapEmergencyProperties(properties));
+                        break;
+                    }
                 }
             }
         }
