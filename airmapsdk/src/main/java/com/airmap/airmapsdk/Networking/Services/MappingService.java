@@ -51,14 +51,17 @@ public class MappingService extends BaseService {
         ClassC("class_c", R.string.tile_layer_class_c),
         ClassD("class_d", R.string.tile_layer_class_d),
         ClassE("class_e0", R.string.tile_layer_class_e),
+        ClassF("class_f", R.string.tile_layer_class_f),
         HazardAreas("hazard_areas", R.string.tile_layer_hazard_areas),
         AerialRecreationalAreas("aerial_recreational_areas", R.string.tile_layer_aerial_rec_areas),
+        DenselyPopulatedRegion("densely_populated_region", R.string.tile_layer_did),
         Cities("cities", R.string.tile_layer_cities),
         Custom("custom", R.string.tile_layer_custom),
         Prisons("prisons", R.string.tile_layer_prisons),
         Universities("universities", R.string.tile_layer_universities),
         SeaplaneBase("seaplane_base", R.string.tile_layer_seaplane_base),
-        Other("aerial_recreational_areas,custom,hazard_areas,hospitals,power_plants,prisons,schools,universities,cities", R.string.tile_layer_other_cautionary_areas);
+        Other("aerial_recreational_areas,custom,hazard_areas,hospitals,power_plants,prisons,schools,universities,cities", R.string.tile_layer_other_cautionary_areas),
+        Unknown("type_not_found", R.string.tile_layer_unknown);
 
         private final String text;
         private final int title;
@@ -120,10 +123,14 @@ public class MappingService extends BaseService {
                     return ClassD;
                 case "class_e0":
                     return ClassE;
+                case "class_f":
+                    return ClassF;
                 case "hazard_areas":
                     return HazardAreas;
                 case "aerial_recreational_areas":
                     return AerialRecreationalAreas;
+                case "densely_populated_region":
+                    return DenselyPopulatedRegion;
                 case "cities":
                     return Cities;
                 case "custom":
@@ -135,7 +142,7 @@ public class MappingService extends BaseService {
                 case "seaplane_base":
                     return SeaplaneBase;
                 default:
-                    return null;
+                    return Unknown;
             }
         }
 
@@ -149,7 +156,6 @@ public class MappingService extends BaseService {
                     return AirMapAirspaceType.Fires;
                 case Emergencies:
                     return AirMapAirspaceType.Emergencies;
-                case SeaplaneBase:
                 case Prohibited:
                 case Restricted:
                     return AirMapAirspaceType.SpecialUse;
@@ -162,6 +168,7 @@ public class MappingService extends BaseService {
                     return AirMapAirspaceType.Hospitals;
                 case PowerPlants:
                     return AirMapAirspaceType.PowerPlant;
+                case SeaplaneBase:
                 case AirportsCommercial:
                 case AirportsRecreational:
                 case AirportsCommercialPrivate:
@@ -172,11 +179,13 @@ public class MappingService extends BaseService {
                 case ClassC:
                 case ClassD:
                 case ClassE:
+                case ClassF:
                     return AirMapAirspaceType.ControlledAirspace;
                 case HazardAreas:
                     return AirMapAirspaceType.HazardArea;
                 case AerialRecreationalAreas:
                     return AirMapAirspaceType.RecreationalArea;
+                case DenselyPopulatedRegion:
                 case Cities:
                     return AirMapAirspaceType.City;
                 case Custom:
@@ -185,6 +194,8 @@ public class MappingService extends BaseService {
                     return AirMapAirspaceType.Prison;
                 case Universities:
                     return AirMapAirspaceType.University;
+                case Unknown:
+                    return AirMapAirspaceType.Unknown;
             }
             return null;
         }
@@ -209,7 +220,8 @@ public class MappingService extends BaseService {
         City("city", R.string.airspace_type_city),
         Custom("custom", R.string.airspace_type_custom),
         Prison("prison", R.string.airspace_type_prison),
-        University("university", R.string.airspace_type_university);
+        University("university", R.string.airspace_type_university),
+        Unknown("unknown", R.string.airspace_type_unknown);
 
         private final String text;
         private final int title;
@@ -268,8 +280,9 @@ public class MappingService extends BaseService {
                     return University;
                 case "seaplane_base":
                     return SeaplaneBase;
+                default:
+                    return Unknown;
             }
-            return null;
         }
     }
 
