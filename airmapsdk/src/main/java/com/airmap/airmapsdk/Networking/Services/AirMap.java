@@ -47,6 +47,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -647,7 +648,11 @@ public class AirMap {
             if (layers != null) {
                 ArrayList<String> stringLayers = new ArrayList<>();
                 for (MappingService.AirMapLayerType layer : layers) {
-                    stringLayers.add(layer.toString());
+                    if (layer.toString().contains(",")) {
+                        Collections.addAll(stringLayers, layer.toString().split(","));
+                    } else {
+                        stringLayers.add(layer.toString());
+                    }
                 }
                 intent.putStringArrayListExtra(CreateFlightActivity.KEY_LAYERS, stringLayers);
             }
