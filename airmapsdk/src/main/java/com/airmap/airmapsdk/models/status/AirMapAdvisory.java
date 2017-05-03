@@ -124,6 +124,7 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
                         setTfrProperties(new AirMapTfrProperties(properties));
                         break;
                     }
+                    case Wildfires:
                     case Fires: {
                         setWildfireProperties(new AirMapWildfireProperties(properties));
                         break;
