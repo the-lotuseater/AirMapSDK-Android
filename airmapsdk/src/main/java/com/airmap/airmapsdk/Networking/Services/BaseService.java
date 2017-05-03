@@ -81,6 +81,7 @@ class BaseService {
     protected static final String authVersion = DEBUG ? Utils.getDebugUrl() : "v1/";
     protected static final String authBaseUrl = baseUrl + "auth/" + authVersion;
     protected static final String anonymousLoginUrl = authBaseUrl + "anonymous/token";
+    protected static final String delegationUrl = DEBUG ? "https://sso-dev.airmap.io/delegation" : "https://sso.airmap.io/delegation";
 
     //Rules
     protected static final String rulesetsVersion = DEBUG ? Utils.getDebugUrl() : "v2/";

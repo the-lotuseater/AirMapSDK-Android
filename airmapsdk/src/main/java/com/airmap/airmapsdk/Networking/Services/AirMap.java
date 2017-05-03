@@ -203,6 +203,10 @@ public class AirMap {
         }
     }
 
+    public static void getFirebaseToken(AirMapCallback<String> callback) {
+        AuthService.getFirebaseToken(callback);
+    }
+
     /**
      * This function should be called when the application enters the background (onDestroy,
      * onStop, onPause)
