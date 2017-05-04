@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.SwitchCompat;
+import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -25,6 +24,8 @@ import com.airmap.airmapsdk.models.permits.AirMapPermitIssuer;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapStatusRequirementNotice;
+import com.airmap.airmapsdk.ui.activities.WebActivity;
+import com.airmap.airmapsdk.util.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +48,7 @@ public class FlightNoticeFragment extends Fragment {
     private Set<String> digitalNoticeNames;
     private List<AirMapStatusRequirementNotice> notDigitalNotices;
     private List<String> notDigitalNoticeNames;
+    private List<String> notDigitalNoticeTypes;
 
     public FlightNoticeFragment() {
         // Required empty public constructor
@@ -81,6 +83,15 @@ public class FlightNoticeFragment extends Fragment {
         submitNoticeSwitch = (TextView) view.findViewById(R.id.submit_notice_switch);
         digitalNoticeListView = (ListView) view.findViewById(R.id.digital_notice_list);
         notDigitalLabelTextView = (TextView) view.findViewById(R.id.not_digital_label);
+        notDigitalLabelTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), WebActivity.class);
+                intent.putExtra(Constants.URL_EXTRA, Constants.FAQ_URL);
+                intent.putExtra(Intent.EXTRA_TITLE, "FAQ");
+                startActivity(intent);
+            }
+        });
         notDigitalNoticeListView = (ListView) view.findViewById(R.id.not_digital_list);
         nextButton = (Button) view.findViewById(R.id.next_button);
     }
@@ -90,6 +101,7 @@ public class FlightNoticeFragment extends Fragment {
         digitalNoticeNames = new HashSet<>();
         notDigitalNotices = new ArrayList<>();
         notDigitalNoticeNames = new ArrayList<>();
+        notDigitalNoticeTypes = new ArrayList<>();
         AirMapStatus status = mListener.getFlightStatus();
         for (AirMapStatusAdvisory advisory : status.getAdvisories()) {
             if (advisory.getRequirements() != null && advisory.getRequirements().getNotice() != null) {
@@ -113,6 +125,7 @@ public class FlightNoticeFragment extends Fragment {
                 } else if (notice.isNoticeRequired()) {
                     notDigitalNotices.add(notice);
                     notDigitalNoticeNames.add(advisory.getName());
+                    notDigitalNoticeTypes.add(getString(advisory.getType().getTitle()));
                 }
             }
         }
@@ -147,8 +160,11 @@ public class FlightNoticeFragment extends Fragment {
                 map.put("name", notDigitalNoticeNames.get(i));
                 String number = notDigitalNotices.get(i).getPhoneNumber();
                 if (number == null || number.length() < 10) {
-                    number = "";
+                    number = getString(R.string.no_phone_number_provided);
+                } else {
+                    number = PhoneNumberUtils.formatNumber(number);
                 }
+                map.put("type", notDigitalNoticeTypes.get(i));
                 map.put("phone", number);
                 list.add(map);
             }
@@ -164,7 +180,7 @@ public class FlightNoticeFragment extends Fragment {
                     }
                 }
             });
-            notDigitalNoticeListView.setAdapter(new SimpleAdapter(getContext(), list, android.R.layout.simple_list_item_2, new String[]{"name", "phone"}, new int[]{android.R.id.text1, android.R.id.text2}));
+            notDigitalNoticeListView.setAdapter(new SimpleAdapter(getContext(), list, R.layout.flight_notice_not_digital_list_item, new String[]{"name", "type", "phone"}, new int[]{R.id.authority_name, R.id.authority_type, R.id.phone_number}));
         }
     }
 
