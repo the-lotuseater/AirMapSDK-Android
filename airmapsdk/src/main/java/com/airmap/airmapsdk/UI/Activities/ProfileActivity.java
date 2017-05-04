@@ -248,9 +248,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                             @Override
                             public void run() {
                                 phoneEditText.setText(PhoneNumberUtils.formatNumber(phone)); //Update the UI with the new phone number
+                                showVerifyDialog();
                             }
                         });
-                        showVerifyDialog();
                     }
 
                     @Override
