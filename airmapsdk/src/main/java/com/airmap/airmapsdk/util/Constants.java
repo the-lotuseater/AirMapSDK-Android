@@ -14,7 +14,7 @@ public class Constants {
     public static final String WELCOME_RESULT_EXTRA = "welcome_result_extra";
     public static final String CITY_EXTRA = "city_extra";
 
-    public static final String FAQ_URL = "https://cdn.airmap.io/static/webviews/faq.html";
+    public static final String FAQ_URL = "https://support.airmap.com/hc/en-us/articles/115006598947?utm_source=android%20app";
     public static final String FAQ_PERMITS_URL = "https://cdn.airmap.io/static/webviews/faq.html#permit-what";
     public static final String INFO_URL = "https://cdn.airmap.io/static/webviews/faq.html#let-others-know";
 
