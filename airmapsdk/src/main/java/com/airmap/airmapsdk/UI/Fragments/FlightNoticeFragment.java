@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -45,10 +44,11 @@ public class FlightNoticeFragment extends Fragment {
     private Button nextButton;
 
     private List<AirMapStatusRequirementNotice> digitalNotices;
-    private Set<String> digitalNoticeNames;
-    private List<AirMapStatusRequirementNotice> notDigitalNotices;
-    private List<String> notDigitalNoticeNames;
-    private List<String> notDigitalNoticeTypes;
+    private Map<String,String> digitalNoticeNamesAndTypes;
+
+    private List<AirMapStatusRequirementNotice> nonDigitalNotices;
+    private List<String> nonDigitalNoticeNames;
+    private List<String> nonDigitalNoticeTypes;
 
     public FlightNoticeFragment() {
         // Required empty public constructor
@@ -98,10 +98,11 @@ public class FlightNoticeFragment extends Fragment {
 
     private void getNotices() {
         digitalNotices = new ArrayList<>();
-        digitalNoticeNames = new HashSet<>();
-        notDigitalNotices = new ArrayList<>();
-        notDigitalNoticeNames = new ArrayList<>();
-        notDigitalNoticeTypes = new ArrayList<>();
+        digitalNoticeNamesAndTypes = new HashMap<>();
+        nonDigitalNotices = new ArrayList<>();
+        nonDigitalNoticeNames = new ArrayList<>();
+        nonDigitalNoticeTypes = new ArrayList<>();
+
         AirMapStatus status = mListener.getFlightStatus();
         for (AirMapStatusAdvisory advisory : status.getAdvisories()) {
             if (advisory.getRequirements() != null && advisory.getRequirements().getNotice() != null) {
@@ -113,19 +114,22 @@ public class FlightNoticeFragment extends Fragment {
                     if (!TextUtils.isEmpty(advisory.getOrganizationId())) {
                         for (AirMapPermitIssuer issuer : status.getOrganizations()) {
                             if (advisory.getOrganizationId().equals(issuer.getId())) {
-                                digitalNoticeNames.add(issuer.getName());
+                                String type = advisory.getType() != null ? getString(advisory.getType().getTitle()) : "";
+                                digitalNoticeNamesAndTypes.put(issuer.getName(), type);
                                 useAdvisoryName = false;
                             }
                         }
                     }
 
                     if (useAdvisoryName) {
-                        digitalNoticeNames.add(advisory.getName());
+                        String type = advisory.getType() != null ? getString(advisory.getType().getTitle()) : "";
+                        digitalNoticeNamesAndTypes.put(advisory.getName(), type);
                     }
                 } else if (notice.isNoticeRequired()) {
-                    notDigitalNotices.add(notice);
-                    notDigitalNoticeNames.add(advisory.getName());
-                    notDigitalNoticeTypes.add(getString(advisory.getType().getTitle()));
+                    nonDigitalNotices.add(notice);
+                    nonDigitalNoticeNames.add(advisory.getName());
+                    String type = advisory.getType() != null ? getString(advisory.getType().getTitle()) : "";
+                    nonDigitalNoticeTypes.add(type);
                 }
             }
         }
@@ -141,37 +145,44 @@ public class FlightNoticeFragment extends Fragment {
 
     private void setupDigitalNoticeList() {
         AirMapStatus status = mListener.getFlightStatus();
-        if (digitalNoticeNames.isEmpty() || !status.getApplicablePermits().isEmpty()) {
+        if (digitalNoticeNamesAndTypes.isEmpty() && status.getApplicablePermits().isEmpty()) {
             submitNoticeSwitch.setVisibility(View.GONE);
         }
 
-        if (!digitalNoticeNames.isEmpty()) {
-            digitalNoticeListView.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, new ArrayList<>(digitalNoticeNames)));
+        List<Map<String, String>> list = new ArrayList<>();
+        for (String digitalNoticeName : digitalNoticeNamesAndTypes.keySet()) {
+            Map<String, String> map = new HashMap<>();
+            map.put("name", digitalNoticeName);
+            map.put("type", digitalNoticeNamesAndTypes.get(digitalNoticeName));
+            list.add(map);
+        }
+        if (!digitalNoticeNamesAndTypes.isEmpty()) {
+            digitalNoticeListView.setAdapter(new SimpleAdapter(getContext(), list, R.layout.flight_notice_digital_list_item, new String[]{"name", "type"}, new int[]{R.id.authority_name, R.id.authority_type}));
         }
     }
 
     private void setupNotDigitalNoticeList() {
-        if (notDigitalNoticeNames.isEmpty()) {
+        if (nonDigitalNoticeNames.isEmpty()) {
             notDigitalLabelTextView.setVisibility(View.GONE);
         } else {
             List<Map<String, String>> list = new ArrayList<>();
-            for (int i = 0; i < notDigitalNotices.size(); i++) {
+            for (int i = 0; i < nonDigitalNotices.size(); i++) {
                 Map<String, String> map = new HashMap<>();
-                map.put("name", notDigitalNoticeNames.get(i));
-                String number = notDigitalNotices.get(i).getPhoneNumber();
+                map.put("name", nonDigitalNoticeNames.get(i));
+                String number = nonDigitalNotices.get(i).getPhoneNumber();
                 if (number == null || number.length() < 10) {
                     number = getString(R.string.no_phone_number_provided);
                 } else {
                     number = PhoneNumberUtils.formatNumber(number);
                 }
-                map.put("type", notDigitalNoticeTypes.get(i));
+                map.put("type", nonDigitalNoticeTypes.get(i));
                 map.put("phone", number);
                 list.add(map);
             }
             notDigitalNoticeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String number = notDigitalNotices.get(position).getPhoneNumber();
+                    String number = nonDigitalNotices.get(position).getPhoneNumber();
                     if (number != null && number.length() >= 10) {
                         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number));
                         if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
@@ -186,7 +197,7 @@ public class FlightNoticeFragment extends Fragment {
 
     //If there are no digital notices or non-digital airports that need notice, go to next fragment
     private void continueToNextFragmentIfNecessary() {
-        if (notDigitalLabelTextView.getVisibility() == View.GONE && submitNoticeSwitch.getVisibility() == View.GONE) {
+        if (digitalNotices.isEmpty() && nonDigitalNotices.isEmpty()) {
             onNextButton();
         }
     }
