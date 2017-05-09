@@ -27,12 +27,13 @@ import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapTrafficListener;
+import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
 import com.airmap.airmapsdk.networking.callbacks.LoginListener;
 import com.airmap.airmapsdk.ui.activities.CreateEditAircraftActivity;
 import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
-import com.airmap.airmapsdk.ui.activities.LoginActivity;
 import com.airmap.airmapsdk.ui.activities.PilotProfileActivity;
 import com.airmap.airmapsdk.ui.activities.ProfileActivity;
+import com.airmap.airmapsdk.util.AirMapAuthenticationCallback;
 import com.airmap.airmapsdk.util.Utils;
 
 import org.jose4j.jwt.JwtClaims;
@@ -387,39 +388,10 @@ public class AirMap {
      * Show the login screen
      *
      * @param activity    Activity to create the UI with and to deliver results to
-     * @param requestCode The request code to start the activity with
+     * @param callback    AirMap authentication callback
      */
-    public static void showLogin(Activity activity, int requestCode) {
-        if (activity != null) {
-            Intent intent = new Intent(activity, LoginActivity.class);
-            activity.startActivityForResult(intent, requestCode);
-        }
-    }
-
-    /**
-     * Show the login screen
-     *
-     * @param fragment    Fragment to create the UI with and to deliver results to
-     * @param requestCode The request code to start the activity with
-     */
-    public static void showLogin(Fragment fragment, int requestCode) {
-        if (fragment != null) {
-            Intent intent = new Intent(fragment.getActivity(), LoginActivity.class);
-            fragment.startActivityForResult(intent, requestCode);
-        }
-    }
-
-    /**
-     * Show the login screen
-     *
-     * @param fragment    Fragment to create the UI with and to deliver results to
-     * @param requestCode The request code to start the activity with
-     */
-    public static void showLogin(android.support.v4.app.Fragment fragment, int requestCode) {
-        if (fragment != null) {
-            Intent intent = new Intent(fragment.getContext(), LoginActivity.class);
-            fragment.startActivityForResult(intent, requestCode);
-        }
+    public static void showLogin(Activity activity, LoginCallback callback) {
+        Auth.loginOrSignup(activity, new AirMapAuthenticationCallback(activity, callback));
     }
 
     /**
@@ -849,6 +821,8 @@ public class AirMap {
     public static void getPilot(@NonNull String pilotId, @Nullable AirMapCallback<AirMapPilot> callback) {
         if (pilotId != null) {
             PilotService.getPilot(pilotId, callback);
+        } else {
+            callback.onError(new AirMapException("No pilot id"));
         }
     }
 
