@@ -28,6 +28,10 @@ import okhttp3.Response;
 
 public class AuthService extends BaseService {
 
+    public static String getAuth0Domain() {
+        return auth0Domain;
+    }
+
     public static void performAnonymousLogin(String userId, final AirMapCallback<Void> callback) {
         String url = anonymousLoginUrl;
         Map<String, String> params = new HashMap<>();
@@ -107,7 +111,7 @@ public class AuthService extends BaseService {
                     JSONObject jsonObject = new JSONObject(json);
                     String customToken = jsonObject.getString("id_token");
                     if (listener != null) {
-                        listener.onSuccess(null);
+                        listener.onSuccess(customToken);
                     }
                 } catch (JSONException e) {
                     AirMapLog.e("AuthServices", e.getMessage());
