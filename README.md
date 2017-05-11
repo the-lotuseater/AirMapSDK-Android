@@ -4,7 +4,7 @@
 
 Create Flights, Send Telemetry Data, Get Realtime Traffic Alerts.
 
-##Requirements
+## Requirements
 * Minimum Andorid SDK Level 18 or higher
 
 ### Sign up for an [AirMap Developer Account.](https://dashboard.airmap.io/developer/)
@@ -46,8 +46,8 @@ Simply add this line in your Application or Activity's `onCreate`
 AirMap.init(MainActivity.this);
 ```
 
-###Documentation
+### Documentation
 Visit [https://developers.airmap.com/docs/android-getting-started](https://developers.airmap.com/docs/android-getting-started) for the full documentation
 
-#License
+# License
 See [LICENSE](https://raw.githubusercontent.com/airmap/AirMapSDK-Android/master/LICENSE) for details.
