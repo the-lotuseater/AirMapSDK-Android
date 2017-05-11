@@ -103,7 +103,7 @@ public class AirMapAirspaceAdvisoryStatus implements Serializable, AirMapBaseMod
                 advisories.add(new AirMapAdvisory(advisoriesJson.optJSONObject(i)));
             }
             setAdvisories(advisories);
-            setAdvisoryColor(StatusColor.fromString(json.optString("advisory_color")));
+            setAdvisoryColor(StatusColor.fromString(json.optString("color")));
         }
         return this;
     }
