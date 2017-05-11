@@ -274,8 +274,7 @@ public class AirMapClient {
                 Builder newRequest = chain.request().newBuilder();
                 String authToken = AirMap.getAuthToken();
                 if (!TextUtils.isEmpty(authToken)) {
-                    newRequest.removeHeader("Authorization"); // Remove the old Auth header with the old token
-                    newRequest.addHeader("Authorization", "Bearer " + authToken);
+                    newRequest.header("Authorization", "Bearer " + authToken);
                 }
                 return chain.proceed(newRequest.build());
             }
@@ -291,10 +290,10 @@ public class AirMapClient {
                     String authToken = AirMap.getAuthToken();
                     String xApiKey = AirMap.getApiKey();
                     if (!TextUtils.isEmpty(xApiKey)) {
-                        newRequest.addHeader("x-Api-Key", xApiKey);
+                        newRequest.header("x-Api-Key", xApiKey);
                     }
                     if (!TextUtils.isEmpty(authToken)) {
-                        newRequest.addHeader("Authorization", "Bearer " + authToken);
+                        newRequest.header("Authorization", "Bearer " + authToken);
                     }
                     return chain.proceed(newRequest.build());
                 }
