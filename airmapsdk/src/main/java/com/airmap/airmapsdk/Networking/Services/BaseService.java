@@ -10,8 +10,10 @@ import com.airmap.airmapsdk.util.Utils;
 class BaseService {
 
     //URLs should end with a /
-    //TODO: Change all the debug servers to production upon release
     private static final boolean DEBUG = true;
+
+    //TODO: get rid of this
+    private static final boolean DEV = false;
 
     //Base Urls
     protected static final String baseUrl = "https://api.airmap.com/";
@@ -81,6 +83,8 @@ class BaseService {
     protected static final String authVersion = DEBUG ? Utils.getDebugUrl() : "v1/";
     protected static final String authBaseUrl = baseUrl + "auth/" + authVersion;
     protected static final String anonymousLoginUrl = authBaseUrl + "anonymous/token";
+    protected static final String delegationUrl = DEV ? "https://sso-dev.airmap.io/delegation" : "https://sso.airmap.io/delegation";
+    protected static final String auth0Domain = DEV ? "sso-dev.airmap.io" : "sso.airmap.io";
 
     //Rules
     protected static final String rulesetsVersion = DEBUG ? Utils.getDebugUrl() : "v2/";

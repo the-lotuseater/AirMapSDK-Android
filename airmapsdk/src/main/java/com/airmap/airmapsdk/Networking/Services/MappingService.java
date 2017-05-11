@@ -109,6 +109,7 @@ public class MappingService extends BaseService {
                 case "airports_commercial,airports_commercial_private":
                 case "airports_commercial":
                     return AirportsCommercial;
+                case "airports_recreational":
                 case "airports_recreational,airports_recreational_private":
                     return AirportsRecreational;
                 case "airports_commercial_private":
@@ -141,6 +142,8 @@ public class MappingService extends BaseService {
                     return Universities;
                 case "seaplane_base":
                     return SeaplaneBase;
+                case "aerial_recreational_areas,custom,hazard_areas,hospitals,power_plants,prisons,schools,universities,cities":
+                    return Other;
                 default:
                     return Unknown;
             }

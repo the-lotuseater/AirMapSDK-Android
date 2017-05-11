@@ -1,5 +1,7 @@
 package com.airmap.airmapsdk.networking.services;
 
+import android.util.Log;
+
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.AirMapToken;
@@ -26,6 +28,10 @@ import okhttp3.Response;
 
 public class AuthService extends BaseService {
 
+    public static String getAuth0Domain() {
+        return auth0Domain;
+    }
+
     public static void performAnonymousLogin(String userId, final AirMapCallback<Void> callback) {
         String url = anonymousLoginUrl;
         Map<String, String> params = new HashMap<>();
@@ -45,7 +51,7 @@ public class AuthService extends BaseService {
     }
 
     public static void refreshAccessToken(String refreshToken, final AirMapCallback<Void> listener) {
-        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://sso.airmap.io/delegation").newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(delegationUrl).newBuilder();
         urlBuilder.addQueryParameter("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
         urlBuilder.addQueryParameter("api_type", "app");
         urlBuilder.addQueryParameter("client_id", Utils.getClientId());
@@ -70,6 +76,42 @@ public class AuthService extends BaseService {
                     AirMap.setAuthToken(idToken);
                     if (listener != null) {
                         listener.onSuccess(null);
+                    }
+                } catch (JSONException e) {
+                    AirMapLog.e("AuthServices", e.getMessage());
+                    if (listener != null) {
+                        listener.onError(new AirMapException(response.code(), e.getMessage()));
+                    }
+                }
+            }
+        });
+    }
+
+    public static void getFirebaseToken(final AirMapCallback<String> listener) {
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(delegationUrl).newBuilder();
+        urlBuilder.addQueryParameter("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
+        urlBuilder.addQueryParameter("client_id", Utils.getClientId());
+        urlBuilder.addQueryParameter("id_token", AirMap.getAuthToken());
+        urlBuilder.addQueryParameter("scope", "openid");
+        urlBuilder.addQueryParameter("device", "android_app");
+        String url = urlBuilder.build().toString();
+        AirMap.getClient().get(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (listener != null) {
+                    listener.onError(new AirMapException(e.getMessage()));
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    String json = response.body().string();
+                    response.body().close();
+                    JSONObject jsonObject = new JSONObject(json);
+                    String customToken = jsonObject.getString("id_token");
+                    if (listener != null) {
+                        listener.onSuccess(customToken);
                     }
                 } catch (JSONException e) {
                     AirMapLog.e("AuthServices", e.getMessage());
