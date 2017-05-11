@@ -51,7 +51,7 @@ public class AuthService extends BaseService {
     }
 
     public static void refreshAccessToken(String refreshToken, final AirMapCallback<Void> listener) {
-        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://sso.airmap.io/delegation").newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(delegationUrl).newBuilder();
         urlBuilder.addQueryParameter("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
         urlBuilder.addQueryParameter("api_type", "app");
         urlBuilder.addQueryParameter("client_id", Utils.getClientId());
