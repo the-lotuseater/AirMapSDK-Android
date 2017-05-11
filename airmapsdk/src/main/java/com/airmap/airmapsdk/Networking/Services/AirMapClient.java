@@ -285,16 +285,20 @@ public class AirMapClient {
         builder.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
-                Builder newRequest = chain.request().newBuilder();
-                String authToken = AirMap.getAuthToken();
-                String xApiKey = AirMap.getApiKey();
-                if (!TextUtils.isEmpty(xApiKey)) {
-                    newRequest.addHeader("x-Api-Key", xApiKey);
+                // Only attach our API Key and Auth token if we're going to AirMap
+                if (chain.request().url().host().equals("api.airmap.com")) {
+                    Builder newRequest = chain.request().newBuilder();
+                    String authToken = AirMap.getAuthToken();
+                    String xApiKey = AirMap.getApiKey();
+                    if (!TextUtils.isEmpty(xApiKey)) {
+                        newRequest.addHeader("x-Api-Key", xApiKey);
+                    }
+                    if (!TextUtils.isEmpty(authToken)) {
+                        newRequest.addHeader("Authorization", "Bearer " + authToken);
+                    }
+                    return chain.proceed(newRequest.build());
                 }
-                if (!TextUtils.isEmpty(authToken)) {
-                    newRequest.addHeader("Authorization", "Bearer " + authToken);
-                }
-                return chain.proceed(newRequest.build());
+                return chain.proceed(chain.request());
             }
         });
 
