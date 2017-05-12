@@ -43,14 +43,33 @@ public class AirMapAuthenticationCallback extends AuthenticationCallback {
         AirMap.setAuthToken(credentials.getIdToken());
         AirMap.getPilot(new AirMapCallback<AirMapPilot>() {
             @Override
-            public void onSuccess(AirMapPilot response) {
-                callback.onSuccess(response);
+            public void onSuccess(final AirMapPilot response) {
+                if (activity == null || activity.isDestroyed() || activity.isFinishing()) {
+                    Log.e(TAG, "Activity was killed before login returned. However auth token was saved.");
+                    return;
+                }
+
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onSuccess(response);
+                    }
+                });
             }
 
             @Override
-            public void onError(AirMapException e) {
+            public void onError(final AirMapException e) {
                 Log.e(TAG, "get pilot failed", e);
-                callback.onError(e);
+                if (activity == null || activity.isDestroyed() || activity.isFinishing()) {
+                    return;
+                }
+
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onError(e);
+                    }
+                });
             }
         });
 
