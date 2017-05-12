@@ -65,10 +65,13 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     private ArrayList<AirMapWelcomeResult> welcomeData;
     private String welcomeCity;
 
+    private List<AirMapStatusAdvisory> advisoriesToFilter;
+
 
     public AdvisoriesBottomSheetAdapter(Context context, Map<String, List<AirMapStatusAdvisory>> data, Map<String, String> organizations) {
         this.context = context;
         this.dateFormat = Utils.getDateTimeFormat();
+        this.advisoriesToFilter = new ArrayList<>();
 
         RED_TITLE = context.getString(R.string.flight_strictly_regulated);
         YELLOW_TITLE = context.getString(R.string.advisories);
@@ -109,6 +112,8 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
 
     public void setData(Map<String, List<AirMapStatusAdvisory>> data, Map<String, String> organizations) {
         advisories.clear();
+        advisoriesToFilter.clear();
+
 
         if (data.containsKey(RED_TITLE)) {
             AirMapStatusAdvisory header = new AirMapStatusAdvisory();
@@ -150,6 +155,26 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
         welcomeData = data;
 
         notifyDataSetChanged();
+    }
+
+    public void setAdvisoriesToFilter(List<String> names) {
+        advisoriesToFilter = new ArrayList<>();
+
+        for (AirMapStatusAdvisory advisory : advisories) {
+            if (names.contains(advisory.getName())) {
+                advisoriesToFilter.add(advisory);
+            }
+        }
+
+        notifyDataSetChanged();
+    }
+
+    private List<AirMapStatusAdvisory> getAdvisories() {
+        if (!advisoriesToFilter.isEmpty()) {
+            return advisoriesToFilter;
+        }
+
+        return advisories;
     }
 
     public boolean isWelcomeEnabled() {
@@ -362,12 +387,12 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     }
 
     private AirMapStatusAdvisory getItem(int position) {
-        return advisories.get(isWelcomeEnabled() ? position - 1 : position);
+        return getAdvisories().get(isWelcomeEnabled() ? position - 1 : position);
     }
 
     @Override
     public int getItemCount() {
-        return advisories.size() + (isWelcomeEnabled() ? 1 : 0);
+        return getAdvisories().size() + (isWelcomeEnabled() ? 1 : 0);
     }
 
     @Override

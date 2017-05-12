@@ -24,17 +24,16 @@ import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
-import com.airmap.airmapsdk.models.welcome.AirMapWelcome;
 import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapTrafficListener;
+import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
 import com.airmap.airmapsdk.networking.callbacks.LoginListener;
-import com.airmap.airmapsdk.networking.callbacks.RefreshTokenListener;
 import com.airmap.airmapsdk.ui.activities.CreateEditAircraftActivity;
 import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
-import com.airmap.airmapsdk.ui.activities.LoginActivity;
 import com.airmap.airmapsdk.ui.activities.PilotProfileActivity;
 import com.airmap.airmapsdk.ui.activities.ProfileActivity;
+import com.airmap.airmapsdk.util.AirMapAuthenticationCallback;
 import com.airmap.airmapsdk.util.Utils;
 
 import org.jose4j.jwt.JwtClaims;
@@ -49,6 +48,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -226,7 +226,7 @@ public class AirMap {
      *
      * @param jwt The JWT Auth Token
      */
-    private void decodeToken(String jwt) {
+    private static void decodeToken(String jwt) {
         JwtConsumer consumer = new JwtConsumerBuilder()
                 .setSkipAllValidators()
                 .setDisableRequireSignature()
@@ -246,7 +246,7 @@ public class AirMap {
      *
      * @param auth The new auth token
      */
-    public void setAuthToken(String auth) {
+    public static void setAuthToken(String auth) {
         authToken = auth;
         client.setAuthToken(authToken);
         getAirMapTrafficService().setAuthToken(auth);
@@ -273,14 +273,14 @@ public class AirMap {
     /**
      * @return the authToken
      */
-    protected String getAuthToken() {
+    public static String getAuthToken() {
         return authToken;
     }
 
     /**
      * @return the API key
      */
-    protected String getApiKey() {
+    public static String getApiKey() {
         return apiKey;
     }
 
@@ -388,48 +388,27 @@ public class AirMap {
      * Show the login screen
      *
      * @param activity    Activity to create the UI with and to deliver results to
-     * @param requestCode The request code to start the activity with
+     * @param callback    AirMap authentication callback
      */
-    public static void showLogin(Activity activity, int requestCode) {
-        if (activity != null) {
-            Intent intent = new Intent(activity, LoginActivity.class);
-            activity.startActivityForResult(intent, requestCode);
-        }
-    }
-
-    /**
-     * Show the login screen
-     *
-     * @param fragment    Fragment to create the UI with and to deliver results to
-     * @param requestCode The request code to start the activity with
-     */
-    public static void showLogin(Fragment fragment, int requestCode) {
-        if (fragment != null) {
-            Intent intent = new Intent(fragment.getActivity(), LoginActivity.class);
-            fragment.startActivityForResult(intent, requestCode);
-        }
-    }
-
-    /**
-     * Show the login screen
-     *
-     * @param fragment    Fragment to create the UI with and to deliver results to
-     * @param requestCode The request code to start the activity with
-     */
-    public static void showLogin(android.support.v4.app.Fragment fragment, int requestCode) {
-        if (fragment != null) {
-            Intent intent = new Intent(fragment.getContext(), LoginActivity.class);
-            fragment.startActivityForResult(intent, requestCode);
-        }
+    public static void showLogin(Activity activity, LoginCallback callback) {
+        Auth.loginOrSignup(activity, new AirMapAuthenticationCallback(activity, callback));
     }
 
     /**
      * Refreshes the pilot's authentication token
      *
-     * @param listener The callback that is invoked on success or error
+     * @param callback The callback that is invoked on success or error
      */
-    public static void refreshAccessToken(@Nullable RefreshTokenListener listener) {
-        Auth.refreshAccessToken(getInstance().getContext(), listener);
+    public static void refreshAccessToken(@Nullable AirMapCallback<Void> callback) {
+        Auth.refreshAccessToken(getInstance().getContext(), callback);
+    }
+
+    /**
+     * Logs in anonymously. The auth token of the anonymous user can be obtained, if required,
+     * through {@link AirMap#getAuthToken()}
+     */
+    public static void performAnonymousLogin(@NonNull String userId, @Nullable AirMapCallback<Void> callback) {
+        AuthService.performAnonymousLogin(userId, callback);
     }
 
     //Aircraft
@@ -630,7 +609,8 @@ public class AirMap {
      */
     public static void createFlight(@NonNull Activity activity, int requestCode,
                                     @NonNull Coordinate coordinate, @Nullable HashMap<String, String> extras,
-                                    @Nullable List<MappingService.AirMapLayerType> layers) {
+                                    @Nullable List<MappingService.AirMapLayerType> layers,
+                                    @Nullable MappingService.AirMapMapTheme theme) {
         if (activity != null && coordinate != null) {
             Intent intent = new Intent(activity, CreateFlightActivity.class);
             intent.putExtra(CreateFlightActivity.COORDINATE, coordinate);
@@ -640,9 +620,16 @@ public class AirMap {
             if (layers != null) {
                 ArrayList<String> stringLayers = new ArrayList<>();
                 for (MappingService.AirMapLayerType layer : layers) {
-                    stringLayers.add(layer.toString());
+                    if (layer.toString().contains(",")) {
+                        Collections.addAll(stringLayers, layer.toString().split(","));
+                    } else {
+                        stringLayers.add(layer.toString());
+                    }
                 }
                 intent.putStringArrayListExtra(CreateFlightActivity.KEY_LAYERS, stringLayers);
+            }
+            if (theme != null) {
+                intent.putExtra(CreateFlightActivity.KEY_THEME, theme);
             }
             activity.startActivityForResult(intent, requestCode);
         }
@@ -662,7 +649,8 @@ public class AirMap {
      */
     public static void createFlight(@NonNull Fragment fragment, int requestCode,
                                     @NonNull Coordinate coordinate, @Nullable HashMap<String, String> extras,
-                                    @Nullable List<MappingService.AirMapLayerType> layers) {
+                                    @Nullable List<MappingService.AirMapLayerType> layers,
+                                    @Nullable MappingService.AirMapMapTheme theme) {
         if (fragment != null && coordinate != null) {
             Intent intent = new Intent(fragment.getActivity(), CreateFlightActivity.class);
             intent.putExtra(CreateFlightActivity.COORDINATE, coordinate);
@@ -675,6 +663,9 @@ public class AirMap {
                     stringLayers.add(layer.toString());
                 }
                 intent.putStringArrayListExtra(CreateFlightActivity.KEY_LAYERS, stringLayers);
+            }
+            if (theme != null) {
+                intent.putExtra(CreateFlightActivity.KEY_THEME, theme);
             }
             fragment.startActivityForResult(intent, requestCode);
         }
@@ -694,7 +685,8 @@ public class AirMap {
      */
     public static void createFlight(@NonNull android.support.v4.app.Fragment fragment, int requestCode,
                                     @NonNull Coordinate coordinate, @Nullable HashMap<String, String> extras,
-                                    @Nullable List<MappingService.AirMapLayerType> layers) {
+                                    @Nullable List<MappingService.AirMapLayerType> layers,
+                                    @Nullable MappingService.AirMapMapTheme theme) {
         if (fragment != null && coordinate != null) {
             Intent intent = new Intent(fragment.getContext(), CreateFlightActivity.class);
             intent.putExtra(CreateFlightActivity.COORDINATE, coordinate);
@@ -707,6 +699,9 @@ public class AirMap {
                     stringLayers.add(layer.toString());
                 }
                 intent.putStringArrayListExtra(CreateFlightActivity.KEY_LAYERS, stringLayers);
+            }
+            if (theme != null) {
+                intent.putExtra(CreateFlightActivity.KEY_THEME, theme);
             }
             fragment.startActivityForResult(intent, requestCode);
         }
@@ -826,6 +821,8 @@ public class AirMap {
     public static void getPilot(@NonNull String pilotId, @Nullable AirMapCallback<AirMapPilot> callback) {
         if (pilotId != null) {
             PilotService.getPilot(pilotId, callback);
+        } else {
+            callback.onError(new AirMapException("No pilot id"));
         }
     }
 
@@ -1213,7 +1210,6 @@ public class AirMap {
         return AirspaceService.getAirspace(airspaceIds, listener);
     }
 
-    //TODO: Remove context. only necessary since we're reading from assets to mock
     public static Call getWelcomeSummary(@NonNull Coordinate coordinate, @Nullable AirMapCallback<List<AirMapWelcomeResult>> listener) {
         return WelcomeService.getWelcomeSummary(coordinate, listener);
     }

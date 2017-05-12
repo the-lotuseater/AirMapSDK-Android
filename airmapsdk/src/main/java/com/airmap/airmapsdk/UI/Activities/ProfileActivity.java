@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -204,7 +205,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
         phoneLayout.addView(editText);
         phoneLayout.setPadding(dpAsPixels, dpAsPixels, dpAsPixels, 0);
-        final AlertDialog dialog = new AlertDialog.Builder(this)
+        final AlertDialog dialog = new AlertDialog.Builder(this, R.style.Theme_AppCompat_Dialog_Alert)
                 .setMessage(R.string.airmap_phone_number_disclaimer)
                 .setTitle(R.string.phone_number)
                 .setView(phoneLayout)
@@ -213,12 +214,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Analytics.logEvent(Analytics.Page.PHONE_NUMBER_PHONE_VERIFICATION, Analytics.Action.tap, Analytics.Label.SAVE);
-
                         onSubmitPhoneNumber(phoneLayout);
                         dialog.dismiss();
                     }
                 })
                 .show();
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -246,10 +247,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         phoneEditText.post(new Runnable() {
                             @Override
                             public void run() {
-                                phoneEditText.setText(phone); //Update the UI with the new phone number
+                                phoneEditText.setText(PhoneNumberUtils.formatNumber(phone)); //Update the UI with the new phone number
+                                showVerifyDialog();
                             }
                         });
-                        showVerifyDialog();
                     }
 
                     @Override
@@ -284,7 +285,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         phoneEditText.post(new Runnable() { //run on UI thread
             @Override
             public void run() {
-                final AlertDialog dialog = new AlertDialog.Builder(ProfileActivity.this)
+                final AlertDialog dialog = new AlertDialog.Builder(ProfileActivity.this, R.style.Theme_AppCompat_Dialog_Alert)
                         .setView(verifyLayout)
                         .setMessage(R.string.enter_verification_token)
                         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -300,6 +301,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                             }
                         })
                         .show();
+                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
                 editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                     @Override
                     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {

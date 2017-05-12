@@ -62,6 +62,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
     public static final String COORDINATE = "coordinate";
     public static final String KEY_VALUE_EXTRAS = "keyValueExtras";
     public static final String KEY_LAYERS = "layers";
+    public static final String KEY_THEME = "theme";
 
     public static final String FLIGHT = "flight";
     public static final String FLIGHT_STATUS = "flight_status";
@@ -94,6 +95,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
     private ArrayList<AirMapAvailablePermit> permitsToShowInReview; //selectedPermits + permitsToApplyFor temporarily transformed into AvailablePermit
 
     private List<MappingService.AirMapLayerType> mapLayers;
+    private MappingService.AirMapMapTheme mapTheme;
 
     private List<LatLng>[] pathBuffers; //So that we don't need to recalculate the buffer polygon using turf on flight details screen
     private AnnotationsFactory annotationsFactory;
@@ -109,10 +111,18 @@ public class CreateFlightActivity extends AppCompatActivity implements
         permitsToApplyFor = new ArrayList<>();
         permitsToShowInReview = new ArrayList<>();
         mapLayers = new ArrayList<>();
-        if (getIntent().getExtras() != null && getIntent().getStringArrayListExtra(KEY_LAYERS) != null) {
-            ArrayList<String> stringLayers = getIntent().getStringArrayListExtra(KEY_LAYERS);
-            for (String stringLayer : stringLayers) {
-                mapLayers.add(MappingService.AirMapLayerType.fromString(stringLayer));
+        mapTheme = MappingService.AirMapMapTheme.Standard;
+        if (getIntent().getExtras() != null) {
+            if (getIntent().getStringArrayListExtra(KEY_LAYERS) != null) {
+                ArrayList<String> stringLayers = getIntent().getStringArrayListExtra(KEY_LAYERS);
+                for (String stringLayer : stringLayers) {
+                    if (MappingService.AirMapLayerType.fromString(stringLayer) != null) {
+                        mapLayers.add(MappingService.AirMapLayerType.fromString(stringLayer));
+                    }
+                }
+            }
+            if (getIntent().getSerializableExtra(KEY_THEME) != null) {
+                mapTheme = (MappingService.AirMapMapTheme) getIntent().getSerializableExtra(KEY_THEME);
             }
         }
 
@@ -464,25 +474,14 @@ public class CreateFlightActivity extends AppCompatActivity implements
             }
         }
 
-        if (!notices.isEmpty()) {
-            for (int i = 0; i < adapter.getCount(); i++) {
-                Fragment fragment = adapter.getItem(i);
-                if (fragment instanceof FlightNoticeFragment) {
-                    viewPager.setCurrentItem(i, true);
-                    return;
-                }
+        for (int i = 0; i < adapter.getCount(); i++) {
+            Fragment fragment = adapter.getItem(i);
+            if (fragment instanceof FlightNoticeFragment) {
+                viewPager.setCurrentItem(i, true);
+                return;
             }
-            adapter.add(FlightNoticeFragment.newInstance());
-        } else {
-            for (int i = 0; i < adapter.getCount(); i++) {
-                Fragment fragment = adapter.getItem(i);
-                if (fragment instanceof ReviewFlightFragment) {
-                    viewPager.setCurrentItem(i, true);
-                    return;
-                }
-            }
-            adapter.add(ReviewFlightFragment.newInstance());
         }
+        adapter.add(FlightNoticeFragment.newInstance());
         goToLastPage();
     }
 
@@ -588,6 +587,10 @@ public class CreateFlightActivity extends AppCompatActivity implements
 
     public List<MappingService.AirMapLayerType> getMapLayers() {
         return mapLayers;
+    }
+
+    public MappingService.AirMapMapTheme getMapTheme() {
+        return mapTheme;
     }
 
     @Override
