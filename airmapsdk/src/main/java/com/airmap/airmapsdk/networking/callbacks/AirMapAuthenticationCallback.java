@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.util;
+package com.airmap.airmapsdk.networking.callbacks;
 
 import android.app.Activity;
 import android.util.Log;
@@ -8,6 +8,9 @@ import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.util.PreferenceUtils;
+import com.airmap.airmapsdk.util.SecuredPreferenceException;
+import com.airmap.airmapsdk.util.Utils;
 import com.auth0.android.lock.AuthenticationCallback;
 import com.auth0.android.lock.Lock;
 import com.auth0.android.lock.utils.LockException;
@@ -43,14 +46,24 @@ public class AirMapAuthenticationCallback extends AuthenticationCallback {
         AirMap.setAuthToken(credentials.getIdToken());
         AirMap.getPilot(new AirMapCallback<AirMapPilot>() {
             @Override
-            public void onSuccess(AirMapPilot response) {
-                callback.onSuccess(response);
+            public void onSuccess(final AirMapPilot response) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onSuccess(response);
+                    }
+                });
             }
 
             @Override
-            public void onError(AirMapException e) {
+            public void onError(final AirMapException e) {
                 Log.e(TAG, "get pilot failed", e);
-                callback.onError(e);
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onError(e);
+                    }
+                });
             }
         });
 
@@ -73,13 +86,17 @@ public class AirMapAuthenticationCallback extends AuthenticationCallback {
     }
 
     @Override
-    public void onError(LockException error) {
+    public void onError(final LockException error) {
         Log.e(TAG, "Error authenticating with auth0", error);
-        callback.onError(new AirMapException(error.getMessage()));
-
-        if (lock != null) {
-            lock.onDestroy(activity);
-            lock = null;
-        }
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                callback.onError(new AirMapException(error.getMessage()));
+                if (lock != null) {
+                    lock.onDestroy(activity);
+                    lock = null;
+                }
+            }
+        });
     }
 }

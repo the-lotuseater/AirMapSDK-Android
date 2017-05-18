@@ -22,6 +22,8 @@ import okhttp3.Response;
  */
 public class GenericListOkHttpCallback extends GenericBaseOkHttpCallback {
 
+    private static final String TAG = "GenericListOkHttpCallback";
+
     public GenericListOkHttpCallback(AirMapCallback listener, Class<? extends AirMapBaseModel> classToInstantiate) {
         super(listener, classToInstantiate);
     }
@@ -31,32 +33,34 @@ public class GenericListOkHttpCallback extends GenericBaseOkHttpCallback {
         if (listener == null) {
             return; //Don't need to do anything if no listener was provided
         }
+
         String jsonString;
         try {
             jsonString = response.body().string();
         } catch (IOException e) {
-            Utils.error(listener, e);
+            failed(e);
             return;
         } finally {
             response.body().close();
         }
+
         JSONObject result = null;
         try {
             result = new JSONObject(jsonString);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         if (!response.isSuccessful() || !Utils.statusSuccessful(result)) {
-            Utils.error(listener, response.code(), result);
+            failed(response.code(), result);
             return;
         }
 
         JSONArray jsonArray = result.optJSONArray("data");
         if (jsonArray == null && result.isNull("data")) {
-            //noinspection unchecked
-            listener.onSuccess(new ArrayList<>()); //Pretend that there was an array with no items
+            success(new ArrayList<>());
         } else if (jsonArray == null) {
-            Utils.error(listener, response.code(), result); //There was a parsing exception most likely
+            failed(response.code(), result); //There was a parsing exception most likely
         } else {
             List<AirMapBaseModel> models = new ArrayList<>(jsonArray.length());
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -70,8 +74,7 @@ public class GenericListOkHttpCallback extends GenericBaseOkHttpCallback {
                     e.printStackTrace();
                 }
             }
-            //noinspection unchecked
-            listener.onSuccess(models);
+            success(models);
         }
     }
 }

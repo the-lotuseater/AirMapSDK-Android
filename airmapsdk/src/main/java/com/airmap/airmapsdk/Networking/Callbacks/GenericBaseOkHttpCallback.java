@@ -1,7 +1,12 @@
 package com.airmap.airmapsdk.networking.callbacks;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.util.Utils;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -29,4 +34,31 @@ abstract class GenericBaseOkHttpCallback implements okhttp3.Callback {
 
     @Override
     public abstract void onResponse(Call call, Response response);
+
+    protected void success(final Object response) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                listener.onSuccess(response);
+            }
+        });
+    }
+
+    protected void failed(final Exception e) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Utils.error(listener, e);
+            }
+        });
+    }
+
+    protected void failed(final int code, final JSONObject jsonObject) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Utils.error(listener, code, jsonObject);
+            }
+        });
+    }
 }

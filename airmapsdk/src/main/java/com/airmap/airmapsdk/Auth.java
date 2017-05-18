@@ -3,37 +3,19 @@ package com.airmap.airmapsdk;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
-import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
-import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.networking.services.AuthService;
-import com.airmap.airmapsdk.util.AirMapAuthenticationCallback;
+import com.airmap.airmapsdk.networking.callbacks.AirMapAuthenticationCallback;
 import com.airmap.airmapsdk.util.PreferenceUtils;
 import com.airmap.airmapsdk.util.SecuredPreferenceException;
 import com.airmap.airmapsdk.util.Utils;
 import com.auth0.android.Auth0;
 import com.auth0.android.lock.Lock;
 
-import org.jose4j.jwt.JwtClaims;
-import org.jose4j.jwt.MalformedClaimException;
-import org.jose4j.jwt.consumer.InvalidJwtException;
-import org.jose4j.jwt.consumer.JwtConsumer;
-import org.jose4j.jwt.consumer.JwtConsumerBuilder;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import okhttp3.HttpUrl;
 
 /**
  * Created by Vansh Gandhi on 8/10/16.
