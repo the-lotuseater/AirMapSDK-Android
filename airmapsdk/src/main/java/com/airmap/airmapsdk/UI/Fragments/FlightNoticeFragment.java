@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +27,8 @@ import com.airmap.airmapsdk.util.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class FlightNoticeFragment extends Fragment {
 
@@ -172,8 +169,6 @@ public class FlightNoticeFragment extends Fragment {
                 String number = nonDigitalNotices.get(i).getPhoneNumber();
                 if (number == null || number.length() < 10) {
                     number = getString(R.string.no_phone_number_provided);
-                } else {
-                    number = PhoneNumberUtils.formatNumber(number);
                 }
                 map.put("type", nonDigitalNoticeTypes.get(i));
                 map.put("phone", number);

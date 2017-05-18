@@ -1,22 +1,12 @@
 package com.airmap.airmapsdk;
 
-import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
-import com.airmap.airmapsdk.networking.services.MappingService;
-import com.airmap.airmapsdk.util.Utils;
-import com.google.i18n.phonenumbers.NumberParseException;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.Phonenumber;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,9 +17,11 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
-import com.airmap.airmapsdk.models.welcome.AirMapWelcome;
+import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
+import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.ui.activities.WelcomeActivity;
 import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.Utils;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -272,7 +264,7 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
                     advisory.getRequirements().getNotice().getPhoneNumber() : advisory.getAirportProperties().getPhone();
 
             if (number != null && number.length() >= 10) {
-                holder.description2TextView.setText(formatPhoneNumber(number));
+                holder.description2TextView.setText(number);
                 holder.description2TextView.setVisibility(View.VISIBLE);
                 holder.description2TextView.setTextColor(ContextCompat.getColor(context, R.color.colorLinkBlue));
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -369,21 +361,6 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
         String city = advisory.getCity() + ", " + (TextUtils.isEmpty(advisory.getState()) ? advisory.getCountry() : advisory.getState());
         holder.description1TextView.setText(TextUtils.isEmpty(advisory.getCity()) ? advisory.getName() : city);
         holder.description1TextView.setVisibility(View.VISIBLE);
-    }
-
-    private String formatPhoneNumber(String number) {
-        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-        Locale locale = Locale.getDefault();
-        String country = locale != null && locale.getCountry() != null && !TextUtils.isEmpty(locale.getCountry()) ? locale.getCountry() : "US";
-        try {
-            Phonenumber.PhoneNumber phoneNumber = phoneUtil.parse(number, country);
-            return phoneUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
-        } catch (NumberParseException e) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                return PhoneNumberUtils.formatNumber(number, country);
-            }
-            return PhoneNumberUtils.formatNumber(number);
-        }
     }
 
     private AirMapStatusAdvisory getItem(int position) {
