@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#344052</color>
-    <!--<color name="colorPrimaryDark">#263238</color>-->
-    <color name="colorPrimaryDark">#19202b</color>
+    <color name="colorPrimary">@color/airmap_navy</color>
+    <color name="colorPrimaryDark">@color/airmap_navy_dark</color>
     <color name="colorAccent">#13A4FA</color>
     <color name="colorTextAndIcons">#FFFFFF</color>
     <color name="airmap_colorFill">#B8E1E3</color>
@@ -23,9 +22,13 @@
     <color name="status_yellow">#ffeb3b</color>
     <color name="status_green">#7ED321</color>
     <color name="status_orange">#FF8C00</color>
-    
-    <color name="airmap_aqua">#88DBDF</color>
+
     <color name="light_grey">#E6E6E6</color>
+
+    <color name="airmap_aqua">#88DBDF</color>
     <color name="airmap_navy">#333F48</color>
     <color name="airmap_navy_dark">#2A313C</color>
+    <color name="airmap_navy_light">#444d54</color>
+    <color name="airmap_orange">#FC4C02</color>
+    <color name="airmap_yellow">#F9E547</color>
 </resources>
