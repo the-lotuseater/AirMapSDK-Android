@@ -13,12 +13,6 @@ import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
-import com.ibm.icu.text.MeasureFormat;
-import com.ibm.icu.text.NumberFormat;
-import com.ibm.icu.util.Currency;
-import com.ibm.icu.util.CurrencyAmount;
-import com.ibm.icu.util.Measure;
-import com.ibm.icu.util.MeasureUnit;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
@@ -179,10 +173,18 @@ public class Utils {
 
         if (timeInMillis >= oneHour) {
             double hours = timeInMillis / oneHour;
-            return context.getResources().getQuantityString(R.plurals.duration_in_hours, (int) Math.ceil(hours), NumberFormat.getInstance(Locale.getDefault()).format(hours));
+            return context.getResources().getQuantityString(R.plurals.duration_in_hours, (int) Math.ceil(hours), formatNumber(hours));
         } else {
             double minutes = timeInMillis / oneMinute;
-            return context.getString(R.string.duration_in_minutes, NumberFormat.getInstance(Locale.getDefault()).format(minutes));
+            return context.getString(R.string.duration_in_minutes, formatNumber(minutes));
+        }
+    }
+
+    private static String formatNumber(double number) {
+        if (number == (long) number) {
+            return String.format(Locale.getDefault(), "%d", (long) number);
+        } else {
+            return String.format(Locale.getDefault(), "%s", number);
         }
     }
 
@@ -276,10 +278,9 @@ public class Utils {
         };
     }
 
-    public static String getMeasurementText(double bufferInMeters, boolean useMetric) {
-        MeasureFormat format = MeasureFormat.getInstance(Locale.getDefault(), MeasureFormat.FormatWidth.SHORT);
+    public static String getMeasurementText(Context context, double bufferInMeters, boolean useMetric) {
         double buffer = useMetric ? bufferInMeters : Math.round(metersToFeet(bufferInMeters));
-        return format.format(new Measure(buffer, useMetric ? MeasureUnit.METER : MeasureUnit.FOOT));
+        return context.getString(useMetric ? R.string.units_meter_short : R.string.units_feet_short, buffer);
     }
 
     public static int indexOfMeterPreset(double meters, double[] presets) {
@@ -301,8 +302,7 @@ public class Utils {
     }
 
     public static String getPriceText(double priceInUSD) {
-        NumberFormat format = NumberFormat.getCurrencyInstance(Locale.getDefault());
-        return format.format(new CurrencyAmount(priceInUSD, Currency.getInstance("USD")));
+        return String.format("$%.2f", priceInUSD);
     }
 
     /**

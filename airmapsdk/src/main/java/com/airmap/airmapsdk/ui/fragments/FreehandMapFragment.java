@@ -965,7 +965,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 double bufferPreset = Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[progress] : getBufferPresets()[progress];
-                String bufferText = Utils.getMeasurementText(bufferPreset, Utils.useMetric(getActivity()));
+                String bufferText = Utils.getMeasurementText(getActivity(), bufferPreset, Utils.useMetric(getActivity()));
                 seekBarValueTextView.setText(bufferText);
                 drawCircle(circleContainer.center, bufferPreset);
                 if (!fromUser) {
@@ -1029,7 +1029,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 double bufferPreset = Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[progress] : getBufferPresets()[progress];
-                String bufferText = Utils.getMeasurementText(bufferPreset, Utils.useMetric(getActivity()));
+                String bufferText = Utils.getMeasurementText(getActivity(), bufferPreset, Utils.useMetric(getActivity()));
 
                 lineContainer.width = getPathWidthFromSeekBar(getActivity(), progress);
                 seekBarValueTextView.setText(bufferText);

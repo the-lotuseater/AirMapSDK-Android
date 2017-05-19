@@ -73,4 +73,7 @@
     <string name="airspace_type_seaplane_base">Seaplane Base</string>
     <string name="tile_layer_unknown">Unknown</string>
     <string name="airspace_type_unknown">Unknown</string>
+
+    <string name="units_meter_short">%1$s m</string>
+    <string name="units_feet_short">%1$s ft</string>
 </resources>

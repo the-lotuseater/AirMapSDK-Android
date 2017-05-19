@@ -329,7 +329,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                             double altitude = getAltitudePresets()[altitudeSeekBar.getProgress()];
-                            String altitudeText = Utils.getMeasurementText(altitude, Utils.useMetric(getActivity()));
+                            String altitudeText = Utils.getMeasurementText(getActivity(), altitude, Utils.useMetric(getActivity()));
 
                             altitudeValueTextView.setText(altitudeText);
                             mListener.getFlight().setMaxAltitude(altitude);
