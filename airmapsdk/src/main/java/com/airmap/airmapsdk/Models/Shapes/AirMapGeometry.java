@@ -4,6 +4,7 @@ import com.airmap.airmapsdk.models.Coordinate;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
@@ -49,5 +50,32 @@ public abstract class AirMapGeometry implements Serializable {
             }
         }
         return null;
+    }
+
+    public static JSONObject getGeoJSONFromGeometry(AirMapGeometry geometry) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if (geometry instanceof AirMapPolygon) {
+                jsonObject.put("type", "Polygon");
+
+                JSONArray polygon = new JSONArray();
+                for (Coordinate coordinate : ((AirMapPolygon) geometry).getCoordinates()) {
+                    JSONArray point = new JSONArray();
+                    point.put(coordinate.getLongitude());
+                    point.put(coordinate.getLatitude());
+                    polygon.put(point);
+                }
+
+                JSONArray coordinates = new JSONArray();
+                coordinates.put(polygon);
+
+                jsonObject.put("coordinates", coordinates);
+            } else if (geometry instanceof AirMapPoint) {
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
     }
 }
