@@ -8,6 +8,7 @@ import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.airspace.AirMapAirspaceAdvisoryStatus;
 import com.airmap.airmapsdk.models.rules.AirMapRule;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
+import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
 import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
@@ -38,6 +39,12 @@ public class RulesService extends BaseService {
         Map<String, String> params = new HashMap<>();
         params.put("latitude", String.valueOf(coordinate.getLatitude()));
         params.put("longitude", String.valueOf(coordinate.getLongitude()));
+        return AirMap.getClient().get(rulesetsBaseUrl, params, new GenericListOkHttpCallback(listener, AirMapRuleset.class));
+    }
+
+    public static Call getRulesets(JSONObject geometry, AirMapCallback<List<AirMapRuleset>> listener) {
+        Map<String, String> params = new HashMap<>();
+        params.put("geometry", geometry.toString());
         return AirMap.getClient().get(rulesetsBaseUrl, params, new GenericListOkHttpCallback(listener, AirMapRuleset.class));
     }
 

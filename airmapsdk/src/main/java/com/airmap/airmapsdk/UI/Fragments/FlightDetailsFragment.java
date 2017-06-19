@@ -75,11 +75,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.airmap.airmapsdk.util.Constants.URL_EXTRA;
-import static com.airmap.airmapsdk.util.Utils.getDurationPresets;
-import static com.airmap.airmapsdk.util.Utils.indexOfDurationPreset;
-import static com.airmap.airmapsdk.util.Utils.indexOfMeterPreset;
-
 
 public class FlightDetailsFragment extends Fragment implements OnMapReadyCallback {
 
@@ -169,7 +164,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), WebActivity.class);
-                intent.putExtra(URL_EXTRA, Constants.INFO_URL);
+                intent.putExtra(Constants.URL_EXTRA, Constants.INFO_URL);
                 startActivity(intent);
             }
         });
@@ -313,8 +308,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
     private void setupSeekBars() {
         if (mListener == null || mListener.getFlight() == null) return;
-        final int altitudeIndex = indexOfMeterPreset(mListener.getFlight().getMaxAltitude(), getAltitudePresets());
-        final int durationIndex = indexOfDurationPreset(mListener.getFlight().getEndsAt().getTime() - mListener.getFlight().getStartsAt().getTime());
+        final int altitudeIndex = Utils.indexOfNearestMatch(mListener.getFlight().getMaxAltitude(), getAltitudePresets());
+        final int durationIndex = Utils.indexOfDurationPreset(mListener.getFlight().getEndsAt().getTime() - mListener.getFlight().getStartsAt().getTime());
         final int animationDuration = 250;
         int altitudeAnimateTo = (int) (((float) altitudeIndex / getAltitudePresets().length) * 100);
         ObjectAnimator altitudeAnimator = ObjectAnimator.ofInt(altitudeSeekBar, "progress", altitudeAnimateTo);
@@ -343,7 +338,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             }
         });
 
-        int durationAnimateTo = (int) (((float) durationIndex / getDurationPresets().length) * 100);
+        int durationAnimateTo = (int) (((float) durationIndex / Utils.getDurationPresets().length) * 100);
         ObjectAnimator durationAnimator = ObjectAnimator.ofInt(durationSeekBar, "progress", durationAnimateTo);
         durationAnimator.setDuration(animationDuration);
         durationAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -355,7 +350,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                     durationSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener() {
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                            long duration = getDurationPresets()[progress];
+                            long duration = Utils.getDurationPresets()[progress];
                             String durationText = Utils.getDurationText(getActivity(), duration);
                             durationValueTextView.setText(durationText);
                             Date endsAt = new Date(mListener.getFlight().getStartsAt().getTime() + duration);
@@ -364,7 +359,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                             Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.slide, Analytics.Label.FLIGHT_END_TIME);
                         }
                     });
-                    durationSeekBar.setMax(getDurationPresets().length - 1);
+                    durationSeekBar.setMax(Utils.getDurationPresets().length - 1);
                     durationSeekBar.setProgress(durationIndex);
                 }
             }
@@ -402,7 +397,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
 
                                 if (mListener != null) {
                                     mListener.getFlight().setStartsAt(flightDate.getTime());
-                                    Date correctedEndTime = new Date(flightDate.getTime().getTime() + getDurationPresets()[durationSeekBar.getProgress()]);
+                                    Date correctedEndTime = new Date(flightDate.getTime().getTime() + Utils.getDurationPresets()[durationSeekBar.getProgress()]);
                                     mListener.getFlight().setEndsAt(correctedEndTime);
                                     updateStartsAtTextView();
                                     mListener.flightChanged();

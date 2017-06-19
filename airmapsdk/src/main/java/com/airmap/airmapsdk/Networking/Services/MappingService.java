@@ -327,15 +327,15 @@ public class MappingService extends BaseService {
     }
 
     protected String getJurisdictionsTileUrlTemplate() {
-        return "http://ec2-54-200-159-247.us-west-2.compute.amazonaws.com:3000/base-jurisdiction/{z}/{x}/{y}";
+        return mapTilesRulesUrl + "/base-jurisdiction/{z}/{x}/{y}";
     }
 
     protected String getRulesetTileUrlTemplate(String rulesetId, List<String> layers) {
-        return "http://ec2-54-200-159-247.us-west-2.compute.amazonaws.com:3000/" + rulesetId + "/" + TextUtils.join(",", layers) + "/{z}/{x}/{y}";
+        return mapTilesRulesUrl + rulesetId + "/" + TextUtils.join(",", layers) + "/{z}/{x}/{y}";
     }
 
     protected String getStylesUrl() {
-        return "https://cdn.airmap.com/static/map-styles/0.2.1/styles.json";
+        return "https://cdn.airmap.com/static/map-styles/v0.2/styles.json";
     }
 
     protected void getStylesJson(final AirMapCallback<JSONObject> listener) {

@@ -30,4 +30,23 @@
         <item name="Auth0.PrimaryColor">@color/airmap_aqua</item>
         <item name="Auth0.DarkPrimaryColor">@color/airmap_navy</item>
     </style>
+
+    <style name="AppTheme.WeatherLabel" >
+        <item name="android:layout_width">84dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <style name="AppTheme.WeatherValue" >
+        <item name="android:layout_width">84dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/font_title</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
 </resources>

@@ -1,11 +1,17 @@
 package com.airmap.airmapsdk.models.rules;
 
+import android.text.TextUtils;
+
 import com.airmap.airmapsdk.models.AirMapBaseModel;
+import com.airmap.airmapsdk.models.flight.AirMapFlightFeature;
 import com.airmap.airmapsdk.util.Utils;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -15,41 +21,44 @@ import java.io.Serializable;
 public class AirMapRule implements Serializable, AirMapBaseModel {
 
     public enum Status {
-        Pass("pass"), Info("info"), MoreAction("moreaction"), Fail("fail");
+        Conflicting, NotConflicting, MissingInfo, InformationRules, Unknown;
 
-        private String text;
-
-        Status(String text) {
-            this.text = text;
-        }
-
-        public static AirMapRule.Status fromString(String text) {
+        public static Status fromString(String text) {
             switch (text.toLowerCase()) {
-                case "pass":
-                    return Pass;
-                case "info":
-                    return Info;
-                case "moreaction":
-                    return MoreAction;
-                case "fail":
-                    return Fail;
+                case "conflicting":
+                    return Conflicting;
+                case "not_conflicting":
+                    return NotConflicting;
+                case "missing_info":
+                    return MissingInfo;
+                case "informational":
+                case "information_rules":
+                    return InformationRules;
+                default:
+                    return Unknown;
             }
-
-            return Pass;
         }
 
-        public String toString() {
-            return text;
+        public int intValue() {
+            switch (this) {
+                case Conflicting:
+                    return 0;
+                case MissingInfo:
+                    return 1;
+                case InformationRules:
+                    return 2;
+                case NotConflicting:
+                    return 3;
+            }
+            return -1;
         }
-
     }
 
-    private String id;
-    private String summary;
+    private String shortText;
+    private String description;
     private Status status;
-
-    public AirMapRule() {
-    }
+    private int displayOrder;
+    private List<AirMapFlightFeature> flightFeatures;
 
     public AirMapRule(JSONObject resultJson) {
         constructFromJson(resultJson);
@@ -58,29 +67,29 @@ public class AirMapRule implements Serializable, AirMapBaseModel {
     @Override
     public AirMapRule constructFromJson(JSONObject json) {
         if (json != null) {
-            setId(json.optString("id"));
-            setSummary(Utils.optString(json, "summary"));
+            setShortText(Utils.optString(json, "short_text"));
+            setDescription(Utils.optString(json, "description"));
+            setStatus(AirMapRule.Status.fromString(json.optString("status")));
+            setDisplayOrder(json.optInt("display_order"));
 
-            setStatus(AirMapRule.Status.fromString(json.optString("rule-status")));
+            List<AirMapFlightFeature> flightFeatures = new ArrayList<>();
+            if (json.has("flight_features")) {
+                JSONArray flightFeaturesArray = json.optJSONArray("flight_features");
+                for (int i = 0; i < flightFeaturesArray.length(); i++) {
+                    flightFeatures.add(new AirMapFlightFeature(flightFeaturesArray.optJSONObject(i)));
+                }
+            }
+            setFlightFeatures(flightFeatures);
         }
         return this;
     }
 
-    public String getId() {
-        return id;
+    public String getDescription() {
+        return description;
     }
 
-    public AirMapRule setId(String id) {
-        this.id = id;
-        return this;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public AirMapRule setSummary(String summary) {
-        this.summary = summary;
+    public AirMapRule setDescription(String description) {
+        this.description = description;
         return this;
     }
 
@@ -91,5 +100,38 @@ public class AirMapRule implements Serializable, AirMapBaseModel {
     public AirMapRule setStatus(AirMapRule.Status status) {
         this.status = status;
         return this;
+    }
+
+    public int getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public void setDisplayOrder(int displayOrder) {
+        this.displayOrder = displayOrder;
+    }
+
+    public String getShortText() {
+        return shortText;
+    }
+
+    public void setShortText(String shortText) {
+        this.shortText = shortText;
+    }
+
+    public List<AirMapFlightFeature> getFlightFeatures() {
+        return flightFeatures;
+    }
+
+    public void setFlightFeatures(List<AirMapFlightFeature> flightFeatures) {
+        this.flightFeatures = flightFeatures;
+    }
+
+    @Override
+    public String toString() {
+        if (!TextUtils.isEmpty(description) && !description.toLowerCase().equals("not available.")) {
+            return description;
+        }
+
+        return shortText;
     }
 }

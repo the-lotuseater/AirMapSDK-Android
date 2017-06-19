@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:orientation="vertical">
+
+    <TextView android:id="@+id/description_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="We can off you insurance for as little as $9.00 for this flight. This is the rest of the description"
+        android:textSize="12sp"
+        android:textColor="?colorAccent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView android:id="@+id/label_text_view"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="0.15"
+            android:gravity="center_vertical"
+            android:textSize="12sp"
+            android:text="Weight:" />
+
+        <TextView android:id="@+id/value_text_view"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="0.15"
+            android:gravity="center_vertical"
+            android:textColor="@color/font_title"
+            android:textSize="12sp"
+            android:text="14lbs" />
+
+        <SeekBar android:id="@+id/seekbar"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight=".7"
+            android:gravity="center_vertical"/>
+
+    </LinearLayout>
+
+</LinearLayout>

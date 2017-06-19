@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.models.comm.AirMapComm;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
+import com.airmap.airmapsdk.models.flight.AirMapFlightBriefing;
+import com.airmap.airmapsdk.models.flight.AirMapFlightPlan;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.GenericOkHttpCallback;
 import com.airmap.airmapsdk.networking.callbacks.ListFlightsCallback;
@@ -18,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Call;
 import okhttp3.Response;
 import rx.Observable;
 
@@ -134,6 +137,32 @@ class FlightService extends BaseService {
         Map<String, String> params = new HashMap<>();
         params.put("enhance", String.valueOf(enhance));
         AirMap.getClient().get(url, params, new GenericOkHttpCallback(listener, AirMapFlight.class));
+    }
+
+    public static Call createFlightPlan(AirMapFlightPlan flightPlan, final AirMapCallback<AirMapFlightPlan> callback) {
+        String url = flightPlanUrl;
+        JSONObject params = flightPlan.getAsParams();
+        Call call = AirMap.getClient().postWithJsonBody(url, params, new GenericOkHttpCallback(callback, AirMapFlightPlan.class));
+        return call;
+    }
+
+    public static Call patchFlightPlan(AirMapFlightPlan flightPlan, final AirMapCallback<AirMapFlightPlan> callback) {
+        String url = String.format(flightPlanPatchUrl, flightPlan.getPlanId());
+        JSONObject params = flightPlan.getAsParams();
+        Call call = AirMap.getClient().patchWithJsonBody(url, params, new GenericOkHttpCallback(callback, AirMapFlightPlan.class));
+        return call;
+    }
+
+    public static void getFlightBriefing(String flightPlanId, AirMapCallback<AirMapFlightBriefing> callback) {
+        String url = String.format(flightPlanBriefingUrl, flightPlanId);
+        AirMap.getClient().get(url, new GenericOkHttpCallback(callback, AirMapFlightBriefing.class));
+    }
+
+    public static void submitFlightPlan(String flightPlanId, boolean isPublic, AirMapCallback<AirMapFlightPlan> callback) {
+        String url = String.format(flightPlanSubmitUrl, flightPlanId);
+        Map<String, String> params = new HashMap<>();
+        params.put("public", Boolean.toString(isPublic));
+        AirMap.getClient().post(url, params, new GenericOkHttpCallback(callback, AirMapFlightPlan.class));
     }
 
     /**

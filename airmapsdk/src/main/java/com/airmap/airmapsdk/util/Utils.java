@@ -283,18 +283,27 @@ public class Utils {
         return context.getString(useMetric ? R.string.units_meter_short : R.string.units_feet_short, buffer);
     }
 
-    public static int indexOfMeterPreset(double meters, double[] presets) {
+    public static int indexOfNearestMatch(double meters, double[] presets) {
         for (int i = 0; i < presets.length; i++) {
-            if (presets[i] == meters) {
+            if (Math.round(presets[i]) >= Math.round(meters)) {
                 return i;
             }
         }
-        return -1;
+        return presets.length - 1;
+    }
+
+    public static int indexOfNearestMatch(double meters, List<Double> presets) {
+        for (int i = 0; i < presets.size(); i++) {
+            if (Math.round(presets.get(i)) >= Math.round(meters)) {
+                return i;
+            }
+        }
+        return presets.size() - 1;
     }
 
     public static int indexOfDurationPreset(long millis) {
         for (int i = 0; i < getDurationPresets().length; i++) {
-            if (getDurationPresets()[i] == millis) {
+            if (getDurationPresets()[i] >= millis) {
                 return i;
             }
         }

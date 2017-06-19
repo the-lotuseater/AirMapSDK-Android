@@ -56,7 +56,7 @@ public class AnnotationsFactory {
     public PolygonOptions getDefaultPolygonOptions() {
         PolygonOptions options = new PolygonOptions();
         options.fillColor(ContextCompat.getColor(context, R.color.airmap_colorFill));
-        options.alpha(0.66f);
+        options.alpha(0.75f);
         return options;
     }
 

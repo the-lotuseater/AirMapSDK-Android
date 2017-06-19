@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:orientation="vertical">
+
+    <TextView android:id="@+id/description_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginBottom="4dp"
+        android:text="We can off you insurance for as little as $9.00 for this flight. This is the rest of the description"
+        android:textSize="12sp"
+        android:textColor="?colorAccent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.airmap.airmapsdk.ui.views.ToggleButton
+            android:id="@+id/no_button"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="0.5"
+            android:textSize="12sp"
+            android:text="@string/no"
+            app:backgroundTint="?colorPrimaryDark" />
+
+        <com.airmap.airmapsdk.ui.views.ToggleButton
+            android:id="@+id/yes_button"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="0.5"
+            android:textSize="12sp"
+            android:text="@string/yes"
+            app:backgroundTint="?colorPrimaryDark" />
+
+    </LinearLayout>
+
+</LinearLayout>

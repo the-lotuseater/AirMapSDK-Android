@@ -1,15 +1,18 @@
 package com.airmap.airmapsdk.networking.services;
 
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
+import com.airmap.airmapsdk.models.AirMapWeather;
+import com.airmap.airmapsdk.models.AirMapWeatherUpdate;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.callbacks.GenericListOkHttpCallback;
 import com.airmap.airmapsdk.networking.callbacks.GenericOkHttpCallback;
 import com.airmap.airmapsdk.util.Utils;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -105,5 +108,15 @@ class StatusService extends BaseService {
             params.put("buffer", String.valueOf(buffer));
         }
         return AirMap.getClient().get(url, params, new GenericOkHttpCallback(listener, AirMapStatus.class));
+    }
+
+    public static Call getWeather(Coordinate coordinate, Date startTime, Date endTime, AirMapCallback<AirMapWeather> callback) {
+        Map<String, String> params = new HashMap<>();
+        params.put("latitude", Double.toString(coordinate.getLatitude()));
+        params.put("longitude", Double.toString(coordinate.getLongitude()));
+        params.put("start", Utils.getIso8601StringFromDate(startTime));
+        params.put("end", Utils.getIso8601StringFromDate(endTime));
+
+        return AirMap.getClient().get(weatherUrl, params, new GenericOkHttpCallback(callback, AirMapWeather.class));
     }
 }

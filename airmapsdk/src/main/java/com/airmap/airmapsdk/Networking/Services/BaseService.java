@@ -19,6 +19,7 @@ class BaseService {
     protected static final String baseUrl = "https://api.airmap.com/";
     protected static final String mapTilesVersion = DEBUG ? Utils.getDebugUrl() : "v4/";
     protected static final String mapTilesBaseUrl = baseUrl + "maps/" + mapTilesVersion + "tilejson/";
+    protected static final String mapTilesRulesUrl = baseUrl + "tiledata/" + mapTilesVersion;
 
     //Aircraft
     protected static final String aircraftVersion = DEBUG ? Utils.getDebugUrl() : "v2/";
@@ -39,6 +40,14 @@ class BaseService {
     protected static final String flightEndUrl = flightByIdUrl + "end/"; //Replace %s with id using String.format
     protected static final String flightStartCommUrl = flightByIdUrl + "start-comm/"; //Replace %s with id using String.format
     protected static final String flightEndCommUrl = flightByIdUrl + "end-comm/"; //Replace %s with id using String.format
+    protected static final String flightPlanUrl = flightBaseUrl + "plan/";
+    protected static final String flightPlanPatchUrl = flightPlanUrl + "%s/";
+    protected static final String flightPlanBriefingUrl = flightPlanPatchUrl + "briefing";
+    protected static final String flightPlanSubmitUrl = flightPlanPatchUrl + "submit";
+
+    //Weather
+    protected static final String weatherVersion = DEBUG ? Utils.getDebugUrl() : "v2/";
+    protected static final String weatherUrl = baseUrl + "advisory/" + weatherVersion + "weather";
 
     //Permits
     protected static final String permitVersion = DEBUG ? Utils.getDebugUrl() : "v2/";

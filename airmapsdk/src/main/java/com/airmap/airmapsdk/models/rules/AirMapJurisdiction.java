@@ -92,6 +92,7 @@ public class AirMapJurisdiction implements Serializable, AirMapBaseModel {
                 AirMapRuleset ruleset = new AirMapRuleset(rulesetsJSON.optJSONObject(i));
                 ruleset.setRegion(region);
                 ruleset.setJurisdictionId(getId());
+                ruleset.setJurisdictionName(getName());
                 rulesets.add(ruleset);
             }
         }

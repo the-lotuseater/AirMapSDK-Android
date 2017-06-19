@@ -23,5 +23,5 @@ public class Constants {
     public static final String METRIC_SYSTEM = "metric_system";
 
     public static final int CUSTOM_PROPERTIES_REQUEST_CODE = 112;
-
+    public static final int CREATE_AIRCRAFT_REQUEST_CODE = 2494;
 }

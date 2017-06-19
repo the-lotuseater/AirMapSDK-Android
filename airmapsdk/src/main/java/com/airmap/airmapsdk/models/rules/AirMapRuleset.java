@@ -78,6 +78,7 @@ public class AirMapRuleset implements Serializable, AirMapBaseModel, Comparable 
     private String name;
     private String shortName;
     private int jurisdictionId;
+    private String jurisdictionName;
     private AirMapJurisdiction.RegionCategory region;
     private AirMapRuleset.Type type;
     private boolean isDefault;
@@ -99,11 +100,16 @@ public class AirMapRuleset implements Serializable, AirMapBaseModel, Comparable 
             setId(json.optString("id"));
             setName(json.optString("name"));
             setShortName(Utils.optString(json, "short_name"));
-            setJurisdictionId(json.optInt("jurisdiction_id"));
+
+            JSONObject jurisdictionObject = json.optJSONObject("jurisdiction");
+            if (jurisdictionObject != null) {
+                setJurisdictionId(jurisdictionObject.optInt("id"));
+                setJurisdictionName(jurisdictionObject.optString("name"));
+                setRegion(AirMapJurisdiction.RegionCategory.fromString(jurisdictionObject.optString("region")));
+            }
             setSummary(Utils.optString(json, "summary"));
             setDefault(json.optBoolean("default"));
-            setType(Type.fromString(json.optString("type")));
-            setRegion(AirMapJurisdiction.RegionCategory.fromString(json.optString("region")));
+            setType(Type.fromString(json.optString("selection_type")));
 
 
             layers = new ArrayList<>();
@@ -145,6 +151,15 @@ public class AirMapRuleset implements Serializable, AirMapBaseModel, Comparable 
 
     public AirMapRuleset setJurisdictionId(int jurisdictionId) {
         this.jurisdictionId = jurisdictionId;
+        return this;
+    }
+
+    public String getJurisdictionName() {
+        return jurisdictionName;
+    }
+
+    public AirMapRuleset setJurisdictionName(String jurisdictionName) {
+        this.jurisdictionName = jurisdictionName;
         return this;
     }
 
@@ -200,6 +215,10 @@ public class AirMapRuleset implements Serializable, AirMapBaseModel, Comparable 
 
     public List<AirMapRule> getRules() {
         return rules;
+    }
+
+    public void setRules(List<AirMapRule> rules) {
+        this.rules = rules;
     }
 
     @Override

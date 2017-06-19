@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="72dp"
+        android:orientation="horizontal">
+
+        <TextView style="@style/AppTheme.WeatherLabel"
+            android:drawableTop="@drawable/com_auth0_lock_ic_clock"
+            android:text="Time" />
+
+        <FrameLayout
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey"/>
+
+        <TextView style="@style/AppTheme.WeatherLabel"
+            android:drawableTop="@drawable/com_auth0_lock_ic_clock"
+            android:text="Condition" />
+
+        <FrameLayout
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey"/>
+
+        <TextView style="@style/AppTheme.WeatherLabel"
+            android:drawableTop="@drawable/com_auth0_lock_ic_clock"
+            android:text="Wind" />
+
+        <FrameLayout
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey"/>
+
+        <TextView style="@style/AppTheme.WeatherLabel"
+            android:drawableTop="@drawable/com_auth0_lock_ic_clock"
+            android:text="Visibility" />
+
+        <FrameLayout
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey"/>
+
+        <TextView style="@style/AppTheme.WeatherLabel"
+            android:drawableTop="@drawable/com_auth0_lock_ic_clock"
+            android:text="Temperature" />
+
+        <FrameLayout
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey"/>
+
+        <TextView style="@style/AppTheme.WeatherLabel"
+            android:drawableTop="@drawable/com_auth0_lock_ic_clock"
+            android:text="Precipitation" />
+
+        <FrameLayout
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey"/>
+
+        <TextView style="@style/AppTheme.WeatherLabel"
+            android:drawableTop="@drawable/com_auth0_lock_ic_clock"
+            android:text="Humidity" />
+
+    </LinearLayout>
+
+</RelativeLayout>

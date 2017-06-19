@@ -13,6 +13,8 @@ import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.AnalyticsTracker;
 import com.airmap.airmapsdk.Auth;
+import com.airmap.airmapsdk.models.AirMapWeather;
+import com.airmap.airmapsdk.models.AirMapWeatherUpdate;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
@@ -21,6 +23,8 @@ import com.airmap.airmapsdk.models.airspace.AirMapAirspace;
 import com.airmap.airmapsdk.models.airspace.AirMapAirspaceAdvisoryStatus;
 import com.airmap.airmapsdk.models.comm.AirMapComm;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
+import com.airmap.airmapsdk.models.flight.AirMapFlightBriefing;
+import com.airmap.airmapsdk.models.flight.AirMapFlightPlan;
 import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
@@ -588,6 +592,22 @@ public class AirMap {
      */
     public static void getFlights(@Nullable AirMapCallback<List<AirMapFlight>> callback) {
         FlightService.getFlights(null, AirMap.getUserId(), null, null, null, null, null, null, null, null, null, null, null, true, callback);
+    }
+
+    public static Call createFlightPlan(AirMapFlightPlan flightPlan, AirMapCallback<AirMapFlightPlan> callback) {
+        return FlightService.createFlightPlan(flightPlan, callback);
+    }
+
+    public static Call patchFlightPlan(AirMapFlightPlan plan, AirMapCallback<AirMapFlightPlan> callback) {
+        return FlightService.patchFlightPlan(plan, callback);
+    }
+
+    public static void submitFlightPlan(String flightPlanId, boolean isPublic, AirMapCallback<AirMapFlightPlan> callback) {
+        FlightService.submitFlightPlan(flightPlanId, isPublic, callback);
+    }
+
+    public static Call getWeather(Coordinate coordinate, Date startTime, Date endTime, AirMapCallback<AirMapWeather> callback) {
+        return StatusService.getWeather(coordinate, startTime, endTime, callback);
     }
 
     /**
@@ -1233,8 +1253,16 @@ public class AirMap {
         return RulesService.getRulesets(coordinate, listener);
     }
 
+    public static Call getRulesets(@NonNull JSONObject geometry, @Nullable AirMapCallback<List<AirMapRuleset>> listener) {
+        return RulesService.getRulesets(geometry, listener);
+    }
+
     public static Call getRules(@NonNull String rulesetId, @Nullable AirMapCallback<AirMapRuleset> listener) {
         return RulesService.getRules(rulesetId, listener);
+    }
+
+    public static void getFlightBrief(@NonNull String flightPlanId, @NonNull AirMapCallback<AirMapFlightBriefing> callback) {
+        FlightService.getFlightBriefing(flightPlanId, callback);
     }
 
     public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull List<Coordinate> geometry, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
