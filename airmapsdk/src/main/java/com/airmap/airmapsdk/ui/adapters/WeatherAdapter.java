@@ -54,9 +54,9 @@ public class WeatherAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                 WeatherViewHolder holder = (WeatherViewHolder) viewHolder;
 
+                //FIXME:
                 SimpleDateFormat dateFormat = new SimpleDateFormat("h:mm a");
                 holder.timeTextView.setText(dateFormat.format(weather.getTime()));
-                holder.conditionTextView.setText(weather.getCondition());
 
                 AirMapWeatherUpdate.Wind wind = weather.getWind();
                 //FIXME:
@@ -72,11 +72,11 @@ public class WeatherAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 String temp = String.format("%s° F", weather.getTemperature());
                 holder.tempTextView.setText(temp);
 
-                String precip = String.format("%s%%", weather.getPrecipitation());
-                holder.precipTextView.setText(precip);
+                String dewPoint = String.format("%s° F", weather.getDewPoint());
+                holder.dewPointTextView.setText(dewPoint);
 
-                String humidity = String.format("%s%%", weather.getHumidity());
-                holder.humidityTextView.setText(humidity);
+                String pressure = String.format("%s Hg", weather.getMslp());
+                holder.pressureTextView.setText(pressure);
                 break;
         }
     }
@@ -97,23 +97,21 @@ public class WeatherAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     class WeatherViewHolder extends RecyclerView.ViewHolder {
         TextView timeTextView;
-        TextView conditionTextView;
         TextView windTextView;
         TextView visibilityTextView;
         TextView tempTextView;
-        TextView precipTextView;
-        TextView humidityTextView;
+        TextView dewPointTextView;
+        TextView pressureTextView;
 
         WeatherViewHolder(View itemView) {
             super(itemView);
 
             timeTextView = (TextView) itemView.findViewById(R.id.time_text_view);
-            conditionTextView = (TextView) itemView.findViewById(R.id.condition_text_view);
             windTextView = (TextView) itemView.findViewById(R.id.wind_text_view);
             visibilityTextView = (TextView) itemView.findViewById(R.id.visibility_text_view);
             tempTextView = (TextView) itemView.findViewById(R.id.temp_text_view);
-            precipTextView = (TextView) itemView.findViewById(R.id.precip_text_view);
-            humidityTextView = (TextView) itemView.findViewById(R.id.humidity_text_view);
+            dewPointTextView = (TextView) itemView.findViewById(R.id.dew_point_text_view);
+            pressureTextView = (TextView) itemView.findViewById(R.id.pressure_text_view);
         }
     }
 
