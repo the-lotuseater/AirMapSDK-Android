@@ -74,6 +74,27 @@ public class RulesService extends BaseService {
         return call;
     }
 
+    public static Call getAdvisories(List<String> rulesets, JSONObject geometry, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+        Map<String, String> params = new HashMap<>();
+        params.put("rulesets", TextUtils.join(",", rulesets));
+        params.put("geometry", geometry.toString());
+
+        if (flightFeatures != null && !flightFeatures.isEmpty()) {
+            try {
+                JSONObject jsonObject = new JSONObject();
+                for (String key : flightFeatures.keySet()) {
+                    jsonObject.put(key, flightFeatures.get(key));
+                }
+                params.put("flight_features", URLEncoder.encode(jsonObject.toString(), "UTF-8"));
+            } catch (JSONException | UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Call call = AirMap.getClient().get(advisoriesUrl, params, new GenericOkHttpCallback(listener, AirMapAirspaceAdvisoryStatus.class));
+        return call;
+    }
+
     public static Call getWelcomeSummary(Coordinate coordinate, AirMapCallback<List<AirMapWelcomeResult>> listener) {
         Map<String, String> params = new HashMap<>();
         params.put("latitude", String.valueOf(coordinate.getLatitude()));
