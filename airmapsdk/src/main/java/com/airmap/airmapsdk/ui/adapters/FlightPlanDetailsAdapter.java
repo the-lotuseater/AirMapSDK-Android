@@ -394,7 +394,6 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         final FlightFeatureConfiguration config = flightFeaturesConfigMap.get("duration");
         final FlightFeatureConfiguration.ValueConfiguration valueConfig = config.getImperialValueConfig();
         final List<Double> durationsInMinutes = valueConfig.getPresets();
-        final long startTime = flightPlan.getStartsAt() != null ? flightPlan.getStartsAt().getTime() : new Date().getTime();
 
         holder.durationSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -403,6 +402,8 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                 holder.durationValueTextView.setText(Utils.getDurationText(activity, durationInMillis));
 
                 if (fromUser) {
+                    flightPlan.setDurationInMillis(durationInMillis);
+                    long startTime = flightPlan.getStartsAt() != null ? flightPlan.getStartsAt().getTime() : new Date().getTime();
                     flightPlan.setEndsAt(new Date(startTime + durationInMillis));
                     flightPlanChangeListener.onFlightPlanChanged(flightPlan);
                 }
@@ -416,9 +417,12 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         });
 
         if (flightPlan.getEndsAt() == null) {
-            flightPlan.setEndsAt(new Date(System.currentTimeMillis() + (long) (valueConfig.getDefaultValue() * 60 * 1000)));
+            long defaultDuration = (long) (valueConfig.getDefaultValue() * 60 * 1000);
+            flightPlan.setDurationInMillis(defaultDuration);
+            flightPlan.setEndsAt(new Date(System.currentTimeMillis() + defaultDuration));
             flightPlanChangeListener.onFlightPlanChanged(flightPlan);
         }
+        long startTime = flightPlan.getStartsAt() != null ? flightPlan.getStartsAt().getTime() : new Date().getTime();
         double durationInMins = (flightPlan.getEndsAt().getTime() - startTime) / (60 * 1000);
         int progress = Utils.indexOfNearestMatch(durationInMins, durationsInMinutes);
 
@@ -454,6 +458,8 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                 flightDate.set(year, monthOfYear, dayOfMonth, hourOfDay, minute);
+                                flightDate.set(Calendar.SECOND, 0);
+                                flightDate.set(Calendar.MILLISECOND, 0);
 
                                 // don't allow the user to pick a time in the past
                                 if (flightDate.getTime().before(new Date())) {
