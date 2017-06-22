@@ -1,5 +1,8 @@
 package com.airmap.airmapsdk.networking.callbacks;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import com.airmap.airmapsdk.util.Utils;
 
 import org.json.JSONException;
@@ -20,15 +23,20 @@ public class VoidCallback extends GenericBaseOkHttpCallback {
     }
 
     @Override
-    public void onResponse(Call call, Response response) {
+    public void onResponse(Call call, final Response response) {
         if (listener == null) {
             return; //Don't need to do anything if no listener was provided
         }
         String jsonString;
         try {
             jsonString = response.body().string();
-        } catch (IOException e) {
-            Utils.error(listener, e);
+        } catch (final IOException e) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    Utils.error(listener, e);
+                }
+            });
             return;
         }
         response.body().close();
@@ -39,10 +47,21 @@ public class VoidCallback extends GenericBaseOkHttpCallback {
             e.printStackTrace();
         }
         if (!response.isSuccessful() || !Utils.statusSuccessful(result)) {
-            Utils.error(listener, response.code(), result);
+            final JSONObject resultJSON = result;
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    Utils.error(listener, response.code(), resultJSON);
+                }
+            });
         } else {
             //noinspection unchecked
-            listener.onSuccess(null);
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    listener.onSuccess(null);
+                }
+            });
         }
     }
 }
