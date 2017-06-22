@@ -1,5 +1,6 @@
 package com.airmap.airmapsdk.models.map;
 
+import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 
@@ -35,8 +36,8 @@ public class AirMapSymbolLayerStyle extends AirMapLayerStyle {
     }
 
     @Override
-    public SymbolLayer toMapboxLayer(String sourceId) {
-        SymbolLayer layer = new SymbolLayer(id + "|new", sourceId);
+    public SymbolLayer toMapboxLayer(Layer layerToClone, String sourceId) {
+        SymbolLayer layer = new SymbolLayer(id + "|" + sourceId + "|new", sourceId);
         layer.setSourceLayer(sourceId + "_" + sourceLayer);
         layer.setProperties(PropertyFactory.iconImage(iconImage));
         layer.setProperties(PropertyFactory.iconAllowOverlap(iconAllowOverlap));

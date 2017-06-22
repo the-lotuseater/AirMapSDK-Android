@@ -1,5 +1,6 @@
 package com.airmap.airmapsdk.models.map;
 
+import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 
@@ -44,8 +45,8 @@ public class AirMapLineLayerStyle extends AirMapLayerStyle {
     }
 
     @Override
-    public LineLayer toMapboxLayer(String sourceId) {
-        LineLayer layer = new LineLayer(id + "|new", sourceId);
+    public LineLayer toMapboxLayer(Layer layerToClone, String sourceId) {
+        LineLayer layer = new LineLayer(id + "|" + sourceId + "|new", sourceId);
         layer.setSourceLayer(sourceId + "_" + sourceLayer);
         layer.setProperties(PropertyFactory.lineOpacity(lineOpacity));
         layer.setProperties(PropertyFactory.lineColor(lineColor));

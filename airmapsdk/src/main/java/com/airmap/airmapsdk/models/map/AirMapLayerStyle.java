@@ -20,7 +20,7 @@ public abstract class AirMapLayerStyle {
     public final String source;
     public final String sourceLayer;
     public final String type;
-    public final Filter.Statement filter;
+    public Filter.Statement filter;
     public final boolean interactive;
 
     protected AirMapLayerStyle(JSONObject json) {
@@ -42,7 +42,7 @@ public abstract class AirMapLayerStyle {
         return id.contains("background");
     }
 
-    public abstract Layer toMapboxLayer(String sourceId);
+    public abstract Layer toMapboxLayer(Layer layerToClone, String sourceId);
 
     private static Filter.Statement getFilter(JSONArray filterJsonArray) {
         if (filterJsonArray == null) {

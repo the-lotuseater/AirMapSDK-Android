@@ -1,6 +1,9 @@
 package com.airmap.airmapsdk.models.map;
 
+import android.util.Log;
+
 import com.mapbox.mapboxsdk.style.layers.FillLayer;
+import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 
 import org.json.JSONObject;
@@ -32,8 +35,8 @@ public class AirMapFillLayerStyle extends AirMapLayerStyle {
     }
 
     @Override
-    public FillLayer toMapboxLayer(String sourceId) {
-        FillLayer fillLayer = new FillLayer(id + "|new", sourceId);
+    public FillLayer toMapboxLayer(Layer layerToClone, String sourceId) {
+        FillLayer fillLayer = new FillLayer(id + "|" + sourceId + "|new", sourceId);
         fillLayer.setSourceLayer(sourceId + "_" + sourceLayer);
         fillLayer.setProperties(PropertyFactory.fillOpacity(fillOpacity));
         fillLayer.setProperties(PropertyFactory.fillColor(fillColor));
