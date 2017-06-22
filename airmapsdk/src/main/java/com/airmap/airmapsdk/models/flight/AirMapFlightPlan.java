@@ -34,10 +34,12 @@ import static com.airmap.airmapsdk.util.Utils.getIso8601StringFromDate;
 public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
 
     private String planId;
+    private String flightId;
     private String pilotId;
     private String aircraftId;
     private Date startsAt;
     private Date endsAt;
+    private long durationInMillis;
     private float buffer;
     private String geometry;
     private float maxAltitude;
@@ -62,6 +64,7 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
     public AirMapFlightPlan constructFromJson(JSONObject json) {
         if (json != null) {
             setPlanId(json.optString("id"));
+            setFlightId(json.optString("flight_id"));
             setCoordinate(new Coordinate(json.optDouble("latitude", 0), json.optDouble("longitude", 0)));
             setMaxAltitude((float) json.optDouble("max_altitude_agl"));
             setNotify(json.optBoolean("notify"));
@@ -107,10 +110,22 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
             }
 
             String startTime = json.optString("start_time");
+            String endTime = json.optString("end_time");
             if (!TextUtils.isEmpty(startTime) && !startTime.equals("now")) {
-                setStartsAt(getDateFromIso8601String(startTime));
+                // if start date is before now, set it to now and shift end time
+                Date startDate = getDateFromIso8601String(startTime);
+                Date endDate = getDateFromIso8601String(endTime);
+                long duration = endDate.getTime() - startDate.getTime();
+                if (new Date().after(startDate)) {
+                    setStartsAt(null);
+                    setEndsAt(new Date(System.currentTimeMillis() + duration));
+                } else {
+                    setStartsAt(startDate);
+                    setEndsAt(new Date(startDate.getTime() + duration));
+                }
+            } else {
+                setEndsAt(getDateFromIso8601String(endTime));
             }
-            setEndsAt(getDateFromIso8601String(json.optString("end_time")));
         }
         return this;
     }
@@ -134,7 +149,13 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
         } else {
             params.put("start_time", "now");
         }
-        params.put("end_time", getIso8601StringFromDate(getEndsAt()));
+
+        if (getDurationInMillis() != 0) {
+            long startTime = getStartsAt() != null ? getStartsAt().getTime() : System.currentTimeMillis();
+            params.put("end_time", getIso8601StringFromDate(new Date(startTime + getDurationInMillis())));
+        } else {
+            params.put("end_time", getIso8601StringFromDate(getEndsAt()));
+        }
 
         params.put("geometry", getGeometry().toString());
 
@@ -232,6 +253,14 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
 
     public String getPlanId() {
         return planId;
+    }
+
+    public String getFlightId() {
+        return flightId;
+    }
+
+    public void setFlightId(String flightId) {
+        this.flightId = flightId;
     }
 
     public String getPilotId() {
@@ -395,6 +424,14 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
         if (flightFeatureValue.getValue() != null) {
             flightFeatureValues.put(flightFeatureValue.getKey(), flightFeatureValue);
         }
+    }
+
+    public long getDurationInMillis() {
+        return durationInMillis;
+    }
+
+    public void setDurationInMillis(long durationInMillis) {
+        this.durationInMillis = durationInMillis;
     }
 
     /**
