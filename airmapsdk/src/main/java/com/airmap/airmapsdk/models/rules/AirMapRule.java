@@ -70,7 +70,7 @@ public class AirMapRule implements Serializable, AirMapBaseModel {
             setShortText(Utils.optString(json, "short_text"));
             setDescription(Utils.optString(json, "description"));
             setStatus(AirMapRule.Status.fromString(json.optString("status")));
-            setDisplayOrder(json.optInt("display_order"));
+            setDisplayOrder(json.optInt("display_order", 90000));
 
             List<AirMapFlightFeature> flightFeatures = new ArrayList<>();
             if (json.has("flight_features")) {
