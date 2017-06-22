@@ -41,6 +41,7 @@ class BaseService {
     protected static final String flightStartCommUrl = flightByIdUrl + "start-comm/"; //Replace %s with id using String.format
     protected static final String flightEndCommUrl = flightByIdUrl + "end-comm/"; //Replace %s with id using String.format
     protected static final String flightPlanUrl = flightBaseUrl + "plan/";
+    protected static final String flightPlanByFlightIdUrl = flightBaseUrl + "%s/" + "plan/";
     protected static final String flightPlanPatchUrl = flightPlanUrl + "%s/";
     protected static final String flightPlanBriefingUrl = flightPlanPatchUrl + "briefing";
     protected static final String flightPlanSubmitUrl = flightPlanPatchUrl + "submit";
