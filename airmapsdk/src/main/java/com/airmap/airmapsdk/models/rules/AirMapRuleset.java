@@ -113,7 +113,7 @@ public class AirMapRuleset implements Serializable, AirMapBaseModel, Comparable 
 
 
             layers = new ArrayList<>();
-            JSONArray layersJSON = json.optJSONArray("layers");
+            JSONArray layersJSON = json.has("layers") ? json.optJSONArray("layers") : json.optJSONArray("airspace_types");
             for (int i = 0; layersJSON != null && i < layersJSON.length(); i++) {
                 layers.add(layersJSON.optString(i));
             }
