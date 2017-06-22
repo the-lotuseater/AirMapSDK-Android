@@ -602,6 +602,10 @@ public class AirMap {
         return FlightService.patchFlightPlan(plan, callback);
     }
 
+    public static Call getFlightPlanByFlightId(String flightId, AirMapCallback<AirMapFlightPlan> callback) {
+        return FlightService.getFlightPlanByFlightId(flightId, callback);
+    }
+
     public static void submitFlightPlan(String flightPlanId, boolean isPublic, AirMapCallback<AirMapFlightPlan> callback) {
         FlightService.submitFlightPlan(flightPlanId, isPublic, callback);
     }
@@ -745,6 +749,10 @@ public class AirMap {
         if (flight != null) {
             FlightService.endFlight(flight, callback);
         }
+    }
+
+    public static void endFlight(@NonNull String flightId, @Nullable AirMapCallback<AirMapFlight> callback) {
+        FlightService.endFlight(flightId, callback);
     }
 
     /**
@@ -1266,6 +1274,15 @@ public class AirMap {
     }
 
     public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull List<Coordinate> geometry, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+        List<String> rulesetIds = new ArrayList<>();
+        for (AirMapRuleset ruleset : rulesets) {
+            rulesetIds.add(ruleset.getId());
+        }
+
+        return RulesService.getAdvisories(rulesetIds, geometry, flightFeatures, listener);
+    }
+
+    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull JSONObject geometry, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
         List<String> rulesetIds = new ArrayList<>();
         for (AirMapRuleset ruleset : rulesets) {
             rulesetIds.add(ruleset.getId());

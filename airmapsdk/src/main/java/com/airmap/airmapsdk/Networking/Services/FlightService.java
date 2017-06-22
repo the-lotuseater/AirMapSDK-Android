@@ -165,6 +165,12 @@ class FlightService extends BaseService {
         AirMap.getClient().post(url, params, new GenericOkHttpCallback(callback, AirMapFlightPlan.class));
     }
 
+    public static Call getFlightPlanByFlightId(String flightId, final AirMapCallback<AirMapFlightPlan> callback) {
+        String url = String.format(flightPlanByFlightIdUrl, flightId);
+        Call call = AirMap.getClient().get(url, new GenericOkHttpCallback(callback, AirMapFlightPlan.class));
+        return call;
+    }
+
     /**
      * Create a flight for the user
      *
@@ -185,6 +191,11 @@ class FlightService extends BaseService {
      */
     public static void endFlight(AirMapFlight flight, AirMapCallback<AirMapFlight> listener) {
         String url = String.format(flightEndUrl, flight.getFlightId());
+        AirMap.getClient().post(url, new GenericOkHttpCallback(listener, AirMapFlight.class));
+    }
+
+    public static void endFlight(String flightId, AirMapCallback<AirMapFlight> listener) {
+        String url = String.format(flightEndUrl, flightId);
         AirMap.getClient().post(url, new GenericOkHttpCallback(listener, AirMapFlight.class));
     }
 
