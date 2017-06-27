@@ -5,8 +5,6 @@ import android.util.Log;
 
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.models.Coordinate;
-import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
-import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
 import com.airmap.airmapsdk.models.shapes.AirMapPath;
 import com.airmap.airmapsdk.models.shapes.AirMapPoint;
@@ -43,7 +41,7 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
     private float buffer;
     private String geometry;
     private float maxAltitude;
-    private Coordinate coordinate;
+    private Coordinate takeoffCoordinate;
     private List<String> rulesetIds;
     private Map<String, FlightFeatureValue> flightFeatureValues;
 
@@ -53,7 +51,6 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
     private List<String> permitIds;
 
     public AirMapFlightPlan() {
-
     }
 
     public AirMapFlightPlan(JSONObject flightJson) {
@@ -65,7 +62,7 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
         if (json != null) {
             setPlanId(json.optString("id"));
             setFlightId(json.optString("flight_id"));
-            setCoordinate(new Coordinate(json.optDouble("latitude", 0), json.optDouble("longitude", 0)));
+            setTakeoffCoordinate(new Coordinate(json.optDouble("takeoff_latitude", 0), json.optDouble("takeoff_longitude", 0)));
             setMaxAltitude((float) json.optDouble("max_altitude_agl"));
             setNotify(json.optBoolean("notify"));
             setPilotId(json.optString("pilot_id"));
@@ -157,7 +154,29 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
             params.put("end_time", getIso8601StringFromDate(getEndsAt()));
         }
 
-        params.put("geometry", getGeometry().toString());
+        params.put("geometry", getGeometry());
+
+        if (takeoffCoordinate != null) {
+            params.put("takeoff_latitude", getTakeoffCoordinate().getLatitude());
+            params.put("takeoff_longitude", getTakeoffCoordinate().getLongitude());
+        } else {
+            try {
+                JSONObject geoJSON = new JSONObject(getGeometry());
+                AirMapGeometry geometry = AirMapGeometry.getGeometryFromGeoJSON(geoJSON);
+                Coordinate coordinate;
+                if (geometry instanceof AirMapPolygon) {
+                    coordinate = ((AirMapPolygon) geometry).getCoordinates().get(0);
+                } else if (geometry instanceof AirMapPoint) {
+                    coordinate = ((AirMapPoint) geometry).getCoordinate();
+                } else { //path
+                    coordinate = ((AirMapPath) geometry).getCoordinates().get(0);
+                }
+                params.put("takeoff_latitude", coordinate.getLatitude());
+                params.put("takeoff_longitude", coordinate.getLongitude());
+            } catch (JSONException e) {
+                Log.e("AirMapFlightPlan", "Failed to parse geojson: " + getGeometry(), e);
+            }
+        }
 
         params.put("buffer", buffer);
 
@@ -272,12 +291,12 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
         return this;
     }
 
-    public Coordinate getCoordinate() {
-        return coordinate;
+    public Coordinate getTakeoffCoordinate() {
+        return takeoffCoordinate;
     }
 
-    public AirMapFlightPlan setCoordinate(Coordinate coordinate) {
-        this.coordinate = coordinate;
+    public AirMapFlightPlan setTakeoffCoordinate(Coordinate takeoffCoordinate) {
+        this.takeoffCoordinate = takeoffCoordinate;
         return this;
     }
 

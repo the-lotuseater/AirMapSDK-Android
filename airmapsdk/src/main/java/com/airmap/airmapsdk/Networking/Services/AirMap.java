@@ -1291,6 +1291,10 @@ public class AirMap {
         return RulesService.getAdvisories(rulesetIds, geometry, flightFeatures, listener);
     }
 
+    public static Call getAdvisories(@NonNull List<String> rulesets, @NonNull JSONObject geometry, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+        return RulesService.getAdvisories(rulesets, geometry, null, listener);
+    }
+
     public static Call getWelcomeSummary(@NonNull Coordinate coordinate, @Nullable AirMapCallback<List<AirMapWelcomeResult>> listener) {
         return RulesService.getWelcomeSummary(coordinate, listener);
     }
