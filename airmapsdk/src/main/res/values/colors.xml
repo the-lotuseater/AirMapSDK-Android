@@ -25,8 +25,10 @@
 
     <color name="light_grey">#E6E6E6</color>
 
-    <color name="font_white">#FFFFFF</color>
+    <color name="font_white">#EFEFEF</color>
     <color name="font_black">#111111</color>
+    <color name="font_grey">#999999</color>
+    <color name="font_light_grey">#AAAAAA</color>
 
     <color name="airmap_aqua">#88DBDF</color>
     <color name="airmap_aqua_translucent">#D9B9E4E7</color>
