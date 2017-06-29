@@ -150,6 +150,15 @@ public class AirMapWeatherUpdate implements AirMapBaseModel, Serializable {
         this.mslp = mslp;
     }
 
+    /**
+     * Determine the validity of the current weather
+     *
+     * @return whether the weather is valid or not
+     */
+    public boolean isValid() {
+        return wind != null && condition != null && !condition.isEmpty();
+    }
+
     public class Wind {
         int heading;
         int speed;
