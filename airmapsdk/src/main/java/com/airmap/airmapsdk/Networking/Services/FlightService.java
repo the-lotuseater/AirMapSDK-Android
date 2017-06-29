@@ -104,22 +104,22 @@ class FlightService extends BaseService {
                             List<AirMapFlight> allFlights = new ArrayList<>(publicFlights);
                             allFlights.removeAll(authenticatedUserFlights); //Remove any would-be duplicates
                             allFlights.addAll(0, authenticatedUserFlights);
-                            listener.onSuccess(allFlights);
+                            listener.success(allFlights);
                         }
 
                         @Override
                         public void onError(AirMapException e) {
-                            listener.onError(e);
+                            listener.error(e);
                         }
                     });
                 } else {
-                    listener.onSuccess(publicFlights);
+                    listener.success(publicFlights);
                 }
             }
 
             @Override
             public void onError(AirMapException e) {
-                listener.onError(e);
+                listener.error(e);
             }
         });
     }

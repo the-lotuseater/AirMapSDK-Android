@@ -63,7 +63,7 @@ public class Auth {
         // return if refresh token is empty
         if (TextUtils.isEmpty(refreshToken)) {
             if (callback != null) {
-                callback.onError(new AirMapException("Invalid Refresh Token"));
+                callback.error(new AirMapException("Invalid Refresh Token"));
             }
             return;
         }

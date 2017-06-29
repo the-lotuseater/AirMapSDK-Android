@@ -1,21 +1,43 @@
 package com.airmap.airmapsdk.networking.callbacks;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import com.airmap.airmapsdk.AirMapException;
 
 /**
  * Created by Vansh Gandhi on 6/16/16.
  * Copyright © 2016 AirMap, Inc. All rights reserved.
  */
-public interface AirMapCallback<T> {
+public abstract class AirMapCallback<T> {
+
+    public final void success(final T response) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                onSuccess(response);
+            }
+        });
+    }
+
+    public final void error(final AirMapException e) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                onError(e);
+            }
+        });
+    }
+
     /**
      * Called when the request was successful
      * @param response The object response
      */
-    void onSuccess(T response);
+    protected abstract void onSuccess(T response);
 
     /**
      * Called when the request was unsuccessful or there was an error making the request
      * @param e Specifics of the error
      */
-    void onError(AirMapException e);
+    protected abstract void onError(AirMapException e);
 }

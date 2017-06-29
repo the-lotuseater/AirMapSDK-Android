@@ -133,9 +133,9 @@ public class Utils {
     public static void error(AirMapCallback listener, Exception e) {
         if (e != null && listener != null) {
             if (e.getMessage().toLowerCase().startsWith("unable to resolve host")) {
-                listener.onError(new AirMapException("No internet connection"));
+                listener.error(new AirMapException("No internet connection"));
             } else if (!e.getMessage().toLowerCase().contains("canceled")) { //Not an error if it was canceled
-                listener.onError(new AirMapException(e.getMessage()));
+                listener.error(new AirMapException(e.getMessage()));
             }
         }
     }
@@ -143,7 +143,7 @@ public class Utils {
     //So we don't have to be doing null checks constantly
     public static void error(AirMapCallback listener, int code, JSONObject json) {
         if (listener != null) {
-            listener.onError(new AirMapException(code, json));
+            listener.error(new AirMapException(code, json));
         }
     }
 

@@ -526,9 +526,9 @@ public class AirMap {
             public void onSuccess(List<AirMapFlight> response) {
                 if (callback != null) {
                     if (response != null && !response.isEmpty()) {
-                        callback.onSuccess(response.get(0));
+                        callback.success(response.get(0));
                     } else {
-                        callback.onSuccess(null);
+                        callback.success(null);
                     }
                 }
             }
@@ -536,7 +536,7 @@ public class AirMap {
             @Override
             public void onError(AirMapException e) {
                 if (callback != null) {
-                    callback.onError(e);
+                    callback.error(e);
                 }
             }
         };
@@ -544,7 +544,7 @@ public class AirMap {
             FlightService.getFlights(null, AirMap.getUserId(), null, null, null, null, null, true, true, null, null, null, null, true, proxy);
         } else {
             if (callback != null) {
-                callback.onSuccess(null);
+                callback.success(null);
             }
         }
     }
@@ -857,7 +857,7 @@ public class AirMap {
         if (pilotId != null) {
             PilotService.getPilot(pilotId, callback);
         } else {
-            callback.onError(new AirMapException("No pilot id"));
+            callback.error(new AirMapException("No pilot id"));
         }
     }
 

@@ -392,7 +392,7 @@ public class TrafficService extends BaseService {
         }
     }
 
-    private class CurrentFlightAirMapCallback implements AirMapCallback<AirMapFlight> {
+    private class CurrentFlightAirMapCallback extends AirMapCallback<AirMapFlight> {
 
         /**
          * Called when the current flight was successfully received

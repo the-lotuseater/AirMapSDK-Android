@@ -342,7 +342,7 @@ public class MappingService extends BaseService {
         AirMap.getClient().get(getStylesUrl(), new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                listener.onError(new AirMapException(e.getMessage()));
+                listener.error(new AirMapException(e.getMessage()));
             }
 
             @Override
@@ -358,11 +358,11 @@ public class MappingService extends BaseService {
                 JSONObject result = null;
                 try {
                     result = new JSONObject(jsonString);
-                    listener.onSuccess(result);
+                    listener.success(result);
                 } catch (JSONException e) {
                     e.printStackTrace();
                     AirMapLog.e("AirMapCallback", jsonString);
-                    listener.onError(new AirMapException(e.getMessage()));
+                    listener.error(new AirMapException(e.getMessage()));
                 }
             }
         });

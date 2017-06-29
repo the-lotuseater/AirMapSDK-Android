@@ -107,7 +107,7 @@ import static com.airmap.airmapsdk.util.Utils.getBufferPresetsMetric;
  */
 
 public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
-        DrawingCallback, MapboxMap.OnCameraChangeListener, AirMapCallback<AirMapStatus> {
+        DrawingCallback, MapboxMap.OnCameraChangeListener {
 
     private static final String TAG = "FreehandMapFragment";
 
@@ -158,9 +158,78 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     private float screenDensity;
 
     private OnFragmentInteractionListener mListener;
+    private AirMapCallback<AirMapStatus> callback;
 
     //Required empty constructor
     public FreehandMapFragment() {
+        callback = new AirMapCallback<AirMapStatus>() {
+            @Override
+            public void onSuccess(final AirMapStatus response) {
+                if (!isFragmentActive()) return;
+
+                latestStatus = response;
+                updateButtonColor(response != null ? response.getAdvisoryColor() : null);
+
+                boolean requiresPermit = false;
+                if (latestStatus.getAdvisories() != null && !latestStatus.getAdvisories().isEmpty()) {
+                    final Map<String, AirMapStatusAdvisory> advisoryMap = new HashMap<>();
+                    for (AirMapStatusAdvisory advisory : latestStatus.getAdvisories()) {
+                        if (advisory.getAvailablePermits() != null && !advisory.getAvailablePermits().isEmpty()) {
+                            advisoryMap.put(advisory.getId(), advisory);
+                            requiresPermit = true;
+                        } else if (advisory.getColor() == AirMapStatus.StatusColor.Red) {
+                            advisoryMap.put(advisory.getId(), advisory);
+                        }
+                    }
+
+                    // check if advisories have changed
+                    if (!permitAdvisories.keySet().equals(advisoryMap.keySet())) {
+                        // new polygons
+                        if (!permitAdvisories.keySet().containsAll(advisoryMap.keySet())) {
+                            updatePermitPolygons(advisoryMap);
+
+                            // invalid polygons that should be removed
+                        } else {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    for (String key : permitAdvisories.keySet()) {
+                                        if (!advisoryMap.containsKey(key)) {
+                                            Polygon polygon = polygonMap.remove(key);
+                                            if (polygon != null) {
+                                                map.removePolygon(polygon);
+                                                polygonMap.remove(key);
+                                            }
+                                        }
+                                    }
+
+                                    permitAdvisories = advisoryMap;
+                                }
+                            });
+                        }
+                    }
+                }
+                redrawFlightPolygon();
+
+                // tell the user if conflicting permits
+                if (requiresPermit && (latestStatus.getApplicablePermits() == null || latestStatus.getApplicablePermits().isEmpty())) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), R.string.airmap_flight_area_overlap_permit_conflict, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onError(AirMapException e) {
+                if (isFragmentActive()) {
+                    updateButtonColor(null);
+                    AirMapLog.e(TAG, e.getMessage());
+                }
+            }
+        };
     }
 
     /**
@@ -995,7 +1064,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         Coordinate coordinate = new Coordinate(circleContainer.center);
         map.removeAnnotations(redPolygons);
         redPolygons.clear();
-        statusCall = AirMap.checkCoordinate(coordinate, circleContainer.radius, null, null, false, null, this);
+        statusCall = AirMap.checkCoordinate(coordinate, circleContainer.radius, null, null, false, null, callback);
     }
 
     private void checkPathStatus() {
@@ -1006,7 +1075,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         }
         map.removeAnnotations(redPolygons);
         redPolygons.clear();
-        statusCall = AirMap.checkFlightPath(coordinates, (int) lineContainer.width, coordinates.get(0), null, null, false, null, this);
+        statusCall = AirMap.checkFlightPath(coordinates, (int) lineContainer.width, coordinates.get(0), null, null, false, null, callback);
     }
 
     private void checkPolygonStatus() {
@@ -1017,7 +1086,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         }
         map.removeAnnotations(redPolygons);
         redPolygons.clear();
-        statusCall = AirMap.checkPolygon(coordinates, coordinates.get(0), null, null, false, null, this);
+        statusCall = AirMap.checkPolygon(coordinates, coordinates.get(0), null, null, false, null, callback);
     }
 
     private void showSeekBarForPath() {
@@ -1259,73 +1328,6 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     private void cancelNetworkCalls() {
         if (statusCall != null) statusCall.cancel();
         if (airspaceCall != null) airspaceCall.cancel();
-    }
-
-    @Override
-    public void onSuccess(final AirMapStatus response) {
-        if (!isFragmentActive()) return;
-
-        latestStatus = response;
-        updateButtonColor(response != null ? response.getAdvisoryColor() : null);
-
-        boolean requiresPermit = false;
-        if (latestStatus.getAdvisories() != null && !latestStatus.getAdvisories().isEmpty()) {
-            final Map<String, AirMapStatusAdvisory> advisoryMap = new HashMap<>();
-            for (AirMapStatusAdvisory advisory : latestStatus.getAdvisories()) {
-                if (advisory.getAvailablePermits() != null && !advisory.getAvailablePermits().isEmpty()) {
-                    advisoryMap.put(advisory.getId(), advisory);
-                    requiresPermit = true;
-                } else if (advisory.getColor() == AirMapStatus.StatusColor.Red) {
-                    advisoryMap.put(advisory.getId(), advisory);
-                }
-            }
-
-            // check if advisories have changed
-            if (!permitAdvisories.keySet().equals(advisoryMap.keySet())) {
-                // new polygons
-                if (!permitAdvisories.keySet().containsAll(advisoryMap.keySet())) {
-                    updatePermitPolygons(advisoryMap);
-
-                    // invalid polygons that should be removed
-                } else {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (String key : permitAdvisories.keySet()) {
-                                if (!advisoryMap.containsKey(key)) {
-                                    Polygon polygon = polygonMap.remove(key);
-                                    if (polygon != null) {
-                                        map.removePolygon(polygon);
-                                        polygonMap.remove(key);
-                                    }
-                                }
-                            }
-
-                            permitAdvisories = advisoryMap;
-                        }
-                    });
-                }
-            }
-        }
-        redrawFlightPolygon();
-
-        // tell the user if conflicting permits
-        if (requiresPermit && (latestStatus.getApplicablePermits() == null || latestStatus.getApplicablePermits().isEmpty())) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getActivity(), R.string.airmap_flight_area_overlap_permit_conflict, Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onError(AirMapException e) {
-        if (isFragmentActive()) {
-            updateButtonColor(null);
-            AirMapLog.e(TAG, e.getMessage());
-        }
     }
 
     private void updatePermitPolygons(final Map<String, AirMapStatusAdvisory> advisoryMap) {

@@ -40,12 +40,12 @@ public class AuthService extends BaseService {
             @Override
             public void onSuccess(AirMapToken response) {
                 AirMap.setAuthToken(response.getAuthToken());
-                callback.onSuccess(null);
+                callback.success(null);
             }
 
             @Override
             public void onError(AirMapException e) {
-                callback.onError(e);
+                callback.error(e);
             }
         }, AirMapToken.class));
     }
@@ -62,7 +62,7 @@ public class AuthService extends BaseService {
             public void onFailure(Call call, IOException e) {
                 AirMapLog.e("AuthServices", e.getMessage());
                 if (listener != null) {
-                    listener.onError(new AirMapException(e.getMessage()));
+                    listener.error(new AirMapException(e.getMessage()));
                 }
             }
 
@@ -75,12 +75,12 @@ public class AuthService extends BaseService {
                     String idToken = jsonObject.getString("id_token");
                     AirMap.setAuthToken(idToken);
                     if (listener != null) {
-                        listener.onSuccess(null);
+                        listener.success(null);
                     }
                 } catch (JSONException e) {
                     AirMapLog.e("AuthServices", e.getMessage());
                     if (listener != null) {
-                        listener.onError(new AirMapException(response.code(), e.getMessage()));
+                        listener.error(new AirMapException(response.code(), e.getMessage()));
                     }
                 }
             }
@@ -99,7 +99,7 @@ public class AuthService extends BaseService {
             @Override
             public void onFailure(Call call, IOException e) {
                 if (listener != null) {
-                    listener.onError(new AirMapException(e.getMessage()));
+                    listener.error(new AirMapException(e.getMessage()));
                 }
             }
 
@@ -111,12 +111,12 @@ public class AuthService extends BaseService {
                     JSONObject jsonObject = new JSONObject(json);
                     String customToken = jsonObject.getString("id_token");
                     if (listener != null) {
-                        listener.onSuccess(customToken);
+                        listener.success(customToken);
                     }
                 } catch (JSONException e) {
                     AirMapLog.e("AuthServices", e.getMessage());
                     if (listener != null) {
-                        listener.onError(new AirMapException(response.code(), e.getMessage()));
+                        listener.error(new AirMapException(response.code(), e.getMessage()));
                     }
                 }
             }
