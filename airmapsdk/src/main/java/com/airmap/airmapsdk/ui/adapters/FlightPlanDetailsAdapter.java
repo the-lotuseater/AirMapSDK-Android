@@ -98,14 +98,22 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
     private void stripDuplicateFlightFeatures() {
         // not displaying altitude flight features for now
         duplicateFlightFeatures = new ArrayList<>();
+
+        int index = 0;
         for (AirMapBaseModel ruleOrFlightFeature : new ArrayList<>(rulesAndFlightFeatures)) {
             if (ruleOrFlightFeature instanceof AirMapFlightFeature) {
                 AirMapFlightFeature flightFeature = (AirMapFlightFeature) ruleOrFlightFeature;
+
                 if (flightFeature.isAltitudeFeature()) {
+                    AirMapBaseModel ruleOrFlightFeatureBefore = rulesAndFlightFeatures.get(index - 1);
+                    if (ruleOrFlightFeatureBefore instanceof AirMapRule) {
+                        rulesAndFlightFeatures.remove(ruleOrFlightFeatureBefore);
+                    }
                     rulesAndFlightFeatures.remove(flightFeature);
                     duplicateFlightFeatures.add(flightFeature);
                 }
             }
+            index++;
         }
     }
 
