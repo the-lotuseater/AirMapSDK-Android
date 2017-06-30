@@ -134,4 +134,10 @@ public class AirMapRule implements Serializable, AirMapBaseModel {
 
         return shortText;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return o != null && o instanceof AirMapRule && ((AirMapRule) o).getShortText().equals(getShortText())
+                && ((AirMapRule) o).getDescription().equals(getDescription()) && ((AirMapRule) o).getDisplayOrder() == getDisplayOrder();
+    }
 }
