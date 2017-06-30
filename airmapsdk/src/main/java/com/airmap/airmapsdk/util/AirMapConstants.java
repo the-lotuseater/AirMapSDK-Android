@@ -4,7 +4,7 @@ package com.airmap.airmapsdk.util;
  * Created by collinvance on 11/4/16.
  */
 
-public class Constants {
+public class AirMapConstants {
 
     public static final String STATUS_PERMIT_EXTRA = "status_permit_extra";
     public static final String PERMIT_WALLET_EXTRA = "permit_wallet_extra";
@@ -13,6 +13,8 @@ public class Constants {
     public static final String WELCOME_EXTRA = "welcome_extra";
     public static final String WELCOME_RESULT_EXTRA = "welcome_result_extra";
     public static final String CITY_EXTRA = "city_extra";
+    public static final String AIRCRAFT_EXTRA = "aircraft_extra";
+    public static final String PILOT_EXTRA = "pilot_extra";
 
     public static final String FAQ_URL = "https://cdn.airmap.io/static/webviews/faq.html";
     public static final String FAQ_PERMITS_URL = "https://cdn.airmap.io/static/webviews/faq.html#permit-what";
@@ -24,4 +26,5 @@ public class Constants {
 
     public static final int CUSTOM_PROPERTIES_REQUEST_CODE = 112;
     public static final int CREATE_AIRCRAFT_REQUEST_CODE = 2494;
+    public static final int EDIT_PROFILE_REQUEST_CODE = 6211;
 }

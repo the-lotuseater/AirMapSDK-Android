@@ -15,7 +15,7 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.AirMapConstants;
 
 public class WebActivity extends AppCompatActivity {
 
@@ -65,7 +65,7 @@ public class WebActivity extends AppCompatActivity {
 
         });
 
-        String url = getIntent().getStringExtra(Constants.URL_EXTRA);
+        String url = getIntent().getStringExtra(AirMapConstants.URL_EXTRA);
         if (url.endsWith(".pdf")) {
             // This enables the user to view PDF's within the app's built in web browser
             url = Uri.parse("http://docs.google.com/viewer?url=" + url).toString();

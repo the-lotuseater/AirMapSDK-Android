@@ -53,7 +53,7 @@ import com.airmap.airmapsdk.ui.activities.ProfileActivity;
 import com.airmap.airmapsdk.ui.activities.WebActivity;
 import com.airmap.airmapsdk.ui.adapters.AircraftAdapter;
 import com.airmap.airmapsdk.util.AnnotationsFactory;
-import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdk.util.Utils;
 import com.mapbox.mapboxsdk.annotations.BasePointCollection;
 import com.mapbox.mapboxsdk.annotations.Polygon;
@@ -164,7 +164,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), WebActivity.class);
-                intent.putExtra(Constants.URL_EXTRA, Constants.INFO_URL);
+                intent.putExtra(AirMapConstants.URL_EXTRA, AirMapConstants.INFO_URL);
                 startActivity(intent);
             }
         });
@@ -894,7 +894,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CREATE_AIRCRAFT) {
             if (resultCode == Activity.RESULT_OK) {
-                AirMapAircraft newAircraft = (AirMapAircraft) data.getSerializableExtra(CreateEditAircraftActivity.AIRCRAFT);
+                AirMapAircraft newAircraft = (AirMapAircraft) data.getSerializableExtra(AirMapConstants.AIRCRAFT_EXTRA);
                 aircraft.add(newAircraft);
                 mListener.getFlight().setAircraft(newAircraft);
                 aircraftTextView.setText(newAircraft.getNickname());

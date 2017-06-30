@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
-import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.AirMapConstants;
 
 public class WelcomeDetailsActivity extends AppCompatActivity {
 
@@ -29,7 +29,7 @@ public class WelcomeDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        welcomeResult = (AirMapWelcomeResult) getIntent().getSerializableExtra(Constants.WELCOME_RESULT_EXTRA);
+        welcomeResult = (AirMapWelcomeResult) getIntent().getSerializableExtra(AirMapConstants.WELCOME_RESULT_EXTRA);
 
         setContentView(R.layout.activity_welcome_result);
 
@@ -60,7 +60,7 @@ public class WelcomeDetailsActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent(WelcomeDetailsActivity.this, WebActivity.class);
                     intent.putExtra(Intent.EXTRA_TITLE, welcomeResult.getJurisdictionName());
-                    intent.putExtra(Constants.URL_EXTRA, welcomeResult.getUrl());
+                    intent.putExtra(AirMapConstants.URL_EXTRA, welcomeResult.getUrl());
                     startActivity(intent);
                 }
             });

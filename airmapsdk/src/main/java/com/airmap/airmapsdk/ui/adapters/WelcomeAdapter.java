@@ -13,7 +13,7 @@ import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.airmap.airmapsdk.ui.activities.WebActivity;
 import com.airmap.airmapsdk.ui.activities.WelcomeDetailsActivity;
-import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.AirMapConstants;
 
 import java.util.List;
 
@@ -62,11 +62,11 @@ public class WelcomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 if (!TextUtils.isEmpty(welcomeResult.getUrl())) {
                     Intent intent = new Intent(activity, WebActivity.class);
                     intent.putExtra(Intent.EXTRA_TITLE, welcomeResult.getJurisdictionName());
-                    intent.putExtra(Constants.URL_EXTRA, welcomeResult.getUrl());
+                    intent.putExtra(AirMapConstants.URL_EXTRA, welcomeResult.getUrl());
                     activity.startActivity(intent);
                 } else {
                     Intent intent = new Intent(activity, WelcomeDetailsActivity.class);
-                    intent.putExtra(Constants.WELCOME_RESULT_EXTRA, welcomeResult);
+                    intent.putExtra(AirMapConstants.WELCOME_RESULT_EXTRA, welcomeResult);
                     activity.startActivity(intent);
                 }
             }

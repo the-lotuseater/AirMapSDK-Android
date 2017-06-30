@@ -26,7 +26,7 @@ import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.ui.activities.WelcomeActivity;
-import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdk.util.Utils;
 
 import java.text.DateFormat;
@@ -228,8 +228,8 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, WelcomeActivity.class);
-                intent.putExtra(Constants.CITY_EXTRA, welcomeCity);
-                intent.putExtra(Constants.WELCOME_EXTRA, welcomeData);
+                intent.putExtra(AirMapConstants.CITY_EXTRA, welcomeCity);
+                intent.putExtra(AirMapConstants.WELCOME_EXTRA, welcomeData);
                 context.startActivity(intent);
             }
         };

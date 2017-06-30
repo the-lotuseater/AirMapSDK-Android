@@ -54,7 +54,7 @@ public class Utils {
     }
 
     public static boolean useMetric(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.MEASUREMENT_SYSTEM, Constants.IMPERIAL_SYSTEM).equals(Constants.METRIC_SYSTEM);
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(AirMapConstants.MEASUREMENT_SYSTEM, AirMapConstants.IMPERIAL_SYSTEM).equals(AirMapConstants.METRIC_SYSTEM);
     }
 
     public static String titleCase(String s) {

@@ -15,7 +15,7 @@ import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.ui.activities.CustomPropertiesActivity;
-import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.AirMapConstants;
 
 import java.util.ArrayList;
 
@@ -82,9 +82,9 @@ public class ReviewPermitsFragment extends Fragment {
                 }
 
                 Intent intent = new Intent(getContext(), CustomPropertiesActivity.class);
-                intent.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, availablePermit);
+                intent.putExtra(AirMapConstants.AVAILABLE_PERMIT_EXTRA, availablePermit);
                 if (pilotPermit != null) {
-                    intent.putExtra(Constants.PERMIT_WALLET_EXTRA, pilotPermit);
+                    intent.putExtra(AirMapConstants.PERMIT_WALLET_EXTRA, pilotPermit);
                 }
                 startActivityForResult(intent, REQUEST_CUSTOM_PROPERTIES);
             }
@@ -95,7 +95,7 @@ public class ReviewPermitsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CUSTOM_PROPERTIES) {
             if (resultCode == Activity.RESULT_OK) {
-                AirMapAvailablePermit permit = (AirMapAvailablePermit) data.getSerializableExtra(Constants.AVAILABLE_PERMIT_EXTRA);
+                AirMapAvailablePermit permit = (AirMapAvailablePermit) data.getSerializableExtra(AirMapConstants.AVAILABLE_PERMIT_EXTRA);
                 if (adapter != null) {
                     adapter.remove(permit); //Will remove permit with old custom properties based on ID
                     adapter.add(permit); //Will add the permit with the updated custom properties

@@ -26,13 +26,12 @@ import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.util.AirMapConstants;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CreateEditAircraftActivity extends AppCompatActivity implements View.OnClickListener {
-
-    public static final String AIRCRAFT = "aircraft";
 
     private Toolbar toolbar;
     private TextInputLayout nicknameTextInputLayout;
@@ -51,8 +50,8 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         int id;
-        if (getIntent() != null && getIntent().getSerializableExtra(AIRCRAFT) != null) {
-            aircraftToEdit = (AirMapAircraft) getIntent().getSerializableExtra(AIRCRAFT);
+        if (getIntent() != null && getIntent().getSerializableExtra(AirMapConstants.AIRCRAFT_EXTRA) != null) {
+            aircraftToEdit = (AirMapAircraft) getIntent().getSerializableExtra(AirMapConstants.AIRCRAFT_EXTRA);
             populateViews(aircraftToEdit);
             id = R.string.airmap_edit_aircraft;
         } else {
@@ -201,7 +200,7 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
                 @Override
                 public void onSuccess(AirMapAircraft response) {
                     Intent intent = new Intent();
-                    intent.putExtra(AIRCRAFT, aircraftToEdit);
+                    intent.putExtra(AirMapConstants.AIRCRAFT_EXTRA, aircraftToEdit);
                     setResult(RESULT_OK, intent);
                     finish();
                 }
@@ -241,7 +240,7 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
                 @Override
                 public void onSuccess(AirMapAircraft response) {
                     Intent intent = new Intent();
-                    intent.putExtra(AIRCRAFT, response);
+                    intent.putExtra(AirMapConstants.AIRCRAFT_EXTRA, response);
                     setResult(RESULT_OK, intent);
                     finish();
                 }

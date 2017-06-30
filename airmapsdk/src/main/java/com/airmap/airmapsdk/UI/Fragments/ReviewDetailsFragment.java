@@ -8,14 +8,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.shapes.AirMapPoint;
-import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdk.util.Utils;
 
 import java.text.DateFormat;
@@ -24,7 +23,6 @@ import java.util.Date;
 
 import static com.airmap.airmapsdk.util.Utils.getDurationPresets;
 import static com.airmap.airmapsdk.util.Utils.indexOfDurationPreset;
-import static com.airmap.airmapsdk.util.Utils.metersToFeet;
 
 
 public class ReviewDetailsFragment extends Fragment {
@@ -112,7 +110,7 @@ public class ReviewDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(Constants.INFO_URL));
+                intent.setData(Uri.parse(AirMapConstants.INFO_URL));
                 startActivity(intent);
             }
         });

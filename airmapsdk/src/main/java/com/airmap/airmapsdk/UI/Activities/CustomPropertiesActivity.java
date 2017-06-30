@@ -28,7 +28,7 @@ import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermitCustomProperty;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
-import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdk.util.Utils;
 
 import java.text.DateFormat;
@@ -50,8 +50,8 @@ public class CustomPropertiesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.airmap_activity_custom_properties);
-        availablePermit = (AirMapAvailablePermit) getIntent().getSerializableExtra(Constants.AVAILABLE_PERMIT_EXTRA);
-        pilotPermit = (AirMapPilotPermit) getIntent().getSerializableExtra(Constants.PERMIT_WALLET_EXTRA);
+        availablePermit = (AirMapAvailablePermit) getIntent().getSerializableExtra(AirMapConstants.AVAILABLE_PERMIT_EXTRA);
+        pilotPermit = (AirMapPilotPermit) getIntent().getSerializableExtra(AirMapConstants.PERMIT_WALLET_EXTRA);
         customProperties = availablePermit.getCustomProperties();
 
         initializeViews();
@@ -125,7 +125,7 @@ public class CustomPropertiesActivity extends AppCompatActivity {
                 if (allRequiredFieldsFilled()) {
                     availablePermit.setCustomProperties(getUpdatedCustomProperties());
                     Intent data = new Intent();
-                    data.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, availablePermit);
+                    data.putExtra(AirMapConstants.AVAILABLE_PERMIT_EXTRA, availablePermit);
                     setResult(Activity.RESULT_OK, data);
                     finish();
                 } else {

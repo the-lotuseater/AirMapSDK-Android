@@ -1,6 +1,8 @@
 package com.airmap.airmapsdk.ui.activities;
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
@@ -31,6 +33,7 @@ import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.util.AirMapConstants;
 import com.bumptech.glide.Glide;
 
 import java.text.NumberFormat;
@@ -402,6 +405,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             public void onSuccess(AirMapPilot response) {
                 Analytics.logEvent(Analytics.Page.PILOT_PROFILE, Analytics.Action.save, Analytics.Label.SUCCESS, 200);
                 toast(getString(R.string.successfully_updated));
+                Intent data = new Intent();
+                data.putExtra(AirMapConstants.PILOT_EXTRA, response);
+                setResult(Activity.RESULT_OK, data);
                 finish();
             }
 

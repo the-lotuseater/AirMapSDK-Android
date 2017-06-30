@@ -6,16 +6,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.status.AirMapStatusPermits;
 import com.airmap.airmapsdk.ui.adapters.SelectPermitsAdapter;
-import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.AirMapConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +32,8 @@ public class PermitSelectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        permits = (AirMapStatusPermits) getIntent().getSerializableExtra(Constants.STATUS_PERMIT_EXTRA);
-        permitsFromWallet = (ArrayList<AirMapPilotPermit>) getIntent().getSerializableExtra(Constants.PERMIT_WALLET_EXTRA);
+        permits = (AirMapStatusPermits) getIntent().getSerializableExtra(AirMapConstants.STATUS_PERMIT_EXTRA);
+        permitsFromWallet = (ArrayList<AirMapPilotPermit>) getIntent().getSerializableExtra(AirMapConstants.PERMIT_WALLET_EXTRA);
 
         setContentView(R.layout.airmap_activity_select_permits);
 
@@ -52,12 +50,12 @@ public class PermitSelectionActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent dataFromCustomProperties) {
-        if (requestCode == Constants.CUSTOM_PROPERTIES_REQUEST_CODE) {
+        if (requestCode == AirMapConstants.CUSTOM_PROPERTIES_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Analytics.logEvent(Analytics.Page.AVAILABLE_PERMITS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.SELECT_PERMIT);
 
                 Intent data = new Intent();
-                data.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, dataFromCustomProperties.getSerializableExtra(Constants.AVAILABLE_PERMIT_EXTRA));
+                data.putExtra(AirMapConstants.AVAILABLE_PERMIT_EXTRA, dataFromCustomProperties.getSerializableExtra(AirMapConstants.AVAILABLE_PERMIT_EXTRA));
                 setResult(RESULT_OK, data);
                 finish();
             }

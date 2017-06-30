@@ -24,14 +24,12 @@ import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapStatusRequirementNotice;
 import com.airmap.airmapsdk.ui.activities.WebActivity;
-import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.AirMapConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class FlightNoticeFragment extends Fragment {
 
@@ -87,7 +85,7 @@ public class FlightNoticeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), WebActivity.class);
-                intent.putExtra(Constants.URL_EXTRA, Constants.FAQ_URL);
+                intent.putExtra(AirMapConstants.URL_EXTRA, AirMapConstants.FAQ_URL);
                 intent.putExtra(Intent.EXTRA_TITLE, "FAQ");
                 startActivity(intent);
             }

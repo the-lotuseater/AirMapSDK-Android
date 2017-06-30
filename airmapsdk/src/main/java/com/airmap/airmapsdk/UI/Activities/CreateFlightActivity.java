@@ -37,7 +37,7 @@ import com.airmap.airmapsdk.ui.fragments.ReviewFlightFragment;
 import com.airmap.airmapsdk.ui.fragments.ReviewNoticeFragment;
 import com.airmap.airmapsdk.ui.views.CustomViewPager;
 import com.airmap.airmapsdk.util.AnnotationsFactory;
-import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdk.util.Utils;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -269,8 +269,8 @@ public class CreateFlightActivity extends AppCompatActivity implements
     @Override
     public void selectPermit(AirMapStatusPermits permit) {
         Intent intent = new Intent(this, PermitSelectionActivity.class);
-        intent.putExtra(Constants.STATUS_PERMIT_EXTRA, permit);
-        intent.putExtra(Constants.PERMIT_WALLET_EXTRA, permitsFromWallet);
+        intent.putExtra(AirMapConstants.STATUS_PERMIT_EXTRA, permit);
+        intent.putExtra(AirMapConstants.PERMIT_WALLET_EXTRA, permitsFromWallet);
         startActivityForResult(intent, REQUEST_DECISION_FLOW);
     }
 
@@ -515,7 +515,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_DECISION_FLOW) { //Decision flow opens up Custom Properties Activity
             if (resultCode == RESULT_OK) {
-                onCustomPropertiesNextButtonClick((AirMapAvailablePermit) data.getSerializableExtra(Constants.AVAILABLE_PERMIT_EXTRA));
+                onCustomPropertiesNextButtonClick((AirMapAvailablePermit) data.getSerializableExtra(AirMapConstants.AVAILABLE_PERMIT_EXTRA));
             }
         }
     }

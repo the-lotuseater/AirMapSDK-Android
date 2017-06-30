@@ -21,7 +21,7 @@ import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.status.AirMapStatusPermits;
 import com.airmap.airmapsdk.ui.activities.WebActivity;
 import com.airmap.airmapsdk.ui.adapters.PermitsAdapter;
-import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.AirMapConstants;
 
 import java.util.ArrayList;
 
@@ -153,7 +153,7 @@ public class ListPermitsFragment extends Fragment {
 
             Intent intent = new Intent(getActivity(), WebActivity.class);
             intent.putExtra(Intent.EXTRA_TITLE, getString(R.string.faqs));
-            intent.putExtra(Constants.URL_EXTRA, Constants.FAQ_PERMITS_URL);
+            intent.putExtra(AirMapConstants.URL_EXTRA, AirMapConstants.FAQ_PERMITS_URL);
             startActivity(intent);
             return true;
         } else {

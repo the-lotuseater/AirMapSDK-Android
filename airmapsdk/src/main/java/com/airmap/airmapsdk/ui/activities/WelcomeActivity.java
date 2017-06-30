@@ -8,10 +8,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.models.welcome.AirMapWelcome;
 import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.airmap.airmapsdk.ui.adapters.WelcomeAdapter;
-import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.AirMapConstants;
 
 import java.util.List;
 
@@ -28,14 +27,14 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        welcome = (List<AirMapWelcomeResult>) getIntent().getSerializableExtra(Constants.WELCOME_EXTRA);
+        welcome = (List<AirMapWelcomeResult>) getIntent().getSerializableExtra(AirMapConstants.WELCOME_EXTRA);
 
         setContentView(R.layout.activity_welcome);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
-        getSupportActionBar().setTitle(getIntent().getStringExtra(Constants.CITY_EXTRA));
+        getSupportActionBar().setTitle(getIntent().getStringExtra(AirMapConstants.CITY_EXTRA));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 

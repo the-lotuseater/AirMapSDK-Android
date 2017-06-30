@@ -16,7 +16,7 @@ import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.status.AirMapStatusPermits;
 import com.airmap.airmapsdk.ui.activities.CustomPropertiesActivity;
-import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdk.util.Utils;
 
 import java.text.DateFormat;
@@ -174,15 +174,15 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
                             Analytics.logEvent(Analytics.Page.AVAILABLE_PERMITS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.SELECT_PERMIT);
 
                             Intent data = new Intent();
-                            data.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, permit);
+                            data.putExtra(AirMapConstants.AVAILABLE_PERMIT_EXTRA, permit);
                             activity.setResult(Activity.RESULT_OK, data);
                             activity.finish();
                         } else {
                             Analytics.logEvent(Analytics.Page.AVAILABLE_PERMITS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.PERMIT_DETAILS);
 
                             Intent intent = new Intent(activity, CustomPropertiesActivity.class);
-                            intent.putExtra(Constants.AVAILABLE_PERMIT_EXTRA, permit);
-                            activity.startActivityForResult(intent, Constants.CUSTOM_PROPERTIES_REQUEST_CODE);
+                            intent.putExtra(AirMapConstants.AVAILABLE_PERMIT_EXTRA, permit);
+                            activity.startActivityForResult(intent, AirMapConstants.CUSTOM_PROPERTIES_REQUEST_CODE);
                         }
                     }
                 });
