@@ -33,7 +33,7 @@ import com.airmap.airmapsdk.models.rules.AirMapRule;
 import com.airmap.airmapsdk.ui.activities.CreateEditAircraftActivity;
 import com.airmap.airmapsdk.ui.activities.ProfileActivity;
 import com.airmap.airmapsdk.ui.views.ToggleButton;
-import com.airmap.airmapsdk.util.Constants;
+import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdk.util.Utils;
 
 import java.text.DateFormat;
@@ -119,6 +119,18 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         notifyItemChanged(0);
     }
 
+    public void setSelectedAircraft(AirMapAircraft aircraft) {
+        if (aircrafts == null) {
+            aircrafts = new ArrayList<>();
+        } else if (aircrafts.contains(aircraft)) {
+            aircrafts.remove(aircraft);
+        }
+
+        flightPlan.setAircraftId(aircraft.getAircraftId());
+        aircrafts.add(0, aircraft);
+        notifyItemChanged(0);
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
@@ -155,7 +167,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(activity, ProfileActivity.class);
-                        activity.startActivity(intent);
+                        activity.startActivityForResult(intent, AirMapConstants.EDIT_PROFILE_REQUEST_CODE);
                     }
                 });
 
@@ -513,7 +525,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                     Analytics.logEvent(Analytics.Page.SELECT_AIRCRAFT, Analytics.Action.tap, Analytics.Label.NEW_AIRCRAFT);
 
                     Intent intent = new Intent(activity, CreateEditAircraftActivity.class);
-                    activity.startActivityForResult(intent, Constants.CREATE_AIRCRAFT_REQUEST_CODE);
+                    activity.startActivityForResult(intent, AirMapConstants.CREATE_AIRCRAFT_REQUEST_CODE);
                 } else {
                     new AlertDialog.Builder(activity)
                             .setTitle(R.string.select_aircraft)
@@ -524,7 +536,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                                         Analytics.logEvent(Analytics.Page.SELECT_AIRCRAFT, Analytics.Action.tap, Analytics.Label.NEW_AIRCRAFT);
 
                                         Intent intent = new Intent(activity, CreateEditAircraftActivity.class);
-                                        activity.startActivityForResult(intent, Constants.CREATE_AIRCRAFT_REQUEST_CODE);
+                                        activity.startActivityForResult(intent, AirMapConstants.CREATE_AIRCRAFT_REQUEST_CODE);
                                     } else {
                                         holder.aircraftTextView.setText(aircrafts.get(position).getNickname());
                                         flightPlan.setAircraftId(aircrafts.get(position).getAircraftId());
@@ -539,7 +551,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                                     Analytics.logEvent(Analytics.Page.SELECT_AIRCRAFT, Analytics.Action.tap, Analytics.Label.NEW_AIRCRAFT);
 
                                     Intent intent = new Intent(activity, CreateEditAircraftActivity.class);
-                                    activity.startActivityForResult(intent, Constants.CREATE_AIRCRAFT_REQUEST_CODE);
+                                    activity.startActivityForResult(intent, AirMapConstants.CREATE_AIRCRAFT_REQUEST_CODE);
                                 }
                             })
                             .show();
