@@ -114,8 +114,8 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
                 Date endDate = getDateFromIso8601String(endTime);
                 long duration = endDate.getTime() - startDate.getTime();
                 if (new Date().after(startDate)) {
-                    setStartsAt(null);
-                    setEndsAt(new Date(System.currentTimeMillis() + duration));
+                    setStartsAt(new Date());
+                    setEndsAt(new Date(getStartsAt().getTime() + duration));
                 } else {
                     setStartsAt(startDate);
                     setEndsAt(new Date(startDate.getTime() + duration));
