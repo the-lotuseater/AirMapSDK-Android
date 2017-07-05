@@ -1,5 +1,6 @@
 package com.airmap.airmapsdk.ui.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.AirMapWeatherUpdate;
+import com.airmap.airmapsdk.util.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -50,31 +52,37 @@ public class WeatherAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             case HEADER_VIEW_TYPE:
                 break;
             case WEATHER_VIEW_TYPE:
+                Context context = viewHolder.itemView.getContext();
+                boolean useMetric = Utils.useMetric(context);
                 AirMapWeatherUpdate weather = weatherUpdates.get(position - 1);
 
                 WeatherViewHolder holder = (WeatherViewHolder) viewHolder;
 
-                //FIXME:
+                //TODO: localization support
                 SimpleDateFormat dateFormat = new SimpleDateFormat("h:mm a");
                 holder.timeTextView.setText(dateFormat.format(weather.getTime()));
 
                 AirMapWeatherUpdate.Wind wind = weather.getWind();
-                //FIXME:
-                String speed = wind.getGusting() == 0 ? String.format("%s Kts", wind.getSpeed()) : String.format("%s-%s Kts", wind.getSpeed(), wind.getGusting());
+                int convertedSpeed = useMetric ? Utils.metersPerSecondToKmph(wind.getSpeed()) : Utils.metersPerSecondToMph(wind.getSpeed());
+                int convertedGusting = useMetric ? Utils.metersPerSecondToKmph(wind.getGusting()) : Utils.metersPerSecondToMph(wind.getSpeed());
+                //TODO: localization support
+                String speed;
+                if (wind.getGusting() == 0) {
+                    speed = String.format("%s %s", convertedSpeed, useMetric ? context.getString(R.string.flight_feature_km_per_hour) : context.getString(R.string.flight_feature_miles_per_hour));
+                } else {
+                    speed = String.format("%s-%s %s", convertedSpeed, convertedGusting, useMetric ? context.getString(R.string.flight_feature_km_per_hour) : context.getString(R.string.flight_feature_miles_per_hour));
+                }
                 String windText = String.format("%s°/%s", wind.getHeading(), speed);
                 holder.windTextView.setText(windText);
 
-                //FIXME:
-                String visibility = String.format("%s mi", weather.getVisibility());
-                holder.visibilityTextView.setText(visibility);
+                int visibility = useMetric ? (int) weather.getVisibility() : Utils.kilometersToMiles((int) weather.getVisibility());
+                holder.visibilityTextView.setText(context.getString(useMetric ? R.string.kilometers_short : R.string.miles_short, visibility));
 
-                //FIXME:
-                String temp = String.format("%s° F", weather.getTemperature());
-                holder.tempTextView.setText(temp);
+                holder.tempTextView.setText(Utils.getTemperatureString(context, weather.getTemperature(), !useMetric));
 
-                String dewPoint = String.format("%s° F", weather.getDewPoint());
-                holder.dewPointTextView.setText(dewPoint);
+                holder.dewPointTextView.setText(Utils.getTemperatureString(context, weather.getDewPoint(), !useMetric));
 
+                //TODO: localization support
                 String pressure = String.format("%s Hg", weather.getMslp());
                 holder.pressureTextView.setText(pressure);
                 break;

@@ -98,4 +98,8 @@
     <string name="missing_info_rules">Rules needing more information</string>
     <string name="informational_rules">Rules you should review</string>
     <string name="not_conflicting_rules">Rules you are following</string>
+    <string name="celsius_temp">%d °C</string>
+    <string name="fahrenheit_temp">%d °F</string>
+    <string name="kilometers_short">%d km</string>
+    <string name="miles_short">%d mi</string>
 </resources>

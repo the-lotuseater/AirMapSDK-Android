@@ -83,6 +83,45 @@ public class Utils {
         return meters * 3.2808399;
     }
 
+    public static double celsiusToFahrenheit(double celsius) {
+        return 32 + (celsius * 9 / 5);
+    }
+
+    public static String getTemperatureString(Context context, double tempInCelsius, boolean useFahrenheit) {
+        if (useFahrenheit) {
+            return context.getString(R.string.fahrenheit_temp, Math.round(celsiusToFahrenheit(tempInCelsius)));
+        }
+        return context.getString(R.string.celsius_temp, Math.round(tempInCelsius));
+    }
+
+    public static int convertToDp(Context context, int px) {
+        float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (px * scale + 0.5f);
+    }
+
+    public static double metersToMiles(double meters) {
+        return meters * 0.000621371;
+    }
+
+    public static int milesToKilometers(int miles) {
+        return (int) (miles * 1.609344);
+    }
+
+    public static int kilometersToMiles(int kilometers) {
+        return (int) (kilometers / 1.609344);
+    }
+
+    public static int metersPerSecondToKts(int metersPerSecond) {
+        return (int) (metersPerSecond * 1.94384);
+    }
+
+    public static int metersPerSecondToKmph(int metersPerSecond) {
+        return (int) (metersPerSecond * 3.6);
+    }
+    public static int metersPerSecondToMph(int metersPerSecond) {
+        return (int) (metersPerSecond * 2.23694);
+    }
+
     public static DateFormat getDateTimeFormat() {
         return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault());
     }
