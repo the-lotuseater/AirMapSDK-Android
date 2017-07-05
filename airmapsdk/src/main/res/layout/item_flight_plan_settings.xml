@@ -19,7 +19,7 @@
     <LinearLayout
         android:id="@+id/date_time_picker_touch_target"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="48dp"
         android:background="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -47,7 +47,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="48dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingLeft="12dp"
@@ -95,7 +95,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="48dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingLeft="12dp"
@@ -141,7 +141,7 @@
     <TextView
         android:id="@+id/pilot_profile_text"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="48dp"
         android:background="?attr/selectableItemBackground"
         android:drawableRight="@drawable/ic_edit"
         android:gravity="center_vertical"
@@ -153,7 +153,7 @@
     <TextView
         android:id="@+id/aircraft_label"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="48dp"
         android:background="?attr/selectableItemBackground"
         android:drawableRight="@drawable/ic_edit"
         android:gravity="center_vertical"
