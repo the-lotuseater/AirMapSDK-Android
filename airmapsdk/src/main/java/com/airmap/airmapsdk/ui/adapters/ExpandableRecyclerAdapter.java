@@ -51,11 +51,11 @@ public abstract class ExpandableRecyclerAdapter<P,C> extends RecyclerView.Adapte
                     public void onClick(View v) {
                         if (!expandedParents.contains(parent)) {
                             expandedParents.add(parent);
-                            notifyItemChanged(holder.getAdapterPosition());
+                            toggleExpandingViewHolder(holder, true);
                             notifyItemRangeInserted(holder.getAdapterPosition() + 1, dataMap.get(parent).size());
                         } else {
                             expandedParents.remove(parent);
-                            notifyItemChanged(holder.getAdapterPosition());
+                            toggleExpandingViewHolder(holder, false);
                             notifyItemRangeRemoved(holder.getAdapterPosition() + 1, dataMap.get(parent).size());
                         }
                     }
@@ -75,6 +75,8 @@ public abstract class ExpandableRecyclerAdapter<P,C> extends RecyclerView.Adapte
             return CHILD_VIEW_TYPE;
         }
     }
+
+    protected abstract void toggleExpandingViewHolder(final RecyclerView.ViewHolder holder, final boolean expanded);
 
     public Object getItem(int position) {
         int index = 0;

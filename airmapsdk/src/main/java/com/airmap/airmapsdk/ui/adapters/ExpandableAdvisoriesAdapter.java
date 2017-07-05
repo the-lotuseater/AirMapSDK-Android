@@ -68,6 +68,12 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Mappi
         }
     }
 
+
+    @Override
+    protected void toggleExpandingViewHolder(final RecyclerView.ViewHolder holder, final boolean expanded) {
+        ((AirspaceTypeViewHolder) holder).expandImageView.setImageResource(expanded ? R.drawable.ic_drop_down_up : R.drawable.ic_drop_down);
+    }
+
     private AirMapStatus.StatusColor calculateStatusColor(MappingService.AirMapAirspaceType type) {
         AirMapStatus.StatusColor color = AirMapStatus.StatusColor.Green;
         for (AirMapAdvisory advisory : dataMap.get(type)) {

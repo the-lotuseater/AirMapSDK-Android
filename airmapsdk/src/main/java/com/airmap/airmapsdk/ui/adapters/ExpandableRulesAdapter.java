@@ -71,6 +71,11 @@ public class ExpandableRulesAdapter extends ExpandableRecyclerAdapter<AirMapRule
         }
     }
 
+    @Override
+    protected void toggleExpandingViewHolder(final RecyclerView.ViewHolder holder, final boolean expanded) {
+        ((SectionViewHolder) holder).expandImageView.setImageResource(expanded ? R.drawable.ic_drop_down_up : R.drawable.ic_drop_down);
+    }
+
     @StringRes
     private int getStatusString(AirMapRule.Status status) {
         switch (status) {
