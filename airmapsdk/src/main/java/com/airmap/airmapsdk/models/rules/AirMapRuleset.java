@@ -107,7 +107,7 @@ public class AirMapRuleset implements Serializable, AirMapBaseModel, Comparable 
                 setJurisdictionName(jurisdictionObject.optString("name"));
                 setRegion(AirMapJurisdiction.RegionCategory.fromString(jurisdictionObject.optString("region")));
             }
-            setSummary(Utils.optString(json, "summary"));
+            setSummary(Utils.optString(json, "description"));
             setDefault(json.optBoolean("default"));
             setType(Type.fromString(json.optString("selection_type")));
 
