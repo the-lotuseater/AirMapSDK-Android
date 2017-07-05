@@ -279,7 +279,7 @@ public class Utils {
     }
 
     public static String getMeasurementText(Context context, double bufferInMeters, boolean useMetric) {
-        double buffer = useMetric ? bufferInMeters : Math.round(metersToFeet(bufferInMeters));
+        int buffer = (int) (useMetric ? bufferInMeters : Math.round(metersToFeet(bufferInMeters)));
         return context.getString(useMetric ? R.string.units_meter_short : R.string.units_feet_short, buffer);
     }
 

@@ -351,8 +351,8 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private String getMeasurementWithUnits(double value, FlightFeatureConfiguration flightFeatureConfig) {
         String units = flightFeatureConfig.getValueConfig(useMetric).getUnit();
-        //FIXME:
-        return value + " " + units;
+        //TODO: i18n support?
+        return String.format("%d %s", (int) value, units);
     }
 
     public AirMapBaseModel getItem(int position) {
