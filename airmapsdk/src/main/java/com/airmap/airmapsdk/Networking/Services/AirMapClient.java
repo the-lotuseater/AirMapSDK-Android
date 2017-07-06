@@ -306,7 +306,7 @@ public class AirMapClient {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 Response response = chain.proceed(chain.request());
-                if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED && AirMap.hasValidAuthenticatedUser()) {
                     AirMap.showLogin();
                 }
                 return response;
