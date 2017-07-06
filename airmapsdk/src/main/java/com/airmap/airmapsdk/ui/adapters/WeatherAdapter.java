@@ -83,7 +83,8 @@ public class WeatherAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 holder.dewPointTextView.setText(Utils.getTemperatureString(context, weather.getDewPoint(), !useMetric));
 
                 //TODO: localization support
-                String pressure = String.format("%s Hg", weather.getMslp());
+                double pressureHg = weather.getMslp() * 0.02953;
+                String pressure = String.format("%.2f Hg", pressureHg);
                 holder.pressureTextView.setText(pressure);
                 break;
         }
