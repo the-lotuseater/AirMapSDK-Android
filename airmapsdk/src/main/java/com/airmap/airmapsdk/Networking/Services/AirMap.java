@@ -1311,8 +1311,8 @@ public class AirMap {
         return airMapMapMappingService.getTileSourceUrl(layers, theme);
     }
 
-    public static String getMapStylesUrl() {
-        return airMapMapMappingService.getStylesUrl();
+    public static String getMapStylesUrl(MappingService.AirMapMapTheme theme) {
+        return airMapMapMappingService.getStylesUrl(theme);
     }
 
     public static String getJurisdictionsTileUrlTemplate() {
@@ -1323,8 +1323,8 @@ public class AirMap {
         return airMapMapMappingService.getRulesetTileUrlTemplate(rulesetId, layers);
     }
 
-    public static void getMapStylesJson(AirMapCallback<JSONObject> listener) {
-        airMapMapMappingService.getStylesJson(listener);
+    public static void getMapStylesJson(MappingService.AirMapMapTheme theme, AirMapCallback<JSONObject> listener) {
+        airMapMapMappingService.getStylesJson(theme, listener);
     }
 
     /**

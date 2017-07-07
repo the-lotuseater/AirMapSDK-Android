@@ -293,7 +293,8 @@ public class MappingService extends BaseService {
         Standard("standard"),
         Light("light"),
         Dark("dark"),
-        Satellite("satellite");
+        Satellite("satellite"),
+        Hybrid("hybrid");
 
         private final String text;
 
@@ -309,6 +310,7 @@ public class MappingService extends BaseService {
         public static AirMapMapTheme fromString(String text) {
             switch (text) {
                 case "standard":
+                case "street":
                     return Standard;
                 case "light":
                     return Light;
@@ -316,6 +318,8 @@ public class MappingService extends BaseService {
                     return Dark;
                 case "satellite":
                     return Satellite;
+                case "hybrid":
+                    return Hybrid;
             }
             return null;
         }
@@ -334,12 +338,33 @@ public class MappingService extends BaseService {
         return mapTilesRulesUrl + rulesetId + "/" + TextUtils.join(",", layers) + "/{z}/{x}/{y}";
     }
 
-    protected String getStylesUrl() {
-        return "https://cdn.airmap.com/static/map-styles/v0.2/styles.json";
+    protected String getStylesUrl(AirMapMapTheme theme) {
+        String stylesUrl = "https://cdn.airmap.com/static/map-styles/v0.4/";
+
+        switch (theme) {
+            case Light:
+                stylesUrl += "light.json";
+                break;
+            case Dark:
+                stylesUrl += "dark.json";
+                break;
+            case Hybrid:
+                stylesUrl += "hybrid.json";
+                break;
+            case Satellite:
+                stylesUrl += "satellite-hybrid.json";
+                break;
+            default:
+            case Standard:
+                stylesUrl += "street.json";
+                break;
+        }
+
+        return stylesUrl;
     }
 
-    protected void getStylesJson(final AirMapCallback<JSONObject> listener) {
-        AirMap.getClient().get(getStylesUrl(), new Callback() {
+    protected void getStylesJson(AirMapMapTheme theme, final AirMapCallback<JSONObject> listener) {
+        AirMap.getClient().get(getStylesUrl(theme), new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 listener.error(new AirMapException(e.getMessage()));
