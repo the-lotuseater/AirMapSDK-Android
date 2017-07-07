@@ -339,7 +339,7 @@ public class MappingService extends BaseService {
     }
 
     protected String getStylesUrl(AirMapMapTheme theme) {
-        String stylesUrl = "https://cdn.airmap.com/static/map-styles/v0.4/";
+        String stylesUrl = "https://cdn.airmap.com/static/map-styles/v0.5/";
 
         switch (theme) {
             case Light:
@@ -352,11 +352,11 @@ public class MappingService extends BaseService {
                 stylesUrl += "hybrid.json";
                 break;
             case Satellite:
-                stylesUrl += "satellite-hybrid.json";
+                stylesUrl += "satellite.json";
                 break;
             default:
             case Standard:
-                stylesUrl += "street.json";
+                stylesUrl += "standard.json";
                 break;
         }
 
