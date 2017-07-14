@@ -139,6 +139,10 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         notifyItemChanged(0);
     }
 
+    private void onFlightPlanChanged() {
+        flightPlanChangeListener.onFlightPlanChanged();
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
@@ -228,18 +232,17 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
 
                         if (fromUser) {
                             flightPlan.setFlightFeatureValue(value);
-                            flightPlanChangeListener.onFlightPlanChanged(flightPlan);
-
                             updateRuleOfFlightFeature(flightFeature);
                         }
-
                     }
 
                     @Override
                     public void onStartTrackingTouch(SeekBar seekBar) {}
 
                     @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {}
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        onFlightPlanChanged();
+                    }
                 });
 
                 int progress = 0;
@@ -268,7 +271,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                     public void onClick(View v) {
                         FlightFeatureValue featureValue = new FlightFeatureValue<>(flightFeature.getFlightFeature(), false);
                         flightPlan.setFlightFeatureValue(featureValue);
-                        flightPlanChangeListener.onFlightPlanChanged(flightPlan);
+                        onFlightPlanChanged();
                         updateRuleOfFlightFeature(flightFeature);
                     }
                 });
@@ -280,7 +283,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                     public void onClick(View v) {
                         FlightFeatureValue featureValue = new FlightFeatureValue<>(flightFeature.getFlightFeature(), true);
                         flightPlan.setFlightFeatureValue(featureValue);
-                        flightPlanChangeListener.onFlightPlanChanged(flightPlan);
+                        onFlightPlanChanged();
                         updateRuleOfFlightFeature(flightFeature);
                     }
                 });
@@ -382,8 +385,6 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                             flightPlan.setFlightFeatureValue(new FlightFeatureValue<>(flightFeature.getFlightFeature(), altitudeInMeters));
                         }
                     }
-
-                    flightPlanChangeListener.onFlightPlanChanged(flightPlan);
                 }
             }
 
@@ -391,13 +392,15 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
             public void onStartTrackingTouch(SeekBar seekBar) {}
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                onFlightPlanChanged();
+            }
         });
 
         // flight plan defaults to max altitude if not set
         if (flightPlan.getMaxAltitude() == 0) {
             flightPlan.setMaxAltitude((float) (valueConfig.getDefaultValue() * valueConfig.getConversionFactor()));
-            flightPlanChangeListener.onFlightPlanChanged(flightPlan);
+            onFlightPlanChanged();
         }
 
         int progress = Utils.indexOfNearestMatch(flightPlan.getMaxAltitude() / valueConfig.getConversionFactor(), altitudes);
@@ -425,7 +428,6 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                     flightPlan.setDurationInMillis(durationInMillis);
                     long startTime = flightPlan.getStartsAt() != null ? flightPlan.getStartsAt().getTime() : new Date().getTime();
                     flightPlan.setEndsAt(new Date(startTime + durationInMillis));
-                    flightPlanChangeListener.onFlightPlanChanged(flightPlan);
                 }
             }
 
@@ -433,14 +435,16 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
             public void onStartTrackingTouch(SeekBar seekBar) {}
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                onFlightPlanChanged();
+            }
         });
 
         if (flightPlan.getEndsAt() == null) {
             long defaultDuration = (long) (valueConfig.getDefaultValue() * 60 * 1000);
             flightPlan.setDurationInMillis(defaultDuration);
             flightPlan.setEndsAt(new Date(System.currentTimeMillis() + defaultDuration));
-            flightPlanChangeListener.onFlightPlanChanged(flightPlan);
+            onFlightPlanChanged();
         }
         long startTime = flightPlan.getStartsAt() != null ? flightPlan.getStartsAt().getTime() : new Date().getTime();
         double durationInMins = (flightPlan.getEndsAt().getTime() - startTime) / (60 * 1000);
@@ -498,7 +502,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                                 holder.startsAtTextView.setText(flightPlan.getStartsAt() == null ?
                                         activity.getString(R.string.now) : format.format(flightPlan.getStartsAt()));
 
-                                flightPlanChangeListener.onFlightPlanChanged(flightPlan);
+                                onFlightPlanChanged();
                             }
                         }, nowHour, nowMinute, false).show();
                     }
@@ -548,7 +552,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                                     } else {
                                         holder.aircraftTextView.setText(aircrafts.get(position).getNickname());
                                         flightPlan.setAircraftId(aircrafts.get(position).getAircraftId());
-                                        flightPlanChangeListener.onFlightPlanChanged(flightPlan);
+                                        onFlightPlanChanged();
                                     }
                                     dialogInterface.dismiss();
                                 }
@@ -656,7 +660,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     public interface FlightPlanChangeListener {
-        void onFlightPlanChanged(AirMapFlightPlan flightPlan);
+        void onFlightPlanChanged();
         void onFlightPlanSubmit();
     }
 }
