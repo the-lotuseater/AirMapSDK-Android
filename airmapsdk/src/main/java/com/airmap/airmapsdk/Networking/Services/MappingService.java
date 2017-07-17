@@ -61,6 +61,8 @@ public class MappingService extends BaseService {
         Universities("universities", R.string.tile_layer_universities),
         SeaplaneBase("seaplane_base", R.string.tile_layer_seaplane_base),
         Other("aerial_recreational_areas,custom,hazard_areas,hospitals,power_plants,prisons,schools,universities,cities", R.string.tile_layer_other_cautionary_areas),
+        Notam("notam", R.string.notams),
+        AMA("ama", R.string.amas),
         Unknown("type_not_found", R.string.tile_layer_unknown);
 
         private final String text;
@@ -144,6 +146,10 @@ public class MappingService extends BaseService {
                     return SeaplaneBase;
                 case "aerial_recreational_areas,custom,hazard_areas,hospitals,power_plants,prisons,schools,universities,cities":
                     return Other;
+                case "notam":
+                    return Notam;
+                case "ama":
+                    return AMA;
                 default:
                     return Unknown;
             }
@@ -197,6 +203,10 @@ public class MappingService extends BaseService {
                     return AirMapAirspaceType.Prison;
                 case Universities:
                     return AirMapAirspaceType.University;
+                case Notam:
+                    return AirMapAirspaceType.Notam;
+                case AMA:
+                    return AirMapAirspaceType.AMA;
                 case Unknown:
                     return AirMapAirspaceType.Unknown;
             }
@@ -224,6 +234,8 @@ public class MappingService extends BaseService {
         Custom("custom", R.string.airspace_type_custom),
         Prison("prison", R.string.airspace_type_prison),
         University("university", R.string.airspace_type_university),
+        Notam("notam", R.string.airspace_type_notam),
+        AMA("ama", R.string.airspace_type_ama),
         Unknown("unknown", R.string.airspace_type_unknown);
 
         private final String text;
@@ -283,6 +295,10 @@ public class MappingService extends BaseService {
                     return University;
                 case "seaplane_base":
                     return SeaplaneBase;
+                case "notam":
+                    return Notam;
+                case "ama":
+                    return AMA;
                 default:
                     return Unknown;
             }
