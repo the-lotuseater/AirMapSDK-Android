@@ -45,7 +45,7 @@ public class RulesService extends BaseService {
     public static Call getRulesets(JSONObject geometry, AirMapCallback<List<AirMapRuleset>> listener) {
         Map<String, String> params = new HashMap<>();
         params.put("geometry", geometry.toString());
-        return AirMap.getClient().get(rulesetsBaseUrl, params, new GenericListOkHttpCallback(listener, AirMapRuleset.class));
+        return AirMap.getClient().post(rulesetsBaseUrl, params, new GenericListOkHttpCallback(listener, AirMapRuleset.class));
     }
 
     public static Call getRules(String rulesetId, AirMapCallback<AirMapRuleset> listener) {
