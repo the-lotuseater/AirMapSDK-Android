@@ -293,8 +293,7 @@ public class MappingService extends BaseService {
         Standard("standard"),
         Light("light"),
         Dark("dark"),
-        Satellite("satellite"),
-        Hybrid("hybrid");
+        Satellite("satellite");
 
         private final String text;
 
@@ -318,8 +317,6 @@ public class MappingService extends BaseService {
                     return Dark;
                 case "satellite":
                     return Satellite;
-                case "hybrid":
-                    return Hybrid;
             }
             return null;
         }
@@ -339,7 +336,7 @@ public class MappingService extends BaseService {
     }
 
     protected String getStylesUrl(AirMapMapTheme theme) {
-        String stylesUrl = "https://cdn.airmap.com/static/map-styles/v0.5/";
+        String stylesUrl = "https://cdn.airmap.com/static/map-styles/v0.6/";
 
         switch (theme) {
             case Light:
@@ -347,9 +344,6 @@ public class MappingService extends BaseService {
                 break;
             case Dark:
                 stylesUrl += "dark.json";
-                break;
-            case Hybrid:
-                stylesUrl += "hybrid.json";
                 break;
             case Satellite:
                 stylesUrl += "satellite.json";
