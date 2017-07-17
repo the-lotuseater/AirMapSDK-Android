@@ -1265,6 +1265,10 @@ public class AirMap {
         return RulesService.getRulesets(geometry, listener);
     }
 
+    public static Call getRulesets(@NonNull List<String> rulesetIds, @Nullable AirMapCallback<List<AirMapRuleset>> listener) {
+        return RulesService.getRulesets(rulesetIds, listener);
+    }
+
     public static Call getRules(@NonNull String rulesetId, @Nullable AirMapCallback<AirMapRuleset> listener) {
         return RulesService.getRules(rulesetId, listener);
     }

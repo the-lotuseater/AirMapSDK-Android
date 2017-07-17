@@ -53,6 +53,13 @@ public class RulesService extends BaseService {
         return AirMap.getClient().get(url, new GenericOkHttpCallback(listener, AirMapRuleset.class));
     }
 
+    public static Call getRulesets(List<String> rulesetIds, AirMapCallback<List<AirMapRuleset>> listener) {
+        String url = rulesetsUrl;
+        Map<String, String> params = new HashMap<>();
+        params.put("rulesets", TextUtils.join(",",rulesetIds));
+        return AirMap.getClient().get(url, params, new GenericListOkHttpCallback(listener, AirMapRuleset.class));
+    }
+
     public static Call getAdvisories(List<String> rulesets, List<Coordinate> geometry, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
         Map<String, String> params = new HashMap<>();
         params.put("rulesets", TextUtils.join(",", rulesets));

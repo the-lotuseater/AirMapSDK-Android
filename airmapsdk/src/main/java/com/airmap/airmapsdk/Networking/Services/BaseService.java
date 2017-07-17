@@ -101,5 +101,6 @@ class BaseService {
     protected static final String rulesetsBaseUrl = baseUrl + "rules/" + rulesetsVersion;
     protected static final String welcomeBaseUrl = DEBUG ? baseUrl + "rules/stage/locale/" : baseUrl + "rules/v1/locale";
     protected static final String rulesByIdUrl = rulesetsBaseUrl + "%s/"; //Replace %s with id using String.format
+    protected static final String rulesetsUrl = rulesetsBaseUrl + "rule/";
     protected static final String advisoriesUrl = baseUrl + "advisory/" + rulesetsVersion + "airspace";
 }
