@@ -62,7 +62,7 @@ public class MappingService extends BaseService {
         SeaplaneBase("seaplane_base", R.string.tile_layer_seaplane_base),
         Other("aerial_recreational_areas,custom,hazard_areas,hospitals,power_plants,prisons,schools,universities,cities", R.string.tile_layer_other_cautionary_areas),
         Notam("notam", R.string.notams),
-        AMA("ama", R.string.amas),
+        AMA("ama_field", R.string.amas),
         Unknown("type_not_found", R.string.tile_layer_unknown);
 
         private final String text;
@@ -149,6 +149,7 @@ public class MappingService extends BaseService {
                 case "notam":
                     return Notam;
                 case "ama":
+                case  "ama_field":
                     return AMA;
                 default:
                     return Unknown;
@@ -235,7 +236,7 @@ public class MappingService extends BaseService {
         Prison("prison", R.string.airspace_type_prison),
         University("university", R.string.airspace_type_university),
         Notam("notam", R.string.airspace_type_notam),
-        AMA("ama", R.string.airspace_type_ama),
+        AMA("ama_field", R.string.airspace_type_ama),
         Unknown("unknown", R.string.airspace_type_unknown);
 
         private final String text;
@@ -298,6 +299,7 @@ public class MappingService extends BaseService {
                 case "notam":
                     return Notam;
                 case "ama":
+                case "ama_field":
                     return AMA;
                 default:
                     return Unknown;
