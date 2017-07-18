@@ -128,9 +128,9 @@ public class AirMapRule implements Serializable, AirMapBaseModel {
 
     @Override
     public String toString() {
-        if (!TextUtils.isEmpty(description) && !description.toLowerCase().equals("not available.")) {
-            return description;
-        }
+//        if (!TextUtils.isEmpty(description) && !description.toLowerCase().equals("not available.")) {
+//            return description;
+//        }
 
         return shortText;
     }
