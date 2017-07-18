@@ -36,16 +36,16 @@ import okhttp3.Call;
 public class RulesService extends BaseService {
 
     public static Call getRulesets(Coordinate coordinate, AirMapCallback<List<AirMapRuleset>> listener) {
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("latitude", String.valueOf(coordinate.getLatitude()));
         params.put("longitude", String.valueOf(coordinate.getLongitude()));
-        return AirMap.getClient().get(rulesetsBaseUrl, params, new GenericListOkHttpCallback(listener, AirMapRuleset.class));
+        return AirMap.getClient().postWithJsonBody(rulesetsBaseUrl, params, new GenericListOkHttpCallback(listener, AirMapRuleset.class));
     }
 
     public static Call getRulesets(JSONObject geometry, AirMapCallback<List<AirMapRuleset>> listener) {
-        Map<String, String> params = new HashMap<>();
-        params.put("geometry", geometry.toString());
-        return AirMap.getClient().post(rulesetsBaseUrl, params, new GenericListOkHttpCallback(listener, AirMapRuleset.class));
+        Map<String, Object> params = new HashMap<>();
+        params.put("geometry", geometry);
+        return AirMap.getClient().postWithJsonBody(rulesetsBaseUrl, params, new GenericListOkHttpCallback(listener, AirMapRuleset.class));
     }
 
     public static Call getRules(String rulesetId, AirMapCallback<AirMapRuleset> listener) {
@@ -61,7 +61,7 @@ public class RulesService extends BaseService {
     }
 
     public static Call getAdvisories(List<String> rulesets, List<Coordinate> geometry, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("rulesets", TextUtils.join(",", rulesets));
         params.put("geometry", "POLYGON(" + Utils.makeGeoString(geometry) + ")");
 
@@ -71,20 +71,20 @@ public class RulesService extends BaseService {
                 for (String key : flightFeatures.keySet()) {
                     jsonObject.put(key, flightFeatures.get(key));
                 }
-                params.put("flight_features", URLEncoder.encode(jsonObject.toString(), "UTF-8"));
-            } catch (JSONException | UnsupportedEncodingException e) {
+                params.put("flight_features", jsonObject);
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-        Call call = AirMap.getClient().get(advisoriesUrl, params, new GenericOkHttpCallback(listener, AirMapAirspaceAdvisoryStatus.class));
+        Call call = AirMap.getClient().postWithJsonBody(advisoriesUrl, params, new GenericOkHttpCallback(listener, AirMapAirspaceAdvisoryStatus.class));
         return call;
     }
 
     public static Call getAdvisories(List<String> rulesets, JSONObject geometry, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("rulesets", TextUtils.join(",", rulesets));
-        params.put("geometry", geometry.toString());
+        params.put("geometry", geometry);
 
         if (flightFeatures != null && !flightFeatures.isEmpty()) {
             try {
@@ -92,13 +92,13 @@ public class RulesService extends BaseService {
                 for (String key : flightFeatures.keySet()) {
                     jsonObject.put(key, flightFeatures.get(key));
                 }
-                params.put("flight_features", URLEncoder.encode(jsonObject.toString(), "UTF-8"));
-            } catch (JSONException | UnsupportedEncodingException e) {
+                params.put("flight_features", jsonObject);
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-        Call call = AirMap.getClient().get(advisoriesUrl, params, new GenericOkHttpCallback(listener, AirMapAirspaceAdvisoryStatus.class));
+        Call call = AirMap.getClient().postWithJsonBody(advisoriesUrl, params, new GenericOkHttpCallback(listener, AirMapAirspaceAdvisoryStatus.class));
         return call;
     }
 

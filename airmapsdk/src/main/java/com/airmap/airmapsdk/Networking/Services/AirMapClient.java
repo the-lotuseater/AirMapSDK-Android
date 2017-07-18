@@ -189,6 +189,31 @@ public class AirMapClient {
     }
 
     /**
+     * Make a POST call with a JSON body
+     *
+     * @param url      The full url to POST
+     * @param params   The JSON params to add to the request
+     * @param callback An OkHttp Callback
+     */
+    public Call postWithJsonBody(String url, Map<String, Object> params, Callback callback) {
+        JSONObject jsonObject = new JSONObject();
+        for (String key : params.keySet()) {
+            try {
+                jsonObject.put(key, params.get(key));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(JSON, jsonObject.toString());
+        Request request = new Builder().url(url).post(body).build();
+        Call call = client.newCall(request);
+        call.enqueue(callback);
+        return call;
+    }
+
+    /**
      * Make a PATCH call with a JSON body
      *
      * @param url      The full url to POST
