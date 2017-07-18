@@ -71,8 +71,8 @@
     <string name="tile_layer_did">Densely Populated Region</string>
     <string name="tile_layer_seaplane_base">Seaplane Base</string>
     <string name="airspace_type_seaplane_base">Seaplane Base</string>
-    <string name="airspace_type_notam">Notam</string>
-    <string name="notams">Notams</string>
+    <string name="airspace_type_notam">NOTAM</string>
+    <string name="notams">NOTAMS</string>
     <string name="airspace_type_ama">AMA Field</string>
     <string name="amas">AMA Fields</string>
     <string name="tile_layer_unknown">Unknown</string>
