@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,10 +61,18 @@ public class RulesService extends BaseService {
         return AirMap.getClient().get(url, params, new GenericListOkHttpCallback(listener, AirMapRuleset.class));
     }
 
-    public static Call getAdvisories(List<String> rulesets, List<Coordinate> geometry, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+    public static Call getAdvisories(List<String> rulesets, List<Coordinate> geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
         Map<String, Object> params = new HashMap<>();
         params.put("rulesets", TextUtils.join(",", rulesets));
         params.put("geometry", "POLYGON(" + Utils.makeGeoString(geometry) + ")");
+
+        if (start != null) {
+            params.put("start", Utils.getIso8601StringFromDate(start));
+        }
+
+        if (end != null) {
+            params.put("end", Utils.getIso8601StringFromDate(end));
+        }
 
         if (flightFeatures != null && !flightFeatures.isEmpty()) {
             try {
@@ -81,10 +90,18 @@ public class RulesService extends BaseService {
         return call;
     }
 
-    public static Call getAdvisories(List<String> rulesets, JSONObject geometry, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+    public static Call getAdvisories(List<String> rulesets, JSONObject geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
         Map<String, Object> params = new HashMap<>();
         params.put("rulesets", TextUtils.join(",", rulesets));
         params.put("geometry", geometry);
+
+        if (start != null) {
+            params.put("start", Utils.getIso8601StringFromDate(start));
+        }
+
+        if (end != null) {
+            params.put("end", Utils.getIso8601StringFromDate(end));
+        }
 
         if (flightFeatures != null && !flightFeatures.isEmpty()) {
             try {

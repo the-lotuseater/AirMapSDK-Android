@@ -1277,26 +1277,26 @@ public class AirMap {
         FlightService.getFlightBriefing(flightPlanId, callback);
     }
 
-    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull List<Coordinate> geometry, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull List<Coordinate> geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
         List<String> rulesetIds = new ArrayList<>();
         for (AirMapRuleset ruleset : rulesets) {
             rulesetIds.add(ruleset.getId());
         }
 
-        return RulesService.getAdvisories(rulesetIds, geometry, flightFeatures, listener);
+        return RulesService.getAdvisories(rulesetIds, geometry, start, end, flightFeatures, listener);
     }
 
-    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull JSONObject geometry, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
         List<String> rulesetIds = new ArrayList<>();
         for (AirMapRuleset ruleset : rulesets) {
             rulesetIds.add(ruleset.getId());
         }
 
-        return RulesService.getAdvisories(rulesetIds, geometry, flightFeatures, listener);
+        return RulesService.getAdvisories(rulesetIds, geometry, start, end, flightFeatures, listener);
     }
 
-    public static Call getAdvisories(@NonNull List<String> rulesets, @NonNull JSONObject geometry, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
-        return RulesService.getAdvisories(rulesets, geometry, null, listener);
+    public static Call getAdvisories(@NonNull List<String> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+        return RulesService.getAdvisories(rulesets, geometry, start, end, null, listener);
     }
 
     public static Call getWelcomeSummary(@NonNull Coordinate coordinate, @Nullable AirMapCallback<List<AirMapWelcomeResult>> listener) {
