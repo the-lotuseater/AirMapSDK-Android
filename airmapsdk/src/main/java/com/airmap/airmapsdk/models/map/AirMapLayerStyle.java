@@ -20,6 +20,7 @@ public abstract class AirMapLayerStyle {
     public final String source;
     public final String sourceLayer;
     public final String type;
+    public final float minZoom;
     public Filter.Statement filter;
     public final boolean interactive;
 
@@ -28,6 +29,7 @@ public abstract class AirMapLayerStyle {
         source = optString(json, "source");
         sourceLayer = optString(json, "source-layer");
         type = optString(json, "type");
+        minZoom = (float) json.optDouble("minzoom");
 
         interactive = json.optBoolean("interactive", false);
 

@@ -42,6 +42,7 @@ public class AirMapSymbolLayerStyle extends AirMapLayerStyle {
         layer.setProperties(PropertyFactory.iconImage(iconImage));
         layer.setProperties(PropertyFactory.iconAllowOverlap(iconAllowOverlap));
         layer.setProperties(PropertyFactory.iconKeepUpright(iconKeepUpright));
+        layer.setMinZoom(minZoom);
 
         if (filter != null) {
             layer.setFilter(filter);
