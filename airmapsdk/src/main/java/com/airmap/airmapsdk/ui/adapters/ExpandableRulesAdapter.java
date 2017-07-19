@@ -103,7 +103,7 @@ public class ExpandableRulesAdapter extends ExpandableRecyclerAdapter<AirMapRule
             case NotConflicting:
                 return R.drawable.ic_checkmark;
         }
-        return R.drawable.com_auth0_lock_ic_check_error;
+        return R.drawable.ic_asterisk_yellow;
     }
 
     private class SectionViewHolder extends RecyclerView.ViewHolder {

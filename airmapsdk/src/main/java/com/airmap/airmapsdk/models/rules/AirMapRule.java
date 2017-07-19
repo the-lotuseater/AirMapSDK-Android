@@ -111,7 +111,11 @@ public class AirMapRule implements Serializable, AirMapBaseModel {
     }
 
     public String getShortText() {
-        return shortText;
+        if (!TextUtils.isEmpty(shortText) && !shortText.toLowerCase().equals("not available.")) {
+            return shortText;
+        }
+
+        return description;
     }
 
     public void setShortText(String shortText) {
@@ -128,9 +132,9 @@ public class AirMapRule implements Serializable, AirMapBaseModel {
 
     @Override
     public String toString() {
-//        if (!TextUtils.isEmpty(description) && !description.toLowerCase().equals("not available.")) {
-//            return description;
-//        }
+        if (!TextUtils.isEmpty(description) && !description.toLowerCase().equals("not available.")) {
+            return description;
+        }
 
         return shortText;
     }

@@ -197,7 +197,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
             case RULE_VIEW_TYPE: {
                 AirMapRule rule = (AirMapRule) getItem(position);
                 RuleViewHolder ruleViewHolder = (RuleViewHolder) holder;
-                ruleViewHolder.descriptionTextView.setText(rule.toString());
+                ruleViewHolder.descriptionTextView.setText(rule.getShortText());
                 ruleViewHolder.statusImageView.setImageResource(R.drawable.ic_asterisk);
                 ruleViewHolder.statusImageView.setVisibility(showStatusIcon(rule) ? View.VISIBLE : View.INVISIBLE);
 
