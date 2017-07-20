@@ -29,7 +29,7 @@ public abstract class AirMapLayerStyle {
         source = optString(json, "source");
         sourceLayer = optString(json, "source-layer");
         type = optString(json, "type");
-        minZoom = (float) json.optDouble("minzoom");
+        minZoom = (float) json.optDouble("minzoom", 0);
 
         interactive = json.optBoolean("interactive", false);
 

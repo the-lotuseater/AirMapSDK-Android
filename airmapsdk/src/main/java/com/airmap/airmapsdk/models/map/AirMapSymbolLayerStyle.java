@@ -6,6 +6,8 @@ import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 
 import org.json.JSONObject;
 
+import java.util.Iterator;
+
 /**
  * Created by collin@airmap.com on 4/17/17.
  */
@@ -13,6 +15,7 @@ import org.json.JSONObject;
 public class AirMapSymbolLayerStyle extends AirMapLayerStyle {
 
     public final String iconImage;
+    public final double iconPadding;
     public final boolean iconAllowOverlap;
     public final boolean iconKeepUpright;
 
@@ -22,10 +25,12 @@ public class AirMapSymbolLayerStyle extends AirMapLayerStyle {
         JSONObject layoutJson = json.optJSONObject("layout");
         if (layoutJson != null) {
             iconImage = optString(layoutJson, "icon-image");
+            iconPadding = layoutJson.optDouble("icon-padding");
             iconAllowOverlap = layoutJson.optBoolean("icon-allow-overlap");
             iconKeepUpright = layoutJson.optBoolean("icon-keep-upright");
         } else {
             iconImage = null;
+            iconPadding = 0;
             iconAllowOverlap = false;
             iconKeepUpright = false;
         }
@@ -42,7 +47,11 @@ public class AirMapSymbolLayerStyle extends AirMapLayerStyle {
         layer.setProperties(PropertyFactory.iconImage(iconImage));
         layer.setProperties(PropertyFactory.iconAllowOverlap(iconAllowOverlap));
         layer.setProperties(PropertyFactory.iconKeepUpright(iconKeepUpright));
-        layer.setMinZoom(minZoom);
+        layer.setProperties(PropertyFactory.iconPadding((float) iconPadding));
+
+        if (minZoom != 0) {
+            layer.setMinZoom(minZoom);
+        }
 
         if (filter != null) {
             layer.setFilter(filter);
