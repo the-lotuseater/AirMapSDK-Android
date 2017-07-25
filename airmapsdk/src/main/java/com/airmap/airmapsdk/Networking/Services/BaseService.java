@@ -10,14 +10,14 @@ import com.airmap.airmapsdk.util.Utils;
 class BaseService {
 
     //URLs should end with a /
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     //TODO: get rid of this
     private static final boolean DEV = false;
 
     //Base Urls
     protected static final String baseUrl = "https://api.airmap.com/";
-    protected static final String mapTilesVersion = DEBUG ? Utils.getDebugUrl() : "v4/";
+    protected static final String mapTilesVersion = DEBUG ? Utils.getDebugUrl() : "v1/";
     protected static final String mapTilesBaseUrl = baseUrl + "maps/" + mapTilesVersion + "tilejson/";
     protected static final String mapTilesRulesUrl = baseUrl + "tiledata/" + mapTilesVersion;
 
@@ -47,7 +47,7 @@ class BaseService {
     protected static final String flightPlanSubmitUrl = flightPlanPatchUrl + "submit";
 
     //Weather
-    protected static final String weatherVersion = DEBUG ? Utils.getDebugUrl() : "v2/";
+    protected static final String weatherVersion = DEBUG ? Utils.getDebugUrl() : "v1/";
     protected static final String weatherUrl = baseUrl + "advisory/" + weatherVersion + "weather";
 
     //Permits
@@ -97,7 +97,7 @@ class BaseService {
     protected static final String auth0Domain = DEV ? "sso-dev.airmap.io" : "sso.airmap.io";
 
     //Rules
-    protected static final String rulesetsVersion = DEBUG ? Utils.getDebugUrl() : "v2/";
+    protected static final String rulesetsVersion = DEBUG ? Utils.getDebugUrl() : "v1/";
     protected static final String rulesetsBaseUrl = baseUrl + "rules/" + rulesetsVersion;
     protected static final String welcomeBaseUrl = DEBUG ? baseUrl + "rules/stage/locale/" : baseUrl + "rules/v1/locale";
     protected static final String rulesByIdUrl = rulesetsBaseUrl + "%s/"; //Replace %s with id using String.format
