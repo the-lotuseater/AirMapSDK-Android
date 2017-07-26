@@ -10,7 +10,7 @@ import com.airmap.airmapsdk.util.Utils;
 class BaseService {
 
     //URLs should end with a /
-    private static final boolean DEBUG = false;
+    static final boolean DEBUG = false;
 
     //TODO: get rid of this
     private static final boolean DEV = false;
