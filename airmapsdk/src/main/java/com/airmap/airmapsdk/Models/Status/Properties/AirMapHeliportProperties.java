@@ -13,6 +13,7 @@ import java.io.Serializable;
 @SuppressWarnings("unused")
 public class AirMapHeliportProperties implements Serializable, AirMapBaseModel {
     private boolean publicUse;
+    private String phoneNumber;
 
     public AirMapHeliportProperties(JSONObject heliportJson) {
         constructFromJson(heliportJson);
@@ -26,6 +27,8 @@ public class AirMapHeliportProperties implements Serializable, AirMapBaseModel {
         if (json != null) {
             String use = json.optString("use");
             setPublicUse(use.equals("public"));
+
+            setPhoneNumber(json.optString("phone"));
         }
         return this;
     }
@@ -37,5 +40,13 @@ public class AirMapHeliportProperties implements Serializable, AirMapBaseModel {
     public AirMapHeliportProperties setPublicUse(boolean publicUse) {
         this.publicUse = publicUse;
         return this;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

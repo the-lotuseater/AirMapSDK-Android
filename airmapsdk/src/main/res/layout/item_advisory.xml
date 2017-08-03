@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="49dp" >
+    android:layout_height="49dp"
+    android:background="?selectableItemBackground" >
 
     <FrameLayout android:id="@+id/background_view"
         android:layout_width="8dp"
@@ -26,14 +27,14 @@
             android:textSize="14sp"
             android:textColor="@color/font_title" />
 
-        <TextView android:id="@+id/description_text_view"
+        <TextView android:id="@+id/info_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:text="Controlled Airspace - Class Bravo"
-            android:textSize="12sp"
+            android:textSize="11sp"
             android:textColor="@color/font_light_grey"
             android:visibility="gone" />
 

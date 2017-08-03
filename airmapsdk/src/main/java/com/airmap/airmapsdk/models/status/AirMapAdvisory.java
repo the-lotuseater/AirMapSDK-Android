@@ -8,6 +8,7 @@ import com.airmap.airmapsdk.models.status.properties.AirMapAirportProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapControlledAirspaceProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapEmergencyProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapHeliportProperties;
+import com.airmap.airmapsdk.models.status.properties.AirMapNotamProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapParkProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapPowerPlantProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapSchoolProperties;
@@ -55,6 +56,7 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
     private AirMapTfrProperties tfrProperties;
     private AirMapWildfireProperties wildfireProperties;
     private AirMapEmergencyProperties emergencyProperties;
+    private AirMapNotamProperties notamProperties;
 
     /**
      * Initialize an AirMapAdvisory from JSON
@@ -135,6 +137,10 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
                     }
                     case Emergencies: {
                         setEmergencyProperties(new AirMapEmergencyProperties(properties));
+                        break;
+                    }
+                    case Notam: {
+                        setNotamProperties(new AirMapNotamProperties(properties));
                         break;
                     }
                 }
@@ -339,6 +345,14 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
     public AirMapAdvisory setEmergencyProperties(AirMapEmergencyProperties emergencyProperties) {
         this.emergencyProperties = emergencyProperties;
         return this;
+    }
+
+    public AirMapNotamProperties getNotamProperties() {
+        return notamProperties;
+    }
+
+    public void setNotamProperties(AirMapNotamProperties notamProperties) {
+        this.notamProperties = notamProperties;
     }
 
     /**
