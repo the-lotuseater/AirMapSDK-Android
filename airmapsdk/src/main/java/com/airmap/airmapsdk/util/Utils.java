@@ -333,11 +333,16 @@ public class Utils {
 
     public static int indexOfNearestMatch(double meters, List<Double> presets) {
         for (int i = 0; i < presets.size(); i++) {
-            if (Math.round(presets.get(i)) >= Math.round(meters)) {
+            if (round(presets.get(i), 2) >= round(meters, 2)) {
                 return i;
             }
         }
         return presets.size() - 1;
+    }
+
+    private static double round(double value, int precision) {
+        int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
     }
 
     public static int indexOfDurationPreset(long millis) {

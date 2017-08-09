@@ -224,6 +224,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                         if (progress == 0) {
                             value = new FlightFeatureValue<>(flightFeature.getFlightFeature(), null);
                             seekbarViewHolder.valueTextView.setText(R.string.null_feature_value);
+                            flightPlanChangeListener.onFlightFeatureRemoved(flightFeature.getFlightFeature());
                         } else {
                             double adjustedValue = presets.get(progress - 1);
                             value = new FlightFeatureValue<>(flightFeature.getFlightFeature(), adjustedValue * valueConfig.getConversionFactor());
@@ -249,8 +250,8 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                 String text = holder.itemView.getContext().getString(R.string.null_feature_value);
                 if (savedValue != null) {
                     double measurement = savedValue.getValue() / valueConfig.getConversionFactor();
-                    progress = Utils.indexOfNearestMatch(measurement, presets);
-                    text = getMeasurementWithUnits(presets.get(progress), config);
+                    progress = Utils.indexOfNearestMatch(measurement, presets) + 1;
+                    text = getMeasurementWithUnits(presets.get(progress - 1), config);
                 }
                 seekbarViewHolder.valueTextView.setText(text);
                 seekbarViewHolder.seekBar.setProgress(progress);
@@ -355,7 +356,13 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
     private String getMeasurementWithUnits(double value, FlightFeatureConfiguration flightFeatureConfig) {
         String units = flightFeatureConfig.getValueConfig(useMetric).getUnit();
         //TODO: i18n support?
-        return String.format("%d %s", (int) value, units);
+        if (value == (long) value) {
+            return String.format("%d %s", (int) value, units);
+        } else if (value % .5 == 0) {
+            return String.format("%.1f %s", value, units);
+        } else {
+            return String.format("%.2f %s", value, units);
+        }
     }
 
     public AirMapBaseModel getItem(int position) {
@@ -661,6 +668,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public interface FlightPlanChangeListener {
         void onFlightPlanChanged();
+        void onFlightFeatureRemoved(String flightFeature);
         void onFlightPlanSubmit();
     }
 }
