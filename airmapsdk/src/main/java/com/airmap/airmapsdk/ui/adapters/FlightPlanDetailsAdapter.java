@@ -6,6 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -39,9 +41,14 @@ import com.airmap.airmapsdk.util.Utils;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by collin@airmap.com on 5/22/17.
@@ -60,7 +67,8 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private Activity activity;
     private AirMapFlightPlan flightPlan;
-    private List<AirMapBaseModel> rulesAndFlightFeatures;
+    private Map<AirMapFlightFeature,List<AirMapRule>> flightFeaturesMap;
+    private List<AirMapFlightFeature> flightFeatures;
     private List<AirMapFlightFeature> duplicateFlightFeatures;
     private Map<String, FlightFeatureConfiguration> flightFeaturesConfigMap;
     private FlightPlanChangeListener flightPlanChangeListener;
@@ -76,21 +84,23 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         this.useMetric = Utils.useMetric(activity);
     }
 
-    public FlightPlanDetailsAdapter(Activity activity, AirMapFlightPlan flightPlan, List<AirMapBaseModel> rulesAndFlightFeatures,
+    public FlightPlanDetailsAdapter(Activity activity, AirMapFlightPlan flightPlan, Map<AirMapFlightFeature, List<AirMapRule>> flightFeaturesMap,
                                     Map<String, FlightFeatureConfiguration> flightFeaturesConfigMap, FlightPlanChangeListener flightPlanChangeListener) {
         this.activity = activity;
         this.flightPlan = flightPlan;
-        this.rulesAndFlightFeatures = rulesAndFlightFeatures;
+        this.flightFeaturesMap = flightFeaturesMap;
         this.flightFeaturesConfigMap = flightFeaturesConfigMap;
         this.flightPlanChangeListener = flightPlanChangeListener;
         this.useMetric = Utils.useMetric(activity);
+        this.flightFeatures = new ArrayList<>(flightFeaturesMap.keySet());
 
         stripDuplicateFlightFeatures();
     }
 
-    public void setFlightFeatures(Map<String, FlightFeatureConfiguration> formatMap, List<AirMapBaseModel> rulesAndFlightFeatures) {
+    public void setFlightFeatures(Map<String, FlightFeatureConfiguration> formatMap, Map<AirMapFlightFeature, List<AirMapRule>> rulesAndFlightFeatures) {
         this.flightFeaturesConfigMap = formatMap;
-        this.rulesAndFlightFeatures = rulesAndFlightFeatures;
+        this.flightFeaturesMap = rulesAndFlightFeatures;
+        this.flightFeatures = new ArrayList<>(rulesAndFlightFeatures.keySet());
         stripDuplicateFlightFeatures();
         notifyDataSetChanged();
     }
@@ -99,22 +109,20 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         // not displaying altitude flight features for now
         duplicateFlightFeatures = new ArrayList<>();
 
-        int index = 0;
-        for (AirMapBaseModel ruleOrFlightFeature : new ArrayList<>(rulesAndFlightFeatures)) {
-            if (ruleOrFlightFeature instanceof AirMapFlightFeature) {
-                AirMapFlightFeature flightFeature = (AirMapFlightFeature) ruleOrFlightFeature;
-
-                if (flightFeature.isAltitudeFeature()) {
-                    AirMapBaseModel ruleOrFlightFeatureBefore = rulesAndFlightFeatures.get(index - 1);
-                    if (ruleOrFlightFeatureBefore instanceof AirMapRule) {
-                        rulesAndFlightFeatures.remove(ruleOrFlightFeatureBefore);
-                    }
-                    rulesAndFlightFeatures.remove(flightFeature);
-                    duplicateFlightFeatures.add(flightFeature);
-                }
+        for (AirMapFlightFeature flightFeature : new ArrayList<>(flightFeaturesMap.keySet())) {
+            if (flightFeature.isAltitudeFeature()) {
+                flightFeaturesMap.remove(flightFeature);
+                flightFeatures.remove(flightFeature);
+                duplicateFlightFeatures.add(flightFeature);
             }
-            index++;
         }
+
+        Collections.sort(flightFeatures, new Comparator<AirMapFlightFeature>() {
+            @Override
+            public int compare(AirMapFlightFeature o1, AirMapFlightFeature o2) {
+                return o1.getFlightFeature().compareTo(o2.getFlightFeature());
+            }
+        });
     }
 
     public void setPilot(AirMapPilot pilot) {
@@ -215,6 +223,13 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                 seekbarViewHolder.descriptionTextView.setText(flightFeature.getDescription());
                 seekbarViewHolder.labelTextView.setText(flightFeature.getMeasurementType().getStringRes());
 
+                seekbarViewHolder.infoButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showFlightFeatureInfo(flightFeature);
+                    }
+                });
+
                 seekbarViewHolder.seekBar.setOnSeekBarChangeListener(null);
                 seekbarViewHolder.seekBar.setMax(presets.size());
                 seekbarViewHolder.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -265,6 +280,13 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                 final FlightFeatureBinaryViewHolder binaryViewHolder = (FlightFeatureBinaryViewHolder) holder;
                 binaryViewHolder.descriptionTextView.setText(flightFeature.getDescription());
 
+                binaryViewHolder.infoButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showFlightFeatureInfo(flightFeature);
+                    }
+                });
+
                 boolean noSelected = savedValue != null && !savedValue.getValue();
                 binaryViewHolder.noButton.setSelected(noSelected);
                 binaryViewHolder.noButton.setOnClickListener(new View.OnClickListener() {
@@ -304,19 +326,91 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    private void updateRuleOfFlightFeature(AirMapFlightFeature flightFeature) {
-        // update the status icon for this feature's rule
-        int index = 1;
-        for (AirMapBaseModel ruleOrFeature : rulesAndFlightFeatures) {
-            if (ruleOrFeature instanceof AirMapRule) {
-                AirMapRule rule = (AirMapRule) ruleOrFeature;
-                if (rule.getFlightFeatures().contains(flightFeature)) {
-                    notifyItemChanged(index);
-                    break;
+    private void showFlightFeatureInfo(final AirMapFlightFeature flightFeature) {
+        List<AirMapRule> rules = flightFeaturesMap.get(flightFeature);
+        Collections.sort(rules, new Comparator<AirMapRule>() {
+            @Override
+            public int compare(AirMapRule o1, AirMapRule o2) {
+                return o1.getShortText().compareTo(o2.getShortText());
+            }
+        });
+
+        StringBuilder rulesTextBuilder = new StringBuilder();
+        Set<String> ruleSet = new HashSet<>();
+        boolean learnMore = false;
+        rulesTextBuilder.append("The following rule(s) apply:").append("\n").append("\n");
+        for (AirMapRule rule : rules) {
+            if (!ruleSet.contains(rule.getShortText())) {
+                if (!ruleSet.isEmpty()) {
+                    rulesTextBuilder.append("\n").append("\n");
+                }
+                rulesTextBuilder.append(rule.getShortText());
+                ruleSet.add(rule.getShortText());
+                if (rule.getShortText() != null && !rule.getShortText().equals(rule.getDescription())) {
+                    learnMore = true;
                 }
             }
-            index++;
         }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity)
+                .setTitle("Why We're Asking")
+                .setMessage(rulesTextBuilder.toString())
+                .setPositiveButton(android.R.string.ok, null);
+
+        if (learnMore) {
+            builder.setNegativeButton(R.string.learn_more, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+
+                    showDetailedRules(flightFeature);
+                }
+            });
+        }
+
+        builder.show();
+    }
+
+    private void showDetailedRules(AirMapFlightFeature flightFeature) {
+        List<AirMapRule> rules = flightFeaturesMap.get(flightFeature);
+        Collections.sort(rules, new Comparator<AirMapRule>() {
+            @Override
+            public int compare(AirMapRule o1, AirMapRule o2) {
+                return o1.toString().compareTo(o2.toString());
+            }
+        });
+
+        StringBuilder rulesTextBuilder = new StringBuilder();
+        Set<String> ruleSet = new HashSet<>();
+        for (AirMapRule rule : rules) {
+            if (!ruleSet.contains(rule.toString())) {
+                if (!ruleSet.isEmpty()) {
+                    rulesTextBuilder.append("\n").append("\n");
+                }
+                rulesTextBuilder.append(rule.toString());
+                ruleSet.add(rule.toString());
+            }
+        }
+        new AlertDialog.Builder(activity)
+                .setTitle("Official Rule")
+                .setMessage(rulesTextBuilder.toString())
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
+    }
+
+    private void updateRuleOfFlightFeature(AirMapFlightFeature flightFeature) {
+        // update the status icon for this feature's rule
+//        int index = 1;
+//        for (AirMapBaseModel ruleOrFeature : flightFeaturesMap) {
+//            if (ruleOrFeature instanceof AirMapRule) {
+//                AirMapRule rule = (AirMapRule) ruleOrFeature;
+//                if (rule.getFlightFeatures().contains(flightFeature)) {
+//                    notifyItemChanged(index);
+//                    break;
+//                }
+//            }
+//            index++;
+//        }
     }
 
     @Override
@@ -366,12 +460,12 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     public AirMapBaseModel getItem(int position) {
-        return rulesAndFlightFeatures.get(position - 1);
+        return flightFeatures.get(position - 1);
     }
 
     @Override
     public int getItemCount() {
-        return rulesAndFlightFeatures != null ? rulesAndFlightFeatures.size() + 2 : 2;
+        return flightFeaturesMap != null ? flightFeaturesMap.size() + 2 : 2;
     }
 
     private void setupAltitudeSeekBar(final SettingsViewHolder holder) {
@@ -620,6 +714,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         TextView descriptionTextView;
         ToggleButton noButton;
         ToggleButton yesButton;
+        ImageButton infoButton;
 
         FlightFeatureBinaryViewHolder(View itemView) {
             super(itemView);
@@ -627,6 +722,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
             descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
             noButton = (ToggleButton) itemView.findViewById(R.id.no_button);
             yesButton = (ToggleButton) itemView.findViewById(R.id.yes_button);
+            infoButton = (ImageButton) itemView.findViewById(R.id.info_button);
         }
     }
 
@@ -635,6 +731,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         TextView labelTextView;
         TextView valueTextView;
         SeekBar seekBar;
+        ImageButton infoButton;
 
         FlightFeatureSeekbarViewHolder(View itemView) {
             super(itemView);
@@ -643,6 +740,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
             labelTextView = (TextView) itemView.findViewById(R.id.label_text_view);
             valueTextView = (TextView) itemView.findViewById(R.id.value_text_view);
             seekBar = (SeekBar) itemView.findViewById(R.id.seekbar);
+            infoButton = (ImageButton) itemView.findViewById(R.id.info_button);
         }
     }
 

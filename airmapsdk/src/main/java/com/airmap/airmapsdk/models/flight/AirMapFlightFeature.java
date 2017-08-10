@@ -157,6 +157,11 @@ public class AirMapFlightFeature implements Serializable, AirMapBaseModel {
         return o != null && o instanceof AirMapFlightFeature && ((AirMapFlightFeature) o).getFlightFeature().equals(this.flightFeature);
     }
 
+    @Override
+    public int hashCode() {
+        return flightFeature.hashCode();
+    }
+
     public boolean isAltitudeFeature() {
         return flightFeature.contains("agl") || flightFeature.contains("altitude");
     }
