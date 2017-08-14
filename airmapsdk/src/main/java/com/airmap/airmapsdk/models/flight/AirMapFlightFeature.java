@@ -25,15 +25,18 @@ public class AirMapFlightFeature implements Serializable, AirMapBaseModel {
     }
 
     public enum InputType {
-        Double,Boolean;
+        Double,Boolean, String, Unknown;
 
         private static InputType fromText(String text) {
             switch (text.toLowerCase()) {
                 case "float":
                     return Double;
-                default:
                 case "bool":
                     return Boolean;
+                case "string":
+                    return String;
+                default:
+                    return Unknown;
             }
         }
     }

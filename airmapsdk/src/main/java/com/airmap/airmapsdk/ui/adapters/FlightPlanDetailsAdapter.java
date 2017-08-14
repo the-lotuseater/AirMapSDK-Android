@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -313,6 +315,36 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
 
                 break;
             }
+            case FIELD_VIEW_TYPE: {
+                final AirMapFlightFeature flightFeature = (AirMapFlightFeature) getItem(position);
+                final FlightFeatureFieldViewHolder fieldViewHolder = (FlightFeatureFieldViewHolder) holder;
+                fieldViewHolder.descriptionTextView.setText(flightFeature.getDescription());
+                fieldViewHolder.editText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        FlightFeatureValue<String> flightFeatureValue = new FlightFeatureValue(flightFeature.getFlightFeature(), s.toString());
+                        flightPlan.setFlightFeatureValue(flightFeatureValue);
+                        onFlightPlanChanged();
+                    }
+                });
+
+                fieldViewHolder.infoButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showFlightFeatureInfo(flightFeature);
+                    }
+                });
+                break;
+            }
             case NEXT_BUTTON_TYPE: {
                 NextButtonViewHolder nextButtonViewHolder = (NextButtonViewHolder) holder;
                 nextButtonViewHolder.nextButton.setOnClickListener(new View.OnClickListener() {
@@ -428,6 +460,8 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
             switch (((AirMapFlightFeature) item).getInputType()) {
                 case Double:
                     return SLIDER_VIEW_TYPE;
+                case String:
+                    return FIELD_VIEW_TYPE;
                 case Boolean:
                 default:
                     return BINARY_VIEW_TYPE;
@@ -747,11 +781,14 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
     private class FlightFeatureFieldViewHolder extends RecyclerView.ViewHolder {
         TextView descriptionTextView;
         EditText editText;
+        ImageButton infoButton;
 
         FlightFeatureFieldViewHolder(View itemView) {
             super(itemView);
+
             descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
             editText = (EditText) itemView.findViewById(R.id.edit_text);
+            infoButton = (ImageButton) itemView.findViewById(R.id.info_button);
         }
     }
 

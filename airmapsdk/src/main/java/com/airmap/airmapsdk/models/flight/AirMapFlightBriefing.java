@@ -3,7 +3,9 @@ package com.airmap.airmapsdk.models.flight;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.models.airspace.AirMapAirspace;
 import com.airmap.airmapsdk.models.airspace.AirMapAirspaceAdvisoryStatus;
+import com.airmap.airmapsdk.models.rules.AirMapAuthorization;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
+import com.airmap.airmapsdk.models.rules.AirMapValidation;
 import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 
 import org.json.JSONArray;
@@ -26,6 +28,8 @@ public class AirMapFlightBriefing implements Serializable, AirMapBaseModel {
     private Date createdAt;
     private List<AirMapRuleset> rulesets;
     private AirMapAirspaceAdvisoryStatus airspace;
+    private List<AirMapValidation> validations;
+    private List<AirMapAuthorization> authorizations;
 
     public AirMapFlightBriefing() {
 
@@ -50,6 +54,22 @@ public class AirMapFlightBriefing implements Serializable, AirMapBaseModel {
             }
 
             airspace = new AirMapAirspaceAdvisoryStatus(json.optJSONObject("airspace"));
+
+            validations = new ArrayList<>();
+            if (json.has("validations")) {
+                JSONArray validationsArray = json.optJSONArray("validations");
+                for (int i = 0; i < validationsArray.length(); i++) {
+                    validations.add(new AirMapValidation(validationsArray.optJSONObject(i)));
+                }
+            }
+
+            authorizations = new ArrayList<>();
+            if (json.has("authorizations")) {
+                JSONArray authorizationsArray = json.optJSONArray("authorizations");
+                for (int i = 0; i < authorizationsArray.length(); i++) {
+                    authorizations.add(new AirMapAuthorization(authorizationsArray.optJSONObject(i)));
+                }
+            }
         }
         return this;
     }
@@ -84,5 +104,21 @@ public class AirMapFlightBriefing implements Serializable, AirMapBaseModel {
 
     public void setAirspace(AirMapAirspaceAdvisoryStatus airspace) {
         this.airspace = airspace;
+    }
+
+    public List<AirMapValidation> getValidations() {
+        return validations;
+    }
+
+    public void setValidations(List<AirMapValidation> validations) {
+        this.validations = validations;
+    }
+
+    public List<AirMapAuthorization> getAuthorizations() {
+        return authorizations;
+    }
+
+    public void setAuthorizations(List<AirMapAuthorization> authorizations) {
+        this.authorizations = authorizations;
     }
 }
