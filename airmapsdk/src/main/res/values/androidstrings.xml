@@ -106,4 +106,6 @@
     <string name="fahrenheit_temp">%d °F</string>
     <string name="kilometers_short">%d km</string>
     <string name="miles_short">%d mi</string>
+
+    <string name="no_pilot_name">Set Pilot Name</string>
 </resources>

@@ -193,8 +193,10 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                     }
                 });
 
-                if (pilot != null) {
+                if (pilot != null && !TextUtils.isEmpty(pilot.getFirstName() + pilot.getLastName())) {
                     viewHolder.pilotProfileTextView.setText(String.format("%s %s", pilot.getFirstName(), pilot.getLastName()));
+                } else {
+                    viewHolder.pilotProfileTextView.setText(R.string.no_pilot_name);
                 }
 
 
