@@ -45,6 +45,7 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
     private int distance;
     private Coordinate coordinate;
     private String geometryString;
+    private AirMapStatusRequirement requirements;
 
     private AirMapAirportProperties airportProperties;
     private AirMapHeliportProperties heliportProperties;
@@ -94,6 +95,10 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
                 setCoordinate(new Coordinate(lat, lng));
             }
             setLastUpdated(getDateFromIso8601String(json.optString("last_updated")));
+
+            if (json.has("requirements")) {
+                setRequirements(new AirMapStatusRequirement(json.optJSONObject("requirements")));
+            }
 
             if (type != null) {
                 JSONObject properties = json.optJSONObject("properties");
@@ -255,6 +260,14 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
     public AirMapAdvisory setGeometryString(String geometryString) {
         this.geometryString = geometryString;
         return this;
+    }
+
+    public AirMapStatusRequirement getRequirements() {
+        return requirements;
+    }
+
+    public void setRequirements(AirMapStatusRequirement requirements) {
+        this.requirements = requirements;
     }
 
     public AirMapAirportProperties getAirportProperties() {
