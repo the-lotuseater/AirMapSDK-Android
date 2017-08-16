@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.models.flight.AirMapFlightFeature;
@@ -74,6 +75,10 @@ public class ExpandableRulesAdapter extends ExpandableRecyclerAdapter<AirMapRule
     @Override
     protected void toggleExpandingViewHolder(final RecyclerView.ViewHolder holder, final boolean expanded) {
         ((SectionViewHolder) holder).expandImageView.setImageResource(expanded ? R.drawable.ic_drop_down_up : R.drawable.ic_drop_down);
+
+        if (expanded) {
+            Analytics.logEvent(Analytics.Event.flightPlanBrief, Analytics.Action.tap, Analytics.Label.HEADER, ((SectionViewHolder) holder).descriptionTextView.getText().toString());
+        }
     }
 
     @StringRes

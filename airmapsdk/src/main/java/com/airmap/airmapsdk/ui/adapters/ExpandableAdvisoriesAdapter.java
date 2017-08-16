@@ -77,6 +77,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Mappi
             String typeAndQuantityText = context.getString(R.string.advisory_type_quantity, typeText, Integer.toString(dataMap.get(type).size()));
             AirMapStatus.StatusColor color = calculateStatusColor(type);
 
+            ((AirspaceTypeViewHolder) holder).type = type;
             ((AirspaceTypeViewHolder) holder).backgroundView.setBackgroundColor(ContextCompat.getColor(context, color.getColorRes()));
             ((AirspaceTypeViewHolder) holder).textView.setText(typeAndQuantityText);
             ((AirspaceTypeViewHolder) holder).textView.setTextColor(ContextCompat.getColor(context, getTextColor(color)));
@@ -233,6 +234,10 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Mappi
     @Override
     protected void toggleExpandingViewHolder(final RecyclerView.ViewHolder holder, final boolean expanded) {
         ((AirspaceTypeViewHolder) holder).expandImageView.setImageResource(expanded ? R.drawable.ic_drop_down_up : R.drawable.ic_drop_down);
+
+        if (expanded) {
+            Analytics.logEvent(Analytics.Event.advisories, Analytics.Action.tap, Analytics.Label.HEADER, ((AirspaceTypeViewHolder) holder).type.toString());
+        }
     }
 
     private AirMapStatus.StatusColor calculateStatusColor(MappingService.AirMapAirspaceType type) {
@@ -264,6 +269,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Mappi
         View backgroundView;
         TextView textView;
         ImageView expandImageView;
+        MappingService.AirMapAirspaceType type;
 
         AirspaceTypeViewHolder(View itemView) {
             super(itemView);

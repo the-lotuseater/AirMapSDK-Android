@@ -188,6 +188,8 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                 viewHolder.pilotProfileTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.tap, Analytics.Label.PILOT);
+
                         Intent intent = new Intent(activity, ProfileActivity.class);
                         activity.startActivityForResult(intent, AirMapConstants.EDIT_PROFILE_REQUEST_CODE);
                     }
@@ -253,6 +255,8 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                         if (fromUser) {
                             flightPlan.setFlightFeatureValue(value);
                             updateRuleOfFlightFeature(flightFeature);
+
+                            Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.tap, Analytics.Label.FEATURE, flightFeature.getFlightFeature());
                         }
                     }
 
@@ -300,6 +304,8 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                         flightPlan.setFlightFeatureValue(featureValue);
                         onFlightPlanChanged();
                         updateRuleOfFlightFeature(flightFeature);
+
+                        Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.tap, Analytics.Label.FEATURE, flightFeature.getFlightFeature());
                     }
                 });
 
@@ -312,6 +318,8 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                         flightPlan.setFlightFeatureValue(featureValue);
                         onFlightPlanChanged();
                         updateRuleOfFlightFeature(flightFeature);
+
+                        Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.tap, Analytics.Label.FEATURE, flightFeature.getFlightFeature());
                     }
                 });
 
@@ -336,6 +344,8 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                         FlightFeatureValue<String> flightFeatureValue = new FlightFeatureValue(flightFeature.getFlightFeature(), s.toString());
                         flightPlan.setFlightFeatureValue(flightFeatureValue);
                         onFlightPlanChanged();
+
+                        Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.tap, Analytics.Label.FEATURE, flightFeature.getFlightFeature());
                     }
                 });
 
@@ -352,6 +362,8 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                 nextButtonViewHolder.nextButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.tap, Analytics.Label.BOTTOM_NEXT_BUTTON);
+
                         flightPlanChangeListener.onFlightPlanSubmit();
                     }
                 });
@@ -522,6 +534,8 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                             flightPlan.setFlightFeatureValue(new FlightFeatureValue<>(flightFeature.getFlightFeature(), altitudeInMeters));
                         }
                     }
+
+                    Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.tap, Analytics.Label.ALTITUDE, Float.toString(altitudeInMeters));
                 }
             }
 
@@ -650,7 +664,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                 dialog.getDatePicker().setMaxDate(now.getTime() + sevenDays);
                 dialog.show();
 
-                Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.FLIGHT_START_TIME);
+                Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.tap, Analytics.Label.START_TIME);
             }
         });
     }
@@ -668,7 +682,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         holder.aircraftTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Analytics.logEvent(Analytics.Page.DETAILS_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.SELECT_AIRCRAFT);
+                Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.tap, Analytics.Label.AIRCRAFT);
 
                 if (aircrafts == null || aircrafts.isEmpty()) {
                     Analytics.logEvent(Analytics.Page.SELECT_AIRCRAFT, Analytics.Action.tap, Analytics.Label.NEW_AIRCRAFT);
