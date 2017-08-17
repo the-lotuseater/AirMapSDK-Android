@@ -99,9 +99,9 @@ public class Analytics {
         public static final String drawer = "drawer";
         public static final String rules = "rules";
         public static final String advisories = "advisories";
-        public static final String flightPlanDraw = "flight plan - draw";
-        public static final String flightPlanCheck = "flight plan - check";
-        public static final String flightPlanBrief = "flight plan - brief";
+        public static final String flightPlanDraw = "flight_plan_draw";
+        public static final String flightPlanCheck = "flight_plan_check";
+        public static final String flightPlanBrief = "flight_plan_brief";
         public static final String fly = "fly";
     }
 
