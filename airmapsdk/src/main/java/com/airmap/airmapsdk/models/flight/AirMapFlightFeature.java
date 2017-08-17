@@ -39,6 +39,19 @@ public class AirMapFlightFeature implements Serializable, AirMapBaseModel {
                     return Unknown;
             }
         }
+
+        public int value() {
+            switch (this) {
+                case String:
+                    return 1;
+                case Double:
+                    return 2;
+                case Boolean:
+                    return 3;
+                default:
+                    return 4;
+            }
+        }
     }
 
     public enum MeasurementType {

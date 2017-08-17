@@ -122,7 +122,11 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         Collections.sort(flightFeatures, new Comparator<AirMapFlightFeature>() {
             @Override
             public int compare(AirMapFlightFeature o1, AirMapFlightFeature o2) {
-                return o1.getFlightFeature().compareTo(o2.getFlightFeature());
+                if (o1.getInputType() != o2.getInputType()) {
+                    return o1.getInputType().value() - o2.getInputType().value();
+                } else {
+                    return o1.getFlightFeature().compareTo(o2.getFlightFeature());
+                }
             }
         });
     }
