@@ -47,6 +47,11 @@ public class AirMapAuthenticationCallback extends AuthenticationCallback {
         AirMap.getPilot(new AirMapCallback<AirMapPilot>() {
             @Override
             public void onSuccess(final AirMapPilot response) {
+                if (activity == null || activity.isDestroyed() || activity.isFinishing()) {
+                    Log.e(TAG, "Activity was killed before login returned. However auth token was saved.");
+                    return;
+                }
+
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -58,6 +63,10 @@ public class AirMapAuthenticationCallback extends AuthenticationCallback {
             @Override
             public void onError(final AirMapException e) {
                 Log.e(TAG, "get pilot failed", e);
+                if (activity == null || activity.isDestroyed() || activity.isFinishing()) {
+                    return;
+                }
+
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -86,17 +95,13 @@ public class AirMapAuthenticationCallback extends AuthenticationCallback {
     }
 
     @Override
-    public void onError(final LockException error) {
+    public void onError(LockException error) {
         Log.e(TAG, "Error authenticating with auth0", error);
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                callback.onError(new AirMapException(error.getMessage()));
-                if (lock != null) {
-                    lock.onDestroy(activity);
-                    lock = null;
-                }
-            }
-        });
+        callback.onError(new AirMapException(error.getMessage()));
+
+        if (lock != null) {
+            lock.onDestroy(activity);
+            lock = null;
+        }
     }
 }

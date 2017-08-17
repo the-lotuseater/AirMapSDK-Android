@@ -24,6 +24,8 @@ public class AirMapConstants {
     public static final String IMPERIAL_SYSTEM = "imperial_system";
     public static final String METRIC_SYSTEM = "metric_system";
 
+
+
     public static final int CUSTOM_PROPERTIES_REQUEST_CODE = 112;
     public static final int CREATE_AIRCRAFT_REQUEST_CODE = 2494;
     public static final int EDIT_PROFILE_REQUEST_CODE = 6211;
