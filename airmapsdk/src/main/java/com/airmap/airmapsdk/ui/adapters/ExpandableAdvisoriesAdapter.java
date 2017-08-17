@@ -236,7 +236,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Mappi
         ((AirspaceTypeViewHolder) holder).expandImageView.setImageResource(expanded ? R.drawable.ic_drop_down_up : R.drawable.ic_drop_down);
 
         if (expanded) {
-            Analytics.logEvent(Analytics.Event.advisories, Analytics.Action.tap, Analytics.Label.HEADER, ((AirspaceTypeViewHolder) holder).type.toString());
+            Analytics.logEvent(Analytics.Event.advisories, Analytics.Action.expand, ((AirspaceTypeViewHolder) holder).type.toString());
         }
     }
 

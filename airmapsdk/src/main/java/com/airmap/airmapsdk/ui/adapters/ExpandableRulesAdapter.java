@@ -60,6 +60,7 @@ public class ExpandableRulesAdapter extends ExpandableRecyclerAdapter<AirMapRule
                 sectionViewHolder.descriptionTextView.setText(getStatusString(status));
                 sectionViewHolder.statusImageView.setImageResource(getStatusIcon(status));
                 sectionViewHolder.expandImageView.setImageResource(isExpanded(status) ? R.drawable.ic_drop_down_up : R.drawable.ic_drop_down);
+                sectionViewHolder.status = status;
                 break;
             }
             case CHILD_VIEW_TYPE: {
@@ -77,7 +78,22 @@ public class ExpandableRulesAdapter extends ExpandableRecyclerAdapter<AirMapRule
         ((SectionViewHolder) holder).expandImageView.setImageResource(expanded ? R.drawable.ic_drop_down_up : R.drawable.ic_drop_down);
 
         if (expanded) {
-            Analytics.logEvent(Analytics.Event.flightPlanBrief, Analytics.Action.tap, Analytics.Label.HEADER, ((SectionViewHolder) holder).descriptionTextView.getText().toString());
+            String label = "";
+            switch (((SectionViewHolder) holder).status) {
+                case Conflicting:
+                    label = Analytics.Label.CONFLICTING;
+                    break;
+                case NotConflicting:
+                    label = Analytics.Label.NON_CONFLICTING;
+                    break;
+                case MissingInfo:
+                    label = Analytics.Label.NEEDS_MORE_INFO;
+                    break;
+                case InformationRules:
+                    label = Analytics.Label.INFORMATIONAL;
+                    break;
+            }
+            Analytics.logEvent(Analytics.Event.flightPlanBrief, Analytics.Action.expand, label);
         }
     }
 
@@ -116,6 +132,7 @@ public class ExpandableRulesAdapter extends ExpandableRecyclerAdapter<AirMapRule
         TextView descriptionTextView;
         ImageView statusImageView;
         ImageView expandImageView;
+        AirMapRule.Status status;
 
         SectionViewHolder(View itemView) {
             super(itemView);

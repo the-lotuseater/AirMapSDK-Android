@@ -260,7 +260,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                             flightPlan.setFlightFeatureValue(value);
                             updateRuleOfFlightFeature(flightFeature);
 
-                            Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.tap, Analytics.Label.FEATURE, flightFeature.getFlightFeature());
+                            Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.change, flightFeature.getFlightFeature());
                         }
                     }
 
@@ -309,7 +309,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                         onFlightPlanChanged();
                         updateRuleOfFlightFeature(flightFeature);
 
-                        Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.tap, Analytics.Label.FEATURE, flightFeature.getFlightFeature());
+                        Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.change, flightFeature.getFlightFeature());
                     }
                 });
 
@@ -323,7 +323,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                         onFlightPlanChanged();
                         updateRuleOfFlightFeature(flightFeature);
 
-                        Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.tap, Analytics.Label.FEATURE, flightFeature.getFlightFeature());
+                        Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.change, flightFeature.getFlightFeature());
                     }
                 });
 
@@ -349,7 +349,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                         flightPlan.setFlightFeatureValue(flightFeatureValue);
                         onFlightPlanChanged();
 
-                        Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.tap, Analytics.Label.FEATURE, flightFeature.getFlightFeature());
+                        Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.change, flightFeature.getFlightFeature());
                     }
                 });
 
@@ -539,7 +539,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                         }
                     }
 
-                    Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.tap, Analytics.Label.ALTITUDE, Float.toString(altitudeInMeters));
+                    Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.change, Analytics.Label.ALTITUDE, Float.toString(altitudeInMeters));
                 }
             }
 
@@ -668,7 +668,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                 dialog.getDatePicker().setMaxDate(now.getTime() + sevenDays);
                 dialog.show();
 
-                Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.tap, Analytics.Label.START_TIME);
+                Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.change, Analytics.Label.START_TIME);
             }
         });
     }
