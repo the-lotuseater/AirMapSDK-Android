@@ -29,7 +29,7 @@ public abstract class AirMapMapActivity extends AppCompatActivity {
 
     public abstract void addMapLayers(String sourceId, List<String> layerIds);
 
-    public abstract void onFlightGeometryChanged(Coordinate takeoffCoordinate, JSONObject geometry);
+    public abstract void onFlightGeometryChanged(Coordinate takeoffCoordinate, float buffer, JSONObject geometry);
 
     public abstract MapStyle getMapStyle();
 }
