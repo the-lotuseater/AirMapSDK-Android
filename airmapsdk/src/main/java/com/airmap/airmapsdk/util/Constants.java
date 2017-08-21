@@ -22,6 +22,8 @@ public class Constants {
     public static final String IMPERIAL_SYSTEM = "imperial_system";
     public static final String METRIC_SYSTEM = "metric_system";
 
+
+
     public static final int CUSTOM_PROPERTIES_REQUEST_CODE = 112;
 
 }

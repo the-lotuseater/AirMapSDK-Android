@@ -166,7 +166,7 @@ public class AirMap {
             e.printStackTrace();
             throw new RuntimeException("Please ensure you have your airmap.config.json file in your /assets directory");
         }
-        client = new AirMapClient(apiKey, auth);
+        client = new AirMapClient();
     }
 
     /**
@@ -244,12 +244,11 @@ public class AirMap {
      * Needs to be called whenever the auth token changes
      * If the auth token has changed, this allows it to be reflected in the web services
      *
-     * @param auth The new auth token
+     * @param newAuthToken The new auth token
      */
-    public static void setAuthToken(String auth) {
-        authToken = auth;
-        client.setAuthToken(authToken);
-        getAirMapTrafficService().setAuthToken(auth);
+    public static void setAuthToken(String newAuthToken) {
+        authToken = newAuthToken;
+        getAirMapTrafficService().setAuthToken(newAuthToken);
         decodeToken(authToken);
     }
 
@@ -257,10 +256,10 @@ public class AirMap {
      * Needs to be called whenever the API key changes
      * If the API key has changed, this allows it to be reflected in the web services
      *
-     * @param apiKey The new API key
+     * @param newApiKey The new API key
      */
-    protected void setApiKey(String apiKey) {
-        client.setApiKey(apiKey);
+    protected static void setApiKey(String newApiKey) {
+        apiKey = newApiKey;
     }
 
     /**
@@ -309,7 +308,7 @@ public class AirMap {
     public void logout() {
         setAuthToken(null);
         userId = null;
-        getClient().clearAndResetHeaders();
+        getClient().resetClient();
     }
 
     /**
@@ -354,7 +353,7 @@ public class AirMap {
 
     public static void enableCertificatePinning(boolean enable) {
         AirMap.certificatePinning = enable;
-        getClient().clearAndResetHeaders();
+        getClient().resetClient();
     }
 
     /**
@@ -395,12 +394,19 @@ public class AirMap {
     }
 
     /**
-     * Refreshes the pilot's authentication token
+     * Refreshes the pilot's authentication token. Non-blocking
      *
      * @param callback The callback that is invoked on success or error
      */
     public static void refreshAccessToken(@Nullable AirMapCallback<Void> callback) {
         Auth.refreshAccessToken(getInstance().getContext(), callback);
+    }
+
+    /**
+     * Refreshes the pilot's authentication token. Blocking
+     */
+    public static void refreshAccessToken() {
+        Auth.refreshAccessToken(getInstance().getContext());
     }
 
     /**
