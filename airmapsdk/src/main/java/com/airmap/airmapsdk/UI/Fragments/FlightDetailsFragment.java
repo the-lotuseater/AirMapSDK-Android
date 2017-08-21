@@ -55,7 +55,6 @@ import com.airmap.airmapsdk.ui.adapters.AircraftAdapter;
 import com.airmap.airmapsdk.util.AnnotationsFactory;
 import com.airmap.airmapsdk.util.Constants;
 import com.airmap.airmapsdk.util.Utils;
-import com.mapbox.mapboxsdk.annotations.MultiPoint;
 import com.mapbox.mapboxsdk.annotations.Polygon;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.annotations.Polyline;
@@ -193,8 +192,8 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void setupMap(Bundle savedInstanceState) {
-        mapView.getMapAsync(this);
         mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
     }
 
     @Override
@@ -205,7 +204,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
             String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), mListener.getMapTheme());
             map.setStyleUrl(url);
             AirMapFlight flight = mListener.getFlight();
-            MultiPoint multiPoint;
+            Polyline multiPoint;
             if (flight.getGeometry() instanceof AirMapPolygon) {
                 PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
                 PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
@@ -329,7 +328,7 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                             double altitude = getAltitudePresets()[altitudeSeekBar.getProgress()];
-                            String altitudeText = Utils.getMeasurementText(altitude, Utils.useMetric(getActivity()));
+                            String altitudeText = Utils.getMeasurementText(getActivity(), altitude, Utils.useMetric(getActivity()));
 
                             altitudeValueTextView.setText(altitudeText);
                             mListener.getFlight().setMaxAltitude(altitude);
@@ -925,6 +924,12 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         mapView.onResume();
@@ -937,15 +942,21 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
+    public void onStop() {
+        super.onStop();
+        mapView.onStop();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
     }
 
     @Override

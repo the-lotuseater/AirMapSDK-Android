@@ -3,7 +3,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'com.airmap.airmapsdk'
-def libVersion = '1.0.9'
+def libVersion = '1.0.10'
 
 android {
     compileSdkVersion 25
@@ -43,7 +43,7 @@ dependencies {
     compile "com.android.support:support-annotations:$supportLibraryVersion"
     compile "com.android.support:support-fragment:$supportLibraryVersion"
     compile "com.android.support:support-v13:$supportLibraryVersion"
-    compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    compile 'com.squareup.okhttp3:okhttp:3.8.0'
     compile 'com.github.bumptech.glide:glide:3.7.0' //Using Glide instead of Picasso because it is more efficient for the app's tutorial images
     compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
     compile 'com.nakama.arraypageradapter:arraypageradapter:0.1.1'
@@ -52,14 +52,13 @@ dependencies {
     compile 'com.google.protobuf:protobuf-java:3.2.0'
     compile 'joda-time:joda-time:2.9.7'
     compile 'com.googlecode.libphonenumber:libphonenumber:8.3.2'
-    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:4.2.0@aar') { transitive = true }
+    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:5.1.3@aar') { transitive = true }
     compile 'com.github.lzyzsd:jsbridge:1.0.4'
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.1'
     compile('org.eclipse.paho:org.eclipse.paho.android.service:1.1.1') { exclude module: 'support-v4' }
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'online.devliving:securedpreferencestore:0.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
-    compile 'com.ibm.icu:icu4j:58.2'
     compile 'com.auth0.android:lock:2.5.0'
 }
 

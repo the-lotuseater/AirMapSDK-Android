@@ -58,6 +58,8 @@
         <item quantity="one">%1$s hour</item>
         <item quantity="other">%1$s hours</item>
     </plurals>
-
     <string name="duration_in_minutes">%1$s mins</string>
+    <string name="units_meter_short">%1$s m</string>
+    <string name="units_feet_short">%1$s ft</string>
+
 </resources>

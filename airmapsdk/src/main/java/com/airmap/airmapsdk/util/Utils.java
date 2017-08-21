@@ -1,7 +1,16 @@
 package com.airmap.airmapsdk.util;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.DrawableRes;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -13,12 +22,6 @@ import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
-import com.ibm.icu.text.MeasureFormat;
-import com.ibm.icu.text.NumberFormat;
-import com.ibm.icu.util.Currency;
-import com.ibm.icu.util.CurrencyAmount;
-import com.ibm.icu.util.Measure;
-import com.ibm.icu.util.MeasureUnit;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
@@ -178,10 +181,18 @@ public class Utils {
 
         if (timeInMillis >= oneHour) {
             double hours = timeInMillis / oneHour;
-            return context.getResources().getQuantityString(R.plurals.duration_in_hours, (int) Math.ceil(hours), NumberFormat.getInstance(Locale.getDefault()).format(hours));
+            return context.getResources().getQuantityString(R.plurals.duration_in_hours, (int) Math.ceil(hours), formatNumber(hours));
         } else {
             double minutes = timeInMillis / oneMinute;
-            return context.getString(R.string.duration_in_minutes, NumberFormat.getInstance(Locale.getDefault()).format(minutes));
+            return context.getString(R.string.duration_in_minutes, formatNumber(minutes));
+        }
+    }
+
+    private static String formatNumber(double number) {
+        if (number == (long) number) {
+            return String.format(Locale.getDefault(), "%d", (long) number);
+        } else {
+            return String.format(Locale.getDefault(), "%s", number);
         }
     }
 
@@ -275,10 +286,9 @@ public class Utils {
         };
     }
 
-    public static String getMeasurementText(double bufferInMeters, boolean useMetric) {
-        MeasureFormat format = MeasureFormat.getInstance(Locale.getDefault(), MeasureFormat.FormatWidth.SHORT);
-        double buffer = useMetric ? bufferInMeters : Math.round(metersToFeet(bufferInMeters));
-        return format.format(new Measure(buffer, useMetric ? MeasureUnit.METER : MeasureUnit.FOOT));
+    public static String getMeasurementText(Context context, double bufferInMeters, boolean useMetric) {
+        int buffer = (int) (useMetric ? bufferInMeters : Math.round(metersToFeet(bufferInMeters)));
+        return context.getString(useMetric ? R.string.units_meter_short : R.string.units_feet_short, buffer);
     }
 
     public static int indexOfMeterPreset(double meters, double[] presets) {
@@ -300,8 +310,7 @@ public class Utils {
     }
 
     public static String getPriceText(double priceInUSD) {
-        NumberFormat format = NumberFormat.getCurrencyInstance(Locale.getDefault());
-        return format.format(new CurrencyAmount(priceInUSD, Currency.getInstance("USD")));
+        return String.format("$%.2f", priceInUSD);
     }
 
     /**
@@ -404,5 +413,35 @@ public class Utils {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private static Bitmap getBitmap(VectorDrawable vectorDrawable) {
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+        return bitmap;
+    }
 
+    private static Bitmap getBitmap(VectorDrawableCompat vectorDrawable) {
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+        return bitmap;
+    }
+
+    public static Bitmap getBitmap(Context context, @DrawableRes int drawableResId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableResId);
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        } else if (drawable instanceof VectorDrawableCompat) {
+            return getBitmap((VectorDrawableCompat) drawable);
+        } else if (drawable instanceof VectorDrawable) {
+            return getBitmap((VectorDrawable) drawable);
+        } else {
+            throw new IllegalArgumentException("Unsupported drawable type");
+        }
+    }
 }

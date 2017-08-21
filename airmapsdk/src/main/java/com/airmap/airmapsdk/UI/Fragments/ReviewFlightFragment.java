@@ -39,8 +39,8 @@ import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.util.AnnotationsFactory;
-import com.mapbox.mapboxsdk.annotations.MultiPoint;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
+import com.mapbox.mapboxsdk.annotations.Polyline;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -218,8 +218,8 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     }
 
     private void setupMap(Bundle savedInstanceState) {
-        mapView.getMapAsync(this);
         mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
     }
 
     @Override
@@ -229,7 +229,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
             String url = AirMap.getTileSourceUrl(mListener.getMapLayers(), mListener.getMapTheme());
             map.setStyleUrl(url);
             AirMapFlight flight = mListener.getFlight();
-            MultiPoint multiPoint;
+            Polyline multiPoint;
             if (flight.getGeometry() instanceof AirMapPolygon) {
                 PolygonOptions polygonOptions = mListener.getAnnotationsFactory().getDefaultPolygonOptions();
                 PolylineOptions polylineOptions = mListener.getAnnotationsFactory().getDefaultPolylineOptions();
@@ -314,6 +314,12 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         mapView.onResume();
@@ -326,15 +332,21 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     }
 
     @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
+    public void onStop() {
+        super.onStop();
+        mapView.onStop();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
     }
 
     @Override
