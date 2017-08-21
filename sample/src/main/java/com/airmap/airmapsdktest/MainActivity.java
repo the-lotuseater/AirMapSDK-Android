@@ -25,6 +25,7 @@ import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
+import com.airmap.airmapsdk.util.Utils;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.Marker;
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             for (AirMapFlight publicFlight : response) {
                                 //Add a map annotation with the location of the flight
                                 map.addMarker(new MarkerOptions()
-                                        .icon(IconFactory.getInstance(MainActivity.this).fromResource(R.drawable.airmap_flight_marker))
+                                        .icon(IconFactory.getInstance(MainActivity.this).fromBitmap(Utils.getBitmap(MainActivity.this, R.drawable.airmap_flight_marker)))
                                         .position(getLatLngFromCoordinate(publicFlight.getCoordinate())));
                             }
                         }
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             AirMapFlight flight = (AirMapFlight) data.getSerializableExtra(CreateFlightActivity.FLIGHT); //Get the flight from the data
             map.addMarker(new MarkerOptions() //Add the flight to the map
                     .position(getLatLngFromCoordinate(flight.getCoordinate()))
-                    .icon(IconFactory.getInstance(this).fromResource(R.drawable.airmap_flight_marker)));
+                    .icon(IconFactory.getInstance(this).fromBitmap(Utils.getBitmap(this, R.drawable.airmap_flight_marker))));
         }
     }
 
@@ -261,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else if (traffic.getTrafficType() == AirMapTraffic.TrafficType.SituationalAwareness) {
             id = getResources().getIdentifier("sa_traffic_marker_icon_" + directionFromBearing(traffic.getTrueHeading()), "drawable", "com.airmap.airmapsdktest");
         }
-        return factory.fromDrawable(ContextCompat.getDrawable(this, id));
+        return factory.fromBitmap(Utils.getBitmap(this, id));
     }
 
     /**
@@ -341,6 +342,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //MapBox required Override methods
     @Override
+    public void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         mapView.onResume();
@@ -353,15 +360,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
+    public void onStop() {
+        super.onStop();
+        mapView.onStop();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
     }
 
     @Override
