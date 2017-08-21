@@ -86,13 +86,13 @@ public class ReviewDetailsFragment extends Fragment {
         DateFormat dateFormat = Utils.getDateTimeFormat();
 
         if (flight.getGeometry() instanceof AirMapPoint) {
-            String radius = Utils.getMeasurementText(flight.getBuffer(), useMetric);
+            String radius = Utils.getMeasurementText(getActivity(), flight.getBuffer(), useMetric);
             radiusTextView.setText(radius);
         } else {
             radiusContainer.setVisibility(View.GONE);
         }
 
-        String altitude = Utils.getMeasurementText(flight.getMaxAltitude(), useMetric);
+        String altitude = Utils.getMeasurementText(getActivity(), flight.getMaxAltitude(), useMetric);
         altitudeTextView.setText(altitude);
 
         if (flight.getStartsAt() != null) {

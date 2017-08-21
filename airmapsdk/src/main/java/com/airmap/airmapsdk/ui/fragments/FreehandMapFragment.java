@@ -672,66 +672,61 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
                             tapPoint.y - averageIconHeight / 2 - toleranceTopBottom,
                             tapPoint.x + averageIconWidth / 2 + toleranceSides,
                             tapPoint.y + averageIconHeight / 2 + toleranceTopBottom);
-                    try {
-                        Method method = mapView.getClass().getDeclaredMethod("getMarkersInRect", RectF.class); //Using reflection to access a Mapbox Package Private method
-                        method.setAccessible(true);
-                        Marker newSelectedMarker = null;
-                        List<Marker> nearbyMarkers = (List<Marker>) method.invoke(mapView, tapRect);
-                        List<Marker> selectedMarkers = map.getSelectedMarkers();
-                        if (selectedMarkers.isEmpty() && nearbyMarkers != null && !nearbyMarkers.isEmpty()) {
-                            Collections.sort(nearbyMarkers);
-                            for (Marker marker : nearbyMarkers) {
-                                if (marker instanceof MarkerView && !((MarkerView) marker).isVisible()) {
-                                    continue; //Don't let user click on hidden midpoints
-                                }
-                                if (!marker.getTitle().equals(AnnotationsFactory.INTERSECTION_TAG)) {
-                                    newSelectedMarker = marker;
-                                    break;
-                                }
+
+                    Marker newSelectedMarker = null;
+                    List<MarkerView> nearbyMarkers = map.getMarkerViewsInRect(tapRect);
+                    List<Marker> selectedMarkers = map.getSelectedMarkers();
+                    if (selectedMarkers.isEmpty() && nearbyMarkers != null && !nearbyMarkers.isEmpty()) {
+                        Collections.sort(nearbyMarkers);
+                        for (Marker marker : nearbyMarkers) {
+                            if (marker instanceof MarkerView && !((MarkerView) marker).isVisible()) {
+                                continue; //Don't let user click on hidden midpoints
                             }
-                        } else if (!selectedMarkers.isEmpty()) {
-                            newSelectedMarker = selectedMarkers.get(0);
+                            if (!marker.getTitle().equals(AnnotationsFactory.INTERSECTION_TAG)) {
+                                newSelectedMarker = marker;
+                                break;
+                            }
                         }
+                    } else if (!selectedMarkers.isEmpty()) {
+                        newSelectedMarker = selectedMarkers.get(0);
+                    }
 
-                        if (newSelectedMarker != null && newSelectedMarker instanceof MarkerView) {
-                            boolean doneDragging = event.getAction() == MotionEvent.ACTION_UP;
-                            boolean deletePoint = false;
-                            deleteButton.getDrawingRect(deleteCoordinates);
-                            deleteCoordinates.left *= 2;
-                            deleteCoordinates.right *= 2;
-                            deleteCoordinates.top *= 2;
-                            deleteCoordinates.bottom *= 2;
-                            if (deleteCoordinates.contains((int) tapPoint.x, (int) tapPoint.y)) {
-                                deleteButton.setSelected(true);
-                                if (doneDragging) {
-                                    deleteButton.setSelected(false);
-                                    updateTip(tabLayout.getSelectedTabPosition() == INDEX_OF_POLYGON_TAB ? R.string.airmap_freehand_tip_area : R.string.airmap_freehand_tip_path);
-                                    deletePoint = true;
-                                }
-                            } else {
-                                deleteButton.setSelected(false);
-                            }
-                            if (tabLayout.getSelectedTabPosition() != INDEX_OF_CIRCLE_TAB) { //We're not showing a tip for circle
-                                if (doneDragging) {
-                                    updateTip(R.string.airmap_done_drawing_tip);
-                                } else {
-                                    updateTip(R.string.airmap_delete_tip);
-                                }
-                            }
-
-                            //DRAG!
-                            //Trying to put most logic in the drag() function, this is pretty messy already
-                            boolean isMidpoint = midpoints.contains(newSelectedMarker);
-                            map.selectMarker(newSelectedMarker); //Use the marker selection state to prevent selecting another marker when dragging over it
-                            drag(isMidpoint ? midpoints.indexOf(newSelectedMarker) : corners.indexOf(newSelectedMarker), map.getProjection().fromScreenLocation(tapPoint), isMidpoint, doneDragging, deletePoint);
+                    if (newSelectedMarker != null && newSelectedMarker instanceof MarkerView) {
+                        boolean doneDragging = event.getAction() == MotionEvent.ACTION_UP;
+                        boolean deletePoint = false;
+                        deleteButton.getDrawingRect(deleteCoordinates);
+                        deleteCoordinates.left *= 2;
+                        deleteCoordinates.right *= 2;
+                        deleteCoordinates.top *= 2;
+                        deleteCoordinates.bottom *= 2;
+                        if (deleteCoordinates.contains((int) tapPoint.x, (int) tapPoint.y)) {
+                            deleteButton.setSelected(true);
                             if (doneDragging) {
-                                map.deselectMarker(newSelectedMarker);
+                                deleteButton.setSelected(false);
+                                updateTip(tabLayout.getSelectedTabPosition() == INDEX_OF_POLYGON_TAB ? R.string.airmap_freehand_tip_area : R.string.airmap_freehand_tip_path);
+                                deletePoint = true;
                             }
-                            return true;
+                        } else {
+                            deleteButton.setSelected(false);
                         }
-                    } catch (Exception e) {
-                        //Probably a reflection error
-                        e.printStackTrace();
+                        if (tabLayout.getSelectedTabPosition() != INDEX_OF_CIRCLE_TAB) { //We're not showing a tip for circle
+                            if (doneDragging) {
+                                updateTip(R.string.airmap_done_drawing_tip);
+                            } else {
+                                updateTip(R.string.airmap_delete_tip);
+                            }
+                        }
+
+                        //DRAG!
+                        //Trying to put most logic in the drag() function, this is pretty messy already
+                        boolean isMidpoint = midpoints.contains(newSelectedMarker);
+                        map.selectMarker(newSelectedMarker); //Use the marker selection state to prevent selecting another marker when dragging over it
+                        newSelectedMarker.hideInfoWindow();
+                        drag(isMidpoint ? midpoints.indexOf(newSelectedMarker) : corners.indexOf(newSelectedMarker), map.getProjection().fromScreenLocation(tapPoint), isMidpoint, doneDragging, deletePoint);
+                        if (doneDragging) {
+                            map.deselectMarker(newSelectedMarker);
+                        }
+                        return true;
                     }
                 }
                 scratchpad.reset();
@@ -743,10 +738,13 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
         if (getArguments() != null) {
             Coordinate coordinate = (Coordinate) getArguments().getSerializable(CreateFlightActivity.COORDINATE);
             if (coordinate != null) {
-                map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(coordinate.getLatitude(), coordinate.getLongitude())), new MapboxMap.CancelableCallback() {
+                map.animateCamera(CameraUpdateFactory.newCameraPosition(
+                        new CameraPosition.Builder()
+                                .target(new LatLng(coordinate.getLatitude(), coordinate.getLongitude()))
+                                .zoom(13)
+                                .build()), new MapboxMap.CancelableCallback() {
                     @Override
                     public void onCancel() {
-
                     }
 
                     @Override
@@ -953,7 +951,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 double bufferPreset = Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[progress] : getBufferPresets()[progress];
                 Log.e(TAG, "buffer preset");
-                String bufferText = Utils.getMeasurementText(bufferPreset, Utils.useMetric(getActivity()));
+                String bufferText = Utils.getMeasurementText(getActivity(), bufferPreset, Utils.useMetric(getActivity()));
                 seekBarValueTextView.setText(bufferText);
                 drawCircle(circleContainer.center, bufferPreset);
                 if (!fromUser) {
@@ -1017,7 +1015,7 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 double bufferPreset = Utils.useMetric(getActivity()) ? getBufferPresetsMetric()[progress] : getBufferPresets()[progress];
-                String bufferText = Utils.getMeasurementText(bufferPreset, Utils.useMetric(getActivity()));
+                String bufferText = Utils.getMeasurementText(getActivity(), bufferPreset, Utils.useMetric(getActivity()));
 
                 lineContainer.width = getPathWidthFromSeekBar(getActivity(), progress);
                 seekBarValueTextView.setText(bufferText);
@@ -1568,6 +1566,12 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         mapView.onResume();
@@ -1580,15 +1584,21 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
+    public void onStop() {
+        super.onStop();
+        mapView.onStop();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
     }
 
     @Override

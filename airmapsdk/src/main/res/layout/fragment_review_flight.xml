@@ -10,9 +10,9 @@
             android:layout_width="match_parent"
             android:layout_height="175dp"
             android:layout_marginBottom="8dp"
-            app:rotate_enabled="false"
-            app:tilt_enabled="false"
-            app:compass_enabled="false"/>
+            app:mapbox_uiRotateGestures="false"
+            app:mapbox_uiTiltGestures="false"
+            app:mapbox_uiCompass="false" />
 
     <android.support.v4.view.ViewPager
             android:id="@+id/view_pager"
