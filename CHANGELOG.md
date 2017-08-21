@@ -1,3 +1,6 @@
+##`1.0.10 (8/21/17)`
+* Updated Mapbox to 5.1.3
+
 ##`1.0.9 (5/12/17)`
 * Updated login/signup to use auth0 Lock library instead of webview
 * Bug fixes
