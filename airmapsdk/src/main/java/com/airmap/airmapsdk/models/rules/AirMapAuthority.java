@@ -23,9 +23,8 @@ public class AirMapAuthority implements Serializable, AirMapBaseModel {
 
     @Override
     public AirMapBaseModel constructFromJson(JSONObject json) {
-        AirMapAuthority authority = new AirMapAuthority();
-        authority.setName(json.optString("name"));
-        return authority;
+        setName(json.optString("name"));
+        return this;
     }
 
     public String getName() {

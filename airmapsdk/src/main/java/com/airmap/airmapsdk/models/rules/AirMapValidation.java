@@ -72,7 +72,14 @@ public class AirMapValidation implements AirMapBaseModel, Serializable {
         setData(json.optString("data"));
         setStatus(Status.fromText(json.optString("status")));
         setMessage(json.optString("message"));
-        setAuthority(new AirMapAuthority(json.optJSONObject("authority")));
+
+        if (json.has("feature")) {
+            setFeature(new Feature(json.optJSONObject("feature")));
+        }
+
+        if (json.has("authority")) {
+            setAuthority(new AirMapAuthority(json.optJSONObject("authority")));
+        }
 
         return this;
     }

@@ -53,7 +53,9 @@ public class AirMapFlightBriefing implements Serializable, AirMapBaseModel {
                 }
             }
 
-            airspace = new AirMapAirspaceAdvisoryStatus(json.optJSONObject("airspace"));
+            if (json.has("airspace")) {
+                airspace = new AirMapAirspaceAdvisoryStatus(json.optJSONObject("airspace"));
+            }
 
             validations = new ArrayList<>();
             if (json.has("validations")) {
