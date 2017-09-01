@@ -179,6 +179,6 @@ public class AirMapFlightFeature implements Serializable, AirMapBaseModel {
     }
 
     public boolean isAltitudeFeature() {
-        return flightFeature.contains("agl") || flightFeature.contains("altitude");
+        return (flightFeature.contains("agl") || flightFeature.contains("altitude")) && getInputType() == InputType.Double;
     }
 }
