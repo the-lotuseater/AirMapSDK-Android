@@ -154,14 +154,14 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
             params.put("end_time", getIso8601StringFromDate(getEndsAt()));
         }
 
-        params.put("geometry", getGeometry());
+        try {
+            JSONObject geoJSON = new JSONObject(getGeometry());
+            params.put("geometry", geoJSON);
 
-        if (takeoffCoordinate != null) {
-            params.put("takeoff_latitude", getTakeoffCoordinate().getLatitude());
-            params.put("takeoff_longitude", getTakeoffCoordinate().getLongitude());
-        } else {
-            try {
-                JSONObject geoJSON = new JSONObject(getGeometry());
+            if (takeoffCoordinate != null) {
+                params.put("takeoff_latitude", getTakeoffCoordinate().getLatitude());
+                params.put("takeoff_longitude", getTakeoffCoordinate().getLongitude());
+            } else {
                 AirMapGeometry geometry = AirMapGeometry.getGeometryFromGeoJSON(geoJSON);
                 Coordinate coordinate;
                 if (geometry instanceof AirMapPolygon) {
@@ -173,9 +173,9 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
                 }
                 params.put("takeoff_latitude", coordinate.getLatitude());
                 params.put("takeoff_longitude", coordinate.getLongitude());
-            } catch (JSONException e) {
-                Log.e("AirMapFlightPlan", "Failed to parse geojson: " + getGeometry(), e);
             }
+        } catch (JSONException e) {
+            Log.e("AirMapFlightPlan", "Failed to parse geojson: " + getGeometry(), e);
         }
 
         params.put("buffer", buffer);
