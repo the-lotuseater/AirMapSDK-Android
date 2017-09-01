@@ -89,6 +89,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Mappi
             ((AdvisoryViewHolder) holder).backgroundView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), advisory.getColor().getColorRes()));
             ((AdvisoryViewHolder) holder).titleTextView.setText(advisory.getName());
             ((AdvisoryViewHolder) holder).infoTextView.setOnClickListener(null);
+            ((AdvisoryViewHolder) holder).infoTextView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.font_light_grey));
 
             String description = "";
             if (advisory.getType() != null) {
@@ -137,6 +138,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Mappi
                         description = formatPhoneNumber(holder.itemView.getContext(), airport.getPhone());
 
                         if (!TextUtils.isEmpty(airport.getPhone())) {
+                            ((AdvisoryViewHolder) holder).infoTextView.setTextColor(ContextCompat.getColor(((AdvisoryViewHolder) holder).infoTextView.getContext(), R.color.airmap_aqua));
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -151,6 +153,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Mappi
                         description = formatPhoneNumber(holder.itemView.getContext(), heliport.getPhoneNumber());
 
                         if (!TextUtils.isEmpty(heliport.getPhoneNumber())) {
+                            ((AdvisoryViewHolder) holder).infoTextView.setTextColor(ContextCompat.getColor(((AdvisoryViewHolder) holder).infoTextView.getContext(), R.color.airmap_aqua));
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -185,6 +188,13 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Mappi
                         break;
                     }
                 }
+            }
+
+            // if this advisory accepts digital notice, show user
+            if (advisory.getRequirements() != null && advisory.getRequirements().getNotice() != null && advisory.getRequirements().getNotice().isDigital()) {
+                description = holder.itemView.getContext().getString(R.string.accepts_digital_notice);
+                holder.itemView.setOnClickListener(null);
+                ((AdvisoryViewHolder) holder).infoTextView.setTextColor(ContextCompat.getColor(((AdvisoryViewHolder) holder).infoTextView.getContext(), R.color.airmap_aqua));
             }
 
             ((AdvisoryViewHolder) holder).infoTextView.setText(description);
