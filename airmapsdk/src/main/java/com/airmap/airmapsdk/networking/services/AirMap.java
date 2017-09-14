@@ -168,7 +168,7 @@ public class AirMap {
         try {
             InputStream inputStream = getContext().getResources().getAssets().open("app.config.json");
             String json = Utils.readInputStreamAsString(inputStream);
-            config = new JSONObject(json).getJSONObject("airmap_sdk");
+            config = new JSONObject(json);
             apiKey = getConfig().getJSONObject("airmap").getString("api_key");
         } catch (IOException | JSONException | NullPointerException e) {
             e.printStackTrace();
