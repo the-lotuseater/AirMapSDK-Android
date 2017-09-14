@@ -6,15 +6,17 @@ group = 'com.airmap.airmapsdk'
 def libVersion = '1.0.8'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
 
     defaultConfig {
         minSdkVersion 18
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "$libVersion"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [auth0Domain: "@string/com_auth0_domain", auth0Scheme: "airmap"]
     }
     buildTypes {
         release {
@@ -35,7 +37,7 @@ dependencies {
     testCompile "org.mockito:mockito-core:1.10.19"
     testCompile "org.robolectric:robolectric:3.1"
 
-    def supportLibraryVersion = '25.3.1'
+    def supportLibraryVersion = '26.0.2'
     compile "com.android.support:appcompat-v7:$supportLibraryVersion"
     compile "com.android.support:design:$supportLibraryVersion"
     compile "com.android.support:cardview-v7:$supportLibraryVersion"
@@ -48,7 +50,7 @@ dependencies {
     compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
     compile 'com.nakama.arraypageradapter:arraypageradapter:0.1.1'
     compile 'de.hdodenhof:circleimageview:2.1.0'
-    compile 'org.bitbucket.b_c:jose4j:0.5.5'
+    compile 'org.bitbucket.b_c:jose4j:0.6.0'
     compile 'com.google.protobuf:protobuf-java:3.2.0'
     compile 'joda-time:joda-time:2.9.7'
     compile 'com.googlecode.libphonenumber:libphonenumber:8.3.2'
@@ -59,7 +61,7 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'online.devliving:securedpreferencestore:0.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
-    compile 'com.auth0.android:lock:2.5.0'
+    compile 'com.auth0.android:lock:2.7.0'
 }
 
 configurations {

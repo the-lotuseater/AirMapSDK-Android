@@ -1,5 +1,6 @@
 package com.airmap.airmapsdk.networking.services;
 
+import com.airmap.airmapsdk.util.AirMapConfig;
 import com.airmap.airmapsdk.util.Utils;
 
 /**
@@ -10,13 +11,10 @@ import com.airmap.airmapsdk.util.Utils;
 class BaseService {
 
     //URLs should end with a /
-    static final boolean DEBUG = false;
-
-    //TODO: get rid of this
-    private static final boolean DEV = false;
+    public static final boolean DEBUG = false;
 
     //Base Urls
-    protected static final String baseUrl = "https://api.airmap.com/";
+    protected static final String baseUrl = "https://api." + AirMapConfig.getDomain() + "/";
     protected static final String mapTilesVersion = DEBUG ? Utils.getDebugUrl() : "v1/";
     protected static final String mapTilesBaseUrl = baseUrl + "maps/" + mapTilesVersion + "tilejson/";
     protected static final String mapTilesRulesUrl = baseUrl + "tiledata/" + mapTilesVersion;
@@ -32,9 +30,6 @@ class BaseService {
     protected static final String flightVersion = DEBUG ? Utils.getDebugUrl() : "v2/";
     protected static final String flightBaseUrl = baseUrl + "flight/" + flightVersion;
     protected static final String flightGetAllUrl = flightBaseUrl;
-    protected static final String flightPointUrl = flightBaseUrl + "point/";
-    protected static final String flightPathUrl = flightBaseUrl + "path/";
-    protected static final String flightPolygonUrl = flightBaseUrl + "polygon/";
     protected static final String flightByIdUrl = flightBaseUrl + "%s/"; //Replace %s with id using String.format
     protected static final String flightDeleteUrl = flightByIdUrl + "delete/"; //Replace %s with id using String.format
     protected static final String flightEndUrl = flightByIdUrl + "end/"; //Replace %s with id using String.format
@@ -45,6 +40,7 @@ class BaseService {
     protected static final String flightPlanPatchUrl = flightPlanUrl + "%s/";
     protected static final String flightPlanBriefingUrl = flightPlanPatchUrl + "briefing";
     protected static final String flightPlanSubmitUrl = flightPlanPatchUrl + "submit";
+    protected static final String flightFeaturesByPlanIdUrl = flightPlanPatchUrl + "features";
 
     //Weather
     protected static final String weatherVersion = DEBUG ? Utils.getDebugUrl() : "v1/";
@@ -54,7 +50,6 @@ class BaseService {
     protected static final String permitVersion = DEBUG ? Utils.getDebugUrl() : "v2/";
     protected static final String permitBaseUrl = baseUrl + "permit/" + permitVersion;
     protected static final String permitApplyUrl = permitBaseUrl + "%s/apply/"; //Replace %s with permitId using String.format
-
 
     //Pilot
     protected static final String pilotVersion = DEBUG ? Utils.getDebugUrl() : "v2/";
@@ -81,21 +76,21 @@ class BaseService {
     protected static final String airspaceByIdsUrl = airspaceBaseUrl + "list/";
 
     //Traffic Alerts
-    protected static final String mqttBaseUrl = DEBUG ? Utils.getMqttDebugUrl() : "ssl://mqtt-prod.airmap.io:8883";
+    protected static final String mqttBaseUrl = DEBUG ? Utils.getMqttDebugUrl() : "ssl://mqtt-prod." + AirMapConfig.getMqttDomain() + ":8883";
     protected static final String trafficAlertChannel = "uav/traffic/alert/%s"; //Replace %s with id using String.format. *Don't* end this url with a /
     protected static final String situationalAwarenessChannel = "uav/traffic/sa/%s"; //Replace %s with id using String.format
 
     //Telemetry
-    protected static final String telemetryBaseUrl = DEBUG ? Utils.getTelemetryDebugUrl() : "api-udp-telemetry.prod.airmap.com";
+    protected static final String telemetryBaseUrl = DEBUG ? Utils.getTelemetryDebugUrl() : "api-udp-telemetry.prod." + AirMapConfig.getDomain();
     protected static final int telemetryPort = 16060;
 
     //Auth
-    protected static final String loginUrl = "https://sso.airmap.io/delegation";
+    protected static final String loginUrl = "https://" + AirMapConfig.getAuth0Host() + "/delegation";
     protected static final String authVersion = DEBUG ? Utils.getDebugUrl() : "v1/";
     protected static final String authBaseUrl = baseUrl + "auth/" + authVersion;
     protected static final String anonymousLoginUrl = authBaseUrl + "anonymous/token";
-    protected static final String delegationUrl = DEV ? "https://sso-dev.airmap.io/delegation" : "https://sso.airmap.io/delegation";
-    protected static final String auth0Domain = DEV ? "sso-dev.airmap.io" : "sso.airmap.io";
+    protected static final String delegationUrl = loginUrl;
+    protected static final String auth0Domain = AirMapConfig.getAuth0Host();
 
     //Rules
     protected static final String rulesetsVersion = DEBUG ? Utils.getDebugUrl() : "v1/";

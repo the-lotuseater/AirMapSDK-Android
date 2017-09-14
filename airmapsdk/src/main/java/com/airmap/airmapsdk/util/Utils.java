@@ -38,6 +38,9 @@ import java.util.Locale;
  */
 @SuppressWarnings("unused")
 public class Utils {
+
+    private static final String TAG = "Utils (SDK)";
+
     public static final String REFRESH_TOKEN_KEY = "AIRMAP_SDK_REFRESH_TOKEN";
 
     /** Return the value mapped by the given key, or {@code null} if not present or null. */
@@ -428,23 +431,6 @@ public class Utils {
         return TextUtils.join(",", coordinates);
     }
 
-    public static String getMapboxApiKey() {
-        try {
-            return AirMap.getConfig().getJSONObject("mapbox").getString("access_token");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error getting mapbox key from airmap.config.json");
-        }
-    }
-
-    public static String getClientId() {
-        try {
-            JSONObject auth0 = AirMap.getConfig().getJSONObject("auth0");
-            return auth0.getString("client_id");
-        } catch (JSONException e) {
-            throw new RuntimeException("client_id and/or callback_url not found in airmap.config.json");
-        }
-    }
 
     public static String getDebugUrl() {
         try {
@@ -469,6 +455,4 @@ public class Utils {
             return "v2/";
         }
     }
-
-
 }

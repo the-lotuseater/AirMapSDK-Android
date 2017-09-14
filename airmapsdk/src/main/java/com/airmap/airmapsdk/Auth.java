@@ -9,6 +9,7 @@ import com.airmap.airmapsdk.networking.callbacks.AirMapAuthenticationCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.networking.services.AuthService;
+import com.airmap.airmapsdk.util.AirMapConfig;
 import com.airmap.airmapsdk.util.PreferenceUtils;
 import com.airmap.airmapsdk.util.SecuredPreferenceException;
 import com.airmap.airmapsdk.util.Utils;
@@ -35,12 +36,13 @@ public class Auth {
     }
 
     public static void loginOrSignup(Activity activity, AirMapAuthenticationCallback callback) {
-        Auth0 auth0 = new Auth0(Utils.getClientId(), "sso.airmap.io");
+        Auth0 auth0 = new Auth0(AirMapConfig.getAuth0ClientId(), AirMapConfig.getAuth0Host());
+        auth0.setOIDCConformant(false);
 
         Lock lock = Lock.newBuilder(auth0, callback)
                 .hideMainScreenTitle(true)
-                .setTermsURL("https://www.airmap.com/terms")
-                .setPrivacyURL("https://www.airmap.com/privacy")
+                .setTermsURL("https://www." + AirMapConfig.getDomain() + "/terms")
+                .setPrivacyURL("https://www." + AirMapConfig.getDomain() + "/privacy")
                 .withScope("openid offline_access")
                 .withScheme("airmap")
                 .closable(true)
@@ -97,6 +99,15 @@ public class Auth {
         }
 
         AuthService.refreshAccessToken(refreshToken);
+    }
+
+    public static void clearRefreshToken(final Context context) {
+        try {
+            SharedPreferences preferences = PreferenceUtils.getPreferences(context);
+            preferences.edit().putString(Utils.REFRESH_TOKEN_KEY, "").apply();
+        } catch (SecuredPreferenceException e) {
+            AirMapLog.e("Auth", "Unable to get clear refresh token from secure prefs", e);
+        }
     }
 
     public static boolean isTokenExpired() {

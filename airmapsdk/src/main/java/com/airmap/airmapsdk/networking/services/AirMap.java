@@ -166,9 +166,9 @@ public class AirMap {
         certificatePinning = pinCertificates;
         decodeToken(auth);
         try {
-            InputStream inputStream = getContext().getResources().getAssets().open("airmap.config.json");
+            InputStream inputStream = getContext().getResources().getAssets().open("app.config.json");
             String json = Utils.readInputStreamAsString(inputStream);
-            config = new JSONObject(json);
+            config = new JSONObject(json).getJSONObject("airmap_sdk");
             apiKey = getConfig().getJSONObject("airmap").getString("api_key");
         } catch (IOException | JSONException | NullPointerException e) {
             e.printStackTrace();
@@ -262,6 +262,11 @@ public class AirMap {
         authToken = newAuthToken;
         getAirMapTrafficService().setAuthToken(newAuthToken);
         decodeToken(authToken);
+    }
+
+    public static void clearAuthToken() {
+        authToken = null;
+        getAirMapTrafficService().setAuthToken(null);
     }
 
     /**
@@ -419,6 +424,10 @@ public class AirMap {
      */
     public static void refreshAccessToken() {
         Auth.refreshAccessToken(getInstance().getContext());
+    }
+
+    public static void clearRefreshToken() {
+        Auth.clearRefreshToken(getInstance().getContext());
     }
 
     /**
