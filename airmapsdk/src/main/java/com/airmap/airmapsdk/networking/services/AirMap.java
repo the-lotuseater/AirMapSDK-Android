@@ -166,7 +166,7 @@ public class AirMap {
         certificatePinning = pinCertificates;
         decodeToken(auth);
         try {
-            InputStream inputStream = getContext().getResources().getAssets().open("app.config.json");
+            InputStream inputStream = getContext().getResources().getAssets().open("airmap.config.json");
             String json = Utils.readInputStreamAsString(inputStream);
             config = new JSONObject(json);
             apiKey = getConfig().getJSONObject("airmap").getString("api_key");
