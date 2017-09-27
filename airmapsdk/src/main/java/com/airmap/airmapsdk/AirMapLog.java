@@ -31,6 +31,16 @@ public class AirMapLog {
         }
     }
 
+    public static void w(String tag, String message) {
+        if (ENABLED) {
+            if (TESTING) {
+                System.out.println(tag + ": " + message);
+            } else if (!message.isEmpty()) {
+                Log.w(tag, message);
+            }
+        }
+    }
+
     public static void e(String tag, String message) {
         if (ENABLED) {
             if (TESTING) {
