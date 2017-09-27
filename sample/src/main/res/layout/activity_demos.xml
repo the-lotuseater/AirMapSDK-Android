@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/main_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true" >
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="4dp">
+
+            <android.support.v7.widget.CardView style="@style/CardView.Demo"
+                android:id="@+id/map_card_view">
+
+                <TextView style="@style/TextAppearance.Demo.Title"
+                    android:text="Map Demo" />
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView style="@style/CardView.Demo"
+                android:id="@+id/login_card_view">
+
+                <TextView style="@style/TextAppearance.Demo.Title"
+                    android:text="Authentication" />
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView style="@style/CardView.Demo"
+                android:id="@+id/plan_card_view">
+
+                <TextView style="@style/TextAppearance.Demo.Title"
+                    android:text="Flight Plan" />
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView style="@style/CardView.Demo"
+                android:id="@+id/briefing_card_view">
+
+                <TextView style="@style/TextAppearance.Demo.Title"
+                    android:text="Flight Brief" />
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView style="@style/CardView.Demo"
+                android:id="@+id/traffic_card_view">
+
+                <TextView style="@style/TextAppearance.Demo.Title"
+                    android:text="Traffic" />
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView style="@style/CardView.Demo"
+                android:id="@+id/telemetry_card_view">
+
+                <TextView style="@style/TextAppearance.Demo.Title"
+                    android:text="Telemetry" />
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView style="@style/CardView.Demo"
+                android:id="@+id/anonymous_login_card_view">
+
+                <TextView style="@style/TextAppearance.Demo.Title"
+                    android:text="Anonymous Login" />
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>
