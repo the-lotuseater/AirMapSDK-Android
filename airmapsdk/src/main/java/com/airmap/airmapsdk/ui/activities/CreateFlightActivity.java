@@ -36,6 +36,7 @@ import com.airmap.airmapsdk.ui.fragments.ListPermitsFragment;
 import com.airmap.airmapsdk.ui.fragments.ReviewFlightFragment;
 import com.airmap.airmapsdk.ui.fragments.ReviewNoticeFragment;
 import com.airmap.airmapsdk.ui.views.CustomViewPager;
+import com.airmap.airmapsdk.util.AirMapConfig;
 import com.airmap.airmapsdk.util.AnnotationsFactory;
 import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdk.util.Utils;
@@ -127,7 +128,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
         }
 
         setupFlight(savedInstanceState);
-        Mapbox.getInstance(this, Utils.getMapboxApiKey());
+        Mapbox.getInstance(this, AirMapConfig.getMapboxApiKey());
         setContentView(R.layout.airmap_activity_create_flight);
         initializeViews();
         setupToolbar();

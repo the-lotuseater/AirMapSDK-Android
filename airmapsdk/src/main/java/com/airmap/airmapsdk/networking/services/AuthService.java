@@ -7,6 +7,7 @@ import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.AirMapToken;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.GenericOkHttpCallback;
+import com.airmap.airmapsdk.util.AirMapConfig;
 import com.airmap.airmapsdk.util.Utils;
 
 import org.json.JSONException;
@@ -56,7 +57,7 @@ public class AuthService extends BaseService {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(BaseService.loginUrl).newBuilder();
         urlBuilder.addQueryParameter("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
         urlBuilder.addQueryParameter("api_type", "app");
-        urlBuilder.addQueryParameter("client_id", Utils.getClientId());
+        urlBuilder.addQueryParameter("client_id", AirMapConfig.getAuth0ClientId());
         urlBuilder.addQueryParameter("refresh_token", refreshToken);
         String url = urlBuilder.build().toString();
         try {
@@ -73,7 +74,7 @@ public class AuthService extends BaseService {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(delegationUrl).newBuilder();
         urlBuilder.addQueryParameter("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
         urlBuilder.addQueryParameter("api_type", "app");
-        urlBuilder.addQueryParameter("client_id", Utils.getClientId());
+        urlBuilder.addQueryParameter("client_id", AirMapConfig.getAuth0ClientId());
         urlBuilder.addQueryParameter("refresh_token", refreshToken);
         String url = urlBuilder.build().toString();
         getClient().get(url, new Callback() {
@@ -109,7 +110,7 @@ public class AuthService extends BaseService {
     public static void getFirebaseToken(final AirMapCallback<String> listener) {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(delegationUrl).newBuilder();
         urlBuilder.addQueryParameter("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
-        urlBuilder.addQueryParameter("client_id", Utils.getClientId());
+        urlBuilder.addQueryParameter("client_id", AirMapConfig.getAuth0ClientId());
         urlBuilder.addQueryParameter("id_token", AirMap.getAuthToken());
         urlBuilder.addQueryParameter("scope", "openid");
         urlBuilder.addQueryParameter("device", "android_app");
