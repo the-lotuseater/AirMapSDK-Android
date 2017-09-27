@@ -1,5 +1,6 @@
 package com.airmap.airmapsdk.models.status;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.airmap.airmapsdk.models.AirMapBaseModel;
@@ -94,7 +95,13 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
             if (lat != Double.NaN && lng != Double.NaN) {
                 setCoordinate(new Coordinate(lat, lng));
             }
-            setLastUpdated(getDateFromIso8601String(json.optString("last_updated")));
+
+            String lastUpdated = json.optString("last_updated");
+            if (!TextUtils.isEmpty(lastUpdated)) {
+                setLastUpdated(getDateFromIso8601String(lastUpdated));
+            } else {
+                setLastUpdated(null);
+            }
 
             if (json.has("requirements")) {
                 setRequirements(new AirMapStatusRequirement(json.optJSONObject("requirements")));
