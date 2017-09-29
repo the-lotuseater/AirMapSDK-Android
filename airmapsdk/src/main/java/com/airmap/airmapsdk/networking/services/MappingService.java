@@ -7,10 +7,7 @@ import android.text.TextUtils;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
-import com.airmap.airmapsdk.networking.callbacks.GenericOkHttpCallback;
-import com.airmap.airmapsdk.util.AirMapConfig;
 import com.airmap.airmapsdk.util.Utils;
 
 import org.json.JSONException;
@@ -355,7 +352,7 @@ public class MappingService extends BaseService {
     }
 
     protected String getStylesUrl(AirMapMapTheme theme) {
-        String stageOrProd = BaseService.DEBUG ? "stage/" : "";
+        String stageOrProd = BaseService.STAGING ? "stage/" : "";
         String stylesUrl = "https://cdn." + "airmap.com" +"/static/map-styles/" + stageOrProd + "0.7.2/";
 
         switch (theme) {

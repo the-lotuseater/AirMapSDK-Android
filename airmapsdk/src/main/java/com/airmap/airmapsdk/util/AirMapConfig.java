@@ -42,6 +42,15 @@ public class AirMapConfig {
         }
     }
 
+    public static boolean isStage() {
+        try {
+            return AirMap.getConfig().getJSONObject("airmap").optString("environment", "prod").equals("stage");
+        } catch (JSONException e) {
+            AirMapLog.e(TAG, "Error getting environment key from airmap.config.json", e);
+            return false;
+        }
+    }
+
     public static String getMapboxApiKey() {
         try {
             return AirMap.getConfig().getJSONObject("mapbox").getString("access_token");
