@@ -96,7 +96,7 @@ class BaseService {
     protected static final String rulesetsVersion = DEBUG ? Utils.getDebugUrl() : "v1/";
     protected static final String jurisdictionBaseUrl = baseUrl + "jurisdiction" + rulesetsVersion;
     protected static final String jurisdictionByIdUrl = jurisdictionBaseUrl + "%s/"; //Replace %s with id using String.format
-    protected static final String rulesetBaseUrl = baseUrl + "ruleset/" + rulesetsVersion;
+    protected static final String rulesetBaseUrl = baseUrl + "rules/" + rulesetsVersion;
     protected static final String rulesetByIdUrl = rulesetBaseUrl + "%s/"; //Replace %s with id using String.format
     protected static final String rulesByIdUrl = rulesetBaseUrl + "%s/rules"; //Replace %s with id using String.format
     protected static final String advisoriesUrl = baseUrl + "advisory/" + rulesetsVersion + "airspace";
