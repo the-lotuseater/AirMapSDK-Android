@@ -65,7 +65,8 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
     private static final int BINARY_VIEW_TYPE = 2;
     private static final int SLIDER_VIEW_TYPE = 3;
     private static final int FIELD_VIEW_TYPE = 4;
-    private static final int NEXT_BUTTON_TYPE = 5;
+    private static final int TEXT_VIEW_TYPE = 5;
+    private static final int NEXT_BUTTON_TYPE = 6;
 
     private Activity activity;
     private AirMapFlightPlan flightPlan;
@@ -173,6 +174,9 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
             case FIELD_VIEW_TYPE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_flight_plan_feature_field, parent, false);
                 return new FlightFeatureFieldViewHolder(view);
+            case TEXT_VIEW_TYPE:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_flight_plan_feature_text, parent, false);
+                return new FlightFeatureTextViewHolder(view);
             case RULE_VIEW_TYPE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_flight_plan_rule, parent, false);
                 return new RuleViewHolder(view);
@@ -313,7 +317,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                     }
                 });
 
-                boolean yesSelected = savedValue != null && ((Boolean) savedValue.getValue());
+                boolean yesSelected = savedValue != null && savedValue.getValue();
                 binaryViewHolder.yesButton.setSelected(yesSelected);
                 binaryViewHolder.yesButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -332,8 +336,19 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
             case FIELD_VIEW_TYPE: {
                 final AirMapFlightFeature flightFeature = (AirMapFlightFeature) getItem(position);
                 final FlightFeatureFieldViewHolder fieldViewHolder = (FlightFeatureFieldViewHolder) holder;
+                final FlightFeatureValue<String> savedValue = flightPlan.getFlightFeatureValues() != null ? flightPlan.getFlightFeatureValues().get(flightFeature.getFlightFeature()) : null;
+
                 fieldViewHolder.descriptionTextView.setText(flightFeature.getDescription());
-                fieldViewHolder.editText.addTextChangedListener(new TextWatcher() {
+
+                if (fieldViewHolder.textWatcher != null) {
+                    fieldViewHolder.editText.removeTextChangedListener(fieldViewHolder.textWatcher);
+                }
+
+                if (savedValue != null) {
+                    fieldViewHolder.editText.setText(savedValue.getValue());
+                }
+
+                TextWatcher textWatcher = new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                     }
@@ -345,14 +360,29 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
 
                     @Override
                     public void afterTextChanged(Editable s) {
-                        FlightFeatureValue<String> flightFeatureValue = new FlightFeatureValue(flightFeature.getFlightFeature(), s.toString());
+                        FlightFeatureValue<String> flightFeatureValue = new FlightFeatureValue<>(flightFeature.getFlightFeature(), s.toString());
                         flightPlan.setFlightFeatureValue(flightFeatureValue);
                         onFlightPlanChanged();
 
                         Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.change, flightFeature.getFlightFeature());
                     }
-                });
+                };
 
+                fieldViewHolder.textWatcher = textWatcher;
+                fieldViewHolder.editText.addTextChangedListener(textWatcher);
+
+                fieldViewHolder.infoButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showFlightFeatureInfo(flightFeature);
+                    }
+                });
+                break;
+            }
+            case TEXT_VIEW_TYPE: {
+                final AirMapFlightFeature flightFeature = (AirMapFlightFeature) getItem(position);
+                final FlightFeatureTextViewHolder fieldViewHolder = (FlightFeatureTextViewHolder) holder;
+                fieldViewHolder.descriptionTextView.setText(flightFeature.getDescription());
                 fieldViewHolder.infoButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -481,8 +511,10 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                 case String:
                     return FIELD_VIEW_TYPE;
                 case Boolean:
-                default:
                     return BINARY_VIEW_TYPE;
+                case Info:
+                default:
+                    return TEXT_VIEW_TYPE;
             }
         } else {
             return RULE_VIEW_TYPE;
@@ -802,12 +834,25 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         TextView descriptionTextView;
         EditText editText;
         ImageButton infoButton;
+        TextWatcher textWatcher;
 
         FlightFeatureFieldViewHolder(View itemView) {
             super(itemView);
 
             descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
             editText = (EditText) itemView.findViewById(R.id.edit_text);
+            infoButton = (ImageButton) itemView.findViewById(R.id.info_button);
+        }
+    }
+
+    private class FlightFeatureTextViewHolder extends RecyclerView.ViewHolder {
+        TextView descriptionTextView;
+        ImageButton infoButton;
+
+        FlightFeatureTextViewHolder(View itemView) {
+            super(itemView);
+
+            descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
             infoButton = (ImageButton) itemView.findViewById(R.id.info_button);
         }
     }

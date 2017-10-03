@@ -25,7 +25,7 @@ public class AirMapFlightFeature implements Serializable, AirMapBaseModel {
     }
 
     public enum InputType {
-        Double,Boolean, String, Unknown;
+        Double,Boolean, String, Info, Unknown;
 
         private static InputType fromText(String text) {
             switch (text.toLowerCase()) {
@@ -35,6 +35,8 @@ public class AirMapFlightFeature implements Serializable, AirMapBaseModel {
                     return Boolean;
                 case "string":
                     return String;
+                case "info":
+                    return Info;
                 default:
                     return Unknown;
             }
@@ -42,6 +44,8 @@ public class AirMapFlightFeature implements Serializable, AirMapBaseModel {
 
         public int value() {
             switch (this) {
+                case Info:
+                    return 0;
                 case String:
                     return 1;
                 case Double:

@@ -18,10 +18,10 @@
     <color name="redDark">#D32F2F</color>
     <color name="red">#FF0000</color>
 
-    <color name="status_red">#FF0000</color>
+    <color name="status_red">#EE0000</color>
     <color name="status_yellow">#ffeb3b</color>
     <color name="status_green">#7ED321</color>
-    <color name="status_orange">#FF8C00</color>
+    <color name="status_orange">#FF7C15</color>
 
     <color name="light_grey">#E6E6E6</color>
 
