@@ -96,8 +96,8 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
                 setCoordinate(new Coordinate(lat, lng));
             }
 
-            String lastUpdated = json.optString("last_updated");
-            if (!TextUtils.isEmpty(lastUpdated)) {
+            if (!json.isNull("last_updated")) {
+                String lastUpdated = json.optString("last_updated");
                 setLastUpdated(getDateFromIso8601String(lastUpdated));
             } else {
                 setLastUpdated(null);

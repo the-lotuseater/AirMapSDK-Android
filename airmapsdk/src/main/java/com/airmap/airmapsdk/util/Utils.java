@@ -164,8 +164,7 @@ public class Utils {
             DateTime dateTime = dateTimeFormatter.parseDateTime(iso8601);
             return dateTime.toDate();
         } catch (UnsupportedOperationException | IllegalArgumentException e) {
-            AirMapLog.e("AirMap Utils", "Error parsing date: " + e.getMessage());
-            e.printStackTrace();
+            AirMapLog.e("AirMap Utils", "Error parsing date: " + iso8601, e);
         }
         return null;
     }
