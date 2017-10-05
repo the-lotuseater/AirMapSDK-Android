@@ -153,9 +153,12 @@ public class MapDataController {
         rulesetsSubscription = Observable.combineLatest(jurisdictionsObservable, preferredRulesetsObservable,
                 new Func2<Map<String, AirMapRuleset>, Set<String>, Pair<List<AirMapRuleset>,List<AirMapRuleset>>>() {
                     @Override
-                    public Pair<List<AirMapRuleset>,List<AirMapRuleset>> call(Map<String, AirMapRuleset> availableRulesets, Set<String> preferredRulesets) {
+                    public Pair<List<AirMapRuleset>,List<AirMapRuleset>> call(Map<String, AirMapRuleset> availableRulesetsMap, Set<String> preferredRulesets) {
                         AirMapLog.i(TAG, "combine available & preferred");
-                        return computeSelectedRulesets(availableRulesets, preferredRulesets);
+                        List<AirMapRuleset> availableRulesets = new ArrayList<>(availableRulesetsMap.values());
+                        List<AirMapRuleset> selectedRulesets = RulesetsEvaluator.computeSelectedRulesets(availableRulesets, preferredRulesets, unpreferredRulesets);
+
+                        return new Pair<>(availableRulesets, selectedRulesets);
                     }
                 })
                 .subscribeOn(Schedulers.io())
@@ -200,74 +203,6 @@ public class MapDataController {
                         AirMapLog.e(TAG, "Unknown error on jurisdictions observable", throwable);
                     }
                 });
-    }
-
-    /**
-     *  Calculate selected rulesets from rulesets available and preferred rulesets
-     *
-     *  @param availableRulesets
-     *  @param preferredRulesets
-     *  @return
-     */
-    private Pair<List<AirMapRuleset>,List<AirMapRuleset>> computeSelectedRulesets(Map<String, AirMapRuleset> availableRulesets, Set<String> preferredRulesets) {
-        Set<AirMapRuleset> selectedRulesets = new HashSet<>();
-
-        // select rulesets that are preferred, required or default
-        for (AirMapRuleset newRuleset : availableRulesets.values()) {
-            // preferred are automatically added
-            if (preferredRulesets.contains(newRuleset.getId())) {
-                selectedRulesets.add(newRuleset);
-                continue;
-            }
-
-            switch (newRuleset.getType()) {
-                case Optional: {
-                    if (newRuleset.isDefault() && !unpreferredRulesets.contains(newRuleset.getId())) {
-                        selectedRulesets.add(newRuleset);
-                    }
-                    break;
-                }
-                case Required: {
-                    selectedRulesets.add(newRuleset);
-                    break;
-                }
-                case PickOne: {
-                    if (newRuleset.isDefault()) {
-                        boolean noSiblingsSelected = true;
-                        for (String preferredRulesetId : preferredRulesets) {
-                            AirMapRuleset preferredRuleset = availableRulesets.get(preferredRulesetId);
-                            if (preferredRuleset != null && preferredRuleset.getType() == PickOne && preferredRuleset.getJurisdictionId() == newRuleset.getJurisdictionId()) {
-                                noSiblingsSelected = false;
-                                break;
-                            }
-                        }
-                        if (noSiblingsSelected) {
-                            selectedRulesets.add(newRuleset);
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-
-        // unselect rulesets that aren't in the jurisdiction rulesets
-        for (AirMapRuleset selectedRuleset : new ArrayList<>(selectedRulesets)) {
-            if (!availableRulesets.containsKey(selectedRuleset.getId())) {
-                selectedRulesets.remove(selectedRuleset);
-            }
-        }
-
-        List<AirMapRuleset> selectedRulesetsList = new ArrayList<>(selectedRulesets);
-        Collections.sort(selectedRulesetsList, new Comparator<AirMapRuleset>() {
-            @Override
-            public int compare(AirMapRuleset o1, AirMapRuleset o2) {
-                return o1.compareTo(o2);
-            }
-        });
-
-        List<AirMapRuleset> availableRulesetsList = new ArrayList<>(availableRulesets.values());
-
-        return new Pair<>(availableRulesetsList, selectedRulesetsList);
     }
 
     /**
