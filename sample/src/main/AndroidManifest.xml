@@ -19,7 +19,7 @@
             android:theme="@style/AppTheme">
 
         <activity
-            android:name=".DemosActivity"
+            android:name=".activities.DemosActivity"
             android:label="@string/airmap_app_name"
             android:theme="@style/AppTheme.NoActionBar">
 
@@ -30,10 +30,31 @@
         </activity>
 
         <activity
-                android:name=".MapDemoActivity"
+                android:name=".activities.MapDemoActivity"
                 android:label="Map Demo"
-                android:parentActivityName=".DemosActivity"
+                android:parentActivityName=".activities.DemosActivity"
                 android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <activity
+            android:name=".activities.FlightPlanDemoActivity"
+            android:label="Flight Plan Demo"
+            android:parentActivityName=".activities.DemosActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <activity
+            android:name=".activities.TrafficActivity"
+            android:label="Traffic Demo"
+            android:parentActivityName=".activities.DemosActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <activity
+            android:name=".activities.AnonymousLoginDemoActivity"
+            android:label="Anonymous Login Demo"
+            android:parentActivityName=".activities.DemosActivity"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <service android:name="com.mapbox.services.android.telemetry.service.TelemetryService"/>

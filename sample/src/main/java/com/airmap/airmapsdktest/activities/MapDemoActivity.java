@@ -1,20 +1,20 @@
-package com.airmap.airmapsdktest;
+package com.airmap.airmapsdktest.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
 import com.airmap.airmapsdk.models.airspace.AirMapAirspaceAdvisoryStatus;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.ui.activities.MyLocationMapActivity;
 import com.airmap.airmapsdk.ui.views.CustomViewPager;
-import com.airmap.airmapsdk.util.Utils;
+import com.airmap.airmapsdktest.fragments.AdvisoriesFragment;
+import com.airmap.airmapsdktest.fragments.MapFragment;
+import com.airmap.airmapsdktest.R;
+import com.airmap.airmapsdktest.fragments.RulesetsFragment;
 
 import java.util.List;
 

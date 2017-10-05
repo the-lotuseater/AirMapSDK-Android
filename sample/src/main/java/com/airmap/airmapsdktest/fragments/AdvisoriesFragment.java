@@ -1,4 +1,4 @@
-package com.airmap.airmapsdktest;
+package com.airmap.airmapsdktest.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,7 +17,7 @@ import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.ui.adapters.ExpandableAdvisoriesAdapter;
-import com.airmap.airmapsdk.util.AirMapConstants;
+import com.airmap.airmapsdktest.R;
 
 import java.util.ArrayList;
 import java.util.Collections;

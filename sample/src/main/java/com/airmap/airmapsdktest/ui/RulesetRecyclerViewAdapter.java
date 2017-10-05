@@ -1,4 +1,4 @@
-package com.airmap.airmapsdktest;
+package com.airmap.airmapsdktest.ui;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.ui.adapters.EmptyableAdapter;
+import com.airmap.airmapsdktest.R;
 import com.marshalchen.ultimaterecyclerview.gridSection.SectionedRecyclerViewAdapter;
 
 import java.util.ArrayList;
@@ -357,7 +358,7 @@ public class RulesetRecyclerViewAdapter extends SectionedRecyclerViewAdapter<Rul
     }
 
 
-    interface RulesetListener {
+    public interface RulesetListener {
         void onRulesetSelected(AirMapRuleset ruleset);
         void onRulesetDeselected(AirMapRuleset ruleset);
         void onRulesetSwitched(AirMapRuleset fromRuleset, AirMapRuleset toRuleset);

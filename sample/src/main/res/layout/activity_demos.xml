@@ -50,7 +50,15 @@
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView style="@style/CardView.Demo"
-                android:id="@+id/plan_card_view">
+                android:id="@+id/anonymous_login_card_view">
+
+                <TextView style="@style/TextAppearance.Demo.Title"
+                    android:text="Anonymous Login" />
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView style="@style/CardView.Demo"
+                android:id="@+id/flight_plan_card_view">
 
                 <TextView style="@style/TextAppearance.Demo.Title"
                     android:text="Flight Plan" />
@@ -78,14 +86,6 @@
 
                 <TextView style="@style/TextAppearance.Demo.Title"
                     android:text="Telemetry" />
-
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView style="@style/CardView.Demo"
-                android:id="@+id/anonymous_login_card_view">
-
-                <TextView style="@style/TextAppearance.Demo.Title"
-                    android:text="Anonymous Login" />
 
             </android.support.v7.widget.CardView>
 

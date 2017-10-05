@@ -1,4 +1,4 @@
-package com.airmap.airmapsdktest;
+package com.airmap.airmapsdktest.fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,6 +15,8 @@ import com.airmap.airmapsdk.models.airspace.AirMapAirspaceAdvisoryStatus;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.ui.activities.MyLocationMapActivity;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
+import com.airmap.airmapsdktest.R;
+import com.airmap.airmapsdktest.activities.MapDemoActivity;
 
 import java.util.List;
 

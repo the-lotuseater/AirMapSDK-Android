@@ -1,4 +1,4 @@
-package com.airmap.airmapsdktest;
+package com.airmap.airmapsdktest.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
+import com.airmap.airmapsdktest.R;
+import com.airmap.airmapsdktest.ui.RulesetRecyclerViewAdapter;
+import com.airmap.airmapsdktest.activities.MapDemoActivity;
 
 import java.util.List;
 
