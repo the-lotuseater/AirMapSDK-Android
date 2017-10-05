@@ -75,8 +75,8 @@ public class ReviewDetailsFragment extends Fragment {
         aircraftTextView = getTextViewById(view, R.id.aircraft_value);
         publicFlightView = view.findViewById(R.id.public_flight_view);
         infoButton = view.findViewById(R.id.airmap_info_button);
-        radiusContainer = (LinearLayout) view.findViewById(R.id.radius_container);
-        aircraftContainer = (LinearLayout) view.findViewById(R.id.aircraft_container);
+        radiusContainer = view.findViewById(R.id.radius_container);
+        aircraftContainer = view.findViewById(R.id.aircraft_container);
     }
 
     private void populateViews() {

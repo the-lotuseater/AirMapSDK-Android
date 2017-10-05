@@ -91,7 +91,7 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
         holder.permitRadioGroup.setOnCheckedChangeListener(new PermitRadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(PermitRadioGroup group, int checkedId) {
-                PermitRadioButton radioButton = (PermitRadioButton) holder.permitRadioGroup.findViewById(checkedId);
+                PermitRadioButton radioButton = holder.permitRadioGroup.findViewById(checkedId);
                 int index = holder.permitRadioGroup.indexOfChild(radioButton);
                 AirMapAvailablePermit permit = holder.enabledPermits.get(index);
 
@@ -215,9 +215,9 @@ public class PermitsAdapter extends RecyclerView.Adapter<PermitsAdapter.ViewHold
 
         public ViewHolder(View itemView) {
             super(itemView);
-            permitAuthorityTextView = (TextView) itemView.findViewById(R.id.permit_authority);
-            permitRadioGroup= (PermitRadioGroup) itemView.findViewById(R.id.permit_radio_group);
-            selectPermitButton = (Button) itemView.findViewById(R.id.select_permit_button);
+            permitAuthorityTextView = itemView.findViewById(R.id.permit_authority);
+            permitRadioGroup= itemView.findViewById(R.id.permit_radio_group);
+            selectPermitButton = itemView.findViewById(R.id.select_permit_button);
         }
     }
 }

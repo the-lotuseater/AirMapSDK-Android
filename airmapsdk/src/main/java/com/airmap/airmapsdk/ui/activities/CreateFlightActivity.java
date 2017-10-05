@@ -198,8 +198,8 @@ public class CreateFlightActivity extends AppCompatActivity implements
     }
 
     private void initializeViews() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        viewPager = (CustomViewPager) findViewById(R.id.container);
+        toolbar = findViewById(R.id.toolbar);
+        viewPager = findViewById(R.id.container);
     }
 
     private void setupToolbar() {
@@ -324,7 +324,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
 
     @Override
     public TabLayout getTabLayout() {
-        return (TabLayout) findViewById(R.id.tabs);
+        return findViewById(R.id.tabs);
     }
 
     @Override

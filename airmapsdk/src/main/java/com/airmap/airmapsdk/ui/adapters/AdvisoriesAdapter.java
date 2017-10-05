@@ -367,7 +367,7 @@ public class AdvisoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         VHHeader(View itemView) {
             super(itemView);
 
-            headerTextView = (TextView) itemView.findViewById(R.id.header);
+            headerTextView = itemView.findViewById(R.id.header);
         }
     }
 
@@ -381,9 +381,9 @@ public class AdvisoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             super(itemView);
 
             colorView = itemView.findViewById(R.id.color_bar);
-            nameTextView = (TextView) itemView.findViewById(R.id.name);
-            description1TextView = (TextView) itemView.findViewById(R.id.organization);
-            description2TextView = (TextView) itemView.findViewById(R.id.phone);
+            nameTextView = itemView.findViewById(R.id.name);
+            description1TextView = itemView.findViewById(R.id.organization);
+            description2TextView = itemView.findViewById(R.id.phone);
         }
 
     }
@@ -398,9 +398,9 @@ public class AdvisoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             super(itemView);
 
             colorView = itemView.findViewById(R.id.color_bar);
-            nameTextView = (TextView) itemView.findViewById(R.id.name);
-            dateTextView = (TextView) itemView.findViewById(R.id.date);
-            urlTextView = (TextView) itemView.findViewById(R.id.url);
+            nameTextView = itemView.findViewById(R.id.name);
+            dateTextView = itemView.findViewById(R.id.date);
+            urlTextView = itemView.findViewById(R.id.url);
         }
 
     }
@@ -414,8 +414,8 @@ public class AdvisoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             super(itemView);
 
             colorView = itemView.findViewById(R.id.color_bar);
-            nameTextView = (TextView) itemView.findViewById(R.id.name);
-            sizeTextView = (TextView) itemView.findViewById(R.id.size);
+            nameTextView = itemView.findViewById(R.id.name);
+            sizeTextView = itemView.findViewById(R.id.size);
         }
 
     }
@@ -430,9 +430,9 @@ public class AdvisoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             super(itemView);
 
             colorView = itemView.findViewById(R.id.color_bar);
-            nameTextView = (TextView) itemView.findViewById(R.id.name);
-            description1TextView = (TextView) itemView.findViewById(R.id.organization);
-            description2TextView = (TextView) itemView.findViewById(R.id.phone);
+            nameTextView = itemView.findViewById(R.id.name);
+            description1TextView = itemView.findViewById(R.id.organization);
+            description2TextView = itemView.findViewById(R.id.phone);
         }
 
     }

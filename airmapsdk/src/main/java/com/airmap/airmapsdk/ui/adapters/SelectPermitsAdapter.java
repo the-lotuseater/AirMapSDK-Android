@@ -250,11 +250,11 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
             super(itemView);
 
             cardView = itemView.findViewById(R.id.card_view);
-            iconImageView = (ImageView) itemView.findViewById(R.id.icon_image_view);
-            permitNameTextView = (TextView) itemView.findViewById(R.id.permit_name_text_view);
-            permitDescriptionTextView = (TextView) itemView.findViewById(R.id.permit_description_text_view);
-            statusTextView = (TextView) itemView.findViewById(R.id.status_text_view);
-            expirationTextView = (TextView) itemView.findViewById(R.id.expiration_text_view);
+            iconImageView = itemView.findViewById(R.id.icon_image_view);
+            permitNameTextView = itemView.findViewById(R.id.permit_name_text_view);
+            permitDescriptionTextView = itemView.findViewById(R.id.permit_description_text_view);
+            statusTextView = itemView.findViewById(R.id.status_text_view);
+            expirationTextView = itemView.findViewById(R.id.expiration_text_view);
         }
     }
 
@@ -263,7 +263,7 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         HeaderViewHolder(View itemView) {
             super(itemView);
-            titleTextView = (TextView) itemView.findViewById(R.id.header_text_view);
+            titleTextView = itemView.findViewById(R.id.header_text_view);
         }
     }
 
@@ -273,8 +273,8 @@ public class SelectPermitsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         InstructionsViewHolder(View itemView) {
             super(itemView);
-            titleTextView = (TextView) itemView.findViewById(R.id.title_text_view);
-            descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
+            titleTextView = itemView.findViewById(R.id.title_text_view);
+            descriptionTextView = itemView.findViewById(R.id.description_text_view);
         }
     }
 }

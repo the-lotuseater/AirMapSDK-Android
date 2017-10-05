@@ -99,12 +99,12 @@ public class PilotProfileActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        profileImageView = (ImageView) findViewById(R.id.profile_image);
-        nameTextView = (TextView) findViewById(R.id.name);
-        usernameTextView = (TextView) findViewById(R.id.username);
-        flightCounterTextView = (TextView) findViewById(R.id.flight_counter_text);
-        aircraftCounterTextView = (TextView) findViewById(R.id.aircraft_counter_text);
+        toolbar = findViewById(R.id.toolbar);
+        profileImageView = findViewById(R.id.profile_image);
+        nameTextView = findViewById(R.id.name);
+        usernameTextView = findViewById(R.id.username);
+        flightCounterTextView = findViewById(R.id.flight_counter_text);
+        aircraftCounterTextView = findViewById(R.id.aircraft_counter_text);
     }
 
     private void populateViews() {

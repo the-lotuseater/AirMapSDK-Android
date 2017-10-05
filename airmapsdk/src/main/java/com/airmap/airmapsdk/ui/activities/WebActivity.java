@@ -31,14 +31,14 @@ public class WebActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_web);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getIntent().getStringExtra(Intent.EXTRA_TITLE));
 
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        webView = (WebView) findViewById(R.id.web_view);
+        progressBar = findViewById(R.id.progress_bar);
+        webView = findViewById(R.id.web_view);
 
         progressBar.setMax(100);
         webView.getSettings().setJavaScriptEnabled(true);

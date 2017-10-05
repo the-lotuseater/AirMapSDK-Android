@@ -172,19 +172,19 @@ public class FlightDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void initializeViews(View view) {
-        mapView = (MapView) view.findViewById(R.id.airmap_map);
-        altitudeValueTextView = (TextView) view.findViewById(R.id.altitude_value);
-        altitudeSeekBar = (SeekBar) view.findViewById(R.id.altitude_seekbar);
+        mapView = view.findViewById(R.id.airmap_map);
+        altitudeValueTextView = view.findViewById(R.id.altitude_value);
+        altitudeSeekBar = view.findViewById(R.id.altitude_seekbar);
         startsAtTouchTarget = view.findViewById(R.id.date_time_picker_touch_target);
-        startsAtTextView = (TextView) view.findViewById(R.id.time_value);
-        durationValueTextView = (TextView) view.findViewById(R.id.duration_value);
-        durationSeekBar = (SeekBar) view.findViewById(R.id.duration_seekbar);
-        pilotProfileTextView = (TextView) view.findViewById(R.id.pilot_profile_text);
-        aircraftTextView = (TextView) view.findViewById(R.id.aircraft_label);
-        infoButton = (ImageView) view.findViewById(R.id.airmap_info_button);
-        shareAirMapSwitch = (SwitchCompat) view.findViewById(R.id.share_airmap_switch);
-        saveNextButton = (Button) view.findViewById(R.id.save_next_button);
-        progressBarContainer = (FrameLayout) view.findViewById(R.id.progress_bar_container);
+        startsAtTextView = view.findViewById(R.id.time_value);
+        durationValueTextView = view.findViewById(R.id.duration_value);
+        durationSeekBar = view.findViewById(R.id.duration_seekbar);
+        pilotProfileTextView = view.findViewById(R.id.pilot_profile_text);
+        aircraftTextView = view.findViewById(R.id.aircraft_label);
+        infoButton = view.findViewById(R.id.airmap_info_button);
+        shareAirMapSwitch = view.findViewById(R.id.share_airmap_switch);
+        saveNextButton = view.findViewById(R.id.save_next_button);
+        progressBarContainer = view.findViewById(R.id.progress_bar_container);
     }
 
     private void setupMap(Bundle savedInstanceState) {

@@ -97,8 +97,8 @@ public class WelcomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             super(itemView);
 
             cardView = itemView.findViewById(R.id.card_view);
-            nameTextView = (TextView) itemView.findViewById(R.id.name_text_view);
-            descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
+            nameTextView = itemView.findViewById(R.id.name_text_view);
+            descriptionTextView = itemView.findViewById(R.id.description_text_view);
         }
     }
 }

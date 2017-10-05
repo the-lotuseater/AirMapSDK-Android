@@ -773,14 +773,14 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         SettingsViewHolder(View itemView) {
             super(itemView);
             altitudeView = itemView.findViewById(R.id.altitude_view);
-            altitudeValueTextView = (TextView) itemView.findViewById(R.id.altitude_value);
-            altitudeSeekBar = (SeekBar) itemView.findViewById(R.id.altitude_seekbar);
+            altitudeValueTextView = itemView.findViewById(R.id.altitude_value);
+            altitudeSeekBar = itemView.findViewById(R.id.altitude_seekbar);
             startsAtTouchTarget = itemView.findViewById(R.id.date_time_picker_touch_target);
-            startsAtTextView = (TextView) itemView.findViewById(R.id.time_value);
-            durationValueTextView = (TextView) itemView.findViewById(R.id.duration_value);
-            durationSeekBar = (SeekBar) itemView.findViewById(R.id.duration_seekbar);
-            pilotProfileTextView = (TextView) itemView.findViewById(R.id.pilot_profile_text);
-            aircraftTextView = (TextView) itemView.findViewById(R.id.aircraft_label);
+            startsAtTextView = itemView.findViewById(R.id.time_value);
+            durationValueTextView = itemView.findViewById(R.id.duration_value);
+            durationSeekBar = itemView.findViewById(R.id.duration_seekbar);
+            pilotProfileTextView = itemView.findViewById(R.id.pilot_profile_text);
+            aircraftTextView = itemView.findViewById(R.id.aircraft_label);
         }
     }
 
@@ -791,8 +791,8 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         RuleViewHolder(View itemView) {
             super(itemView);
 
-            descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
-            statusImageView = (ImageView) itemView.findViewById(R.id.status_badge_image_view);
+            descriptionTextView = itemView.findViewById(R.id.description_text_view);
+            statusImageView = itemView.findViewById(R.id.status_badge_image_view);
         }
     }
 
@@ -805,10 +805,10 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         FlightFeatureBinaryViewHolder(View itemView) {
             super(itemView);
 
-            descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
-            noButton = (ToggleButton) itemView.findViewById(R.id.no_button);
-            yesButton = (ToggleButton) itemView.findViewById(R.id.yes_button);
-            infoButton = (ImageButton) itemView.findViewById(R.id.info_button);
+            descriptionTextView = itemView.findViewById(R.id.description_text_view);
+            noButton = itemView.findViewById(R.id.no_button);
+            yesButton = itemView.findViewById(R.id.yes_button);
+            infoButton = itemView.findViewById(R.id.info_button);
         }
     }
 
@@ -822,11 +822,11 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         FlightFeatureSeekbarViewHolder(View itemView) {
             super(itemView);
 
-            descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
-            labelTextView = (TextView) itemView.findViewById(R.id.label_text_view);
-            valueTextView = (TextView) itemView.findViewById(R.id.value_text_view);
-            seekBar = (SeekBar) itemView.findViewById(R.id.seekbar);
-            infoButton = (ImageButton) itemView.findViewById(R.id.info_button);
+            descriptionTextView = itemView.findViewById(R.id.description_text_view);
+            labelTextView = itemView.findViewById(R.id.label_text_view);
+            valueTextView = itemView.findViewById(R.id.value_text_view);
+            seekBar = itemView.findViewById(R.id.seekbar);
+            infoButton = itemView.findViewById(R.id.info_button);
         }
     }
 
@@ -839,9 +839,9 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         FlightFeatureFieldViewHolder(View itemView) {
             super(itemView);
 
-            descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
-            editText = (EditText) itemView.findViewById(R.id.edit_text);
-            infoButton = (ImageButton) itemView.findViewById(R.id.info_button);
+            descriptionTextView = itemView.findViewById(R.id.description_text_view);
+            editText = itemView.findViewById(R.id.edit_text);
+            infoButton = itemView.findViewById(R.id.info_button);
         }
     }
 
@@ -852,8 +852,8 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         FlightFeatureTextViewHolder(View itemView) {
             super(itemView);
 
-            descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
-            infoButton = (ImageButton) itemView.findViewById(R.id.info_button);
+            descriptionTextView = itemView.findViewById(R.id.description_text_view);
+            infoButton = itemView.findViewById(R.id.info_button);
         }
     }
 
@@ -862,7 +862,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
 
         NextButtonViewHolder(View itemView) {
             super(itemView);
-            nextButton = (Button) itemView.findViewById(R.id.next_button);
+            nextButton = itemView.findViewById(R.id.next_button);
         }
     }
 
