@@ -27,7 +27,8 @@ public class RulesetsEvaluator {
      *  @param availableRulesets - All potential rulesets for the given jurisdictions
      *  @param preferredRulesets - Optional or Pick-One rulesets that the user has manually enabled
      *  @param unpreferredRulesets - Optional rulesets that the user has manually disabled
-     *  @return
+     *
+     *  @return selectedRulesets
      */
     public static List<AirMapRuleset> computeSelectedRulesets(@NonNull List<AirMapRuleset> availableRulesets, @NonNull Set<String> preferredRulesets, @NonNull Set<String> unpreferredRulesets) {
         Set<AirMapRuleset> selectedRulesets = new HashSet<>();
