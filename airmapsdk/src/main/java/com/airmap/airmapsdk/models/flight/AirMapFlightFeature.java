@@ -173,6 +173,11 @@ public class AirMapFlightFeature implements Serializable, AirMapBaseModel {
     }
 
     @Override
+    public String toString() {
+        return flightFeature;
+    }
+
+    @Override
     public boolean equals(Object o) {
         return o != null && o instanceof AirMapFlightFeature && ((AirMapFlightFeature) o).getFlightFeature().equals(this.flightFeature);
     }
