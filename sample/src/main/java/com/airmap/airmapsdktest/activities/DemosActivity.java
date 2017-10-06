@@ -2,6 +2,7 @@ package com.airmap.airmapsdktest.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -10,16 +11,19 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.Auth;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdktest.R;
 
 /**
  * Created by collin@airmap.com on 9/8/17.
  */
 
-public class DemosActivity extends AppCompatActivity implements View.OnClickListener {
+public class DemosActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "DemosActivity";
 
@@ -28,6 +32,7 @@ public class DemosActivity extends AppCompatActivity implements View.OnClickList
     private CardView loginCardView;
     private CardView anonymousLoginCardView;
     private CardView flightPlanCardView;
+    private CardView briefingCardView;
     private CardView trafficCardView;
 
     @Override
@@ -36,6 +41,13 @@ public class DemosActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_demos);
 
         setupViews();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        refreshAccessToken();
     }
 
     private void setupViews() {
@@ -55,6 +67,9 @@ public class DemosActivity extends AppCompatActivity implements View.OnClickList
         flightPlanCardView = findViewById(R.id.flight_plan_card_view);
         flightPlanCardView.setOnClickListener(this);
 
+        briefingCardView = findViewById(R.id.briefing_card_view);
+        briefingCardView.setOnClickListener(this);
+
         trafficCardView = findViewById(R.id.traffic_card_view);
         trafficCardView.setOnClickListener(this);
     }
@@ -67,7 +82,7 @@ public class DemosActivity extends AppCompatActivity implements View.OnClickList
             AirMap.showLogin(this, new LoginCallback() {
                 @Override
                 public void onSuccess(AirMapPilot pilot) {
-                    AirMapLog.v(TAG, "Token is: " + AirMap.getAuthToken());
+                    AirMapLog.v(TAG, "Auth Token is: " + AirMap.getAuthToken());
                     Toast.makeText(DemosActivity.this, "Logged in as " + pilot.getUsername(), Toast.LENGTH_SHORT).show();
                 }
 
@@ -83,6 +98,34 @@ public class DemosActivity extends AppCompatActivity implements View.OnClickList
             startActivity(new Intent(this, TrafficActivity.class));
         } else if (view.getId() == R.id.flight_plan_card_view) {
             startActivity(new Intent(this, FlightPlanDemoActivity.class));
+        } else {
+            String flightPlanId = PreferenceManager.getDefaultSharedPreferences(this).getString(AirMapConstants.FLIGHT_PLAN_ID_EXTRA, null);
+
+            Intent intent = new Intent(this, FlightBriefDemoActivity.class);
+            intent.putExtra(AirMapConstants.FLIGHT_PLAN_ID_EXTRA, flightPlanId);
+            startActivity(intent);
         }
+    }
+
+    private void refreshAccessToken() {
+        AirMap.refreshAccessToken(new AirMapCallback<Void>() {
+            @Override
+            public void onSuccess(Void response) {
+                if (!isActive()) {
+                    return;
+                }
+
+                AirMapLog.e(TAG, "Refreshing access token success");
+            }
+
+            @Override
+            public void onError(AirMapException e) {
+                if (!isActive()) {
+                    return;
+                }
+
+                AirMapLog.e(TAG, "Refreshing access token failed", e);
+            }
+        });
     }
 }

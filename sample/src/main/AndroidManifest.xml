@@ -44,6 +44,13 @@
         </activity>
 
         <activity
+            android:name=".activities.FlightBriefDemoActivity"
+            android:label="Flight Briefing Demo"
+            android:parentActivityName=".activities.DemosActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <activity
             android:name=".activities.TrafficActivity"
             android:label="Traffic Demo"
             android:parentActivityName=".activities.DemosActivity"

@@ -1,14 +1,15 @@
 package com.airmap.airmapsdktest.activities;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
@@ -22,6 +23,7 @@ import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.ui.views.RulesetsEvaluator;
+import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdktest.R;
 import com.airmap.airmapsdktest.ui.FlightPlanDetailsAdapter;
 import org.json.JSONObject;
@@ -40,10 +42,9 @@ import java.util.Map;
 
 public class FlightPlanDemoActivity extends AppCompatActivity {
 
-    private static final String TAG = "AnonymousLoginActivity";
+    private static final String TAG = "FlightPlanActivity";
 
     private Toolbar toolbar;
-    private EditText nameEditText;
     private TextView startTimeTextView;
     private TextView endTimeTextView;
     private TextView altitudeTextView;
@@ -63,7 +64,6 @@ public class FlightPlanDemoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        nameEditText = findViewById(R.id.name_edit_text);
         startTimeTextView = findViewById(R.id.start_time_value);
         endTimeTextView = findViewById(R.id.end_time_value);
         altitudeTextView = findViewById(R.id.altitude_value);
@@ -157,8 +157,6 @@ public class FlightPlanDemoActivity extends AppCompatActivity {
                     flightFeatures.addAll(rule.getFlightFeatures());
 
                     for (AirMapFlightFeature flightFeature : rule.getFlightFeatures()) {
-                        AirMapLog.e(TAG, "Flight feature: " + flightFeature.getFlightFeature());
-
                         List<AirMapRule> rules = new ArrayList<>();
                         if (featuresMap.containsKey(flightFeature)) {
                             rules = featuresMap.get(flightFeature);
@@ -197,19 +195,42 @@ public class FlightPlanDemoActivity extends AppCompatActivity {
         FlightPlanDetailsAdapter detailsAdapter = new FlightPlanDetailsAdapter(this, flightPlan, featuresMap, null, new FlightPlanDetailsAdapter.FlightPlanChangeListener() {
             @Override
             public void onFlightPlanChanged() {
-
             }
 
             @Override
             public void onFlightFeatureRemoved(String flightFeature) {
-
             }
 
             @Override
             public void onFlightPlanSave() {
-
+                saveFlightPlan();
             }
         });
         flightFeaturesRecyclerView.setAdapter(detailsAdapter);
+    }
+
+    private void saveFlightPlan() {
+        AirMapCallback callback = new AirMapCallback<AirMapFlightPlan>() {
+            @Override
+            protected void onSuccess(AirMapFlightPlan response) {
+                Toast.makeText(FlightPlanDemoActivity.this, "Flight plan successfully saved", Toast.LENGTH_SHORT).show();
+
+                PreferenceManager.getDefaultSharedPreferences(FlightPlanDemoActivity.this)
+                        .edit()
+                        .putString(AirMapConstants.FLIGHT_PLAN_ID_EXTRA, response.getPlanId())
+                        .apply();
+            }
+
+            @Override
+            protected void onError(AirMapException e) {
+                Toast.makeText(FlightPlanDemoActivity.this, "Flight plan failed to save", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        if (TextUtils.isEmpty(flightPlan.getFlightId())) {
+            AirMap.createFlightPlan(flightPlan, callback);
+        } else {
+            AirMap.patchFlightPlan(flightPlan, callback);
+        }
     }
 }
