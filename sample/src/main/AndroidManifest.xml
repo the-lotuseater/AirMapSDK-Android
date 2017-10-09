@@ -51,7 +51,7 @@
         </activity>
 
         <activity
-            android:name=".activities.TrafficActivity"
+            android:name=".activities.TrafficDemoActivity"
             android:label="Traffic Demo"
             android:parentActivityName=".activities.DemosActivity"
             android:theme="@style/AppTheme.NoActionBar">

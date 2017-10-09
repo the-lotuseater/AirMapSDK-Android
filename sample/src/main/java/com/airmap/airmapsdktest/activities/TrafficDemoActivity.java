@@ -28,6 +28,7 @@ import com.airmap.airmapsdktest.ui.TrafficMarkerOptions;
 import com.airmap.airmapsdktest.Utils;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
@@ -39,9 +40,9 @@ import java.util.Locale;
  * Created by collin@airmap.com on 9/29/17.
  */
 
-public class TrafficActivity extends AppCompatActivity implements AirMapMapView.MapListener, AirMapTrafficListener {
+public class TrafficDemoActivity extends BaseActivity implements AirMapMapView.MapListener, AirMapTrafficListener {
 
-    private static final String TAG = "TrafficActivity";
+    private static final String TAG = "TrafficDemoActivity";
 
     private Toolbar toolbar;
     private AirMapMapView mapView;
@@ -71,7 +72,7 @@ public class TrafficActivity extends AppCompatActivity implements AirMapMapView.
 
     @Override
     public void onMapReady() {
-        mapView.getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(34.0195, -118.4912), 13));
+        mapView.getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(34.0195, -118.4912), 12.5));
 
         AirMap.getCurrentFlight(new AirMapCallback<AirMapFlight>() {
             @Override
@@ -80,12 +81,20 @@ public class TrafficActivity extends AppCompatActivity implements AirMapMapView.
                 if (response != null) {
                     currentFlight = response;
 
-                    AirMap.addTrafficListener(TrafficActivity.this);
-                    Toast.makeText(TrafficActivity.this, "Enabling traffic alerts", Toast.LENGTH_SHORT).show();
+                    // add a marker for our flight
+                    MarkerOptions markerOptions = new MarkerOptions()
+                            .position(currentFlight.getCoordinate().toMapboxLatLng())
+                            .icon(IconFactory.getInstance(TrafficDemoActivity.this).fromBitmap(Utils.getBitmap(TrafficDemoActivity.this, R.drawable.current_flgiht_marker_icon)));
+
+                    mapView.getMap().addMarker(markerOptions);
+
+                    // Start listening for traffic
+                    AirMap.enableTrafficAlerts(TrafficDemoActivity.this);
+                    Toast.makeText(TrafficDemoActivity.this, "Enabling traffic alerts", Toast.LENGTH_SHORT).show();
 
                 // if not, user needs to create flight first
                 } else {
-                    Toast.makeText(TrafficActivity.this, "No active flight. Please create a flight first.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TrafficDemoActivity.this, "No active flight. Please create a flight first.", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -131,6 +140,9 @@ public class TrafficActivity extends AppCompatActivity implements AirMapMapView.
     public void onStop() {
         super.onStop();
         mapView.onStop();
+
+        AirMap.disableTrafficAlerts();
+        textToSpeech.shutdown();
     }
 
     @Override
@@ -213,6 +225,9 @@ public class TrafficActivity extends AppCompatActivity implements AirMapMapView.
         }
     }
 
+    /**
+     *  Audio alert
+     */
     protected void sayTraffic() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             textToSpeech.speak(getString(R.string.traffic), TextToSpeech.QUEUE_FLUSH, null, null);

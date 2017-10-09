@@ -3,7 +3,6 @@ package com.airmap.airmapsdktest.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
-import com.airmap.airmapsdk.Auth;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
@@ -41,13 +39,13 @@ public class DemosActivity extends BaseActivity implements View.OnClickListener 
         setContentView(R.layout.activity_demos);
 
         setupViews();
+
+        refreshAccessToken();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        refreshAccessToken();
     }
 
     private void setupViews() {
@@ -95,7 +93,7 @@ public class DemosActivity extends BaseActivity implements View.OnClickListener 
         } else if (view.getId() == R.id.anonymous_login_card_view) {
             startActivity(new Intent(this, AnonymousLoginDemoActivity.class));
         } else if (view.getId() == R.id.traffic_card_view) {
-            startActivity(new Intent(this, TrafficActivity.class));
+            startActivity(new Intent(this, TrafficDemoActivity.class));
         } else if (view.getId() == R.id.flight_plan_card_view) {
             startActivity(new Intent(this, FlightPlanDemoActivity.class));
         } else {
