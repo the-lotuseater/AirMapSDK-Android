@@ -17,9 +17,7 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
-import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.airmap.airmapsdk.networking.services.MappingService;
-import com.airmap.airmapsdk.ui.activities.WelcomeActivity;
 import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdk.util.Utils;
 
@@ -54,7 +52,6 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
     private Context context;
     private DateFormat dateFormat;
 
-    private ArrayList<AirMapWelcomeResult> welcomeData;
     private String welcomeCity;
 
     private List<AirMapStatusAdvisory> advisoriesToFilter;
@@ -142,13 +139,6 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
         notifyDataSetChanged();
     }
 
-    public void setWelcomeData(String city, ArrayList<AirMapWelcomeResult> data) {
-        welcomeCity = city;
-        welcomeData = data;
-
-        notifyDataSetChanged();
-    }
-
     public void setAdvisoriesToFilter(List<String> names) {
         advisoriesToFilter = new ArrayList<>();
 
@@ -199,42 +189,18 @@ public class AdvisoriesBottomSheetAdapter extends RecyclerView.Adapter<RecyclerV
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof VHWelcome) {
-            onBindWelcomeHolder((VHWelcome) holder);
-        } else {
-            AirMapStatusAdvisory advisory = getItem(position);
-            if (holder instanceof VHHeader) {
-                onBindHeaderViewHolder((VHHeader) holder, advisory);
-            } else if (holder instanceof VHItem) {
-                onBindItemViewHolder((VHItem) holder, advisory);
-            } else if (holder instanceof VHTfr) {
-                onBindTfrViewHolder((VHTfr) holder, advisory);
-            } else if (holder instanceof VHWildfire) {
-                onBindWildfireViewHolder((VHWildfire) holder, advisory);
-            } else if (holder instanceof VHEmergency) {
-                onBindEmergencyViewHolder((VHEmergency) holder, advisory);
-            }
+        AirMapStatusAdvisory advisory = getItem(position);
+        if (holder instanceof VHHeader) {
+            onBindHeaderViewHolder((VHHeader) holder, advisory);
+        } else if (holder instanceof VHItem) {
+            onBindItemViewHolder((VHItem) holder, advisory);
+        } else if (holder instanceof VHTfr) {
+            onBindTfrViewHolder((VHTfr) holder, advisory);
+        } else if (holder instanceof VHWildfire) {
+            onBindWildfireViewHolder((VHWildfire) holder, advisory);
+        } else if (holder instanceof VHEmergency) {
+            onBindEmergencyViewHolder((VHEmergency) holder, advisory);
         }
-    }
-
-    private void onBindWelcomeHolder(VHWelcome holder) {
-        View.OnClickListener onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, WelcomeActivity.class);
-                intent.putExtra(AirMapConstants.CITY_EXTRA, welcomeCity);
-                intent.putExtra(AirMapConstants.WELCOME_EXTRA, welcomeData);
-                context.startActivity(intent);
-            }
-        };
-
-        boolean hasWelcomeData = welcomeData != null && !welcomeData.isEmpty();
-
-        holder.cityTextView.setText(welcomeCity);
-        holder.rulesContainer.setVisibility(hasWelcomeData ? View.VISIBLE : View.GONE);
-        holder.moreButton.setOnClickListener(hasWelcomeData ? onClickListener : null);
-        holder.itemView.setOnClickListener(hasWelcomeData ? onClickListener : null);
-        holder.itemView.setClickable(hasWelcomeData);
     }
 
     private void onBindHeaderViewHolder(VHHeader holder, AirMapStatusAdvisory advisory) {
