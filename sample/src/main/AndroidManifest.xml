@@ -31,7 +31,7 @@
 
         <activity
                 android:name=".activities.MapDemoActivity"
-                android:label="Map Demo"
+                android:label="Map &amp; Contextual Airspace"
                 android:parentActivityName=".activities.DemosActivity"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>

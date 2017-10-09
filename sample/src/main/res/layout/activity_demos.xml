@@ -42,12 +42,12 @@
 
                     <ImageView style="@style/CardImage"
                         android:id="@+id/map_card_image"
-                        android:src="@drawable/image_map" />
+                        android:src="@drawable/img_map" />
 
                     <TextView style="@style/TextAppearance.Demo.Title"
                         android:id="@+id/map_card_title"
                         android:layout_toRightOf="@id/map_card_image"
-                        android:text="Map Demo" />
+                        android:text="Map &amp; Contextual Airspace" />
 
                     <TextView style="@style/TextAppearance.Demo.Description"
                         android:layout_below="@id/map_card_title"
@@ -67,7 +67,7 @@
 
                     <ImageView style="@style/CardImage"
                         android:id="@+id/login_card_image"
-                        android:src="@drawable/image_map" />
+                        android:src="@drawable/img_login" />
 
                     <TextView style="@style/TextAppearance.Demo.Title"
                         android:id="@+id/login_card_title"
@@ -92,7 +92,7 @@
 
                     <ImageView style="@style/CardImage"
                         android:id="@+id/anonymous_login_card_image"
-                        android:src="@drawable/image_map" />
+                        android:src="@drawable/img_anonymous_login" />
 
                     <TextView style="@style/TextAppearance.Demo.Title"
                         android:id="@+id/anonymous_login_card_title"
@@ -117,7 +117,7 @@
 
                     <ImageView style="@style/CardImage"
                         android:id="@+id/flight_plan_card_image"
-                        android:src="@drawable/image_map" />
+                        android:src="@drawable/img_flight_plan" />
 
                     <TextView style="@style/TextAppearance.Demo.Title"
                         android:id="@+id/flight_plan_card_title"
@@ -142,7 +142,7 @@
 
                     <ImageView style="@style/CardImage"
                         android:id="@+id/briefing_card_image"
-                        android:src="@drawable/image_map" />
+                        android:src="@drawable/img_brief" />
 
                     <TextView style="@style/TextAppearance.Demo.Title"
                         android:id="@+id/briefing_card_title"
@@ -167,7 +167,7 @@
 
                     <ImageView style="@style/CardImage"
                         android:id="@+id/traffic_card_image"
-                        android:src="@drawable/image_map" />
+                        android:src="@drawable/img_traffic" />
 
                     <TextView style="@style/TextAppearance.Demo.Title"
                         android:id="@+id/traffic_card_title"
@@ -192,7 +192,7 @@
 
                     <ImageView style="@style/CardImage"
                         android:id="@+id/telemetry_card_image"
-                        android:src="@drawable/image_map" />
+                        android:src="@drawable/img_telemetry" />
 
                     <TextView style="@style/TextAppearance.Demo.Title"
                         android:id="@+id/telemetry_card_title"
