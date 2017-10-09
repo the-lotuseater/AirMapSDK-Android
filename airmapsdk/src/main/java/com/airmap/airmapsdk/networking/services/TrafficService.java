@@ -130,7 +130,7 @@ public class TrafficService extends BaseService {
             client.disconnect(connectionState, actionListener);
             checkForUpdatedFlight = false;
         } catch (MqttException e) {
-            AirMapLog.e("TrafficService", "Error disconnecting");
+            AirMapLog.e("TrafficService", "Error disconnecting", e);
         } finally {
             onDisconnect(false);
         }
@@ -309,7 +309,7 @@ public class TrafficService extends BaseService {
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     if (exception != null) {
-                        AirMapLog.e("TrafficService", exception.getMessage());
+                        AirMapLog.e("TrafficService", "Subscribe failed", exception);
                         exception.printStackTrace();
                     } else {
                         AirMapLog.e("TrafficService", "Failed with no exception.");
@@ -444,7 +444,7 @@ public class TrafficService extends BaseService {
         @Override
         public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
             exception.printStackTrace();
-            AirMapLog.e("TrafficService", "Error connecting: " + exception.getMessage());
+            AirMapLog.e("TrafficService", "Error connecting: " + exception.getMessage(), exception);
             onDisconnect(false);
         }
     }
