@@ -623,8 +623,8 @@ public class AirMap {
         return FlightService.getFlightPlanByFlightId(flightId, callback);
     }
 
-    public static void submitFlightPlan(String flightPlanId, boolean isPublic, AirMapCallback<AirMapFlightPlan> callback) {
-        FlightService.submitFlightPlan(flightPlanId, isPublic, callback);
+    public static void submitFlightPlan(String flightPlanId, AirMapCallback<AirMapFlightPlan> callback) {
+        FlightService.submitFlightPlan(flightPlanId, true, callback);
     }
 
     public static Call getWeather(Coordinate coordinate, Date startTime, Date endTime, AirMapCallback<AirMapWeather> callback) {
