@@ -73,8 +73,9 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("airmap").getString("mqtt_domain");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "Error getting mqtt domain from airmap.config.json", e);
-            throw new RuntimeException("Error getting mqtt domain from airmap.config.json");
+            AirMapLog.e(TAG, "No mqtt domain found in airmap.config.json, defaulting to airmap.io", e);
+
+            return "airmap.io";
         }
     }
 }
