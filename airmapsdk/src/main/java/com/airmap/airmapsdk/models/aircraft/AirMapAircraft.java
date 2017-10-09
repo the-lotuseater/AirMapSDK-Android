@@ -12,7 +12,6 @@ import java.util.Map;
  * Created by Vansh Gandhi on 7/26/16.
  * Copyright © 2016 AirMap, Inc. All rights reserved.
  */
-@SuppressWarnings("unused")
 public class AirMapAircraft implements Serializable, AirMapBaseModel {
 
     private String aircraftId;
@@ -59,7 +58,7 @@ public class AirMapAircraft implements Serializable, AirMapBaseModel {
         return aircraftId;
     }
 
-    public AirMapAircraft setAircraftId(String aircraftId) {
+    private AirMapAircraft setAircraftId(String aircraftId) {
         this.aircraftId = aircraftId;
         return this;
     }
