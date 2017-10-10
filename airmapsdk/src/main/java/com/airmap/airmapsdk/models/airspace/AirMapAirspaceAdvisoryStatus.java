@@ -1,28 +1,17 @@
 package com.airmap.airmapsdk.models.airspace;
 
 import android.support.annotation.ColorRes;
-import android.text.TextUtils;
 
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
-import com.airmap.airmapsdk.models.Coordinate;
-import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
-import com.airmap.airmapsdk.models.permits.AirMapPermitIssuer;
 import com.airmap.airmapsdk.models.status.AirMapAdvisory;
-import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
-import com.airmap.airmapsdk.models.status.AirMapStatusWeather;
-import com.airmap.airmapsdk.networking.services.MappingService;
-import com.airmap.airmapsdk.util.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Vansh Gandhi on 6/15/16.

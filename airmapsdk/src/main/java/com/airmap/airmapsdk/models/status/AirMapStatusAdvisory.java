@@ -44,7 +44,6 @@ public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
     private Coordinate coordinate;
     private AirMapStatusRequirement requirements;
     private String geometryString;
-    private List<AirMapStatusAdvisoryRule> rules;
     private List<AirMapAvailablePermit> availablePermits;
 
     private AirMapAirportProperties airportProperties;
@@ -95,13 +94,6 @@ public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
                 setCoordinate(new Coordinate(lat, lng));
             }
             setLastUpdated(getDateFromIso8601String(json.optString("last_updated")));
-
-            List<AirMapStatusAdvisoryRule> rules = new ArrayList<>();
-            JSONArray rulesArray = json.optJSONArray("rules");
-            for (int i = 0; rulesArray != null && i < rulesArray.length(); i++) {
-                rules.add(new AirMapStatusAdvisoryRule(rulesArray.optJSONObject(i)));
-            }
-            setRules(rules);
 
             List<AirMapAvailablePermit> availablePermits = new ArrayList<>();
             JSONArray availablePermitsJSON = json.optJSONArray("available_permits");
@@ -340,15 +332,6 @@ public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
 
     public AirMapStatusAdvisory setGeometryString(String geometryString) {
         this.geometryString = geometryString;
-        return this;
-    }
-
-    public List<AirMapStatusAdvisoryRule> getRules() {
-        return rules;
-    }
-
-    public AirMapStatusAdvisory setRules(List<AirMapStatusAdvisoryRule> rules) {
-        this.rules = rules;
         return this;
     }
 

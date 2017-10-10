@@ -88,7 +88,6 @@ public class AirMapStatus implements Serializable, AirMapBaseModel {
     private StatusColor advisoryColor;
     private int maxSafeRadius;
     private List<AirMapStatusAdvisory> advisories;
-    private AirMapStatusWeather weather;
     private List<AirMapAvailablePermit> applicablePermits;
     private List<AirMapPermitIssuer> organizations;
 
@@ -118,9 +117,6 @@ public class AirMapStatus implements Serializable, AirMapBaseModel {
             }
             setAdvisories(advisories);
             setMaxSafeRadius(json.optInt("max_safe_distance"));
-            if (json.has("weather")) {
-                setWeather(new AirMapStatusWeather(json.optJSONObject("weather")));
-            }
             setAdvisoryColor(StatusColor.fromString(json.optString("advisory_color")));
 
             // applicable permits
@@ -199,15 +195,6 @@ public class AirMapStatus implements Serializable, AirMapBaseModel {
 
     public AirMapStatus setAdvisories(List<AirMapStatusAdvisory> advisories) {
         this.advisories = advisories;
-        return this;
-    }
-
-    public AirMapStatusWeather getWeather() {
-        return weather;
-    }
-
-    public AirMapStatus setWeather(AirMapStatusWeather weather) {
-        this.weather = weather;
         return this;
     }
 
