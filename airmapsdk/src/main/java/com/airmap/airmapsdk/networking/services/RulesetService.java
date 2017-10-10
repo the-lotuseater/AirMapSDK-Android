@@ -2,16 +2,11 @@ package com.airmap.airmapsdk.networking.services;
 
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.airmap.airmapsdk.models.Coordinate;
-import com.airmap.airmapsdk.models.airspace.AirMapAirspaceAdvisoryStatus;
+import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.rules.AirMapJurisdiction;
-import com.airmap.airmapsdk.models.rules.AirMapRule;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
-import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
-import com.airmap.airmapsdk.models.status.AirMapAdvisory;
-import com.airmap.airmapsdk.models.status.AirMapStatusAdvisory;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.GenericListOkHttpCallback;
 import com.airmap.airmapsdk.networking.callbacks.GenericOkHttpCallback;
@@ -21,8 +16,6 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -95,7 +88,7 @@ public class RulesetService extends BaseService {
         return AirMap.getClient().get(url, new GenericOkHttpCallback(listener, AirMapRuleset.class));
     }
 
-    public static Call getAdvisories(List<String> rulesets, List<Coordinate> geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+    public static Call getAdvisories(List<String> rulesets, List<Coordinate> geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceStatus> listener) {
         Map<String, Object> params = new HashMap<>();
         params.put("rulesets", TextUtils.join(",", rulesets));
         params.put("geometry", "POLYGON(" + Utils.makeGeoString(geometry) + ")");
@@ -120,11 +113,11 @@ public class RulesetService extends BaseService {
             }
         }
 
-        Call call = AirMap.getClient().postWithJsonBody(advisoriesUrl, params, new GenericOkHttpCallback(listener, AirMapAirspaceAdvisoryStatus.class));
+        Call call = AirMap.getClient().postWithJsonBody(advisoriesUrl, params, new GenericOkHttpCallback(listener, AirMapAirspaceStatus.class));
         return call;
     }
 
-    public static Call getAdvisories(List<String> rulesets, JSONObject geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+    public static Call getAdvisories(List<String> rulesets, JSONObject geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceStatus> listener) {
         Map<String, Object> params = new HashMap<>();
         params.put("rulesets", TextUtils.join(",", rulesets));
         params.put("geometry", geometry);
@@ -149,7 +142,7 @@ public class RulesetService extends BaseService {
             }
         }
 
-        Call call = AirMap.getClient().postWithJsonBody(advisoriesUrl, params, new GenericOkHttpCallback(listener, AirMapAirspaceAdvisoryStatus.class));
+        Call call = AirMap.getClient().postWithJsonBody(advisoriesUrl, params, new GenericOkHttpCallback(listener, AirMapAirspaceStatus.class));
         return call;
     }
 }

@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.models.Coordinate;
-import com.airmap.airmapsdk.models.airspace.AirMapAirspaceAdvisoryStatus;
+import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
@@ -54,9 +54,9 @@ public class AdvisoriesFragment extends Fragment {
     }
 
     private void loadAdvisories(List<String> rulesets, Coordinate northeast, Coordinate southwest) {
-        AirMap.getAdvisories(rulesets, northeast, southwest, null, null, new AirMapCallback<AirMapAirspaceAdvisoryStatus>() {
+        AirMap.getAdvisories(rulesets, northeast, southwest, null, null, new AirMapCallback<AirMapAirspaceStatus>() {
             @Override
-            public void onSuccess(AirMapAirspaceAdvisoryStatus advisoryStatus) {
+            public void onSuccess(AirMapAirspaceStatus advisoryStatus) {
                 // if the activity has been destroy, ignore response
                 if (!isFragmentActive()) {
                     return;
@@ -106,7 +106,7 @@ public class AdvisoriesFragment extends Fragment {
         });
     }
 
-    public void setAdvisoryStatus(AirMapAirspaceAdvisoryStatus advisoryStatus) {
+    public void setAdvisoryStatus(AirMapAirspaceStatus advisoryStatus) {
         if (advisoryStatus != null) {
             Collections.sort(advisoryStatus.getAdvisories(), new Comparator<AirMapAdvisory>() {
                 @Override

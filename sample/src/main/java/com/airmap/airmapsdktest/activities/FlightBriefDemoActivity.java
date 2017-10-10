@@ -1,9 +1,6 @@
 package com.airmap.airmapsdktest.activities;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -13,38 +10,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
-import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.flight.AirMapFlightBriefing;
-import com.airmap.airmapsdk.models.flight.AirMapFlightFeature;
 import com.airmap.airmapsdk.models.flight.AirMapFlightPlan;
 import com.airmap.airmapsdk.models.rules.AirMapRule;
-import com.airmap.airmapsdk.models.rules.AirMapRuleset;
-import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
-import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.ui.adapters.ExpandableRulesAdapter;
-import com.airmap.airmapsdk.ui.views.RulesetsEvaluator;
 import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdk.util.BriefingEvaluator;
 import com.airmap.airmapsdktest.R;
-import com.airmap.airmapsdktest.ui.FlightPlanDetailsAdapter;
 
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by collin@airmap.com on 9/27/17.

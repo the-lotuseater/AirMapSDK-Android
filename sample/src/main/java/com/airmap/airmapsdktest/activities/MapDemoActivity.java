@@ -7,9 +7,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.widget.Toolbar;
 
-import com.airmap.airmapsdk.models.airspace.AirMapAirspaceAdvisoryStatus;
+import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
-import com.airmap.airmapsdk.ui.activities.MyLocationMapActivity;
 import com.airmap.airmapsdk.ui.views.CustomViewPager;
 import com.airmap.airmapsdktest.fragments.AdvisoriesFragment;
 import com.airmap.airmapsdktest.fragments.MapFragment;
@@ -74,7 +73,7 @@ public class MapDemoActivity extends MyLocationMapActivity {
         getMapFragment().onRulesetSwitched(fromRuleset, toRuleset);
     }
 
-    public void setAdvisoryStatus(AirMapAirspaceAdvisoryStatus status) {
+    public void setAdvisoryStatus(AirMapAirspaceStatus status) {
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment instanceof AdvisoriesFragment) {
                 ((AdvisoriesFragment) fragment).setAdvisoryStatus(status);

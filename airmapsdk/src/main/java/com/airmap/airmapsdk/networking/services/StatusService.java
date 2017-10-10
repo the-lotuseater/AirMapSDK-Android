@@ -35,6 +35,7 @@ class StatusService extends BaseService {
      * @param date         Date and time for planned flight
      * @param listener     The callback that is invoked on success or error
      */
+    @Deprecated
     public static Call checkCoordinate(Coordinate coordinate, @Nullable Double buffer,
                                        List<MappingService.AirMapAirspaceType> types,
                                        List<MappingService.AirMapAirspaceType> ignoredTypes,
@@ -60,6 +61,7 @@ class StatusService extends BaseService {
      * @param date         Date and time for planned flight
      * @param listener     The callback that is invoked on success or error
      */
+    @Deprecated
     public static Call checkFlightPath(List<Coordinate> path, int buffer, Coordinate takeOffPoint,
                                        List<MappingService.AirMapAirspaceType> types,
                                        List<MappingService.AirMapAirspaceType> ignoredTypes,
@@ -82,6 +84,7 @@ class StatusService extends BaseService {
      * @param date         Date and time for planned flight
      * @param listener     The callback that is invoked on success or error
      */
+    @Deprecated
     public static Call checkPolygon(List<Coordinate> geometry, Coordinate takeOffPoint,
                                     List<MappingService.AirMapAirspaceType> types,
                                     List<MappingService.AirMapAirspaceType> ignoredTypes,
@@ -100,6 +103,7 @@ class StatusService extends BaseService {
      * @param buffer       Number of meters to buffer a flight (the radius of the flight)
      * @param listener     The callback that is invoked on success or error
      */
+    @Deprecated
     public static Call checkWeather(Coordinate coordinate, @Nullable Double buffer,
                                        AirMapCallback<AirMapStatus> listener) {
         String url = statusPointUrl;
@@ -110,6 +114,15 @@ class StatusService extends BaseService {
         return AirMap.getClient().get(url, params, new GenericOkHttpCallback(listener, AirMapStatus.class));
     }
 
+    /**
+     * Get weather for a particular coordinate and time range
+     *
+     * @param coordinate
+     * @param startTime
+     * @param endTime
+     * @param callback
+     * @return
+     */
     public static Call getWeather(Coordinate coordinate, Date startTime, Date endTime, AirMapCallback<AirMapWeather> callback) {
         Map<String, String> params = new HashMap<>();
         params.put("latitude", Double.toString(coordinate.getLatitude()));

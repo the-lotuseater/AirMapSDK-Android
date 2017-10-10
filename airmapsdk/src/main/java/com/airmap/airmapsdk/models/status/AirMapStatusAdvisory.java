@@ -30,6 +30,7 @@ import static com.airmap.airmapsdk.util.Utils.getDateFromIso8601String;
  * Copyright © 2016 AirMap, Inc. All rights reserved.
  */
 @SuppressWarnings("unused")
+@Deprecated
 public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
     private String id;
     private String name;

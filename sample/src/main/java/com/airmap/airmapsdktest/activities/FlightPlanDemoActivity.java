@@ -22,7 +22,7 @@ import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
 import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
-import com.airmap.airmapsdk.ui.views.RulesetsEvaluator;
+import com.airmap.airmapsdk.controllers.RulesetsEvaluator;
 import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdktest.R;
 import com.airmap.airmapsdktest.ui.FlightPlanDetailsAdapter;

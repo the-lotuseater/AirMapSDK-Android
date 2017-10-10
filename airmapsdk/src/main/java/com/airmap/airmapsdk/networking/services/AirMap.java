@@ -1,9 +1,7 @@
 package com.airmap.airmapsdk.networking.services;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -19,7 +17,7 @@ import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
 import com.airmap.airmapsdk.models.airspace.AirMapAirspace;
-import com.airmap.airmapsdk.models.airspace.AirMapAirspaceAdvisoryStatus;
+import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.comm.AirMapComm;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.flight.AirMapFlightBriefing;
@@ -50,9 +48,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -632,6 +628,7 @@ public class AirMap {
      * @param flight   The flight to create
      * @param callback The callback that is invoked on success or error
      */
+    @Deprecated
     public static void createFlight(@NonNull AirMapFlight flight, @Nullable AirMapCallback<AirMapFlight> callback) {
         if (flight != null) {
             FlightService.createFlight(flight, callback);
@@ -903,6 +900,7 @@ public class AirMap {
      * @param date         Date and time for planned flight
      * @param callback     The callback that is invoked on success or error
      */
+    @Deprecated
     public static Call checkCoordinate(@NonNull Coordinate coordinate, @Nullable Double buffer,
                                        @Nullable List<MappingService.AirMapAirspaceType> types,
                                        @Nullable List<MappingService.AirMapAirspaceType> ignoredTypes,
@@ -923,6 +921,7 @@ public class AirMap {
      * @param date         Date and time for planned flight
      * @param callback     The callback that is invoked on success or error
      */
+    @Deprecated
     public static Call checkFlightPath(@NonNull List<Coordinate> path, int buffer, @NonNull Coordinate takeOffPoint,
                                        @Nullable List<MappingService.AirMapAirspaceType> types,
                                        @Nullable List<MappingService.AirMapAirspaceType> ignoredTypes, boolean showWeather,
@@ -941,6 +940,7 @@ public class AirMap {
      * @param date         Date and time for planned flight
      * @param callback     The callback that is invoked on success or error
      */
+    @Deprecated
     public static Call checkPolygon(@NonNull List<Coordinate> geometry, @NonNull Coordinate takeOffPoint,
                                     @Nullable List<MappingService.AirMapAirspaceType> types,
                                     @Nullable List<MappingService.AirMapAirspaceType> ignoredTypes,
@@ -956,6 +956,7 @@ public class AirMap {
      * @param buffer       Number of meters to buffer a flight (the radius of the flight)
      * @param callback     The callback that is invoked on success or error
      */
+    @Deprecated
     public static Call checkWeather(@NonNull Coordinate coordinate, @Nullable Double buffer,
                                        @Nullable AirMapCallback<AirMapStatus> callback) {
         return StatusService.checkWeather(coordinate, buffer, callback);
@@ -1003,7 +1004,7 @@ public class AirMap {
         FlightService.getFlightBriefing(flightPlanId, callback);
     }
 
-    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull List<Coordinate> geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull List<Coordinate> geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceStatus> listener) {
         List<String> rulesetIds = new ArrayList<>();
         for (AirMapRuleset ruleset : rulesets) {
             rulesetIds.add(ruleset.getId());
@@ -1012,7 +1013,7 @@ public class AirMap {
         return RulesetService.getAdvisories(rulesetIds, geometry, start, end, flightFeatures, listener);
     }
 
-    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceStatus> listener) {
         List<String> rulesetIds = new ArrayList<>();
         for (AirMapRuleset ruleset : rulesets) {
             rulesetIds.add(ruleset.getId());
@@ -1021,11 +1022,11 @@ public class AirMap {
         return RulesetService.getAdvisories(rulesetIds, geometry, start, end, flightFeatures, listener);
     }
 
-    public static Call getAdvisories(@NonNull List<String> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+    public static Call getAdvisories(@NonNull List<String> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceStatus> listener) {
         return RulesetService.getAdvisories(rulesets, geometry, start, end, null, listener);
     }
 
-    public static Call getAdvisories(@NonNull List<String> rulesets, Coordinate southwest, Coordinate northwest, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+    public static Call getAdvisories(@NonNull List<String> rulesets, Coordinate southwest, Coordinate northwest, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceStatus> listener) {
         // create polygon based on Lat/Long bounds
         List<Coordinate> bounds = new ArrayList<>();
         bounds.add(southwest);
@@ -1042,7 +1043,6 @@ public class AirMap {
      * @param theme  The theme of the map
      * @return the map tile url
      */
-
     public static String getTileSourceUrl(List<MappingService.AirMapLayerType> layers, MappingService.AirMapMapTheme theme) {
         return airMapMapMappingService.getTileSourceUrl(layers, theme);
     }

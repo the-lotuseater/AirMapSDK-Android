@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.ui.views;
+package com.airmap.airmapsdk.controllers;
 
 import android.os.Handler;
 
@@ -8,6 +8,7 @@ import com.airmap.airmapsdk.models.map.MapStyle;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.networking.services.MappingService;
+import com.airmap.airmapsdk.ui.views.AirMapMapView;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.style.layers.BackgroundLayer;
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
@@ -147,7 +148,7 @@ public class MapStyleController implements MapView.OnMapChangedListener {
         return mapStyle;
     }
 
-    interface Callback {
+    public interface Callback {
         void onMapStyleLoaded();
     }
 }

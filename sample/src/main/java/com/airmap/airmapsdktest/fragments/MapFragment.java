@@ -11,12 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.airmap.airmapsdk.models.airspace.AirMapAirspaceAdvisoryStatus;
+import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
-import com.airmap.airmapsdk.ui.activities.MyLocationMapActivity;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
 import com.airmap.airmapsdktest.R;
 import com.airmap.airmapsdktest.activities.MapDemoActivity;
+import com.airmap.airmapsdktest.activities.MyLocationMapActivity;
 
 import java.util.List;
 
@@ -115,7 +115,7 @@ public class MapFragment extends Fragment implements AirMapMapView.MapListener {
     }
 
     @Override
-    public void onAdvisoryStatusChanged(AirMapAirspaceAdvisoryStatus status) {
+    public void onAdvisoryStatusChanged(AirMapAirspaceStatus status) {
         ((MapDemoActivity) getActivity()).setAdvisoryStatus(status);
     }
 

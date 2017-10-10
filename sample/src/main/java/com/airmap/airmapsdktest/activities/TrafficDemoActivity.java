@@ -7,14 +7,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.animation.LinearInterpolator;
 import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
-import com.airmap.airmapsdk.models.airspace.AirMapAirspaceAdvisoryStatus;
+import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.models.traffic.AirMapTraffic;
@@ -115,7 +114,7 @@ public class TrafficDemoActivity extends BaseActivity implements AirMapMapView.M
     public void onRulesetsChanged(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets) {}
 
     @Override
-    public void onAdvisoryStatusChanged(AirMapAirspaceAdvisoryStatus status) {}
+    public void onAdvisoryStatusChanged(AirMapAirspaceStatus status) {}
 
     // Mapbox requires lifecycle
     @Override

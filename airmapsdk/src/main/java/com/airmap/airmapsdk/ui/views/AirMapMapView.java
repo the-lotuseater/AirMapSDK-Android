@@ -1,71 +1,39 @@
 package com.airmap.airmapsdk.ui.views;
 
 import android.content.Context;
-import android.graphics.RectF;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.util.Pair;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
-import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
-import com.airmap.airmapsdk.models.Coordinate;
-import com.airmap.airmapsdk.models.airspace.AirMapAirspaceAdvisoryStatus;
+import com.airmap.airmapsdk.controllers.MapDataController;
+import com.airmap.airmapsdk.controllers.MapStyleController;
+import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.map.AirMapFillLayerStyle;
 import com.airmap.airmapsdk.models.map.AirMapLayerStyle;
 import com.airmap.airmapsdk.models.map.AirMapLineLayerStyle;
 import com.airmap.airmapsdk.models.map.AirMapSymbolLayerStyle;
-import com.airmap.airmapsdk.models.map.MapStyle;
-import com.airmap.airmapsdk.models.rules.AirMapJurisdiction;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
-import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
-import com.airmap.airmapsdk.networking.services.MappingService;
-import com.airmap.airmapsdk.util.ThrottleablePublishSubject;
 import com.airmap.airmapsdk.util.Utils;
-import com.google.gson.JsonObject;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.style.layers.BackgroundLayer;
 import com.mapbox.mapboxsdk.style.layers.FillLayer;
 import com.mapbox.mapboxsdk.style.layers.Filter;
 import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.sources.TileSet;
 import com.mapbox.mapboxsdk.style.sources.VectorSource;
-import com.mapbox.services.commons.geojson.Feature;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
-import rx.Observable;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.functions.Func2;
-import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
 
 /**
  * Created by collin@airmap.com on 9/21/17.
@@ -119,7 +87,7 @@ public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedLi
             }
 
             @Override
-            public void onAdvisoryStatusUpdated(AirMapAirspaceAdvisoryStatus advisoryStatus) {
+            public void onAdvisoryStatusUpdated(AirMapAirspaceStatus advisoryStatus) {
                 mapListener.onAdvisoryStatusChanged(advisoryStatus);
             }
         });
@@ -358,7 +326,7 @@ public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedLi
         void onMapLoaded();
         void onMapFailed(MapFailure reason);
         void onRulesetsChanged(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets);
-        void onAdvisoryStatusChanged(AirMapAirspaceAdvisoryStatus status);
+        void onAdvisoryStatusChanged(AirMapAirspaceStatus status);
     }
 
     public enum MapFailure {

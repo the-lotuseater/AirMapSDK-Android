@@ -25,7 +25,7 @@ import java.util.Map;
  * Created by Vansh Gandhi on 6/15/16.
  * Copyright © 2016 AirMap, Inc. All rights reserved.
  */
-@SuppressWarnings("unused")
+@Deprecated
 public class AirMapStatus implements Serializable, AirMapBaseModel {
     public enum StatusColor {
         Red("red"), Yellow("yellow"), Green("green"), Orange("orange");

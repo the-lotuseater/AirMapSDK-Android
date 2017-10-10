@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.ui.views;
+package com.airmap.airmapsdk.controllers;
 
 import android.support.annotation.NonNull;
 

@@ -1,4 +1,4 @@
-package com.airmap.airmapsdk.ui.views;
+package com.airmap.airmapsdk.controllers;
 
 import android.graphics.RectF;
 import android.support.v4.util.Pair;
@@ -7,13 +7,14 @@ import android.text.TextUtils;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.Coordinate;
-import com.airmap.airmapsdk.models.airspace.AirMapAirspaceAdvisoryStatus;
+import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.rules.AirMapJurisdiction;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
 import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.ui.views.AirMapMapView;
 import com.airmap.airmapsdk.util.ThrottleablePublishSubject;
 import com.google.gson.JsonObject;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -25,8 +26,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,9 +45,6 @@ import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subscriptions.Subscriptions;
-
-import static com.airmap.airmapsdk.models.rules.AirMapRuleset.Type.PickOne;
-import static com.airmap.airmapsdk.models.rules.AirMapRuleset.Type.Required;
 
 /**
  * Created by collin@airmap.com on 9/26/17.
@@ -185,16 +181,16 @@ public class MapDataController {
                 })
                 .flatMap(convertRulesetsToAdvisories())
                 .observeOn(AndroidSchedulers.mainThread())
-                .onErrorReturn(new Func1<Throwable, AirMapAirspaceAdvisoryStatus>() {
+                .onErrorReturn(new Func1<Throwable, AirMapAirspaceStatus>() {
                     @Override
-                    public AirMapAirspaceAdvisoryStatus call(Throwable throwable) {
+                    public AirMapAirspaceStatus call(Throwable throwable) {
                         AirMapLog.e(TAG, "onErrorReturn", throwable);
                         return null;
                     }
                 })
-                .subscribe(new Action1<AirMapAirspaceAdvisoryStatus>() {
+                .subscribe(new Action1<AirMapAirspaceStatus>() {
                     @Override
-                    public void call(AirMapAirspaceAdvisoryStatus advisoryStatus) {
+                    public void call(AirMapAirspaceStatus advisoryStatus) {
                         callback.onAdvisoryStatusUpdated(advisoryStatus);
                     }
                 }, new Action1<Throwable>() {
@@ -210,10 +206,10 @@ public class MapDataController {
      *
      *  @return
      */
-    private Func1<List<AirMapRuleset>, Observable<AirMapAirspaceAdvisoryStatus>> convertRulesetsToAdvisories() {
-        return new Func1<List<AirMapRuleset>, Observable<AirMapAirspaceAdvisoryStatus>>() {
+    private Func1<List<AirMapRuleset>, Observable<AirMapAirspaceStatus>> convertRulesetsToAdvisories() {
+        return new Func1<List<AirMapRuleset>, Observable<AirMapAirspaceStatus>>() {
             @Override
-            public Observable<AirMapAirspaceAdvisoryStatus> call(List<AirMapRuleset> selectedRulesets) {
+            public Observable<AirMapAirspaceStatus> call(List<AirMapRuleset> selectedRulesets) {
                 VisibleRegion region = map.getMap().getProjection().getVisibleRegion();
                 LatLngBounds bounds = region.latLngBounds;
                 List<Coordinate> coordinates = new ArrayList<>();
@@ -230,9 +226,9 @@ public class MapDataController {
                 AirMapPolygon polygon = new AirMapPolygon(coordinates);
 
                 return getAdvisories(selectedRulesets, AirMapGeometry.getGeoJSONFromGeometry(polygon), null)
-                        .onErrorResumeNext(new Func1<Throwable, Observable<? extends AirMapAirspaceAdvisoryStatus>>() {
+                        .onErrorResumeNext(new Func1<Throwable, Observable<? extends AirMapAirspaceStatus>>() {
                             @Override
-                            public Observable<? extends AirMapAirspaceAdvisoryStatus> call(Throwable throwable) {
+                            public Observable<? extends AirMapAirspaceStatus> call(Throwable throwable) {
                                 return Observable.just(null);
                             }
                         });
@@ -240,15 +236,15 @@ public class MapDataController {
         };
     }
 
-    private Observable<AirMapAirspaceAdvisoryStatus> getAdvisories(final List<AirMapRuleset> rulesets, final JSONObject geoJSON, final Map<String,Object> flightFeatures) {
-        return Observable.create(new Observable.OnSubscribe<AirMapAirspaceAdvisoryStatus>() {
+    private Observable<AirMapAirspaceStatus> getAdvisories(final List<AirMapRuleset> rulesets, final JSONObject geoJSON, final Map<String,Object> flightFeatures) {
+        return Observable.create(new Observable.OnSubscribe<AirMapAirspaceStatus>() {
             @Override
-            public void call(final Subscriber<? super AirMapAirspaceAdvisoryStatus> subscriber) {
+            public void call(final Subscriber<? super AirMapAirspaceStatus> subscriber) {
                 Date start = new Date();
                 Date end = new Date(start.getTime() + (4 * 60 * 60 * 1000));
-                final Call statusCall = AirMap.getAdvisories(rulesets, geoJSON, start, end, flightFeatures, new AirMapCallback<AirMapAirspaceAdvisoryStatus>() {
+                final Call statusCall = AirMap.getAdvisories(rulesets, geoJSON, start, end, flightFeatures, new AirMapCallback<AirMapAirspaceStatus>() {
                     @Override
-                    public void onSuccess(final AirMapAirspaceAdvisoryStatus response) {
+                    public void onSuccess(final AirMapAirspaceStatus response) {
                         subscriber.onNext(response);
                         subscriber.onCompleted();
                     }
@@ -304,8 +300,8 @@ public class MapDataController {
         preferredRulesetsPublishSubject.onNext(preferredRulesets);
     }
 
-    interface Callback {
+    public interface Callback {
         void onRulesetsUpdated(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets);
-        void onAdvisoryStatusUpdated(AirMapAirspaceAdvisoryStatus advisoryStatus);
+        void onAdvisoryStatusUpdated(AirMapAirspaceStatus advisoryStatus);
     }
 }

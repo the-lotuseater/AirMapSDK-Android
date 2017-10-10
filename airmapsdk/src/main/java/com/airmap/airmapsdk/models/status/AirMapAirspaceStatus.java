@@ -1,10 +1,9 @@
-package com.airmap.airmapsdk.models.airspace;
+package com.airmap.airmapsdk.models.status;
 
 import android.support.annotation.ColorRes;
 
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
-import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,7 +17,7 @@ import java.util.List;
  * Copyright © 2016 AirMap, Inc. All rights reserved.
  */
 @SuppressWarnings("unused")
-public class AirMapAirspaceAdvisoryStatus implements Serializable, AirMapBaseModel {
+public class AirMapAirspaceStatus implements Serializable, AirMapBaseModel {
     public enum StatusColor {
         Red("red"), Yellow("yellow"), Green("green"), Orange("orange");
 
@@ -72,19 +71,19 @@ public class AirMapAirspaceAdvisoryStatus implements Serializable, AirMapBaseMod
      *
      * @param statusJson A JSON representation of an AirMapStatus
      */
-    public AirMapAirspaceAdvisoryStatus(JSONObject statusJson) {
+    public AirMapAirspaceStatus(JSONObject statusJson) {
         constructFromJson(statusJson);
     }
 
     /**
      * Initialize an AirMapStatus with default values
      */
-    public AirMapAirspaceAdvisoryStatus() {
+    public AirMapAirspaceStatus() {
 
     }
 
     @Override
-    public AirMapAirspaceAdvisoryStatus constructFromJson(JSONObject json) {
+    public AirMapAirspaceStatus constructFromJson(JSONObject json) {
         if (json != null) {
             List<AirMapAdvisory> advisories = new ArrayList<>();
             JSONArray advisoriesJson = json.optJSONArray("advisories");
@@ -101,7 +100,7 @@ public class AirMapAirspaceAdvisoryStatus implements Serializable, AirMapBaseMod
         return advisoryColor;
     }
 
-    public AirMapAirspaceAdvisoryStatus setAdvisoryColor(StatusColor advisoryColor) {
+    public AirMapAirspaceStatus setAdvisoryColor(StatusColor advisoryColor) {
         this.advisoryColor = advisoryColor;
         return this;
     }
@@ -110,7 +109,7 @@ public class AirMapAirspaceAdvisoryStatus implements Serializable, AirMapBaseMod
         return advisories;
     }
 
-    public AirMapAirspaceAdvisoryStatus setAdvisories(List<AirMapAdvisory> advisories) {
+    public AirMapAirspaceStatus setAdvisories(List<AirMapAdvisory> advisories) {
         this.advisories = advisories;
         return this;
     }

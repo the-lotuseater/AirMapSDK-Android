@@ -185,6 +185,7 @@ class FlightService extends BaseService {
      * @param flight   The flight to create
      * @param listener The callback that is invoked on success or error
      */
+    @Deprecated
     public static void createFlight(AirMapFlight flight, final AirMapCallback<AirMapFlight> listener) {
         String url = flightBaseUrl + flight.getGeometryType().toString();
         JSONObject params = flight.getAsParams();
