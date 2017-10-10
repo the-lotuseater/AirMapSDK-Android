@@ -984,22 +984,56 @@ public class AirMap {
         return AirspaceService.getAirspace(airspaceIds, listener);
     }
 
+    /**
+     * Get all the rulesets that apply for a specific coordinate
+     *
+     * @param coordinate
+     * @param listener
+     * @return
+     */
     public static Call getRulesets(@NonNull Coordinate coordinate, @Nullable AirMapCallback<List<AirMapRuleset>> listener) {
         return RulesetService.getRulesets(coordinate, listener);
     }
 
+    /**
+     * Get all the rulesets that apply for a geometry (geoJSON)
+     *
+     * @param geometry
+     * @param listener
+     * @return
+     */
     public static Call getRulesets(@NonNull JSONObject geometry, @Nullable AirMapCallback<List<AirMapRuleset>> listener) {
         return RulesetService.getRulesets(geometry, listener);
     }
 
+    /**
+     * Get the full ruleset objects for a list of ruleset ids
+     *
+     * @param rulesetIds
+     * @param listener
+     * @return
+     */
     public static Call getRulesets(@NonNull List<String> rulesetIds, @Nullable AirMapCallback<List<AirMapRuleset>> listener) {
         return RulesetService.getRulesets(rulesetIds, listener);
     }
 
+    /**
+     * Get the entire list of rules of a ruleset
+     *
+     * @param rulesetId
+     * @param listener
+     * @return
+     */
     public static Call getRules(@NonNull String rulesetId, @Nullable AirMapCallback<AirMapRuleset> listener) {
         return RulesetService.getRules(rulesetId, listener);
     }
 
+    /**
+     * Get the briefing for a flight plan (either before or after flight has been submitted)
+     *
+     * @param flightPlanId
+     * @param callback
+     */
     public static void getFlightBrief(@NonNull String flightPlanId, @NonNull AirMapCallback<AirMapFlightBriefing> callback) {
         FlightService.getFlightBriefing(flightPlanId, callback);
     }
