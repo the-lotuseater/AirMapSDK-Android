@@ -112,11 +112,11 @@
     <string name="authorizations_header">Authorization &amp; Validation</string>
     <string name="rules_header">Rules &amp; Compliance</string>
 
-    <string name="authorization_not_requested">Not Requested</string>
-    <string name="rejected_upon_submission">Rejected Upon Submission</string>
-    <string name="authorized_upon_submission">Authorized Upon Submission</string>
-    <string name="manual_authorization">Manual Authorization Upon Submission</string>
-    <string name="authorization_pending">Pending</string>
-    <string name="authorization_accepted">Accepted</string>
-    <string name="authorization_rejected">Rejected</string>
+    <string name="authorization_not_requested">Authorization Not Requested</string>
+    <string name="rejected_upon_submission">Rejected Missing Info</string>
+    <string name="authorized_upon_submission">Authorization Upon Submission</string>
+    <string name="manual_authorization">Manual Authorization Pending Submission</string>
+    <string name="authorization_pending">Authorization Pending Submission</string>
+    <string name="authorization_accepted">Approved</string>
+    <string name="authorization_rejected">Rejected Missing Info</string>
 </resources>
