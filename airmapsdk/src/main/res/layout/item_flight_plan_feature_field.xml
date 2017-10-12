@@ -37,8 +37,21 @@
 
     </LinearLayout>
 
+    <!-- Dummy item to prevent AutoCompleteTextView from receiving focus -->
+    <LinearLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
+
     <EditText android:id="@+id/edit_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:nextFocusUp="@id/edit_text"
+        android:nextFocusLeft="@id/edit_text"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:textSize="12sp"
+        android:maxLines="1" />
 
 </LinearLayout>

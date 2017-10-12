@@ -6,8 +6,10 @@ import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.models.comm.AirMapComm;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.flight.AirMapFlightBriefing;
+import com.airmap.airmapsdk.models.flight.AirMapFlightFeature;
 import com.airmap.airmapsdk.models.flight.AirMapFlightPlan;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.callbacks.GenericListOkHttpCallback;
 import com.airmap.airmapsdk.networking.callbacks.GenericOkHttpCallback;
 import com.airmap.airmapsdk.networking.callbacks.ListFlightsCallback;
 import com.airmap.airmapsdk.networking.callbacks.VoidCallback;
@@ -169,6 +171,12 @@ class FlightService extends BaseService {
         String url = String.format(flightPlanByFlightIdUrl, flightId);
         Call call = AirMap.getClient().get(url, new GenericOkHttpCallback(callback, AirMapFlightPlan.class));
         return call;
+    }
+
+    public static Call getFlightFeatures(String flightPlanId, AirMapCallback<List<AirMapFlightFeature>> callback) {
+        String url = String.format(flightFeaturesByPlanIdUrl, flightPlanId);
+
+        return AirMap.getClient().get(url, new GenericListOkHttpCallback(callback, AirMapFlightFeature.class));
     }
 
     /**

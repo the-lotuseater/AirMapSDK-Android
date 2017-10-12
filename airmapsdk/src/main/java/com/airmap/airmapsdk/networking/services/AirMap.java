@@ -14,7 +14,6 @@ import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.AnalyticsTracker;
 import com.airmap.airmapsdk.Auth;
 import com.airmap.airmapsdk.models.AirMapWeather;
-import com.airmap.airmapsdk.models.AirMapWeatherUpdate;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
@@ -29,6 +28,8 @@ import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
+import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
+import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
@@ -264,6 +265,11 @@ public class AirMap {
         decodeToken(authToken);
     }
 
+    public static void clearAuthToken() {
+        authToken = null;
+        getAirMapTrafficService().setAuthToken(null);
+    }
+
     /**
      * Needs to be called whenever the API key changes
      * If the API key has changed, this allows it to be reflected in the web services
@@ -419,6 +425,10 @@ public class AirMap {
      */
     public static void refreshAccessToken() {
         Auth.refreshAccessToken(getInstance().getContext());
+    }
+
+    public static void clearRefreshToken() {
+        Auth.clearRefreshToken(getInstance().getContext());
     }
 
     /**
@@ -1265,19 +1275,19 @@ public class AirMap {
     }
 
     public static Call getRulesets(@NonNull Coordinate coordinate, @Nullable AirMapCallback<List<AirMapRuleset>> listener) {
-        return RulesService.getRulesets(coordinate, listener);
+        return RulesetService.getRulesets(coordinate, listener);
     }
 
     public static Call getRulesets(@NonNull JSONObject geometry, @Nullable AirMapCallback<List<AirMapRuleset>> listener) {
-        return RulesService.getRulesets(geometry, listener);
+        return RulesetService.getRulesets(geometry, listener);
     }
 
     public static Call getRulesets(@NonNull List<String> rulesetIds, @Nullable AirMapCallback<List<AirMapRuleset>> listener) {
-        return RulesService.getRulesets(rulesetIds, listener);
+        return RulesetService.getRulesets(rulesetIds, listener);
     }
 
     public static Call getRules(@NonNull String rulesetId, @Nullable AirMapCallback<AirMapRuleset> listener) {
-        return RulesService.getRules(rulesetId, listener);
+        return RulesetService.getRules(rulesetId, listener);
     }
 
     public static void getFlightBrief(@NonNull String flightPlanId, @NonNull AirMapCallback<AirMapFlightBriefing> callback) {
@@ -1290,7 +1300,7 @@ public class AirMap {
             rulesetIds.add(ruleset.getId());
         }
 
-        return RulesService.getAdvisories(rulesetIds, geometry, start, end, flightFeatures, listener);
+        return RulesetService.getAdvisories(rulesetIds, geometry, start, end, flightFeatures, listener);
     }
 
     public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
@@ -1299,15 +1309,21 @@ public class AirMap {
             rulesetIds.add(ruleset.getId());
         }
 
-        return RulesService.getAdvisories(rulesetIds, geometry, start, end, flightFeatures, listener);
+        return RulesetService.getAdvisories(rulesetIds, geometry, start, end, flightFeatures, listener);
     }
 
     public static Call getAdvisories(@NonNull List<String> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
-        return RulesService.getAdvisories(rulesets, geometry, start, end, null, listener);
+        return RulesetService.getAdvisories(rulesets, geometry, start, end, null, listener);
     }
 
-    public static Call getWelcomeSummary(@NonNull Coordinate coordinate, @Nullable AirMapCallback<List<AirMapWelcomeResult>> listener) {
-        return RulesService.getWelcomeSummary(coordinate, listener);
+    public static Call getAdvisories(@NonNull List<String> rulesets, Coordinate southwest, Coordinate northwest, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+        // create polygon based on Lat/Long bounds
+        List<Coordinate> bounds = new ArrayList<>();
+        bounds.add(southwest);
+        bounds.add(northwest);
+        AirMapPolygon polygon = new AirMapPolygon(bounds);
+
+        return RulesetService.getAdvisories(rulesets, AirMapGeometry.getGeoJSONFromGeometry(polygon), start, end, null, listener);
     }
 
     /**

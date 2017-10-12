@@ -31,14 +31,14 @@ public class WelcomeActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_welcome);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(getIntent().getStringExtra(AirMapConstants.CITY_EXTRA));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        recyclerView = (RecyclerView) findViewById(R.id.welcome_results_recycler_view);
+        recyclerView = findViewById(R.id.welcome_results_recycler_view);
         adapter = new WelcomeAdapter(this, welcome);
         recyclerView.setAdapter(adapter);
     }

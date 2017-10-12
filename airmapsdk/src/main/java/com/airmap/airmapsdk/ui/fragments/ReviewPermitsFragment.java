@@ -55,7 +55,7 @@ public class ReviewPermitsFragment extends Fragment {
     }
 
     private void initializeViews(View view) {
-        listView = (ListView) view.findViewById(R.id.airmap_list);
+        listView = view.findViewById(R.id.airmap_list);
     }
 
     private void populateViews() {

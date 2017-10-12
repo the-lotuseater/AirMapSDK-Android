@@ -285,8 +285,8 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Mappi
             super(itemView);
 
             backgroundView = itemView.findViewById(R.id.background_view);
-            textView = (TextView) itemView.findViewById(R.id.title_text_view);
-            expandImageView = (ImageView) itemView.findViewById(R.id.expand_image_view);
+            textView = itemView.findViewById(R.id.title_text_view);
+            expandImageView = itemView.findViewById(R.id.expand_image_view);
         }
     }
 
@@ -299,8 +299,8 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Mappi
             super(itemView);
 
             backgroundView = itemView.findViewById(R.id.background_view);
-            titleTextView = (TextView) itemView.findViewById(R.id.title_text_view);
-            infoTextView = (TextView) itemView.findViewById(R.id.info_text_view);
+            titleTextView = itemView.findViewById(R.id.title_text_view);
+            infoTextView = itemView.findViewById(R.id.info_text_view);
         }
     }
 }

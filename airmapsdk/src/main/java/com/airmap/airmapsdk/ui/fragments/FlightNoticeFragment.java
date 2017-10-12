@@ -77,9 +77,9 @@ public class FlightNoticeFragment extends Fragment {
     }
 
     private void initializeViews(View view) {
-        submitNoticeSwitch = (TextView) view.findViewById(R.id.submit_notice_switch);
-        digitalNoticeListView = (ListView) view.findViewById(R.id.digital_notice_list);
-        notDigitalLabelTextView = (TextView) view.findViewById(R.id.not_digital_label);
+        submitNoticeSwitch = view.findViewById(R.id.submit_notice_switch);
+        digitalNoticeListView = view.findViewById(R.id.digital_notice_list);
+        notDigitalLabelTextView = view.findViewById(R.id.not_digital_label);
         notDigitalLabelTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,8 +89,8 @@ public class FlightNoticeFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        notDigitalNoticeListView = (ListView) view.findViewById(R.id.not_digital_list);
-        nextButton = (Button) view.findViewById(R.id.next_button);
+        notDigitalNoticeListView = view.findViewById(R.id.not_digital_list);
+        nextButton = view.findViewById(R.id.next_button);
     }
 
     private void getNotices() {

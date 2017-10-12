@@ -131,19 +131,19 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initializeViews() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        profileImageView = (ImageView) findViewById(R.id.profile_image);
-        nameTextView = (TextView) findViewById(R.id.name);
-        usernameTextView = (TextView) findViewById(R.id.username);
-        flightCounterTextView = (TextView) findViewById(R.id.flight_counter_text);
-        aircraftCounterTextView = (TextView) findViewById(R.id.aircraft_counter_text);
-        firstNameEditText = (EditText) findViewById(R.id.first_name_edit_text);
-        lastNameEditText = (EditText) findViewById(R.id.last_name_edit_text);
-        emailEditText = (EditText) findViewById(R.id.email_edit_text);
-        phoneEditText = (EditText) findViewById(R.id.phone_edit_text);
-        pilotInformationTextView = (TextView) findViewById(R.id.pilot_information_label);
-        extrasLayout = (LinearLayout) findViewById(R.id.extras_container);
-        saveButton = (Button) findViewById(R.id.save);
+        toolbar = findViewById(R.id.toolbar);
+        profileImageView = findViewById(R.id.profile_image);
+        nameTextView = findViewById(R.id.name);
+        usernameTextView = findViewById(R.id.username);
+        flightCounterTextView = findViewById(R.id.flight_counter_text);
+        aircraftCounterTextView = findViewById(R.id.aircraft_counter_text);
+        firstNameEditText = findViewById(R.id.first_name_edit_text);
+        lastNameEditText = findViewById(R.id.last_name_edit_text);
+        emailEditText = findViewById(R.id.email_edit_text);
+        phoneEditText = findViewById(R.id.phone_edit_text);
+        pilotInformationTextView = findViewById(R.id.pilot_information_label);
+        extrasLayout = findViewById(R.id.extras_container);
+        saveButton = findViewById(R.id.save);
     }
 
     private void populateViews() {

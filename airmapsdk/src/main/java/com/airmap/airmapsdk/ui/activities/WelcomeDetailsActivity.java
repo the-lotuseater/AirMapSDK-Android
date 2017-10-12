@@ -33,16 +33,16 @@ public class WelcomeDetailsActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_welcome_result);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(welcomeResult.getJurisdictionName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        summaryTextView = (TextView) findViewById(R.id.summary_text_view);
-        linkTextView = (TextView) findViewById(R.id.link_text_view);
-        moreButton = (Button) findViewById(R.id.read_full_button);
+        summaryTextView = findViewById(R.id.summary_text_view);
+        linkTextView = findViewById(R.id.link_text_view);
+        moreButton = findViewById(R.id.read_full_button);
 
         summaryTextView.setText(welcomeResult.getText());
 

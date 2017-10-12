@@ -96,10 +96,10 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
     }
 
     private void initializeViews(View view) {
-        mapView = (MapView) view.findViewById(R.id.airmap_map);
-        viewPager = (ViewPager) view.findViewById(R.id.view_pager);
-        progressBarContainer = (FrameLayout) view.findViewById(R.id.progress_bar_container);
-        submitButton = (Button) view.findViewById(R.id.airmap_submit_button);
+        mapView = view.findViewById(R.id.airmap_map);
+        viewPager = view.findViewById(R.id.view_pager);
+        progressBarContainer = view.findViewById(R.id.progress_bar_container);
+        submitButton = view.findViewById(R.id.airmap_submit_button);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,7 +110,7 @@ public class ReviewFlightFragment extends Fragment implements OnMapReadyCallback
                 Analytics.logEvent(Analytics.Page.REVIEW_CREATE_FLIGHT, Analytics.Action.tap, Analytics.Label.SAVE);
             }
         });
-        PagerTabStrip strip = (PagerTabStrip) view.findViewById(R.id.tab_strip);
+        PagerTabStrip strip = view.findViewById(R.id.tab_strip);
         strip.setTabIndicatorColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
     }
 

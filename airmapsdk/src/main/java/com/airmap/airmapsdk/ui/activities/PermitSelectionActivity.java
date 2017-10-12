@@ -37,13 +37,13 @@ public class PermitSelectionActivity extends AppCompatActivity {
 
         setContentView(R.layout.airmap_activity_select_permits);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(permits.getAuthorityName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        recyclerView = (RecyclerView) findViewById(R.id.permit_list);
+        recyclerView = findViewById(R.id.permit_list);
         adapter = new SelectPermitsAdapter(this, permits, permitsFromWallet);
         recyclerView.setAdapter(adapter);
     }

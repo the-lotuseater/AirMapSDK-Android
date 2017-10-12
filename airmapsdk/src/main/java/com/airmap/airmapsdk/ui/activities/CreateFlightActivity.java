@@ -36,6 +36,7 @@ import com.airmap.airmapsdk.ui.fragments.ListPermitsFragment;
 import com.airmap.airmapsdk.ui.fragments.ReviewFlightFragment;
 import com.airmap.airmapsdk.ui.fragments.ReviewNoticeFragment;
 import com.airmap.airmapsdk.ui.views.CustomViewPager;
+import com.airmap.airmapsdk.util.AirMapConfig;
 import com.airmap.airmapsdk.util.AnnotationsFactory;
 import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdk.util.Utils;
@@ -127,7 +128,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
         }
 
         setupFlight(savedInstanceState);
-        Mapbox.getInstance(this, Utils.getMapboxApiKey());
+        Mapbox.getInstance(this, AirMapConfig.getMapboxApiKey());
         setContentView(R.layout.airmap_activity_create_flight);
         initializeViews();
         setupToolbar();
@@ -197,8 +198,8 @@ public class CreateFlightActivity extends AppCompatActivity implements
     }
 
     private void initializeViews() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        viewPager = (CustomViewPager) findViewById(R.id.container);
+        toolbar = findViewById(R.id.toolbar);
+        viewPager = findViewById(R.id.container);
     }
 
     private void setupToolbar() {
@@ -323,7 +324,7 @@ public class CreateFlightActivity extends AppCompatActivity implements
 
     @Override
     public TabLayout getTabLayout() {
-        return (TabLayout) findViewById(R.id.tabs);
+        return findViewById(R.id.tabs);
     }
 
     @Override

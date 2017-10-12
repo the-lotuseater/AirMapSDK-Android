@@ -326,7 +326,7 @@ public class AirMapClient {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 // Only attach our API Key and Auth token if we're going to AirMap
-                if (chain.request().url().host().equals("api.airmap.com")) {
+                if (chain.request().url().host().equals("api.airmap.com") || chain.request().url().toString().startsWith(BaseService.baseUrl)) {
                     Builder newRequest = chain.request().newBuilder();
                     String authToken = AirMap.getAuthToken();
                     String xApiKey = AirMap.getApiKey();
@@ -348,6 +348,11 @@ public class AirMapClient {
             public Response intercept(Chain chain) throws IOException {
                 Response response = chain.proceed(chain.request());
                 if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED && AirMap.hasValidAuthenticatedUser()) {
+                    // clear the saved refresh token then present login
+                    AirMap.clearAuthToken();
+
+                    AirMap.clearRefreshToken();
+
                     AirMap.showLogin();
                 }
                 return response;
@@ -364,11 +369,13 @@ public class AirMapClient {
      */
     private CertificatePinner getCertificatePinner() {
         String host = "api.airmap.com";
+        String hostJP = "api.airmap.jp";
         return new CertificatePinner.Builder()
                 .add(host, "sha256/47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=")
                 .add(host, "sha256/CJlvFGiErgX6zPm0H+oO/TRbKOERdQOAYOs2nUlvIQ0=")
                 .add(host, "sha256/8Rw90Ej3Ttt8RRkrg+WYDS9n7IS03bk5bjP/UXPtaY8=")
                 .add(host, "sha256/Ko8tivDrEjiY90yGasP6ZpBU4jwXvHqVvQI0GS3GNdA=")
+                .add(hostJP, "sha256/W5rhIQ2ZbJKFkRvsGDwQVS/H/NSixP33+Z/fpJ0O25Q=")
                 .build();
     }
 

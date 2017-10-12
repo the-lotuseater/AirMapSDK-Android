@@ -180,12 +180,12 @@ public class CreateEditAircraftActivity extends AppCompatActivity implements Vie
     }
 
     private void initializeViews() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        nicknameTextInputLayout = (TextInputLayout) findViewById(R.id.nickname_text_input_layout);
-        nicknameEditText = (EditText) findViewById(R.id.nickname);
-        saveButton = (Button) findViewById(R.id.save);
-        manufacturerSpinner = (Spinner) findViewById(R.id.manufacturer);
-        modelSpinner = (Spinner) findViewById(R.id.models);
+        toolbar = findViewById(R.id.toolbar);
+        nicknameTextInputLayout = findViewById(R.id.nickname_text_input_layout);
+        nicknameEditText = findViewById(R.id.nickname);
+        saveButton = findViewById(R.id.save);
+        manufacturerSpinner = findViewById(R.id.manufacturer);
+        modelSpinner = findViewById(R.id.models);
         saveButton.setOnClickListener(this);
         modelSpinner.setVisibility(View.GONE); //Don't want to show the models picker a manufacturer is picked
     }

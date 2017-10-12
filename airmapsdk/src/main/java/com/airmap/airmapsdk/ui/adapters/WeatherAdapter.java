@@ -115,12 +115,12 @@ public class WeatherAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         WeatherViewHolder(View itemView) {
             super(itemView);
 
-            timeTextView = (TextView) itemView.findViewById(R.id.time_text_view);
-            windTextView = (TextView) itemView.findViewById(R.id.wind_text_view);
-            visibilityTextView = (TextView) itemView.findViewById(R.id.visibility_text_view);
-            tempTextView = (TextView) itemView.findViewById(R.id.temp_text_view);
-            dewPointTextView = (TextView) itemView.findViewById(R.id.dew_point_text_view);
-            pressureTextView = (TextView) itemView.findViewById(R.id.pressure_text_view);
+            timeTextView = itemView.findViewById(R.id.time_text_view);
+            windTextView = itemView.findViewById(R.id.wind_text_view);
+            visibilityTextView = itemView.findViewById(R.id.visibility_text_view);
+            tempTextView = itemView.findViewById(R.id.temp_text_view);
+            dewPointTextView = itemView.findViewById(R.id.dew_point_text_view);
+            pressureTextView = itemView.findViewById(R.id.pressure_text_view);
         }
     }
 

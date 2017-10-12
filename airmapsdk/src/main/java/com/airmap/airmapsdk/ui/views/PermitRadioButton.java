@@ -58,10 +58,10 @@ public class PermitRadioButton extends FrameLayout {
 
     private void init() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.permit_radio_button, this, true);
-        iconImageView = (ImageView) view.findViewById(R.id.icon_image_view);
-        titleTextView = (TextView) view.findViewById(R.id.title_text_view);
-        descriptionTextView = (TextView) view.findViewById(R.id.description_text_view);
-        radioButton = (RadioButton) view.findViewById(R.id.radio_button);
+        iconImageView = view.findViewById(R.id.icon_image_view);
+        titleTextView = view.findViewById(R.id.title_text_view);
+        descriptionTextView = view.findViewById(R.id.description_text_view);
+        radioButton = view.findViewById(R.id.radio_button);
         container = view.findViewById(R.id.container);
     }
 

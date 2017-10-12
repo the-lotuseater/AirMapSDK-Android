@@ -67,9 +67,9 @@ public class ListPermitsFragment extends Fragment {
     }
 
     private void initializeViews(View view) {
-        recyclerView = (RecyclerView) view.findViewById(R.id.permit_list);
-        nextButton = (Button) view.findViewById(R.id.next_button);
-        summaryTextView = (TextView) view.findViewById(R.id.summary);
+        recyclerView = view.findViewById(R.id.permit_list);
+        nextButton = view.findViewById(R.id.next_button);
+        summaryTextView = view.findViewById(R.id.summary);
     }
 
     private void setupRecyclerView() {

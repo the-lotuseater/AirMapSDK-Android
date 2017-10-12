@@ -274,25 +274,25 @@ public class FreehandMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void initializeViews(View view) {
-        seekBarContainer = (RelativeLayout) view.findViewById(R.id.seekbar_container);
-        seekBar = (SeekBar) view.findViewById(R.id.seekbar);
-        seekBarLabelTextView = (TextView) view.findViewById(R.id.label);
-        seekBarValueTextView = (TextView) view.findViewById(R.id.seekbar_value);
-        enableDrawingSwitch = (ImageViewSwitch) view.findViewById(R.id.action_button);
-        deleteButton = (ImageView) view.findViewById(R.id.delete_button);
-        tipTextView = (TextView) view.findViewById(R.id.tip_text);
-        mapView = (MapView) view.findViewById(R.id.map);
-        drawingBoard = (DrawingBoard) view.findViewById(R.id.drawFrame);
-        scratchpad = (Scratchpad) view.findViewById(R.id.scratchpad);
-        nextButton = (ClickableDrawableButton) view.findViewById(R.id.next_button);
+        seekBarContainer = view.findViewById(R.id.seekbar_container);
+        seekBar = view.findViewById(R.id.seekbar);
+        seekBarLabelTextView = view.findViewById(R.id.label);
+        seekBarValueTextView = view.findViewById(R.id.seekbar_value);
+        enableDrawingSwitch = view.findViewById(R.id.action_button);
+        deleteButton = view.findViewById(R.id.delete_button);
+        tipTextView = view.findViewById(R.id.tip_text);
+        mapView = view.findViewById(R.id.map);
+        drawingBoard = view.findViewById(R.id.drawFrame);
+        scratchpad = view.findViewById(R.id.scratchpad);
+        nextButton = view.findViewById(R.id.next_button);
 
         //This hidden WebView does the turf line buffering
         webView = new BridgeWebView(getActivity());
         webView.setWillNotDraw(true);
         webView.loadUrl("file:///android_asset/turf.html");
 
-        bottomSheetLayout = (CoordinatorLayout) view.findViewById(R.id.bottom_sheet);
-        recyclerView = (RecyclerView) view.findViewById(R.id.advisories_list);
+        bottomSheetLayout = view.findViewById(R.id.bottom_sheet);
+        recyclerView = view.findViewById(R.id.advisories_list);
     }
 
     private void setupMap(Bundle savedInstanceState) {

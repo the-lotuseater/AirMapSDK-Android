@@ -89,18 +89,18 @@ public class CustomPropertiesActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(availablePermit.getName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        TextView descriptionTextView = (TextView) findViewById(R.id.description_text);
-        TextView validityTextView = (TextView) findViewById(R.id.validity);
-        TextView priceTextView = (TextView) findViewById(R.id.price);
-        customPropertiesLayout = (LinearLayout) findViewById(R.id.custom_properties_container);
-        selectPermitButton = (Button) findViewById(R.id.select_permit_button);
+        TextView descriptionTextView = findViewById(R.id.description_text);
+        TextView validityTextView = findViewById(R.id.validity);
+        TextView priceTextView = findViewById(R.id.price);
+        customPropertiesLayout = findViewById(R.id.custom_properties_container);
+        selectPermitButton = findViewById(R.id.select_permit_button);
 
-        progressBarContainer = (FrameLayout) findViewById(R.id.progress_bar_container);
+        progressBarContainer = findViewById(R.id.progress_bar_container);
 
         descriptionTextView.setText(availablePermit.getDescription());
         priceTextView.setText(availablePermit.getPrice() == 0 ? getString(R.string.free) : Utils.getPriceText(availablePermit.getPrice()));
@@ -156,7 +156,7 @@ public class CustomPropertiesActivity extends AppCompatActivity {
             switch (property.getType()) {
                 case Text:
                     TextInputLayout textInputLayout = (TextInputLayout) LayoutInflater.from(this).inflate(R.layout.custom_property_edit_text, customPropertiesLayout, false);
-                    TextInputEditText editText = (TextInputEditText) textInputLayout.findViewById(R.id.edit_text);
+                    TextInputEditText editText = textInputLayout.findViewById(R.id.edit_text);
                     textInputLayout.setHint(property.getLabel() + (property.isRequired() && property.getLabel() != null && !property.getLabel().toLowerCase().contains("require") ? "*" : ""));
                     if (property.getValue() != null) { //Will populate with data if it exists
                         editText.setText(property.getValue());
