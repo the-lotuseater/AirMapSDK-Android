@@ -12,7 +12,6 @@ import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.Coordinate;
-import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
@@ -389,25 +388,6 @@ public class Utils {
             points.add(point);
         }
         return new PolygonOptions().addAll(points).strokeColor(color).alpha(0.66f).fillColor(color);
-    }
-
-    public static int getStatusCircleColor(AirMapStatus latestStatus, Context context) {
-        int color = 0;
-        if (latestStatus != null) {
-            AirMapStatus.StatusColor statusColor = latestStatus.getAdvisoryColor();
-            if (statusColor == AirMapStatus.StatusColor.Red) {
-                color = ContextCompat.getColor(context, R.color.status_red);
-            } else if (statusColor == AirMapStatus.StatusColor.Orange) {
-                color = ContextCompat.getColor(context, R.color.status_orange);
-            } else if (statusColor == AirMapStatus.StatusColor.Yellow) {
-                color = ContextCompat.getColor(context, R.color.status_yellow);
-            } else if (statusColor == AirMapStatus.StatusColor.Green) {
-                color = ContextCompat.getColor(context, R.color.status_green);
-            }
-        } else {
-            color = 0x1E88E5;
-        }
-        return color;
     }
 
     public static String readInputStreamAsString(InputStream in) throws IOException {

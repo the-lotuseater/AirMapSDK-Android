@@ -12,10 +12,10 @@ import java.io.Serializable;
  */
 @SuppressWarnings("unused")
 public class AirMapAircraftModel implements Serializable, AirMapBaseModel {
+
     private String modelId;
     private String name;
     private AirMapAircraftManufacturer manufacturer;
-    private AirMapAircraftMetaData metaData;
 
     public AirMapAircraftModel(JSONObject modelJson) {
         constructFromJson(modelJson);
@@ -31,7 +31,6 @@ public class AirMapAircraftModel implements Serializable, AirMapBaseModel {
             setModelId(json.optString("id"));
             setName(json.optString("name"));
             setManufacturer(new AirMapAircraftManufacturer(json.optJSONObject("manufacturer")));
-            setMetaData(new AirMapAircraftMetaData(json.optJSONObject("metadata")));
         }
         return this;
     }
@@ -60,15 +59,6 @@ public class AirMapAircraftModel implements Serializable, AirMapBaseModel {
 
     public AirMapAircraftModel setManufacturer(AirMapAircraftManufacturer manufacturer) {
         this.manufacturer = manufacturer;
-        return this;
-    }
-
-    public AirMapAircraftMetaData getMetaData() {
-        return metaData;
-    }
-
-    public AirMapAircraftModel setMetaData(AirMapAircraftMetaData metaData) {
-        this.metaData = metaData;
         return this;
     }
 

@@ -15,6 +15,8 @@ public class AirMapConstants {
     public static final String CITY_EXTRA = "city_extra";
     public static final String AIRCRAFT_EXTRA = "aircraft_extra";
     public static final String PILOT_EXTRA = "pilot_extra";
+    public static final String FLIGHT_PLAN_ID_EXTRA = "flight_plan_id_extra";
+    public static final String KEY_VALUE_EXTRAS = "key_value_extras";
 
     public static final String FAQ_URL = "https://cdn.airmap.io/static/webviews/faq.html";
     public static final String FAQ_PERMITS_URL = "https://cdn.airmap.io/static/webviews/faq.html#permit-what";

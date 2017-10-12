@@ -1,9 +1,7 @@
 package com.airmap.airmapsdk.networking.services;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -19,7 +17,7 @@ import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
 import com.airmap.airmapsdk.models.airspace.AirMapAirspace;
-import com.airmap.airmapsdk.models.airspace.AirMapAirspaceAdvisoryStatus;
+import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.comm.AirMapComm;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.flight.AirMapFlightBriefing;
@@ -31,15 +29,10 @@ import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
 import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
-import com.airmap.airmapsdk.models.welcome.AirMapWelcomeResult;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapTrafficListener;
 import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
 import com.airmap.airmapsdk.networking.callbacks.LoginListener;
-import com.airmap.airmapsdk.ui.activities.CreateEditAircraftActivity;
-import com.airmap.airmapsdk.ui.activities.CreateFlightActivity;
-import com.airmap.airmapsdk.ui.activities.PilotProfileActivity;
-import com.airmap.airmapsdk.ui.activities.ProfileActivity;
 import com.airmap.airmapsdk.networking.callbacks.AirMapAuthenticationCallback;
 import com.airmap.airmapsdk.util.Utils;
 
@@ -55,9 +48,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -623,8 +614,8 @@ public class AirMap {
         return FlightService.getFlightPlanByFlightId(flightId, callback);
     }
 
-    public static void submitFlightPlan(String flightPlanId, boolean isPublic, AirMapCallback<AirMapFlightPlan> callback) {
-        FlightService.submitFlightPlan(flightPlanId, isPublic, callback);
+    public static void submitFlightPlan(String flightPlanId, AirMapCallback<AirMapFlightPlan> callback) {
+        FlightService.submitFlightPlan(flightPlanId, true, callback);
     }
 
     public static Call getWeather(Coordinate coordinate, Date startTime, Date endTime, AirMapCallback<AirMapWeather> callback) {
@@ -637,124 +628,12 @@ public class AirMap {
      * @param flight   The flight to create
      * @param callback The callback that is invoked on success or error
      */
+    @Deprecated
     public static void createFlight(@NonNull AirMapFlight flight, @Nullable AirMapCallback<AirMapFlight> callback) {
         if (flight != null) {
             FlightService.createFlight(flight, callback);
         }
     }
-
-    /**
-     * Start the create flight process in a custom UI with a built-in permit decision flow. This
-     * will use the passed in context to start the UI and to send any activity results
-     *
-     * @param activity    The activity to start the UI with and to send Activity Result to
-     * @param requestCode The request code you would like to start the activity with
-     * @param coordinate  The location to create the flight
-     * @param extras      Extra information to collect from the pilot in the profile page (key:
-     *                    json key, value: EditText Hint)
-     * @param layers      The layers to show on all maps displayed in the flight creation process
-     *                    (null or empty list for no layers)
-     */
-    public static void createFlight(@NonNull Activity activity, int requestCode,
-                                    @NonNull Coordinate coordinate, @Nullable HashMap<String, String> extras,
-                                    @Nullable List<MappingService.AirMapLayerType> layers,
-                                    @Nullable MappingService.AirMapMapTheme theme) {
-        if (activity != null && coordinate != null) {
-            Intent intent = new Intent(activity, CreateFlightActivity.class);
-            intent.putExtra(CreateFlightActivity.COORDINATE, coordinate);
-            if (extras != null) {
-                intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
-            }
-            if (layers != null) {
-                ArrayList<String> stringLayers = new ArrayList<>();
-                for (MappingService.AirMapLayerType layer : layers) {
-                    if (layer.toString().contains(",")) {
-                        Collections.addAll(stringLayers, layer.toString().split(","));
-                    } else {
-                        stringLayers.add(layer.toString());
-                    }
-                }
-                intent.putStringArrayListExtra(CreateFlightActivity.KEY_LAYERS, stringLayers);
-            }
-            if (theme != null) {
-                intent.putExtra(CreateFlightActivity.KEY_THEME, theme);
-            }
-            activity.startActivityForResult(intent, requestCode);
-        }
-    }
-
-    /**
-     * Start the create flight process in a custom UI with a built-in permit decision flow. This
-     * will use the passed in context to start the UI and to send any activity results
-     *
-     * @param fragment    The fragment to start the UI with and to send Activity Result to
-     * @param requestCode The request code you would like to start the activity with
-     * @param coordinate  The location to create the flight
-     * @param extras      Extra information to collect from the pilot in the profile page (key:
-     *                    json key, value: EditText Hint)
-     * @param layers      The layers to show on all maps displayed in the flight creation process
-     *                    (null or empty list for no layers)
-     */
-    public static void createFlight(@NonNull Fragment fragment, int requestCode,
-                                    @NonNull Coordinate coordinate, @Nullable HashMap<String, String> extras,
-                                    @Nullable List<MappingService.AirMapLayerType> layers,
-                                    @Nullable MappingService.AirMapMapTheme theme) {
-        if (fragment != null && coordinate != null) {
-            Intent intent = new Intent(fragment.getActivity(), CreateFlightActivity.class);
-            intent.putExtra(CreateFlightActivity.COORDINATE, coordinate);
-            if (extras != null) {
-                intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
-            }
-            if (layers != null) {
-                ArrayList<String> stringLayers = new ArrayList<>();
-                for (MappingService.AirMapLayerType layer : layers) {
-                    stringLayers.add(layer.toString());
-                }
-                intent.putStringArrayListExtra(CreateFlightActivity.KEY_LAYERS, stringLayers);
-            }
-            if (theme != null) {
-                intent.putExtra(CreateFlightActivity.KEY_THEME, theme);
-            }
-            fragment.startActivityForResult(intent, requestCode);
-        }
-    }
-
-    /**
-     * Start the create flight process in a custom UI with a built-in permit decision flow. This
-     * will use the passed in context to start the UI and to send any activity results
-     *
-     * @param fragment    The fragment to start the UI with and to send Activity Result to
-     * @param requestCode The request code you would like to start the activity with
-     * @param coordinate  The location to create the flight
-     * @param extras      Extra information to collect from the pilot in the profile page (key:
-     *                    json key, value: EditText Hint)
-     * @param layers      The layers to show on all maps displayed in the flight creation process
-     *                    (null or empty list for no layers)
-     */
-    public static void createFlight(@NonNull android.support.v4.app.Fragment fragment, int requestCode,
-                                    @NonNull Coordinate coordinate, @Nullable HashMap<String, String> extras,
-                                    @Nullable List<MappingService.AirMapLayerType> layers,
-                                    @Nullable MappingService.AirMapMapTheme theme) {
-        if (fragment != null && coordinate != null) {
-            Intent intent = new Intent(fragment.getContext(), CreateFlightActivity.class);
-            intent.putExtra(CreateFlightActivity.COORDINATE, coordinate);
-            if (extras != null) {
-                intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
-            }
-            if (layers != null) {
-                ArrayList<String> stringLayers = new ArrayList<>();
-                for (MappingService.AirMapLayerType layer : layers) {
-                    stringLayers.add(layer.toString());
-                }
-                intent.putStringArrayListExtra(CreateFlightActivity.KEY_LAYERS, stringLayers);
-            }
-            if (theme != null) {
-                intent.putExtra(CreateFlightActivity.KEY_THEME, theme);
-            }
-            fragment.startActivityForResult(intent, requestCode);
-        }
-    }
-
 
     /**
      * End a flight belonging to the logged in pilot
@@ -954,128 +833,6 @@ public class AirMap {
     }
 
     /**
-     * Display the authenticated pilot's profile
-     *
-     * @param activity the activity to start the UI with
-     * @param extras   Extra information to collect from the pilot in the profile page (key: json
-     *                 key, value: EditText Hint)
-     */
-    public static void showProfile(@NonNull Activity activity, @Nullable HashMap<String, String> extras) {
-        if (activity != null) {
-            showProfile(activity, AirMap.getUserId(), extras);
-        }
-    }
-
-    /**
-     * Display the authenticated pilot's profile
-     *
-     * @param fragment the fragment to start the UI with
-     * @param extras   Extra information to collect from the pilot in the profile page (key: json
-     *                 key, value: EditText Hint)
-     */
-    public static void showProfile(@NonNull android.support.v4.app.Fragment fragment, @Nullable HashMap<String, String> extras) {
-        if (fragment != null) {
-            showProfile(fragment, AirMap.getUserId(), extras);
-        }
-    }
-
-    /**
-     * Display the authenticated pilot's profile
-     *
-     * @param fragment the fragment to start the UI with
-     * @param extras   Extra information to collect from the pilot in the profile page (key: json
-     *                 key, value: EditText Hint)
-     */
-    public static void showProfile(@NonNull Fragment fragment, @Nullable HashMap<String, String> extras) {
-        if (fragment != null) {
-            showProfile(fragment, AirMap.getUserId(), extras);
-        }
-    }
-
-    /**
-     * Display the authenticated pilot's profile
-     *
-     * @param activity the activity to start the UI with
-     * @param pilotId  The ID of the pilot to show the profile for
-     * @param extras   Extra information to collect from the pilot in the profile page (key: json
-     *                 key, value: EditText Hint)
-     */
-    public static void showProfile(@NonNull Activity activity, @Nullable String pilotId, @Nullable HashMap<String, String> extras) {
-        if (activity != null) {
-            if ((pilotId == null || pilotId.isEmpty()) && AirMap.hasValidAuthenticatedUser()) {
-                pilotId = AirMap.getUserId();
-            }
-            Intent intent = new Intent(activity, ProfileActivity.class);
-            intent.putExtra(ProfileActivity.ARG_PILOT_ID, pilotId);
-            if (extras != null) {
-                intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
-            }
-            activity.startActivity(intent);
-        }
-    }
-
-    /**
-     * Display the authenticated pilot's profile
-     *
-     * @param fragment the fragment to start the UI with
-     * @param pilotId  The ID of the pilot to show the profile for
-     * @param extras   Extra information to collect from the pilot in the profile page (key: json
-     *                 key, value: EditText Hint)
-     */
-    public static void showProfile(@NonNull android.support.v4.app.Fragment fragment, @Nullable String pilotId, @Nullable HashMap<String, String> extras) {
-        if (fragment != null) {
-            if ((pilotId == null || pilotId.isEmpty()) && AirMap.hasValidAuthenticatedUser()) {
-                pilotId = AirMap.getUserId();
-            }
-            Intent intent = new Intent(fragment.getContext(), ProfileActivity.class);
-            intent.putExtra(ProfileActivity.ARG_PILOT_ID, pilotId);
-            if (extras != null) {
-                intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
-            }
-            fragment.startActivity(intent);
-        }
-    }
-
-    /**
-     * Display the authenticated pilot's profile
-     *
-     * @param fragment the fragment to start the UI with
-     * @param pilotId  The ID of the pilot to show the profile for
-     * @param extras   Extra information to collect from the pilot in the profile page (key: json
-     *                 key, value: EditText Hint)
-     */
-    public static void showProfile(@NonNull Fragment fragment, @Nullable String pilotId, @Nullable HashMap<String, String> extras) {
-        if (fragment != null) {
-            if ((pilotId == null || pilotId.isEmpty()) && AirMap.hasValidAuthenticatedUser()) {
-                pilotId = AirMap.getUserId();
-            }
-            Intent intent = new Intent(fragment.getActivity(), ProfileActivity.class);
-            intent.putExtra(ProfileActivity.ARG_PILOT_ID, pilotId);
-            if (extras != null) {
-                intent.putExtra(CreateFlightActivity.KEY_VALUE_EXTRAS, extras);
-            }
-            fragment.startActivity(intent);
-        }
-    }
-
-    /**
-     * Display the another pilot's profile
-     *
-     * @param fragment the fragment to start the UI with
-     * @param pilotId  The ID of the pilot to show the profile for
-     * @param extras   Extra information to collect from the pilot in the profile page (key: json
-     *                 key, value: EditText Hint)
-     */
-    public static void showPilotProfile(@NonNull android.support.v4.app.Fragment fragment, @Nullable String pilotId, @Nullable HashMap<String, String> extras) {
-        if (fragment != null) {
-            Intent intent = new Intent(fragment.getActivity(), PilotProfileActivity.class);
-            intent.putExtra(ProfileActivity.ARG_PILOT_ID, pilotId);
-            fragment.getActivity().startActivity(intent);
-        }
-    }
-
-
-    /**
      * Get all the authenticated pilot's aircraft
      *
      * @param callback The callback that is invoked on success or error
@@ -1133,57 +890,6 @@ public class AirMap {
     }
 
     /**
-     * Display UI to create an aircraft
-     */
-    public static void showCreateAircraft() {
-        Context context = AirMap.getInstance().getContext();
-        Intent intent = new Intent(context, CreateEditAircraftActivity.class);
-        context.startActivity(intent);
-    }
-
-    /**
-     * Display UI to create an aircraft. Use this if you want the the result of the activity
-     *
-     * @param activity    An activity to create the CreateEditAircraftActivity from (needed to
-     *                    start an activity for result and to deliver the result to the activity)
-     * @param requestCode the requestCode to start the Activity with
-     */
-    public static void showCreateAircraft(@NonNull Activity activity, int requestCode) {
-        if (activity != null) {
-            Intent intent = new Intent(activity, CreateEditAircraftActivity.class);
-            activity.startActivityForResult(intent, requestCode);
-        }
-    }
-
-    /**
-     * Display UI to create an aircraft. Use this if you want the the result of the activity
-     *
-     * @param fragment    An activity to create the CreateEditAircraftActivity from (needed to
-     *                    start an activity for result and to deliver the result to the activity)
-     * @param requestCode the requestCode to start the Activity with
-     */
-    public static void showCreateAircraft(@NonNull Fragment fragment, int requestCode) {
-        if (fragment != null) {
-            Intent intent = new Intent(fragment.getActivity(), CreateEditAircraftActivity.class);
-            fragment.startActivityForResult(intent, requestCode);
-        }
-    }
-
-    /**
-     * Display UI to create an aircraft. Use this if you want the the result of the activity
-     *
-     * @param fragment    An activity to create the CreateEditAircraftActivity from (needed to
-     *                    start an activity for result and to deliver the result to the activity)
-     * @param requestCode the requestCode to start the Activity with
-     */
-    public static void showCreateAircraft(@NonNull android.support.v4.app.Fragment fragment, int requestCode) {
-        if (fragment != null) {
-            Intent intent = new Intent(fragment.getContext(), CreateEditAircraftActivity.class);
-            fragment.startActivityForResult(intent, requestCode);
-        }
-    }
-
-    /**
      * Get a flight status based on a Point and Radius based flight
      *
      * @param coordinate   The coordinate of the flight
@@ -1194,6 +900,7 @@ public class AirMap {
      * @param date         Date and time for planned flight
      * @param callback     The callback that is invoked on success or error
      */
+    @Deprecated
     public static Call checkCoordinate(@NonNull Coordinate coordinate, @Nullable Double buffer,
                                        @Nullable List<MappingService.AirMapAirspaceType> types,
                                        @Nullable List<MappingService.AirMapAirspaceType> ignoredTypes,
@@ -1214,6 +921,7 @@ public class AirMap {
      * @param date         Date and time for planned flight
      * @param callback     The callback that is invoked on success or error
      */
+    @Deprecated
     public static Call checkFlightPath(@NonNull List<Coordinate> path, int buffer, @NonNull Coordinate takeOffPoint,
                                        @Nullable List<MappingService.AirMapAirspaceType> types,
                                        @Nullable List<MappingService.AirMapAirspaceType> ignoredTypes, boolean showWeather,
@@ -1232,6 +940,7 @@ public class AirMap {
      * @param date         Date and time for planned flight
      * @param callback     The callback that is invoked on success or error
      */
+    @Deprecated
     public static Call checkPolygon(@NonNull List<Coordinate> geometry, @NonNull Coordinate takeOffPoint,
                                     @Nullable List<MappingService.AirMapAirspaceType> types,
                                     @Nullable List<MappingService.AirMapAirspaceType> ignoredTypes,
@@ -1247,6 +956,7 @@ public class AirMap {
      * @param buffer       Number of meters to buffer a flight (the radius of the flight)
      * @param callback     The callback that is invoked on success or error
      */
+    @Deprecated
     public static Call checkWeather(@NonNull Coordinate coordinate, @Nullable Double buffer,
                                        @Nullable AirMapCallback<AirMapStatus> callback) {
         return StatusService.checkWeather(coordinate, buffer, callback);
@@ -1294,7 +1004,7 @@ public class AirMap {
         FlightService.getFlightBriefing(flightPlanId, callback);
     }
 
-    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull List<Coordinate> geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull List<Coordinate> geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceStatus> listener) {
         List<String> rulesetIds = new ArrayList<>();
         for (AirMapRuleset ruleset : rulesets) {
             rulesetIds.add(ruleset.getId());
@@ -1303,7 +1013,7 @@ public class AirMap {
         return RulesetService.getAdvisories(rulesetIds, geometry, start, end, flightFeatures, listener);
     }
 
-    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapAirspaceStatus> listener) {
         List<String> rulesetIds = new ArrayList<>();
         for (AirMapRuleset ruleset : rulesets) {
             rulesetIds.add(ruleset.getId());
@@ -1312,11 +1022,11 @@ public class AirMap {
         return RulesetService.getAdvisories(rulesetIds, geometry, start, end, flightFeatures, listener);
     }
 
-    public static Call getAdvisories(@NonNull List<String> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+    public static Call getAdvisories(@NonNull List<String> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceStatus> listener) {
         return RulesetService.getAdvisories(rulesets, geometry, start, end, null, listener);
     }
 
-    public static Call getAdvisories(@NonNull List<String> rulesets, Coordinate southwest, Coordinate northwest, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceAdvisoryStatus> listener) {
+    public static Call getAdvisories(@NonNull List<String> rulesets, Coordinate southwest, Coordinate northwest, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceStatus> listener) {
         // create polygon based on Lat/Long bounds
         List<Coordinate> bounds = new ArrayList<>();
         bounds.add(southwest);
@@ -1333,7 +1043,6 @@ public class AirMap {
      * @param theme  The theme of the map
      * @return the map tile url
      */
-
     public static String getTileSourceUrl(List<MappingService.AirMapLayerType> layers, MappingService.AirMapMapTheme theme) {
         return airMapMapMappingService.getTileSourceUrl(layers, theme);
     }
