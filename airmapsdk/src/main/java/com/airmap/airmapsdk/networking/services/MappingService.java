@@ -7,9 +7,7 @@ import android.text.TextUtils;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
-import com.airmap.airmapsdk.networking.callbacks.GenericOkHttpCallback;
 import com.airmap.airmapsdk.util.AirMapConfig;
 import com.airmap.airmapsdk.util.Utils;
 
@@ -377,8 +375,8 @@ public class MappingService extends BaseService {
         return stylesUrl;
     }
 
-    protected void getStylesJson(AirMapMapTheme theme, final AirMapCallback<JSONObject> listener) {
-        AirMap.getClient().get(getStylesUrl(theme), new Callback() {
+    protected Call getStylesJson(AirMapMapTheme theme, final AirMapCallback<JSONObject> listener) {
+        return AirMap.getClient().get(getStylesUrl(theme), new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 listener.error(new AirMapException(e.getMessage()));
