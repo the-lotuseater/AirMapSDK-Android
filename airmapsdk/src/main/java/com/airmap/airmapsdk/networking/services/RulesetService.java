@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.models.flight.AirMapFlightBriefing;
 import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.rules.AirMapJurisdiction;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
@@ -144,5 +145,25 @@ public class RulesetService extends BaseService {
 
         Call call = AirMap.getClient().postWithJsonBody(advisoriesUrl, params, new GenericOkHttpCallback(listener, AirMapAirspaceStatus.class));
         return call;
+    }
+
+    static Call getEvaluation(List<String> rulesets, JSONObject geometry, @Nullable Map<String,Object> flightFeatures, AirMapCallback<AirMapFlightBriefing> callback) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("rulesets", TextUtils.join(",", rulesets));
+        params.put("geometry", geometry);
+
+        if (flightFeatures != null && !flightFeatures.isEmpty()) {
+            try {
+                JSONObject jsonObject = new JSONObject();
+                for (String key : flightFeatures.keySet()) {
+                    jsonObject.put(key, flightFeatures.get(key));
+                }
+                params.put("flight_features", jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return AirMap.getClient().postWithJsonBody(evaluationUrl, params, new GenericOkHttpCallback(callback, AirMapFlightBriefing.class));
     }
 }

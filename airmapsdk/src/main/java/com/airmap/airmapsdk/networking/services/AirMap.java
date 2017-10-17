@@ -1002,6 +1002,10 @@ public final class AirMap {
         FlightService.getFlightBriefing(flightPlanId, callback);
     }
 
+    public static void getFlightPlanEvaluation(@NonNull List<String> rulesets, @NonNull JSONObject geometry, @Nullable Map<String, Object> flightFeatures, AirMapCallback<AirMapFlightBriefing> listener) {
+        RulesetService.getEvaluation(rulesets, geometry, flightFeatures, listener);
+    }
+
     public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull List<Coordinate> geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String, Object> flightFeatures, AirMapCallback<AirMapAirspaceStatus> listener) {
         List<String> rulesetIds = new ArrayList<>();
         for (AirMapRuleset ruleset : rulesets) {
