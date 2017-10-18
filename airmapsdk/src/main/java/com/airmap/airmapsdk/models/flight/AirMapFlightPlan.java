@@ -212,6 +212,11 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
             JSONObject flightFeaturesJson = new JSONObject();
             for (FlightFeatureValue featureValue : flightFeatureValues.values()) {
                 try {
+                    // Don't include empty strings
+                    if (featureValue.getValue() != null && featureValue.getValue() instanceof String && TextUtils.isEmpty((CharSequence) featureValue.getValue())) {
+                        continue;
+                    }
+
                     flightFeaturesJson.put(featureValue.getKey(), featureValue.getValue());
                 } catch (JSONException e) {
                     e.printStackTrace();
