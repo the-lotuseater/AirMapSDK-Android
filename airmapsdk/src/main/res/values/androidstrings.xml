@@ -119,4 +119,6 @@
     <string name="authorization_pending">Authorization Pending Submission</string>
     <string name="authorization_accepted">Approved</string>
     <string name="authorization_rejected">Rejected</string>
+
+    <string name="airspace_laanc_authorization_automated">FAA authorization available</string>
 </resources>
