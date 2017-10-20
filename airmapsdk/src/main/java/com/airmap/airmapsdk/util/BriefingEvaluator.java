@@ -90,7 +90,11 @@ public class BriefingEvaluator {
             for (AirMapRule rule : ruleset.getRules()) {
                 // Rules that are conflicting, missing information or are informational should be shown
                 if (rule.getStatus() != AirMapRule.Status.NotConflicting) {
-                    flightFeatures.addAll(rule.getFlightFeatures());
+                    for (AirMapFlightFeature flightFeature : rule.getFlightFeatures()) {
+                        if (!flightFeature.isCalculated()) {
+                            flightFeatures.add(flightFeature);
+                        }
+                    }
                 }
             }
         }
