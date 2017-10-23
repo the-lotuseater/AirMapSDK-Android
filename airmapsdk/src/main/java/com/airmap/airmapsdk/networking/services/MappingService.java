@@ -354,7 +354,7 @@ public class MappingService extends BaseService {
 
     protected String getStylesUrl(AirMapMapTheme theme) {
         String stageOrProd = BaseService.DEBUG ? "stage/" : "";
-        String stylesUrl = "https://cdn." + AirMapConfig.getDomain() +"/static/map-styles/" + stageOrProd + "0.7.2/";
+        String stylesUrl = "https://cdn." + AirMapConfig.getDomain() +"/static/map-styles/" + stageOrProd + "0.7.3/";
 
         switch (theme) {
             case Light:
