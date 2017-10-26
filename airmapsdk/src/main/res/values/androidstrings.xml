@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+
+    <string name="com_auth0_domain">sso.airmap.io</string>
+    <string name="com_auth0_scheme">airmap</string>
+
     <string name="read_full_rules">Read Full Rules</string>
     <string name="learn_more">Learn More</string>
     <string name="rules_hint">Learn about federal, state, and local rules that may impact operations in this area</string>

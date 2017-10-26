@@ -26,9 +26,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="sso.airmap.io"
+                    android:host="@string/com_auth0_domain"
                     android:pathPrefix="/android/${applicationId}/callback"
-                    android:scheme="airmap" />
+                    android:scheme="@string/com_auth0_scheme" />
             </intent-filter>
         </activity>
 
