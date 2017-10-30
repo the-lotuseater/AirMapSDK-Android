@@ -33,15 +33,6 @@ public class AirMapConfig {
         }
     }
 
-    public static String getApiOverride(String key) {
-        try {
-            return AirMap.getConfig().getJSONObject("airmap").getJSONObject("api_overrides").getString(key);
-        } catch (JSONException e) {
-            AirMapLog.e(TAG, "Error getting api override for " + key + "  from airmap.config.json", e);
-            throw new RuntimeException("Error getting api override for " + key +  " from airmap.config.json");
-        }
-    }
-
     public static boolean isStage() {
         try {
             return AirMap.getConfig().getJSONObject("airmap").optString("environment", "prod").equals("stage");
@@ -85,6 +76,16 @@ public class AirMapConfig {
             AirMapLog.e(TAG, "No mqtt domain found in airmap.config.json, defaulting to airmap.io", e);
 
             return "airmap.io";
+        }
+    }
+
+    public static String getApiOverride(String key, String fallback) {
+        try {
+            return AirMap.getConfig().getJSONObject("airmap").getJSONObject("api_overrides").optString(key, fallback);
+        } catch (JSONException e) {
+            AirMapLog.e(TAG, "No overridden end point found in airmap.config.json for: " + key, e);
+
+            return fallback;
         }
     }
 }
