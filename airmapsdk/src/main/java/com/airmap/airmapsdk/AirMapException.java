@@ -11,6 +11,8 @@ import org.json.JSONObject;
 @SuppressWarnings("unused")
 public class AirMapException extends Exception {
 
+    private static final String TAG = "AirMapException";
+
     private static final String UNKNOWN_ERROR_MESSAGE = "Unknown error";
 
     private int errorCode;
@@ -95,6 +97,9 @@ public class AirMapException extends Exception {
         }
         JSONObject data = json.optJSONObject("data");
         if (data == null) {
+            if (json.has("message")) {
+                return json.optString("message");
+            }
             return UNKNOWN_ERROR_MESSAGE;
         }
         return data.optString("message");

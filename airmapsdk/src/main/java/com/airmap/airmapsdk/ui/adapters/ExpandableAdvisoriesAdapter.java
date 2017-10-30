@@ -26,6 +26,7 @@ import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.models.status.properties.AirMapAirportProperties;
+import com.airmap.airmapsdk.models.status.properties.AirMapControlledAirspaceProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapHeliportProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapNotamProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapPowerPlantProperties;
@@ -187,6 +188,15 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Mappi
                         }
                         break;
                     }
+                    case ControlledAirspace: {
+                        AirMapControlledAirspaceProperties controlledAirspaceProperties = advisory.getControlledAirspaceProperties();
+
+                        if (controlledAirspaceProperties.isLaanc() && controlledAirspaceProperties.isAuthorization()) {
+                            description = holder.itemView.getContext().getString(R.string.airspace_laanc_authorization_automated);
+                            ((AdvisoryViewHolder) holder).infoTextView.setTextColor(ContextCompat.getColor(((AdvisoryViewHolder) holder).infoTextView.getContext(), R.color.airmap_aqua));
+                        }
+                        break;
+                    }
                 }
             }
 
@@ -285,8 +295,8 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Mappi
             super(itemView);
 
             backgroundView = itemView.findViewById(R.id.background_view);
-            textView = (TextView) itemView.findViewById(R.id.title_text_view);
-            expandImageView = (ImageView) itemView.findViewById(R.id.expand_image_view);
+            textView = itemView.findViewById(R.id.title_text_view);
+            expandImageView = itemView.findViewById(R.id.expand_image_view);
         }
     }
 
@@ -299,8 +309,8 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Mappi
             super(itemView);
 
             backgroundView = itemView.findViewById(R.id.background_view);
-            titleTextView = (TextView) itemView.findViewById(R.id.title_text_view);
-            infoTextView = (TextView) itemView.findViewById(R.id.info_text_view);
+            titleTextView = itemView.findViewById(R.id.title_text_view);
+            infoTextView = itemView.findViewById(R.id.info_text_view);
         }
     }
 }

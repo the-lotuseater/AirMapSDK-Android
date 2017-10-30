@@ -1,6 +1,8 @@
 package com.airmap.airmapsdk.util;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -10,7 +12,6 @@ import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.Coordinate;
-import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
@@ -162,8 +163,7 @@ public class Utils {
             DateTime dateTime = dateTimeFormatter.parseDateTime(iso8601);
             return dateTime.toDate();
         } catch (UnsupportedOperationException | IllegalArgumentException e) {
-            AirMapLog.e("AirMap Utils", "Error parsing date: " + e.getMessage());
-            e.printStackTrace();
+            AirMapLog.e("AirMap Utils", "Error parsing date: " + iso8601, e);
         }
         return null;
     }
@@ -390,25 +390,6 @@ public class Utils {
         return new PolygonOptions().addAll(points).strokeColor(color).alpha(0.66f).fillColor(color);
     }
 
-    public static int getStatusCircleColor(AirMapStatus latestStatus, Context context) {
-        int color = 0;
-        if (latestStatus != null) {
-            AirMapStatus.StatusColor statusColor = latestStatus.getAdvisoryColor();
-            if (statusColor == AirMapStatus.StatusColor.Red) {
-                color = ContextCompat.getColor(context, R.color.status_red);
-            } else if (statusColor == AirMapStatus.StatusColor.Orange) {
-                color = ContextCompat.getColor(context, R.color.status_orange);
-            } else if (statusColor == AirMapStatus.StatusColor.Yellow) {
-                color = ContextCompat.getColor(context, R.color.status_yellow);
-            } else if (statusColor == AirMapStatus.StatusColor.Green) {
-                color = ContextCompat.getColor(context, R.color.status_green);
-            }
-        } else {
-            color = 0x1E88E5;
-        }
-        return color;
-    }
-
     public static String readInputStreamAsString(InputStream in) throws IOException {
         BufferedInputStream bis = new BufferedInputStream(in);
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
@@ -454,5 +435,11 @@ public class Utils {
         } catch (JSONException e) {
             return "v2/";
         }
+    }
+
+    public static boolean isNetworkConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 }

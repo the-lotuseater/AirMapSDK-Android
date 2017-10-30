@@ -127,29 +127,29 @@ public class ExpandableRulesAdapter extends ExpandableRecyclerAdapter<AirMapRule
         return R.drawable.ic_asterisk_yellow;
     }
 
-    private class SectionViewHolder extends RecyclerView.ViewHolder {
+    protected class SectionViewHolder extends RecyclerView.ViewHolder {
 
         TextView descriptionTextView;
         ImageView statusImageView;
         ImageView expandImageView;
         AirMapRule.Status status;
 
-        SectionViewHolder(View itemView) {
+        public SectionViewHolder(View itemView) {
             super(itemView);
 
-            descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
-            statusImageView = (ImageView) itemView.findViewById(R.id.status_badge_image_view);
-            expandImageView = (ImageView) itemView.findViewById(R.id.expand_image_view);
+            descriptionTextView = itemView.findViewById(R.id.description_text_view);
+            statusImageView = itemView.findViewById(R.id.status_badge_image_view);
+            expandImageView = itemView.findViewById(R.id.expand_image_view);
         }
     }
 
-    private class RuleViewHolder extends RecyclerView.ViewHolder {
+    protected class RuleViewHolder extends RecyclerView.ViewHolder {
         TextView descriptionTextView;
 
-        RuleViewHolder(View itemView) {
+        public RuleViewHolder(View itemView) {
             super(itemView);
 
-            descriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
+            descriptionTextView = itemView.findViewById(R.id.description_text_view);
         }
     }
 }

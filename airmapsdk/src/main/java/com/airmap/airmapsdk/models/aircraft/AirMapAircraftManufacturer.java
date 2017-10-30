@@ -12,10 +12,10 @@ import java.io.Serializable;
  */
 @SuppressWarnings("unused")
 public class AirMapAircraftManufacturer implements Serializable, AirMapBaseModel {
+
     private String id;
     private String name;
     private String url;
-
 
     public AirMapAircraftManufacturer(JSONObject manufacturerJson) {
         constructFromJson(manufacturerJson);

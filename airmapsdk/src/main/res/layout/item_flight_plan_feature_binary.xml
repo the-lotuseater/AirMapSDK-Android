@@ -33,6 +33,7 @@
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:src="@drawable/ic_info"
+            android:tint="#fff"
             android:scaleType="centerInside"
             android:background="@null"/>
 

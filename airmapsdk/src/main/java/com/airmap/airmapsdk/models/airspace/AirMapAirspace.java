@@ -24,7 +24,6 @@ public class AirMapAirspace implements Serializable, AirMapBaseModel {
     private String city;
     private AirMapGeometry geometry;
     private AirMapGeometry propertyBoundary;
-    private List<AirMapAirspaceRule> rules;
 
     public AirMapAirspace(JSONObject airspaceJson) {
         constructFromJson(airspaceJson);
@@ -117,13 +116,5 @@ public class AirMapAirspace implements Serializable, AirMapBaseModel {
 
     public void setPropertyBoundary(AirMapGeometry propertyBoundary) {
         this.propertyBoundary = propertyBoundary;
-    }
-
-    public List<AirMapAirspaceRule> getRules() {
-        return rules;
-    }
-
-    public void setRules(List<AirMapAirspaceRule> rules) {
-        this.rules = rules;
     }
 }

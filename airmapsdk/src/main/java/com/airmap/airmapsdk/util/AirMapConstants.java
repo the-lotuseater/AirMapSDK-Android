@@ -6,24 +6,19 @@ package com.airmap.airmapsdk.util;
 
 public class AirMapConstants {
 
-    public static final String STATUS_PERMIT_EXTRA = "status_permit_extra";
-    public static final String PERMIT_WALLET_EXTRA = "permit_wallet_extra";
-    public static final String AVAILABLE_PERMIT_EXTRA = "available_permit_extra";
     public static final String URL_EXTRA = "url_extra";
-    public static final String WELCOME_EXTRA = "welcome_extra";
-    public static final String WELCOME_RESULT_EXTRA = "welcome_result_extra";
-    public static final String CITY_EXTRA = "city_extra";
     public static final String AIRCRAFT_EXTRA = "aircraft_extra";
     public static final String PILOT_EXTRA = "pilot_extra";
+    public static final String FLIGHT_PLAN_ID_EXTRA = "flight_plan_id_extra";
+    public static final String KEY_VALUE_EXTRAS = "key_value_extras";
+    public static final String START_DATE_EXTRA = "start_date_extra";
+    public static final String END_DATE_EXTRA = "end_date_extra";
 
-    public static final String FAQ_URL = "https://cdn.airmap.io/static/webviews/faq.html";
-    public static final String FAQ_PERMITS_URL = "https://cdn.airmap.io/static/webviews/faq.html#permit-what";
     public static final String INFO_URL = "https://cdn.airmap.io/static/webviews/faq.html#let-others-know";
 
     public static final String MEASUREMENT_SYSTEM = "measurement_system";
     public static final String IMPERIAL_SYSTEM = "imperial_system";
     public static final String METRIC_SYSTEM = "metric_system";
-
 
 
     public static final int CUSTOM_PROPERTIES_REQUEST_CODE = 112;

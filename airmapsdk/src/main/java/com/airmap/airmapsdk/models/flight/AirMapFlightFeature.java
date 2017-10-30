@@ -25,7 +25,7 @@ public class AirMapFlightFeature implements Serializable, AirMapBaseModel {
     }
 
     public enum InputType {
-        Double,Boolean, String, Unknown;
+        Double,Boolean, String, Info, Unknown;
 
         private static InputType fromText(String text) {
             switch (text.toLowerCase()) {
@@ -35,6 +35,8 @@ public class AirMapFlightFeature implements Serializable, AirMapBaseModel {
                     return Boolean;
                 case "string":
                     return String;
+                case "info":
+                    return Info;
                 default:
                     return Unknown;
             }
@@ -42,6 +44,8 @@ public class AirMapFlightFeature implements Serializable, AirMapBaseModel {
 
         public int value() {
             switch (this) {
+                case Info:
+                    return 0;
                 case String:
                     return 1;
                 case Double:
@@ -109,6 +113,7 @@ public class AirMapFlightFeature implements Serializable, AirMapBaseModel {
     private InputType inputType;
     private MeasurementType measurementType;
     private MeasurementUnit measurementUnit;
+    private boolean isCalculated;
 
     public AirMapFlightFeature(String flightFeature) {
         setFlightFeature(flightFeature);
@@ -125,6 +130,7 @@ public class AirMapFlightFeature implements Serializable, AirMapBaseModel {
         setDescription(json.optString("description"));
         setMeasurementType(MeasurementType.fromText(json.optString("measurement_type")));
         setMeasurementUnit(MeasurementUnit.fromText(json.optString("measurement_unit")));
+        setCalculated(json.optBoolean("is_calculated"));
         return this;
     }
 
@@ -166,6 +172,19 @@ public class AirMapFlightFeature implements Serializable, AirMapBaseModel {
 
     public void setMeasurementUnit(MeasurementUnit measurementUnit) {
         this.measurementUnit = measurementUnit;
+    }
+
+    public boolean isCalculated() {
+        return isCalculated;
+    }
+
+    public void setCalculated(boolean calculated) {
+        isCalculated = calculated;
+    }
+
+    @Override
+    public String toString() {
+        return flightFeature;
     }
 
     @Override

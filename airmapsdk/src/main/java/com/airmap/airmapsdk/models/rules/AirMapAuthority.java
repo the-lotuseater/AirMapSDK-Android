@@ -12,6 +12,7 @@ import java.io.Serializable;
 
 public class AirMapAuthority implements Serializable, AirMapBaseModel {
 
+    private String id;
     private String name;
 
     private AirMapAuthority() {
@@ -23,6 +24,7 @@ public class AirMapAuthority implements Serializable, AirMapBaseModel {
 
     @Override
     public AirMapBaseModel constructFromJson(JSONObject json) {
+        setId(json.optString("id"));
         setName(json.optString("name"));
         return this;
     }
@@ -33,5 +35,13 @@ public class AirMapAuthority implements Serializable, AirMapBaseModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

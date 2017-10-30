@@ -1,6 +1,5 @@
 package com.airmap.airmapsdk.networking.services;
 
-import com.airmap.airmapsdk.BuildConfig;
 import com.airmap.airmapsdk.util.AirMapConfig;
 import com.airmap.airmapsdk.util.Utils;
 
@@ -12,8 +11,8 @@ import com.airmap.airmapsdk.util.Utils;
 class BaseService {
 
     //URLs should end with a /
-    protected static final boolean OVERRIDE = false;
-    protected static final boolean STAGING = AirMapConfig.isStage() || OVERRIDE;
+    protected static final boolean OVERRIDE_TO_STAGING = false;
+    protected static final boolean STAGING = AirMapConfig.isStage() || OVERRIDE_TO_STAGING;
 
     //Base Urls
     protected static final String baseUrl = "https://api." + AirMapConfig.getDomain() + "/";
@@ -96,9 +95,11 @@ class BaseService {
 
     //Rules
     protected static final String rulesetsVersion = STAGING ? Utils.getStagingUrl() : "v1/";
-    protected static final String rulesetsBaseUrl = baseUrl + "rules/" + rulesetsVersion;
-    protected static final String welcomeBaseUrl = STAGING ? baseUrl + "rules/stage/locale/" : baseUrl + "rules/v1/locale";
-    protected static final String rulesByIdUrl = rulesetsBaseUrl + "%s/"; //Replace %s with id using String.format
-    protected static final String rulesetsUrl = rulesetsBaseUrl + "rule/";
+    protected static final String jurisdictionBaseUrl = baseUrl + "jurisdiction" + rulesetsVersion;
+    protected static final String jurisdictionByIdUrl = jurisdictionBaseUrl + "%s/"; //Replace %s with id using String.format
+    protected static final String rulesetBaseUrl = baseUrl + "rules/" + rulesetsVersion;
+    protected static final String rulesetByIdUrl = rulesetBaseUrl + "%s/"; //Replace %s with id using String.format
+    protected static final String rulesByIdUrl = rulesetBaseUrl + "%s/"; //Replace %s with id using String.format
     protected static final String advisoriesUrl = baseUrl + "advisory/" + rulesetsVersion + "airspace";
+    protected static final String evaluationUrl = rulesetBaseUrl + "evaluation";
 }

@@ -35,7 +35,8 @@ class StatusService extends BaseService {
      * @param date         Date and time for planned flight
      * @param listener     The callback that is invoked on success or error
      */
-    public static Call checkCoordinate(Coordinate coordinate, @Nullable Double buffer,
+    @Deprecated
+    static Call checkCoordinate(Coordinate coordinate, @Nullable Double buffer,
                                        List<MappingService.AirMapAirspaceType> types,
                                        List<MappingService.AirMapAirspaceType> ignoredTypes,
                                        boolean weather, Date date,
@@ -60,7 +61,8 @@ class StatusService extends BaseService {
      * @param date         Date and time for planned flight
      * @param listener     The callback that is invoked on success or error
      */
-    public static Call checkFlightPath(List<Coordinate> path, int buffer, Coordinate takeOffPoint,
+    @Deprecated
+    static Call checkFlightPath(List<Coordinate> path, int buffer, Coordinate takeOffPoint,
                                        List<MappingService.AirMapAirspaceType> types,
                                        List<MappingService.AirMapAirspaceType> ignoredTypes,
                                        boolean weather, Date date,
@@ -82,7 +84,8 @@ class StatusService extends BaseService {
      * @param date         Date and time for planned flight
      * @param listener     The callback that is invoked on success or error
      */
-    public static Call checkPolygon(List<Coordinate> geometry, Coordinate takeOffPoint,
+    @Deprecated
+    static Call checkPolygon(List<Coordinate> geometry, Coordinate takeOffPoint,
                                     List<MappingService.AirMapAirspaceType> types,
                                     List<MappingService.AirMapAirspaceType> ignoredTypes,
                                     boolean weather, Date date,
@@ -100,7 +103,8 @@ class StatusService extends BaseService {
      * @param buffer       Number of meters to buffer a flight (the radius of the flight)
      * @param listener     The callback that is invoked on success or error
      */
-    public static Call checkWeather(Coordinate coordinate, @Nullable Double buffer,
+    @Deprecated
+    static Call checkWeather(Coordinate coordinate, @Nullable Double buffer,
                                        AirMapCallback<AirMapStatus> listener) {
         String url = statusPointUrl;
         Map<String, String> params = AirMapStatus.getAsParams(coordinate, null, null, true, new Date());
@@ -110,7 +114,16 @@ class StatusService extends BaseService {
         return AirMap.getClient().get(url, params, new GenericOkHttpCallback(listener, AirMapStatus.class));
     }
 
-    public static Call getWeather(Coordinate coordinate, Date startTime, Date endTime, AirMapCallback<AirMapWeather> callback) {
+    /**
+     * Get weather for a particular coordinate and time range
+     *
+     * @param coordinate
+     * @param startTime
+     * @param endTime
+     * @param callback
+     * @return
+     */
+    static Call getWeather(Coordinate coordinate, Date startTime, Date endTime, AirMapCallback<AirMapWeather> callback) {
         Map<String, String> params = new HashMap<>();
         params.put("latitude", Double.toString(coordinate.getLatitude()));
         params.put("longitude", Double.toString(coordinate.getLongitude()));

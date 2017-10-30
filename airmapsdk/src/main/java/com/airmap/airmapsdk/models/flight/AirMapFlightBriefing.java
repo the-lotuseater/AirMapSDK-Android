@@ -1,12 +1,10 @@
 package com.airmap.airmapsdk.models.flight;
 
 import com.airmap.airmapsdk.models.AirMapBaseModel;
-import com.airmap.airmapsdk.models.airspace.AirMapAirspace;
-import com.airmap.airmapsdk.models.airspace.AirMapAirspaceAdvisoryStatus;
+import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.rules.AirMapAuthorization;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.models.rules.AirMapValidation;
-import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,7 +25,7 @@ public class AirMapFlightBriefing implements Serializable, AirMapBaseModel {
     private String color;
     private Date createdAt;
     private List<AirMapRuleset> rulesets;
-    private AirMapAirspaceAdvisoryStatus airspace;
+    private AirMapAirspaceStatus airspace;
     private List<AirMapValidation> validations;
     private List<AirMapAuthorization> authorizations;
 
@@ -54,7 +52,7 @@ public class AirMapFlightBriefing implements Serializable, AirMapBaseModel {
             }
 
             if (json.has("airspace")) {
-                airspace = new AirMapAirspaceAdvisoryStatus(json.optJSONObject("airspace"));
+                airspace = new AirMapAirspaceStatus(json.optJSONObject("airspace"));
             }
 
             validations = new ArrayList<>();
@@ -100,11 +98,11 @@ public class AirMapFlightBriefing implements Serializable, AirMapBaseModel {
         this.createdAt = createdAt;
     }
 
-    public AirMapAirspaceAdvisoryStatus getAirspace() {
+    public AirMapAirspaceStatus getAirspace() {
         return airspace;
     }
 
-    public void setAirspace(AirMapAirspaceAdvisoryStatus airspace) {
+    public void setAirspace(AirMapAirspaceStatus airspace) {
         this.airspace = airspace;
     }
 
