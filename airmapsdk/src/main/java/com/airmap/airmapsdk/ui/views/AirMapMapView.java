@@ -244,7 +244,7 @@ public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedLi
         }
     }
 
-    private void removeMapLayers(String sourceId, List<String> sourceLayers) {
+    public void removeMapLayers(String sourceId, List<String> sourceLayers) {
         //TODO: file bug against mapbox, remove source doesn't seem to be working or at least not after just adding source
         //TODO: to reproduce, open app w/ active flight. adds map layers, removes layers, adds flight map layers
         AirMapLog.e(TAG, "remove source: " + sourceId  + " layers: " + TextUtils.join(",", sourceLayers));
