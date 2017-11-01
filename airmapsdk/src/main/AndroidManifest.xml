@@ -16,21 +16,10 @@
 
         <activity
             android:name="com.auth0.android.lock.LockActivity"
+            android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AirMap.Lock.Theme">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="@string/com_auth0_domain"
-                    android:pathPrefix="/android/${applicationId}/callback"
-                    android:scheme="@string/com_auth0_scheme" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/AirMap.Lock.Theme" />
 
     </application>
 
