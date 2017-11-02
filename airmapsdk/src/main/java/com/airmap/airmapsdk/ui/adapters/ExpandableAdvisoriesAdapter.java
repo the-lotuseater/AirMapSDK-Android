@@ -131,7 +131,10 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Mappi
                         AirMapWildfireProperties wildfire = advisory.getWildfireProperties();
                         SimpleDateFormat dateFormat = new SimpleDateFormat("h:mm a");
                         String unknownSize = holder.itemView.getContext().getString(R.string.unknown_size);
-                        description = dateFormat.format(wildfire.getEffectiveDate())  + " - " + (wildfire.getSize() == -1 ? unknownSize : String.format(Locale.US, "%d acres", wildfire.getSize()));
+
+                        if (wildfire != null && wildfire.getEffectiveDate() != null) {
+                            description = dateFormat.format(wildfire.getEffectiveDate())  + " - " + (wildfire.getSize() == -1 ? unknownSize : String.format(Locale.US, "%d acres", wildfire.getSize()));
+                        }
                         break;
                     }
                     case Airport: {
