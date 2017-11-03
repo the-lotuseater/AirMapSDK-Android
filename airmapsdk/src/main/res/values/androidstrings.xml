@@ -120,4 +120,25 @@
     <string name="pressure">Pressure</string>
 
     <string name="airspace_laanc_authorization_automated">FAA authorization available</string>
+
+    <string name="country">Country</string>
+    <string name="county">County</string>
+    <string name="embassy">Embassy</string>
+    <string name="fir">FIR</string>
+    <string name="federal_building">Federal Building</string>
+    <string name="glider_port">Gliderport</string>
+    <string name="highway">Highway</string>
+    <string name="industrial_property">Industrial Property</string>
+    <string name="military_property">Military Property</string>
+    <string name="police_station">Police Station</string>
+    <string name="powerline">Power Line</string>
+    <string name="railway">Railway</string>
+    <string name="residential_property">Residential Property</string>
+    <string name="stadium">Stadium</string>
+    <string name="state">State</string>
+    <string name="subprefecture">Subprefecture</string>
+    <string name="supercity">Supercity</string>
+    <string name="trap">Trap</string>
+    <string name="ulm_field">Ulm Field</string>
+    <string name="waterway">Waterway</string>
 </resources>
