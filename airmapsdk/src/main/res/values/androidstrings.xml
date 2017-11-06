@@ -125,7 +125,7 @@
     <string name="country">Country</string>
     <string name="county">County</string>
     <string name="embassy">Embassy</string>
-    <string name="fir">FIR</string>
+    <string name="fir">Flight Information Region</string>
     <string name="federal_building">Federal Building</string>
     <string name="glider_port">Gliderport</string>
     <string name="highway">Highway</string>
@@ -139,7 +139,7 @@
     <string name="state">State</string>
     <string name="subprefecture">Subprefecture</string>
     <string name="supercity">Supercity</string>
-    <string name="trap">Trap</string>
     <string name="ulm_field">Ulm Field</string>
     <string name="waterway">Waterway</string>
+    <string name="japan_base_admin">Japan Base Admin</string>
 </resources>
