@@ -50,7 +50,7 @@ public class MapStyleController implements MapView.OnMapChangedListener {
 
         currentTheme = MappingService.AirMapMapTheme.Standard;
 
-        map.getMapView().addOnMapChangedListener(this);
+        map.addOnMapChangedListener(this);
     }
 
     public void onMapReady() {

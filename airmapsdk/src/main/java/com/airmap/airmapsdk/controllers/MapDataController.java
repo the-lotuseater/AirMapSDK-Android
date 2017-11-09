@@ -102,8 +102,8 @@ public class MapDataController {
                     @Override
                     public Pair<Map<String, AirMapRuleset>,List<AirMapJurisdiction>> call(Coordinate coordinate) {
                         // query map for jurisdictions
-                        List<Feature> features = map.getMap().queryRenderedFeatures(new RectF(map.getMapView().getLeft(),
-                                map.getMapView().getTop(), map.getMapView().getRight(), map.getMapView().getBottom()), "jurisdictions");
+                        List<Feature> features = map.getMap().queryRenderedFeatures(new RectF(map.getLeft(),
+                                map.getTop(), map.getRight(), map.getBottom()), "jurisdictions");
 
                         Map<String, AirMapRuleset> jurisdictionRulesets = new HashMap<>();
                         List<AirMapJurisdiction> jurisdictions = new ArrayList<>();
