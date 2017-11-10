@@ -88,4 +88,13 @@ public class AirMapConfig {
             return fallback;
         }
     }
+
+    public static String getMapStyleUrl() {
+        try {
+            return AirMap.getConfig().getJSONObject("airmap").getString("map_style");
+        } catch (JSONException e) {
+            AirMapLog.e(TAG, "No map style found in airmap.config.json for", e);
+            return null;
+        }
+    }
 }
