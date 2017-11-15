@@ -94,7 +94,7 @@ public final class AirMap {
         ourInstance = new AirMap(context, authToken, pinCertificates);
         airMapTrafficService = new TrafficService(context); //Initialized here because TrafficService requires AirMap to be initialized already, so it is called after the constructor
         airMapMapMappingService = new MappingService(); //Initialized here because MappingService requires AirMap to be initialized already, so it is called after the constructor
-        AirMapLog.ENABLED = BaseService.DEBUG;
+        AirMapLog.ENABLED = BaseService.STAGING;
         return ourInstance;
     }
 

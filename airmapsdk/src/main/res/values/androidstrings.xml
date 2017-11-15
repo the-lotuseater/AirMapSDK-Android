@@ -84,9 +84,7 @@
     <string name="no">NO</string>
     <string name="yes">YES</string>
 
-    <string name="flight_brief">Flight Brief</string>
     <string name="advisory_type_quantity">%1$s (%2$s)</string>
-    <string name="rules_and_flight_features_header">Rules &amp; Flight Features</string>
     <string name="null_feature_value">—</string>
     <string name="flight_feature_speed">Speed</string>
     <string name="flight_feature_weight">Weight</string>
@@ -98,16 +96,10 @@
     <string name="flight_feature_km_per_hour">km/h</string>
     <string name="flight_feature_miles_per_hour">mph</string>
 
-    <string name="conflicting_rules">Rules you may be violating</string>
-    <string name="missing_info_rules">Rules needing more information</string>
-    <string name="informational_rules">Rules you should review</string>
-    <string name="not_conflicting_rules">Rules you are following</string>
     <string name="celsius_temp">%d °C</string>
     <string name="fahrenheit_temp">%d °F</string>
     <string name="kilometers_short">%d km</string>
     <string name="miles_short">%d mi</string>
-
-    <string name="no_pilot_name">Set Pilot Name</string>
 
     <string name="authorizations_header">Authorization &amp; Validation</string>
     <string name="rules_header">Rules &amp; Compliance</string>
@@ -119,6 +111,13 @@
     <string name="authorization_pending">Authorization Pending Submission</string>
     <string name="authorization_accepted">Authorization Approved</string>
     <string name="authorization_rejected">Authorization Rejected</string>
+
+    <string name="time">Time</string>
+    <string name="wind">Wind</string>
+    <string name="visibility">Visibility</string>
+    <string name="temperature">Temperature</string>
+    <string name="dew_point">Dew Point</string>
+    <string name="pressure">Pressure</string>
 
     <string name="airspace_laanc_authorization_automated">FAA authorization available</string>
 
