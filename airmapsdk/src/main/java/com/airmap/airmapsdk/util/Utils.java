@@ -413,11 +413,11 @@ public class Utils {
     }
 
 
-    public static String getDebugUrl() {
+    public static String getStagingUrl() {
         try {
             return AirMap.getConfig().getJSONObject("internal").getString("debug_url");
         } catch (JSONException e) {
-            return "v2/";
+            return "stage/";
         }
     }
 

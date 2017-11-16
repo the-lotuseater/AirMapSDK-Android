@@ -58,7 +58,7 @@ public class AirMapFlightBriefing implements Serializable, AirMapBaseModel {
             validations = new ArrayList<>();
             if (json.has("validations")) {
                 JSONArray validationsArray = json.optJSONArray("validations");
-                for (int i = 0; i < validationsArray.length(); i++) {
+                for (int i = 0; validationsArray != null && i < validationsArray.length(); i++) {
                     validations.add(new AirMapValidation(validationsArray.optJSONObject(i)));
                 }
             }
@@ -66,7 +66,7 @@ public class AirMapFlightBriefing implements Serializable, AirMapBaseModel {
             authorizations = new ArrayList<>();
             if (json.has("authorizations")) {
                 JSONArray authorizationsArray = json.optJSONArray("authorizations");
-                for (int i = 0; i < authorizationsArray.length(); i++) {
+                for (int i = 0; authorizationsArray != null && i < authorizationsArray.length(); i++) {
                     authorizations.add(new AirMapAuthorization(authorizationsArray.optJSONObject(i)));
                 }
             }

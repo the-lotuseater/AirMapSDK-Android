@@ -236,8 +236,8 @@ public class MappingService extends BaseService {
         University("university", R.string.airspace_type_university),
         Notam("notam", R.string.airspace_type_notam),
         AMA("ama_field", R.string.airspace_type_ama),
-        Country("country", R.string.country),
         County("county", R.string.county),
+        Country("country", R.string.country),
         Embassy("embassy", R.string.embassy),
         FIR("fir", R.string.fir),
         FederalBuilding("federal_building", R.string.federal_building),
@@ -253,9 +253,9 @@ public class MappingService extends BaseService {
         State("state", R.string.state),
         Subprefecture("subprefecture", R.string.subprefecture),
         Supercity("supercity", R.string.supercity),
-        Trap("trap", R.string.trap),
         UlmField("ulm_field", R.string.ulm_field),
         Waterway("waterway", R.string.waterway),
+        JapanBase("jpn_base", R.string.japan_base_admin),
         Unknown("unknown", R.string.airspace_type_unknown);
 
         private final String text;
@@ -354,8 +354,6 @@ public class MappingService extends BaseService {
                     return Subprefecture;
                 case "supercity":
                     return Supercity;
-                case "trap":
-                    return Trap;
                 case "ulm_field":
                     return UlmField;
                 case "waterway":
@@ -413,8 +411,12 @@ public class MappingService extends BaseService {
     }
 
     protected String getStylesUrl(AirMapMapTheme theme) {
-        String stageOrProd = BaseService.DEBUG ? "stage/" : "";
-        String stylesUrl = "https://cdn." + AirMapConfig.getDomain() +"/static/map-styles/" + stageOrProd + "0.7.3/";
+        String stylesUrl = AirMapConfig.getMapStyleUrl();
+
+        // fallback
+        if (TextUtils.isEmpty(stylesUrl)) {
+            stylesUrl = "https://cdn.airmap.com/static/map-styles/0.7.3/";
+        }
 
         switch (theme) {
             case Light:
