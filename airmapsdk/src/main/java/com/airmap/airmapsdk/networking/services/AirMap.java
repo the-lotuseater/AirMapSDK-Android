@@ -800,7 +800,7 @@ public final class AirMap {
      * @param token    The token that the pilot received in the text
      * @param callback The callback that is invoked on success or error
      */
-    public static Call verifyPhoneToken(@NonNull String token, @Nullable AirMapCallback<Void> callback) {
+    public static Call verifyPhoneToken(@NonNull String token, @Nullable AirMapCallback<Boolean> callback) {
         return PilotService.verifyToken(token, callback);
     }
 

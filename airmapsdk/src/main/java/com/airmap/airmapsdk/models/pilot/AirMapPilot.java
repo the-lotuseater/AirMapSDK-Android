@@ -1,5 +1,7 @@
 package com.airmap.airmapsdk.models.pilot;
 
+import android.text.TextUtils;
+
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 
 import org.json.JSONObject;
@@ -176,6 +178,10 @@ public class AirMapPilot implements Serializable, AirMapBaseModel {
     public AirMapPilot setAppMetaData(AirMapPilotMetaData appMetaData) {
         this.appMetaData = appMetaData;
         return this;
+    }
+
+    public boolean isPhoneVerified() {
+        return !TextUtils.isEmpty(phone) && verificationStatus != null && verificationStatus.isPhone();
     }
 
     /**

@@ -36,6 +36,7 @@
     <string name="resend_email">Resend Email</string>
     <string name="sent_email">Sent email</string>
     <string name="successfully_updated">Successfully updated</string>
+    <string name="phone_verification_mismatch">Verification code does not match the one sent. Send a new SMS for the verification code and try again?</string>
 
     <string name="select_manufacturer">Select Manufacturer</string>
     <string name="select_model">Select Model</string>
