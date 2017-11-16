@@ -270,6 +270,14 @@ public class MapDataController {
         });
     }
 
+    public void setRulesets(List<String> preferred, List<String> unpreferred) {
+        preferredRulesets.clear();
+        unpreferredRulesets.clear();
+        preferredRulesets.addAll(preferred);
+        unpreferredRulesets.addAll(unpreferred);
+        preferredRulesetsPublishSubject.onNext(preferredRulesets);
+    }
+
     public void onMapLoaded(LatLng latLng) {
         jurisdictionsPublishSubject.onNext(new Coordinate(latLng));
     }

@@ -94,6 +94,10 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         addOnMapChangedListener(this);
     }
 
+    public void setRulesets(List<String> preferred, List<String> unpreferred) {
+        mapDataController.setRulesets(preferred, unpreferred);
+    }
+
     @Override
     public void onMapReady(MapboxMap mapboxMap) {
 
@@ -142,7 +146,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         }
     }
 
-    public void setLayers(List<AirMapRuleset> newRulesets) {
+    private void setLayers(List<AirMapRuleset> newRulesets) {
         for (AirMapRuleset oldRuleset : selectedRulesets) {
             if (!newRulesets.contains(oldRuleset)) {
                 removeMapLayers(oldRuleset.getId(), oldRuleset.getLayers());
