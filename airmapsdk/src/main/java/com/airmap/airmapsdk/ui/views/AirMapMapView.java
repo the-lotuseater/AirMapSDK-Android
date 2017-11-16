@@ -100,14 +100,8 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     @Override
     public void onMapReady(MapboxMap mapboxMap) {
-
         this.map = mapboxMap;
-
         mapStyleController.onMapReady();
-        if (mapListener != null) {
-            mapListener.onMapReady();
-        }
-
     }
 
     @Override
@@ -279,7 +273,6 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     }
 
     public interface MapListener {
-        void onMapReady();
         void onMapLoaded();
         void onMapFailed(MapFailure reason);
         void onRulesetsChanged(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets);
