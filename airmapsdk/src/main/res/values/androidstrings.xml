@@ -97,8 +97,6 @@
     <string name="flight_feature_km_per_hour">km/h</string>
     <string name="flight_feature_miles_per_hour">mph</string>
 
-    <string name="celsius_temp">%d °C</string>
-    <string name="fahrenheit_temp">%d °F</string>
     <string name="kilometers_short">%d km</string>
     <string name="miles_short">%d mi</string>
 

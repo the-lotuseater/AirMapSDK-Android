@@ -1,12 +1,18 @@
 package com.airmap.airmapsdk.models.map;
 
+import com.mapbox.mapboxsdk.style.functions.Function;
+import com.mapbox.mapboxsdk.style.functions.stops.Stop;
+import com.mapbox.mapboxsdk.style.functions.stops.Stops;
 import com.mapbox.mapboxsdk.style.layers.Filter;
 import com.mapbox.mapboxsdk.style.layers.Layer;
+import com.mapbox.mapboxsdk.style.layers.PropertyValue;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by collin@airmap.com on 4/17/17.
@@ -119,6 +125,35 @@ public abstract class AirMapLayerStyle {
             statements[i] = getFilter((JSONArray) jsonArrays[i]);
         }
         return statements;
+    }
+
+    public static Function getFillColorFunction(JSONObject fillColor) {
+        String property = optString(fillColor, "property");
+        String type = optString(fillColor, "type");
+        JSONArray stopsArray = fillColor.optJSONArray("stops");
+
+        switch (type) {
+            case "categorical": {
+                Stop[] stops;
+                if (stopsArray != null) {
+                    stops = new Stop[stopsArray.length()];
+                    for (int i = 0; i < stopsArray.length(); i++) {
+                        JSONArray stopArray = stopsArray.optJSONArray(i);
+                        if (stopArray != null) {
+                            Object value1 = stopArray.opt(0);
+                            Object value2 = stopArray.opt(1);
+                            stops[i] = (Stop.stop(value1, new PropertyValue("color", value2)));
+                        }
+                    }
+                } else {
+                    stops = new Stop[0];
+                }
+
+                return Function.property(property, Stops.categorical(stops));
+            }
+        }
+
+        return null;
     }
 
     public static AirMapLayerStyle fromJson(JSONObject jsonObject) {
