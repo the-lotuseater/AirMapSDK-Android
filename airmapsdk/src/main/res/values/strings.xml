@@ -422,4 +422,14 @@
   <!-- Unit and format for displaying temperature in Fahrenheit -->
   <string name="units_temperature_fahrenheit_format">%1$s°F</string>
   <string name="no_phone_number_provided">No Phone Number Provided</string>
+
+  <string name="no_pilot_name">Set Pilot Name</string>
+
+  <string name="flight_brief">Flight Brief</string>
+  <string name="rules_and_flight_features_header">Rules &amp; Flight Features</string>
+
+  <string name="conflicting_rules">Rules you may be violating</string>
+  <string name="missing_info_rules">Rules needing more information</string>
+  <string name="informational_rules">Rules you should review</string>
+  <string name="not_conflicting_rules">Rules you are following</string>
 </resources>

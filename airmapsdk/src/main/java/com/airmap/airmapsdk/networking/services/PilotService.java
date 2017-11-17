@@ -6,6 +6,7 @@ import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.GenericListOkHttpCallback;
 import com.airmap.airmapsdk.networking.callbacks.GenericOkHttpCallback;
+import com.airmap.airmapsdk.networking.callbacks.PhoneVerificationCallback;
 import com.airmap.airmapsdk.networking.callbacks.VoidCallback;
 
 import org.json.JSONException;
@@ -84,7 +85,7 @@ class PilotService extends BaseService {
      * @param token    The token that the user received in the text
      * @param listener The callback that is invoked on success or error
      */
-    static Call verifyToken(String token, AirMapCallback<Void> listener) {
+    static Call verifyToken(String token, AirMapCallback<Boolean> listener) {
         String url = String.format(pilotVerifyUrl, AirMap.getUserId());
         JSONObject params = new JSONObject();
         try {
@@ -92,7 +93,7 @@ class PilotService extends BaseService {
         } catch (JSONException | NumberFormatException e) {
             e.printStackTrace();
         }
-        return AirMap.getClient().postWithJsonBody(url, params, new VoidCallback(listener));
+        return AirMap.getClient().postWithJsonBody(url, params, new PhoneVerificationCallback(listener));
     }
 
     //Aircraft related requests

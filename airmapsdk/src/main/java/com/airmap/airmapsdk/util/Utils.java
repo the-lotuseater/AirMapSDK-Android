@@ -93,9 +93,9 @@ public class Utils {
 
     public static String getTemperatureString(Context context, double tempInCelsius, boolean useFahrenheit) {
         if (useFahrenheit) {
-            return context.getString(R.string.fahrenheit_temp, Math.round(celsiusToFahrenheit(tempInCelsius)));
+            return context.getString(R.string.units_temperature_fahrenheit_format, Long.toString(Math.round(celsiusToFahrenheit(tempInCelsius))));
         }
-        return context.getString(R.string.celsius_temp, Math.round(tempInCelsius));
+        return context.getString(R.string.units_temperature_celcius_format, Long.toString(Math.round(tempInCelsius)));
     }
 
     public static int convertToDp(Context context, int px) {
@@ -413,11 +413,11 @@ public class Utils {
     }
 
 
-    public static String getDebugUrl() {
+    public static String getStagingUrl() {
         try {
             return AirMap.getConfig().getJSONObject("internal").getString("debug_url");
         } catch (JSONException e) {
-            return "v2/";
+            return "stage/";
         }
     }
 

@@ -19,7 +19,7 @@
 
             <TextView android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Time"
+                android:text="@string/time"
                 android:gravity="center"
                 android:textColor="@color/font_title"
                 android:textSize="12sp"/>
@@ -42,7 +42,7 @@
 
             <TextView android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Wind"
+                android:text="@string/wind"
                 android:gravity="center"
                 android:textColor="@color/font_title"
                 android:textSize="12sp"/>
@@ -65,7 +65,7 @@
 
             <TextView android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Visibility"
+                android:text="@string/visibility"
                 android:gravity="center"
                 android:textColor="@color/font_title"
                 android:textSize="12sp"/>
@@ -88,7 +88,7 @@
 
             <TextView android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Temperature"
+                android:text="@string/temperature"
                 android:gravity="center"
                 android:textColor="@color/font_title"
                 android:textSize="12sp"/>
@@ -111,7 +111,7 @@
 
             <TextView android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dew Point"
+                android:text="@string/dew_point"
                 android:gravity="center"
                 android:textColor="@color/font_title"
                 android:textSize="12sp"/>
@@ -134,7 +134,7 @@
 
             <TextView android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pressure"
+                android:text="@string/pressure"
                 android:gravity="center"
                 android:textColor="@color/font_title"
                 android:textSize="12sp"/>
