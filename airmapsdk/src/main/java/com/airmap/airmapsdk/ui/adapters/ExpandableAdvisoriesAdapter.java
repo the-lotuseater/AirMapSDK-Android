@@ -7,13 +7,14 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.ColorRes;
-import android.support.annotation.IntegerRes;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +39,9 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -48,10 +51,52 @@ import java.util.Map;
  * Created by collin@airmap.com on 5/30/17.
  */
 
-public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<MappingService.AirMapAirspaceType, AirMapAdvisory> {
+public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>, AirMapAdvisory> {
 
     public ExpandableAdvisoriesAdapter(LinkedHashMap<MappingService.AirMapAirspaceType, List<AirMapAdvisory>> advisories) {
-        super(advisories);
+        super(separateByColor(advisories));
+    }
+
+    public void setDataUnseparated(LinkedHashMap<MappingService.AirMapAirspaceType, List<AirMapAdvisory>> data) {
+        super.setData(separateByColor(data));
+    }
+
+    @Override
+    public void setData(@Nullable LinkedHashMap<Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>, List<AirMapAdvisory>> dataMap) {
+        throw new RuntimeException("please call setDataUnseparated instead");
+    }
+
+    public static LinkedHashMap<Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>, List<AirMapAdvisory>> separateByColor(Map<MappingService.AirMapAirspaceType, List<AirMapAdvisory>> og) {
+        LinkedHashMap<Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>, List<AirMapAdvisory>> dataTemp = new LinkedHashMap<>();
+        for (MappingService.AirMapAirspaceType type : og.keySet()) {
+            for (AirMapAdvisory advisory : og.get(type)) {
+                Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor> key = new Pair<>(type, advisory.getColor());
+                List<AirMapAdvisory> list = dataTemp.containsKey(key) ? dataTemp.get(key) : new ArrayList<AirMapAdvisory>();
+                list.add(advisory);
+                dataTemp.put(key, list);
+            }
+        }
+        List<Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>> keys = new ArrayList<>(dataTemp.keySet());
+        // Sort based on color
+        Collections.sort(keys, new Comparator<Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>>() {
+            @Override
+            public int compare(Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor> p1, Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor> p2) {
+                if (p1.second == p2.second) return p1.first.toString().compareTo(p2.first.toString());
+                if (p1.second == AirMapStatus.StatusColor.Red) return -1;
+                if (p2.second == AirMapStatus.StatusColor.Red) return 1;
+                if (p1.second == AirMapStatus.StatusColor.Orange) return -1;
+                if (p2.second == AirMapStatus.StatusColor.Orange) return 1;
+                if (p1.second == AirMapStatus.StatusColor.Yellow) return -1;
+                if (p2.second == AirMapStatus.StatusColor.Yellow) return 1;
+                return 0;
+            }
+        });
+        LinkedHashMap<Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>, List<AirMapAdvisory>> data = new LinkedHashMap<>();
+        for (Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor> key : keys) {
+            data.put(key, dataTemp.get(key));
+        }
+
+        return data;
     }
 
     @Override
@@ -72,13 +117,13 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Mappi
         super.onBindViewHolder(holder, position);
 
         if (holder instanceof AirspaceTypeViewHolder) {
-            MappingService.AirMapAirspaceType type = (MappingService.AirMapAirspaceType) getItem(position);
+            Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor> type = (Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>) getItem(position);
             Context context = holder.itemView.getContext();
-            String typeText = context.getString(type.getTitle());
+            String typeText = context.getString(type.first.getTitle());
             String typeAndQuantityText = context.getString(R.string.advisory_type_quantity, typeText, Integer.toString(dataMap.get(type).size()));
-            AirMapStatus.StatusColor color = calculateStatusColor(type);
+            AirMapStatus.StatusColor color = type.second;
 
-            ((AirspaceTypeViewHolder) holder).type = type;
+            ((AirspaceTypeViewHolder) holder).type = type.first;
             ((AirspaceTypeViewHolder) holder).backgroundView.setBackgroundColor(ContextCompat.getColor(context, color.getColorRes()));
             ((AirspaceTypeViewHolder) holder).textView.setText(typeAndQuantityText);
             ((AirspaceTypeViewHolder) holder).textView.setTextColor(ContextCompat.getColor(context, getTextColor(color)));
