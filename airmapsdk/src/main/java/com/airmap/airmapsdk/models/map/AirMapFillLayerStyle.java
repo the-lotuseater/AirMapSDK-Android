@@ -17,6 +17,7 @@ import org.json.JSONObject;
 public class AirMapFillLayerStyle extends AirMapLayerStyle {
 
     public final float fillOpacity;
+    public final Function fillOpacityFunction;
     public final String fillColor;
     public final Function fillColorFunction;
     public final String fillOutlineColor;
@@ -26,7 +27,15 @@ public class AirMapFillLayerStyle extends AirMapLayerStyle {
 
         JSONObject paintJson = json.optJSONObject("paint");
         if (paintJson != null) {
-            fillOpacity = (float) paintJson.optDouble("fill-opacity");
+
+            JSONObject fillOpacityJson = paintJson.optJSONObject("fill-opacity");
+            if (fillOpacityJson != null) {
+                fillOpacityFunction = getFillOpacityFunction(fillOpacityJson);
+                fillOpacity = 0;
+            } else {
+                fillOpacity = (float) paintJson.optDouble("fill-opacity", 1);
+                fillOpacityFunction = null;
+            }
 
             JSONObject fillColorJson = paintJson.optJSONObject("fill-color");
             if (fillColorJson != null) {
@@ -40,6 +49,7 @@ public class AirMapFillLayerStyle extends AirMapLayerStyle {
             fillOutlineColor = optString(paintJson, "fill-outline-color");
         } else {
             fillOpacity = 0;
+            fillOpacityFunction = null;
             fillColor = "#000000";
             fillColorFunction = null;
             fillOutlineColor = "#000000";
@@ -54,10 +64,15 @@ public class AirMapFillLayerStyle extends AirMapLayerStyle {
     public FillLayer toMapboxLayer(Layer layerToClone, String sourceId) {
         FillLayer fillLayer = new FillLayer(id + "|" + sourceId + "|new", sourceId);
         fillLayer.setSourceLayer(sourceId + "_" + sourceLayer);
-        fillLayer.setProperties(PropertyFactory.fillOpacity(fillOpacity));
 
         if (!TextUtils.isEmpty(fillOutlineColor)) {
             fillLayer.setProperties(PropertyFactory.fillOutlineColor(fillOutlineColor));
+        }
+
+        if (fillOpacityFunction != null) {
+            fillLayer.setProperties(PropertyFactory.fillOpacity(fillOpacityFunction));
+        } else {
+            fillLayer.setProperties(PropertyFactory.fillOpacity(fillOpacity));
         }
 
         if (fillColorFunction != null) {

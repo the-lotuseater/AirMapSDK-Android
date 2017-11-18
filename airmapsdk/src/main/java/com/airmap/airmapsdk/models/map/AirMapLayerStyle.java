@@ -130,6 +130,7 @@ public abstract class AirMapLayerStyle {
     public static Function getFillColorFunction(JSONObject fillColor) {
         String property = optString(fillColor, "property");
         String type = optString(fillColor, "type");
+        String defaultColor = fillColor.optString("default", "#000000");
         JSONArray stopsArray = fillColor.optJSONArray("stops");
 
         switch (type) {
@@ -149,7 +150,37 @@ public abstract class AirMapLayerStyle {
                     stops = new Stop[0];
                 }
 
-                return Function.property(property, Stops.categorical(stops));
+                return Function.property(property, Stops.categorical(stops)).withDefaultValue(new PropertyValue("default", defaultColor));
+            }
+        }
+
+        return null;
+    }
+
+    public static Function getFillOpacityFunction(JSONObject fillOpacity) {
+        String property = optString(fillOpacity, "property");
+        String type = optString(fillOpacity, "type");
+        float defaultOpacity = (float) fillOpacity.optDouble("default", 1.0f);
+        JSONArray stopsArray = fillOpacity.optJSONArray("stops");
+
+        switch (type) {
+            case "categorical": {
+                Stop[] stops;
+                if (stopsArray != null) {
+                    stops = new Stop[stopsArray.length()];
+                    for (int i = 0; i < stopsArray.length(); i++) {
+                        JSONArray stopArray = stopsArray.optJSONArray(i);
+                        if (stopArray != null) {
+                            Object value1 = stopArray.opt(0);
+                            Object value2 = stopArray.opt(1);
+                            stops[i] = (Stop.stop(value1, new PropertyValue("opacity", value2)));
+                        }
+                    }
+                } else {
+                    stops = new Stop[0];
+                }
+
+                return Function.property(property, Stops.categorical(stops)).withDefaultValue(new PropertyValue("default", defaultOpacity));
             }
         }
 

@@ -14,8 +14,9 @@ import org.json.JSONObject;
 
 public class AirMapLineLayerStyle extends AirMapLayerStyle {
 
-    private final float lineOpacity;
     private final float lineWidth;
+    private final float lineOpacity;
+    private final Function lineOpacityFunction;
     private final String lineColor;
     private final Function lineColorFunction;
     private final Float[] lineDashArray;
@@ -25,8 +26,16 @@ public class AirMapLineLayerStyle extends AirMapLayerStyle {
 
         JSONObject paintJson = json.optJSONObject("paint");
         if (paintJson != null) {
-            lineOpacity = (float) paintJson.optDouble("line-opacity", 1.0f);
             lineWidth = (float) paintJson.optDouble("line-width", 1.0f);
+
+            JSONObject lineOpacityJson = paintJson.optJSONObject("line-opacity");
+            if (lineOpacityJson != null) {
+                lineOpacityFunction = getFillOpacityFunction(lineOpacityJson);
+                lineOpacity = 0;
+            } else {
+                lineOpacity = (float) paintJson.optDouble("line-opacity", 1.0f);
+                lineOpacityFunction = null;
+            }
 
             JSONObject lineColorJson = paintJson.optJSONObject("line-color");
             if (lineColorJson != null) {
@@ -48,6 +57,7 @@ public class AirMapLineLayerStyle extends AirMapLayerStyle {
             }
         } else {
             lineOpacity = 1.0f;
+            lineOpacityFunction = null;
             lineWidth = 1f;
             lineColor = "#000000";
             lineColorFunction = null;
@@ -59,8 +69,13 @@ public class AirMapLineLayerStyle extends AirMapLayerStyle {
     public LineLayer toMapboxLayer(Layer layerToClone, String sourceId) {
         LineLayer layer = new LineLayer(id + "|" + sourceId + "|new", sourceId);
         layer.setSourceLayer(sourceId + "_" + sourceLayer);
-        layer.setProperties(PropertyFactory.lineOpacity(lineOpacity));
         layer.setProperties(PropertyFactory.lineWidth(lineWidth));
+
+        if (lineOpacityFunction != null) {
+            layer.setProperties(PropertyFactory.lineOpacity(lineOpacityFunction));
+        } else {
+            layer.setProperties(PropertyFactory.lineOpacity(lineOpacity));
+        }
 
         if (lineColorFunction != null) {
             layer.setProperties(PropertyFactory.lineColor(lineColorFunction));
