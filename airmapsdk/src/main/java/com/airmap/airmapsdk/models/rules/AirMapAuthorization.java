@@ -50,14 +50,12 @@ public class AirMapAuthorization implements AirMapBaseModel, Serializable{
 
     @Override
     public AirMapBaseModel constructFromJson(JSONObject json) {
-        if (json != null) {
-            if (json.has("authority")) {
-                setAuthority(new AirMapAuthority(json.optJSONObject("authority")));
-            }
-            setStatus(Status.fromText(json.optString("status")));
-            setMessage(json.optString("message"));
-            setDescription(json.optString("description"));
+        if (json.has("authority")) {
+            setAuthority(new AirMapAuthority(json.optJSONObject("authority")));
         }
+        setStatus(Status.fromText(json.optString("status")));
+        setMessage(json.optString("message"));
+        setDescription(json.optString("description"));
         return this;
     }
 
