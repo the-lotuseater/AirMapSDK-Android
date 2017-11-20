@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-
-    <string name="com_auth0_domain">sso.airmap.io</string>
-    <string name="com_auth0_scheme">airmap</string>
-
     <string name="read_full_rules">Read Full Rules</string>
     <string name="learn_more">Learn More</string>
     <string name="rules_hint">Learn about federal, state, and local rules that may impact operations in this area</string>
@@ -40,6 +36,7 @@
     <string name="resend_email">Resend Email</string>
     <string name="sent_email">Sent email</string>
     <string name="successfully_updated">Successfully updated</string>
+    <string name="phone_verification_mismatch">Verification code does not match the one sent. Send a new SMS for the verification code and try again?</string>
 
     <string name="select_manufacturer">Select Manufacturer</string>
     <string name="select_model">Select Model</string>
@@ -88,9 +85,7 @@
     <string name="no">NO</string>
     <string name="yes">YES</string>
 
-    <string name="flight_brief">Flight Brief</string>
     <string name="advisory_type_quantity">%1$s (%2$s)</string>
-    <string name="rules_and_flight_features_header">Rules &amp; Flight Features</string>
     <string name="null_feature_value">—</string>
     <string name="flight_feature_speed">Speed</string>
     <string name="flight_feature_weight">Weight</string>
@@ -102,16 +97,8 @@
     <string name="flight_feature_km_per_hour">km/h</string>
     <string name="flight_feature_miles_per_hour">mph</string>
 
-    <string name="conflicting_rules">Rules you may be violating</string>
-    <string name="missing_info_rules">Rules needing more information</string>
-    <string name="informational_rules">Rules you should review</string>
-    <string name="not_conflicting_rules">Rules you are following</string>
-    <string name="celsius_temp">%d °C</string>
-    <string name="fahrenheit_temp">%d °F</string>
     <string name="kilometers_short">%d km</string>
     <string name="miles_short">%d mi</string>
-
-    <string name="no_pilot_name">Set Pilot Name</string>
 
     <string name="authorizations_header">Authorization &amp; Validation</string>
     <string name="rules_header">Rules &amp; Compliance</string>
@@ -121,8 +108,36 @@
     <string name="authorized_upon_submission">Authorization Upon Submission</string>
     <string name="manual_authorization">Manual Authorization Pending Submission</string>
     <string name="authorization_pending">Authorization Pending Submission</string>
-    <string name="authorization_accepted">Approved</string>
-    <string name="authorization_rejected">Rejected</string>
+    <string name="authorization_accepted">Authorization Approved</string>
+    <string name="authorization_rejected">Authorization Rejected</string>
+
+    <string name="time">Time</string>
+    <string name="wind">Wind</string>
+    <string name="visibility">Visibility</string>
+    <string name="temperature">Temperature</string>
+    <string name="dew_point">Dew Point</string>
+    <string name="pressure">Pressure</string>
 
     <string name="airspace_laanc_authorization_automated">FAA authorization available</string>
+
+    <string name="country">Country</string>
+    <string name="county">County</string>
+    <string name="embassy">Embassy</string>
+    <string name="fir">Flight Information Region</string>
+    <string name="federal_building">Federal Building</string>
+    <string name="glider_port">Gliderport</string>
+    <string name="highway">Highway</string>
+    <string name="industrial_property">Industrial Property</string>
+    <string name="military_property">Military Property</string>
+    <string name="police_station">Police Station</string>
+    <string name="powerline">Power Line</string>
+    <string name="railway">Railway</string>
+    <string name="residential_property">Residential Property</string>
+    <string name="stadium">Stadium</string>
+    <string name="state">State</string>
+    <string name="subprefecture">Subprefecture</string>
+    <string name="supercity">Supercity</string>
+    <string name="ulm_field">Ulm Field</string>
+    <string name="waterway">Waterway</string>
+    <string name="japan_base_admin">Japan Base Admin</string>
 </resources>

@@ -39,12 +39,11 @@ import java.util.Set;
  * Created by collin@airmap.com on 9/21/17.
  */
 
-public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedListener, OnMapReadyCallback {
+public class AirMapMapView extends MapView implements MapView.OnMapChangedListener, OnMapReadyCallback {
 
     private static final String TAG = "AirMapMapView";
 
     private MapboxMap map;
-    private MapView mapView;
 
     private MapStyleController mapStyleController;
     private MapDataController mapDataController;
@@ -54,35 +53,26 @@ public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedLi
 
     public AirMapMapView(@NonNull Context context) {
         super(context);
-        mapView = new MapView(context);
-
         init();
     }
 
     public AirMapMapView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        mapView = new MapView(context, attrs);
-
         init();
     }
 
     public AirMapMapView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mapView = new MapView(context, attrs, defStyleAttr);
-
         init();
     }
 
     private void init() {
-        addView(mapView);
-
         selectedRulesets = new HashSet<>();
 
         mapDataController = new MapDataController(this, new MapDataController.Callback() {
             @Override
             public void onRulesetsUpdated(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets) {
                 mapListener.onRulesetsChanged(availableRulesets, selectedRulesets);
-
                 setLayers(selectedRulesets);
             }
 
@@ -95,23 +85,22 @@ public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedLi
         mapStyleController = new MapStyleController(this, new MapStyleController.Callback() {
             @Override
             public void onMapStyleLoaded() {
-                mapDataController.onMapLoaded(map.getCameraPosition().target);
+                mapDataController.onMapLoaded(getMap().getCameraPosition().target);
 
                 mapListener.onMapLoaded();
             }
         });
 
-        mapView.addOnMapChangedListener(this);
+        addOnMapChangedListener(this);
+    }
+
+    public void setRulesets(List<String> preferred, List<String> unpreferred) {
+        mapDataController.setRulesets(preferred, unpreferred);
     }
 
     @Override
     public void onMapReady(MapboxMap mapboxMap) {
-        map = mapboxMap;
-
-        if (mapListener != null) {
-            mapListener.onMapReady();
-        }
-
+        this.map = mapboxMap;
         mapStyleController.onMapReady();
     }
 
@@ -141,7 +130,7 @@ public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedLi
             case MapView.REGION_DID_CHANGE:
             case MapView.REGION_DID_CHANGE_ANIMATED: {
                 if (mapDataController != null) {
-                    mapDataController.onMapMoved(map.getCameraPosition().target);
+                    mapDataController.onMapMoved(getMap().getCameraPosition().target);
                 }
                 break;
             }
@@ -169,7 +158,7 @@ public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedLi
 
     private void addMapLayers(String sourceId, List<String> layers) {
         //TODO: shouldn't need to add layers if source exists, see removeMapLayers
-        if (map.getSource(sourceId) != null) {
+        if (getMap().getSource(sourceId) != null) {
             AirMapLog.e(TAG, "source id isn't null for: " + sourceId);
         } else {
             String urlTemplates = AirMap.getRulesetTileUrlTemplate(sourceId, layers);
@@ -177,7 +166,7 @@ public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedLi
             tileSet.setMaxZoom(15f);
             tileSet.setMinZoom(7f);
             VectorSource tileSource = new VectorSource(sourceId, tileSet);
-            map.addSource(tileSource);
+            getMap().addSource(tileSource);
         }
 
         for (String sourceLayer : layers) {
@@ -186,11 +175,11 @@ public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedLi
             }
 
             for (AirMapLayerStyle layerStyle : mapStyleController.getMapStyle().getLayerStyles()) {
-                if (layerStyle == null || !layerStyle.sourceLayer.equals(sourceLayer) || map.getLayer(layerStyle.id + "|" + sourceId + "|new") != null) {
+                if (layerStyle == null || !layerStyle.sourceLayer.equals(sourceLayer) || getMap().getLayer(layerStyle.id + "|" + sourceId + "|new") != null) {
                     continue;
                 }
 
-                Layer layer = map.getLayerAs(layerStyle.id);
+                Layer layer = getMap().getLayerAs(layerStyle.id);
                 if (layerStyle instanceof AirMapFillLayerStyle) {
                     FillLayer newLayer = (FillLayer) layerStyle.toMapboxLayer(layer, sourceId);
                     if (newLayer.getId().contains("airmap|tfr")) {
@@ -198,7 +187,7 @@ public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedLi
                     } else if (newLayer.getId().contains("notam")) {
                         addNotamFilter(newLayer);
                     }
-                    map.addLayerAbove(newLayer, layerStyle.id);
+                    getMap().addLayerAbove(newLayer, layerStyle.id);
                 } else if (layerStyle instanceof AirMapLineLayerStyle) {
                     LineLayer newLayer = (LineLayer) layerStyle.toMapboxLayer(layer, sourceId);
                     if (newLayer.getId().contains("airmap|tfr")) {
@@ -206,9 +195,9 @@ public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedLi
                     } else if (newLayer.getId().contains("notam")) {
                         addNotamFilter(newLayer);
                     }
-                    map.addLayerAbove(newLayer, layerStyle.id);
+                    getMap().addLayerAbove(newLayer, layerStyle.id);
                 } else if (layerStyle instanceof AirMapSymbolLayerStyle) {
-                    map.addLayerAbove(layerStyle.toMapboxLayer(layer, sourceId), layerStyle.id);
+                    getMap().addLayerAbove(layerStyle.toMapboxLayer(layer, sourceId), layerStyle.id);
                 }
             }
         }
@@ -248,7 +237,7 @@ public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedLi
         //TODO: file bug against mapbox, remove source doesn't seem to be working or at least not after just adding source
         //TODO: to reproduce, open app w/ active flight. adds map layers, removes layers, adds flight map layers
         AirMapLog.e(TAG, "remove source: " + sourceId  + " layers: " + TextUtils.join(",", sourceLayers));
-        map.removeSource(sourceId);
+        getMap().removeSource(sourceId);
 
         if (sourceLayers == null || sourceLayers.isEmpty()) {
             return;
@@ -257,7 +246,7 @@ public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedLi
         for (String sourceLayer : sourceLayers) {
             for (AirMapLayerStyle layerStyle : mapStyleController.getMapStyle().getLayerStyles()) {
                 if (layerStyle != null && layerStyle.sourceLayer.equals(sourceLayer)) {
-                    map.removeLayer(layerStyle.id + "|" + sourceId + "|new");
+                    getMap().removeLayer(layerStyle.id + "|" + sourceId + "|new");
                 }
             }
         }
@@ -265,10 +254,6 @@ public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedLi
 
     public void setMapListener(MapListener listener) {
         mapListener = listener;
-    }
-
-    public MapView getMapView() {
-        return mapView;
     }
 
     public MapboxMap getMap() {
@@ -287,42 +272,7 @@ public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedLi
         mapDataController.onRulesetSwitched(fromRuleset, toRuleset);
     }
 
-    public void onCreate(Bundle savedInstanceState) {
-        mapView.onCreate(savedInstanceState);
-
-        mapView.getMapAsync(this);
-    }
-
-    public void onStart() {
-        mapView.onStart();
-    }
-
-    public void onResume() {
-        mapView.onResume();
-    }
-
-    public void onPause() {
-        mapView.onPause();
-    }
-
-    public void onStop() {
-        mapView.onStop();
-    }
-
-    public void onDestroy() {
-        mapView.onDestroy();
-    }
-
-    public void onSaveInstanceState(Bundle outState) {
-        mapView.onSaveInstanceState(outState);
-    }
-
-    public void onLowMemory() {
-        mapView.onLowMemory();
-    }
-
     public interface MapListener {
-        void onMapReady();
         void onMapLoaded();
         void onMapFailed(MapFailure reason);
         void onRulesetsChanged(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets);
@@ -330,6 +280,6 @@ public class AirMapMapView extends FrameLayout implements MapView.OnMapChangedLi
     }
 
     public enum MapFailure {
-        INACCURATE_DATE_TIME_FAILURE, NETWORK_CONNECTION_FAILURE, UNKNOWN_FAILURE;
+        INACCURATE_DATE_TIME_FAILURE, NETWORK_CONNECTION_FAILURE, UNKNOWN_FAILURE
     }
 }

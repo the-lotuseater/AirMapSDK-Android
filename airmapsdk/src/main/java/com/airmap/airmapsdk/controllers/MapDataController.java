@@ -102,8 +102,8 @@ public class MapDataController {
                     @Override
                     public Pair<Map<String, AirMapRuleset>,List<AirMapJurisdiction>> call(Coordinate coordinate) {
                         // query map for jurisdictions
-                        List<Feature> features = map.getMap().queryRenderedFeatures(new RectF(map.getMapView().getLeft(),
-                                map.getMapView().getTop(), map.getMapView().getRight(), map.getMapView().getBottom()), "jurisdictions");
+                        List<Feature> features = map.getMap().queryRenderedFeatures(new RectF(map.getLeft(),
+                                map.getTop(), map.getRight(), map.getBottom()), "jurisdictions");
 
                         Map<String, AirMapRuleset> jurisdictionRulesets = new HashMap<>();
                         List<AirMapJurisdiction> jurisdictions = new ArrayList<>();
@@ -268,6 +268,14 @@ public class MapDataController {
                 }));
             }
         });
+    }
+
+    public void setRulesets(List<String> preferred, List<String> unpreferred) {
+        preferredRulesets.clear();
+        unpreferredRulesets.clear();
+        preferredRulesets.addAll(preferred);
+        unpreferredRulesets.addAll(unpreferred);
+        preferredRulesetsPublishSubject.onNext(preferredRulesets);
     }
 
     public void onMapLoaded(LatLng latLng) {

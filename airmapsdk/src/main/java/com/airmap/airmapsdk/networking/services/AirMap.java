@@ -94,7 +94,7 @@ public final class AirMap {
         ourInstance = new AirMap(context, authToken, pinCertificates);
         airMapTrafficService = new TrafficService(context); //Initialized here because TrafficService requires AirMap to be initialized already, so it is called after the constructor
         airMapMapMappingService = new MappingService(); //Initialized here because MappingService requires AirMap to be initialized already, so it is called after the constructor
-        AirMapLog.ENABLED = BaseService.DEBUG;
+        AirMapLog.ENABLED = BaseService.STAGING;
         return ourInstance;
     }
 
@@ -800,7 +800,7 @@ public final class AirMap {
      * @param token    The token that the pilot received in the text
      * @param callback The callback that is invoked on success or error
      */
-    public static Call verifyPhoneToken(@NonNull String token, @Nullable AirMapCallback<Void> callback) {
+    public static Call verifyPhoneToken(@NonNull String token, @Nullable AirMapCallback<Boolean> callback) {
         return PilotService.verifyToken(token, callback);
     }
 

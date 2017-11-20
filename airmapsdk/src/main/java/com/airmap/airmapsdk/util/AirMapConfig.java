@@ -33,12 +33,12 @@ public class AirMapConfig {
         }
     }
 
-    public static String getApiOverride(String key) {
+    public static boolean isStage() {
         try {
-            return AirMap.getConfig().getJSONObject("airmap").getJSONObject("api_overrides").getString(key);
+            return AirMap.getConfig().getJSONObject("airmap").optString("environment", "prod").equals("stage");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "Error getting api override for " + key + "  from airmap.config.json", e);
-            throw new RuntimeException("Error getting api override for " + key +  " from airmap.config.json");
+            AirMapLog.e(TAG, "Error getting environment key from airmap.config.json", e);
+            return false;
         }
     }
 
@@ -76,6 +76,70 @@ public class AirMapConfig {
             AirMapLog.e(TAG, "No mqtt domain found in airmap.config.json, defaulting to airmap.io", e);
 
             return "airmap.io";
+        }
+    }
+
+    public static String getApiOverride(String key, String fallback) {
+        try {
+            return AirMap.getConfig().getJSONObject("airmap").getJSONObject("api_overrides").optString(key, fallback);
+        } catch (JSONException e) {
+            AirMapLog.e(TAG, "No overridden end point found in airmap.config.json for: " + key, e);
+
+            return fallback;
+        }
+    }
+
+    public static String getMapStyleUrl() {
+        try {
+            return AirMap.getConfig().getJSONObject("airmap").getString("map_style");
+        } catch (JSONException e) {
+            AirMapLog.e(TAG, "No map style found in airmap.config.json for", e);
+            return null;
+        }
+    }
+
+    public static String getAboutUrl() {
+        try {
+            return AirMap.getConfig().getJSONObject("app").getString("about_url");
+        } catch (JSONException e) {
+            AirMapLog.e(TAG, "No map style found in airmap.config.json for about url", e);
+            return "https://" + getDomain() + "/about-us";
+        }
+    }
+
+    public static String getFAQUrl() {
+        try {
+            return AirMap.getConfig().getJSONObject("app").getString("faq_url");
+        } catch (JSONException e) {
+            AirMapLog.e(TAG, "No map style found in airmap.config.json for FAQ url", e);
+            return "https://airmap.typeform.com/to/ljGZpe";
+        }
+    }
+
+    public static String getPrivacyUrl() {
+        try {
+            return AirMap.getConfig().getJSONObject("app").getString("privacy_url");
+        } catch (JSONException e) {
+            AirMapLog.e(TAG, "No map style found in airmap.config.json for privacy url", e);
+            return "https://" + getDomain() + "/privacy";
+        }
+    }
+
+    public static String getTermsUrl() {
+        try {
+            return AirMap.getConfig().getJSONObject("app").getString("terms_url");
+        } catch (JSONException e) {
+            AirMapLog.e(TAG, "No map style found in airmap.config.json for terms url", e);
+            return "https://" + getDomain() + "/terms";
+        }
+    }
+
+    public static String getFeedbackUrl() {
+        try {
+            return AirMap.getConfig().getJSONObject("app").getString("feedback_url");
+        } catch (JSONException e) {
+            AirMapLog.e(TAG, "No map style found in airmap.config.json for feedback url", e);
+            return "https://airmap.typeform.com/to/r6MaMO";
         }
     }
 }
