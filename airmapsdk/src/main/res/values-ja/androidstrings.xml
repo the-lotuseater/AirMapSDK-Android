@@ -106,7 +106,6 @@
   <string name="tile_layer_wildfires">山火事</string>
   <string name="time">時刻</string>
   <string name="trap">タラップ</string>
-  <string name="ulm_field">Ulm Field</string>
   <string name="units_feet_short">%1$s ft</string>
   <string name="units_meter_short">%1$s m</string>
   <string name="validity_hours">%1$d 時間</string>
@@ -118,4 +117,7 @@
   <string name="wind">風</string>
   <string name="yes">はい</string>
   <string name="you_have_selected_permits_of_total_required">このフライトに必要な %1$d／%2$d 個の 許可証を選択しました。</string>
+
+  <string name="japan_base_admin">日本基地</string>
+  <string name="ulm_field">ULMフィールド</string>
 </resources>
