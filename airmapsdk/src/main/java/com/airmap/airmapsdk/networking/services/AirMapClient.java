@@ -1,8 +1,10 @@
 package com.airmap.airmapsdk.networking.services;
 
+import android.os.Build;
 import android.text.TextUtils;
 
 import com.airmap.airmapsdk.AirMapException;
+import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.Auth;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.util.Utils;
@@ -12,6 +14,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
@@ -336,6 +339,11 @@ public class AirMapClient {
                     if (!TextUtils.isEmpty(authToken)) {
                         newRequest.header("Authorization", "Bearer " + authToken);
                     }
+
+                    if (!TextUtils.isEmpty(getLanguageTag())) {
+                        newRequest.header("Accept-Language", getLanguageTag());
+                    }
+
                     return chain.proceed(newRequest.build());
                 }
                 return chain.proceed(chain.request());
@@ -431,5 +439,14 @@ public class AirMapClient {
                 call.cancel();
             }
         }
+    }
+
+    private String getLanguageTag() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return Locale.getDefault().toLanguageTag();
+        } else {
+            return Locale.getDefault().toString().replace("_", "-");
+        }
+
     }
 }
