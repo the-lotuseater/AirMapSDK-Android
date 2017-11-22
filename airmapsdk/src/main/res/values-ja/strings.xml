@@ -420,4 +420,13 @@
   <string name="units_temperature_celcius_format">%1$s °C</string>
   <!-- Unit and format for displaying temperature in Fahrenheit -->
   <string name="units_temperature_fahrenheit_format">%1$s °F</string>
+
+
+  <string name="no_phone_number_provided">電話番号なし</string>
+  <string name="rules_and_flight_features_header">ルールとコンプライアンス</string>
+
+  <string name="conflicting_rules">違反している可能性のあるルール</string>
+  <string name="missing_info_rules">このルールにはより多くの情報が必要です</string>
+  <string name="informational_rules">確認したほうがよいルール</string>
+  <string name="not_conflicting_rules">遵守しているルールは以下のとおりです</string>
 </resources>

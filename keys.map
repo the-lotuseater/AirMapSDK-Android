@@ -79,6 +79,12 @@ advisories_title : airmap_airspace_advisories
 flight_drawing_mode_area : airmap_polygon
 create_aircraft_title : create_aircraft
 
+RULES_SECTION_CONFLICTING_TITLE : conflicting_rules
+RULES_SECTION_NEEDING_MORE_INFO_TITLE : missing_info_rules
+RULES_SECTION_INFORMATIONAL_TITLE : informational_rules
+RULES_SECTION_NOT_CONFLICTING_TITLE : not_conflicting_rules
+HEADER_SECTION_RULES_AND_COMPLIANCE_TITLE : rules_and_flight_features_header
+
 
 
 
