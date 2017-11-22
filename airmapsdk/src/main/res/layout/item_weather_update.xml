@@ -19,6 +19,7 @@
 
         <TextView style="@style/AppTheme.WeatherValue"
             android:id="@+id/wind_text_view"
+            android:textSize="11sp"
             android:text="240'/12Kts" />
 
         <FrameLayout
