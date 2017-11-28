@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.rules.AirMapJurisdiction;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
@@ -63,6 +64,8 @@ public class MapDataController {
     private Set<String> preferredRulesets;
     private Set<String> unpreferredRulesets;
     private List<AirMapRuleset> selectedRulesets;
+
+    private List<AirMapAdvisory> currentAdvisories;
 
     private Callback callback;
 
@@ -191,6 +194,7 @@ public class MapDataController {
                 .subscribe(new Action1<AirMapAirspaceStatus>() {
                     @Override
                     public void call(AirMapAirspaceStatus advisoryStatus) {
+                        currentAdvisories = advisoryStatus.getAdvisories();
                         callback.onAdvisoryStatusUpdated(advisoryStatus);
                     }
                 }, new Action1<Throwable>() {
@@ -268,6 +272,10 @@ public class MapDataController {
                 }));
             }
         });
+    }
+
+    public List<AirMapAdvisory> getCurrentAdvisories() {
+        return currentAdvisories;
     }
 
     public void setRulesets(List<String> preferred, List<String> unpreferred) {

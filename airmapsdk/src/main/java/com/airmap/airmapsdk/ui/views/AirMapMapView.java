@@ -1,18 +1,29 @@
 package com.airmap.airmapsdk.ui.views;
 
+import android.Manifest;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.PointF;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresPermission;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.controllers.MapDataController;
 import com.airmap.airmapsdk.controllers.MapStyleController;
+import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.map.AirMapFillLayerStyle;
 import com.airmap.airmapsdk.models.map.AirMapLayerStyle;
@@ -21,15 +32,18 @@ import com.airmap.airmapsdk.models.map.AirMapSymbolLayerStyle;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.util.Utils;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 import com.mapbox.mapboxsdk.style.layers.FillLayer;
 import com.mapbox.mapboxsdk.style.layers.Filter;
 import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.sources.TileSet;
 import com.mapbox.mapboxsdk.style.sources.VectorSource;
+import com.mapbox.services.commons.geojson.Feature;
 
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +53,7 @@ import java.util.Set;
  * Created by collin@airmap.com on 9/21/17.
  */
 
-public class AirMapMapView extends MapView implements MapView.OnMapChangedListener, OnMapReadyCallback {
+public class AirMapMapView extends MapView implements MapView.OnMapChangedListener, MapboxMap.OnMapClickListener, LifecycleObserver {
 
     private static final String TAG = "AirMapMapView";
 
@@ -47,7 +61,11 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     private MapStyleController mapStyleController;
     private MapDataController mapDataController;
-    private MapListener mapListener;
+
+    // optional callbacks
+    private OnMapLoadListener mapLoadListener;
+    private OnMapChangedListener mapChangedListener;
+    private OnAdvisoryClickListener advisoryClickListener;
 
     private Set<AirMapRuleset> selectedRulesets;
 
@@ -72,13 +90,18 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         mapDataController = new MapDataController(this, new MapDataController.Callback() {
             @Override
             public void onRulesetsUpdated(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets) {
-                mapListener.onRulesetsChanged(availableRulesets, selectedRulesets);
+                if (mapChangedListener != null) {
+                    mapChangedListener.onRulesetsChanged(availableRulesets, selectedRulesets);
+                }
+
                 setLayers(selectedRulesets);
             }
 
             @Override
             public void onAdvisoryStatusUpdated(AirMapAirspaceStatus advisoryStatus) {
-                mapListener.onAdvisoryStatusChanged(advisoryStatus);
+                if (mapChangedListener != null) {
+                    mapChangedListener.onAdvisoryStatusChanged(advisoryStatus);
+                }
             }
         });
 
@@ -87,7 +110,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             public void onMapStyleLoaded() {
                 mapDataController.onMapLoaded(getMap().getCameraPosition().target);
 
-                mapListener.onMapLoaded();
+                mapLoadListener.onMapLoaded();
             }
         });
 
@@ -99,9 +122,20 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     }
 
     @Override
-    public void onMapReady(MapboxMap mapboxMap) {
-        this.map = mapboxMap;
-        mapStyleController.onMapReady();
+    public void getMapAsync(final OnMapReadyCallback callback) {
+        super.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(MapboxMap mapboxMap) {
+                map = mapboxMap;
+                mapStyleController.onMapReady();
+
+                map.setOnMapClickListener(AirMapMapView.this);
+
+                if (callback != null) {
+                    callback.onMapReady(mapboxMap);
+                }
+            }
+        });
     }
 
     @Override
@@ -109,7 +143,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         switch (change) {
             // check if map failed
             case MapView.DID_FAIL_LOADING_MAP: {
-                if (mapListener != null) {
+                if (mapLoadListener != null) {
                     MapFailure failure = MapFailure.UNKNOWN_FAILURE;
 
                     /**
@@ -123,7 +157,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                         failure = MapFailure.NETWORK_CONNECTION_FAILURE;
                     }
 
-                    mapListener.onMapFailed(failure);
+                    mapLoadListener.onMapFailed(failure);
                 }
                 break;
             }
@@ -137,6 +171,51 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             default: {
                 break;
             }
+        }
+    }
+
+    @Override
+    public void onMapClick(@NonNull LatLng point) {
+        // Launch the Advisory Details Activity
+
+        PointF clickPoint = map.getProjection().toScreenLocation(point);
+        RectF clickRect = new RectF(clickPoint.x - 10, clickPoint.y - 10, clickPoint.x + 10, clickPoint.y + 10);
+        RectF mapRect = new RectF(getLeft(), getTop(), getRight(), getBottom());
+        Filter.Statement filter = Filter.has("airspace_id");
+        List<Feature> allFeatures = map.queryRenderedFeatures(mapRect, filter);
+
+        if (allFeatures.size() > 400) {
+            //TODO:
+//            Toast.makeText(MainActivity.this, R.string.zoom_for_advisory_details, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        List<Feature> selectedFeatures = map.queryRenderedFeatures(clickRect, filter);
+        List<AirMapAdvisory> allAdvisories = mapDataController.getCurrentAdvisories();
+        if (allAdvisories == null) {
+            return;
+        }
+
+        Set<AirMapAdvisory> filteredAdvisories = new HashSet<>(); // Include only those with features on map
+        AirMapAdvisory clickedAdvisory = null;
+        for (AirMapAdvisory advisory : allAdvisories) {
+            for (Feature feature : selectedFeatures) {
+                if (feature.hasProperty("airspace_id") && advisory.getId().equals(feature.getStringProperty("airspace_id"))) {
+                    clickedAdvisory = advisory;
+                    break;
+                }
+            }
+
+            for (Feature feature : allFeatures) {
+                if (feature.getStringProperty("airspace_id").equals(advisory.getId())) {
+                    filteredAdvisories.add(advisory);
+                }
+            }
+
+        }
+
+        if (clickedAdvisory != null) {
+            advisoryClickListener.onAdvisoryClicked(clickedAdvisory);
         }
     }
 
@@ -236,7 +315,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     public void removeMapLayers(String sourceId, List<String> sourceLayers) {
         //TODO: file bug against mapbox, remove source doesn't seem to be working or at least not after just adding source
         //TODO: to reproduce, open app w/ active flight. adds map layers, removes layers, adds flight map layers
-        AirMapLog.e(TAG, "remove source: " + sourceId  + " layers: " + TextUtils.join(",", sourceLayers));
+        AirMapLog.e(TAG, "remove source: " + sourceId + " layers: " + TextUtils.join(",", sourceLayers));
         getMap().removeSource(sourceId);
 
         if (sourceLayers == null || sourceLayers.isEmpty()) {
@@ -250,10 +329,6 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                 }
             }
         }
-    }
-
-    public void setMapListener(MapListener listener) {
-        mapListener = listener;
     }
 
     public MapboxMap getMap() {
@@ -272,11 +347,31 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         mapDataController.onRulesetSwitched(fromRuleset, toRuleset);
     }
 
-    public interface MapListener {
+    // callbacks
+    public void setOnMapLoadListener(OnMapLoadListener listener) {
+        mapLoadListener = listener;
+    }
+
+    public void setOnMapChangedListener(OnMapChangedListener listener) {
+        mapChangedListener = listener;
+    }
+
+    public void setOnAdvisoryClickListener(OnAdvisoryClickListener listener) {
+        advisoryClickListener = listener;
+    }
+
+    public interface OnMapLoadListener {
         void onMapLoaded();
         void onMapFailed(MapFailure reason);
+    }
+
+    public interface OnMapChangedListener {
         void onRulesetsChanged(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets);
         void onAdvisoryStatusChanged(AirMapAirspaceStatus status);
+    }
+
+    public interface OnAdvisoryClickListener {
+        void onAdvisoryClicked(AirMapAdvisory advisory);
     }
 
     public enum MapFailure {

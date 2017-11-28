@@ -20,7 +20,7 @@ public class Analytics {
         if (tracker != null) {
             tracker.logEvent(section, action, label);
         } else {
-            AirMapLog.w(TAG, "No tracker set!");
+            AirMapLog.d(TAG, "No tracker set!");
         }
     }
 
@@ -28,7 +28,7 @@ public class Analytics {
         if (tracker != null) {
             tracker.logEvent(section, action, label, value);
         } else {
-            AirMapLog.w(TAG, "No tracker set!");
+            AirMapLog.d(TAG, "No tracker set!");
         }
     }
 
@@ -36,7 +36,15 @@ public class Analytics {
         if (tracker != null) {
             tracker.logEvent(section, action, label, value);
         } else {
-            AirMapLog.w(TAG, "No tracker set!");
+            AirMapLog.d(TAG, "No tracker set!");
+        }
+    }
+
+    public static void report(Exception e) {
+        if (tracker != null) {
+            tracker.report(e);
+        } else {
+            AirMapLog.d(TAG, "No tracker set!");
         }
     }
 
