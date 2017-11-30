@@ -1,8 +1,10 @@
 package com.airmap.airmapsdk.util;
 
 import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.networking.services.AirMap;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -140,6 +142,28 @@ public class AirMapConfig {
         } catch (JSONException e) {
             AirMapLog.e(TAG, "No map style found in airmap.config.json for feedback url", e);
             return "https://airmap.typeform.com/to/r6MaMO";
+        }
+    }
+
+    public static String[] getIntroImages() {
+        try {
+            JSONArray jsonArray = AirMap.getConfig().getJSONObject("app").getJSONArray("intro_images");
+            String[] urls = new String[jsonArray.length()];
+
+            for (int i = 0; i < urls.length; i++) {
+                urls[i] = (String) jsonArray.get(0);
+            }
+            return urls;
+        } catch (JSONException e) {
+            AirMapLog.e(TAG, "No intro images found in airmap.config.json", e);
+            
+            //fallback urls
+            return new String[] {
+                    "https://cdn.airmap.io/mobile/android/intro/welcome_intro1.png",
+                    "https://cdn.airmap.io/mobile/android/intro/welcome_intro2.png",
+                    "https://cdn.airmap.io/mobile/android/intro/welcome_intro3.png",
+                    "https://cdn.airmap.io/mobile/android/intro/welcome_intro4.png"
+            };
         }
     }
 }
