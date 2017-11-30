@@ -361,7 +361,7 @@
   <!-- Invalid JWT token base64Url value -->
   <!-- Invalid JSON value inside base64Url -->
   <!-- The request with the authority will be reviewed manually sometime after the flight plan is submitted -->
-  <string name="manual_authorization">申請後、空域管理者の承認をお待ちください</string>
+  <string name="manual_authorization">申請後、承認をお待ちください。</string>
   <!-- Class = "UINavigationItem"; title = "Manufacturers"; ObjectID = "a84-JL-ndb"; Note = "MANUFACTURERS_TITLE|Title for the view that displays a list of all aircraft manufacturers"; AirMapUIObjectId = "a84-JL-ndb.title"; -->
   <string name="manufacturers_title">ドローンメーカー</string>
   <!-- Class = "UINavigationItem"; title = "Models"; ObjectID = "9xB-Yl-FrO"; Note = "MODELS_TITLE|Title for the view that displays a list of all aircraft models"; AirMapUIObjectId = "9xB-Yl-FrO.title"; -->
