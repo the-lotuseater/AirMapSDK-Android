@@ -151,7 +151,7 @@ public class AirMapConfig {
             String[] urls = new String[jsonArray.length()];
 
             for (int i = 0; i < urls.length; i++) {
-                urls[i] = (String) jsonArray.get(0);
+                urls[i] = (String) jsonArray.get(i);
             }
             return urls;
         } catch (JSONException e) {
