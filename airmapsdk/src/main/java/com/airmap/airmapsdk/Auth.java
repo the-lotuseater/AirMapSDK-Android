@@ -41,8 +41,8 @@ public class Auth {
 
         Lock lock = Lock.newBuilder(auth0, callback)
                 .hideMainScreenTitle(true)
-                .setTermsURL("https://www." + AirMapConfig.getDomain() + "/terms")
-                .setPrivacyURL("https://www." + AirMapConfig.getDomain() + "/privacy")
+                .setTermsURL(AirMapConfig.getTermsUrl())
+                .setPrivacyURL(AirMapConfig.getPrivacyUrl())
                 .withScope("openid offline_access")
                 .withScheme("airmap")
                 .closable(true)

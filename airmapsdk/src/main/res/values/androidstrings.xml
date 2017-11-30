@@ -71,8 +71,6 @@
     <string name="tile_layer_class_f">Class F</string>
     <string name="tile_layer_did">Densely Populated Region</string>
     <string name="tile_layer_seaplane_base">Seaplane Base</string>
-    <string name="airspace_type_seaplane_base">Seaplane Base</string>
-    <string name="airspace_type_notam">NOTAM</string>
     <string name="notams">NOTAMS</string>
     <string name="airspace_type_ama">AMA Field</string>
     <string name="amas">AMA Fields</string>
@@ -140,4 +138,13 @@
     <string name="ulm_field">Ulm Field</string>
     <string name="waterway">Waterway</string>
     <string name="japan_base_admin">Japan Base Admin</string>
+
+
+    <string name="com_auth0_lock_description_change_password">Please enter your email address. We will send you an email to reset your password.</string>
+    <string name="com_auth0_lock_sign_up_terms_dialog_title">Terms &amp; Policy</string>
+    <string name="com_auth0_lock_sign_up_terms_dialog_message" formatted="false"><![CDATA[
+    By signing up, you agree to our <a href=\'%s\'>terms of service</a> and <a href=\'%s\'>privacy policy</a>
+    ]]></string>
+    <string name="com_auth0_lock_password_strength_title_at_least">And contain at least 3 of the following 4 types of characters:</string>
+
 </resources>
