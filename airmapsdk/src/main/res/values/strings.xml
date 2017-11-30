@@ -432,4 +432,12 @@
   <string name="missing_info_rules">Rules needing more information</string>
   <string name="informational_rules">Rules you should review</string>
   <string name="not_conflicting_rules">Rules you are following</string>
+
+  <string name="authorization_not_requested">Authorization Not Requested</string>
+  <string name="authorization_rejected_upon_submission">Rejected Upon Submission</string>
+  <string name="authorized_upon_submission">Authorization Upon Submission</string>
+  <string name="manual_authorization">Manual Authorization Pending Submission</string>
+  <string name="authorization_pending">Authorization Pending Submission</string>
+  <string name="authorization_accepted">Authorization Approved</string>
+  <string name="authorization_rejected">Authorization Rejected</string>
 </resources>
