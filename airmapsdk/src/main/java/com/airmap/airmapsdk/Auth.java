@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.airmap.airmapsdk.networking.callbacks.AirMapAuthenticationCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
@@ -121,7 +122,6 @@ public class Auth {
             JwtClaims claims = consumer.processToClaims(token);
             return claims.getExpirationTime().isBefore(NumericDate.now());
         } catch (InvalidJwtException | MalformedClaimException e) {
-            e.printStackTrace();
             return true;
         }
     }
