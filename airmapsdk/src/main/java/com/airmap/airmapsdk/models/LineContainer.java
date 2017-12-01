@@ -2,6 +2,7 @@ package com.airmap.airmapsdk.models;
 
 import com.mapbox.mapboxsdk.annotations.Polygon;
 import com.mapbox.mapboxsdk.annotations.Polyline;
+import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class LineContainer implements Container {
 
     @Override
     public void clear() {
-        line = null;
+        line = new PolylineOptions().getPolyline();
         buffers = new ArrayList<>();
         width = -1;
     }
