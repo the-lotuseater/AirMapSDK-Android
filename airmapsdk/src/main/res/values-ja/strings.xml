@@ -317,7 +317,7 @@
   <!-- Call to action to tap the icon to begin drawing a flight path. -->
   <string name="airmap_freehand_tip_path">手のアイコンをタップすると、経路をフリーハンドで描くことができます。</string>
   <!-- Displayed when the user has drawn an invalid shaping, overlapping with conflicting permitted zones -->
-  <string name="airmap_flight_area_overlap_permit_conflict">許可の条件が異なるゾーンを2つ以上重ねることはできません。</string>
+  <string name="airmap_flight_area_overlap_permit_conflict">フライトエリアは許可が必要な飛行エリアに重なってはいけません。</string>
   <!-- Call to action to fix self-intersecting geometries of an area-based flight. -->
   <string name="airmap_error_overlap">無効な飛行エリアです。重複のないよう飛行エリアを調節してください。</string>
   <!-- The width of a path-based flight extending outward from the centerline -->
@@ -357,6 +357,16 @@
   <string name="gcdasyncsocketconnecttimeouterror">ホストへの接続がタイムアウトしました</string>
   <!-- No comment provided by engineer. -->
   <string name="gcdasyncsocketothererror">ソケットFDからのソケット作成に失敗しました。getpeername() failed</string>
+  <!-- No comment provided by engineer. -->
+  <string name="gcdasyncsocketreadmaxedouterror">読み込みが制限に達しました</string>
+  <!-- No comment provided by engineer. -->
+  <string name="gcdasyncsocketreadtimeouterror">読み込みがタイムアウト</string>
+  <!-- No comment provided by engineer. -->
+  <string name="gcdasyncsocketwritetimeouterror">書き込みがタイムアウト</string>
+  <!-- No comment provided by engineer. -->
+  <string name="gcdasyncudpsocketclosederror">ソケットが閉じました</string>
+  <!-- No comment provided by engineer. -->
+  <string name="gcdasyncudpsocketsendtimeouterror">送信がタイムアウト</string>
   <!-- Invalid amount of jwt parts -->
   <!-- Invalid JWT token base64Url value -->
   <!-- Invalid JSON value inside base64Url -->
