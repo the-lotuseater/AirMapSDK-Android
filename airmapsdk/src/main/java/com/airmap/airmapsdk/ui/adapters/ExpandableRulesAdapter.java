@@ -66,7 +66,7 @@ public class ExpandableRulesAdapter extends ExpandableRecyclerAdapter<AirMapRule
             case CHILD_VIEW_TYPE: {
                 final AirMapRule rule = (AirMapRule) getItem(position);
                 RuleViewHolder ruleViewHolder = (RuleViewHolder) holder;
-                ruleViewHolder.descriptionTextView.setText(rule.toString());
+                ruleViewHolder.descriptionTextView.setText(rule.getShortText());
 
                 break;
             }
