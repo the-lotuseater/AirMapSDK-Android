@@ -1,6 +1,7 @@
 package com.airmap.airmapsdk.models.map;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -14,8 +15,10 @@ public class MapStyle {
 
     private List<AirMapLayerStyle> layerStyles;
 
-    public MapStyle(JSONObject json) {
-        JSONArray layersArray = json.optJSONArray("layers");
+    public MapStyle(String json) throws JSONException {
+        JSONObject jsonObject = new JSONObject(json);
+
+        JSONArray layersArray = jsonObject.optJSONArray("layers");
 
         layerStyles = new ArrayList<>();
         for (int i = 0; layersArray != null && i < layersArray.length(); i++) {
