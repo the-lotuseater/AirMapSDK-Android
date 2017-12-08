@@ -436,34 +436,4 @@ public class MappingService extends BaseService {
 
         return stylesUrl;
     }
-
-    protected Call getStylesJson(AirMapMapTheme theme, final AirMapCallback<JSONObject> listener) {
-        return AirMap.getClient().get(getStylesUrl(theme), new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                listener.error(new AirMapException(e.getMessage()));
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String jsonString;
-                try {
-                    jsonString = response.body().string();
-                } catch (IOException e) {
-                    Utils.error(listener, e);
-                    return;
-                }
-                response.body().close();
-                JSONObject result = null;
-                try {
-                    result = new JSONObject(jsonString);
-                    listener.success(result);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    AirMapLog.e("AirMapCallback", jsonString);
-                    listener.error(new AirMapException(e.getMessage()));
-                }
-            }
-        });
-    }
 }

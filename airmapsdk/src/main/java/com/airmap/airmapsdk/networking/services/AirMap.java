@@ -989,10 +989,6 @@ public final class AirMap {
         return airMapMapMappingService.getRulesetTileUrlTemplate(rulesetId, layers);
     }
 
-    public static Call getMapStylesJson(MappingService.AirMapMapTheme theme, AirMapCallback<JSONObject> listener) {
-        return airMapMapMappingService.getStylesJson(theme, listener);
-    }
-
     /**
      * Starts the Traffic Alerts service to receive traffic alerts for the current active flight
      *
