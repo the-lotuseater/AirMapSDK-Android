@@ -2,7 +2,6 @@ package com.airmap.airmapsdk.models.status;
 
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.models.Coordinate;
-import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
 import com.airmap.airmapsdk.models.status.properties.AirMapAirportProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapControlledAirspaceProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapEmergencyProperties;
@@ -45,7 +44,6 @@ public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
     private Coordinate coordinate;
     private AirMapStatusRequirement requirements;
     private String geometryString;
-    private List<AirMapAvailablePermit> availablePermits;
 
     private AirMapAirportProperties airportProperties;
     private AirMapHeliportProperties heliportProperties;
@@ -95,13 +93,6 @@ public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
                 setCoordinate(new Coordinate(lat, lng));
             }
             setLastUpdated(getDateFromIso8601String(json.optString("last_updated")));
-
-            List<AirMapAvailablePermit> availablePermits = new ArrayList<>();
-            JSONArray availablePermitsJSON = json.optJSONArray("available_permits");
-            for (int j = 0; availablePermitsJSON != null && j < availablePermitsJSON.length(); j++) {
-                availablePermits.add(new AirMapAvailablePermit(availablePermitsJSON.optJSONObject(j)));
-            }
-            setAvailablePermits(availablePermits);
 
             JSONObject properties = json.optJSONObject("properties");
             if (type == MappingService.AirMapAirspaceType.Airport) {
@@ -333,15 +324,6 @@ public class AirMapStatusAdvisory implements Serializable, AirMapBaseModel {
 
     public AirMapStatusAdvisory setGeometryString(String geometryString) {
         this.geometryString = geometryString;
-        return this;
-    }
-
-    public List<AirMapAvailablePermit> getAvailablePermits() {
-        return availablePermits;
-    }
-
-    public AirMapStatusAdvisory setAvailablePermits(List<AirMapAvailablePermit> availablePermits) {
-        this.availablePermits = availablePermits;
         return this;
     }
 

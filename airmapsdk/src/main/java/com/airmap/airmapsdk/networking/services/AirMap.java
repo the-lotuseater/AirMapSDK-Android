@@ -22,8 +22,6 @@ import com.airmap.airmapsdk.models.comm.AirMapComm;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.flight.AirMapFlightBriefing;
 import com.airmap.airmapsdk.models.flight.AirMapFlightPlan;
-import com.airmap.airmapsdk.models.permits.AirMapAvailablePermit;
-import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
@@ -675,57 +673,6 @@ public final class AirMap {
         return FlightService.clearCommKey(flight, callback);
     }
 
-    //Permits
-
-    /**
-     * Get permits by permit IDs and/or organization ID. Either permitIds or organizationId must be
-     * non-null
-     *
-     * @param permitIds      The list of permits to get
-     * @param organizationId The organization get permits for
-     * @param callback       The callback that is invoked on success or error
-     */
-    public static Call getPermits(@Nullable List<String> permitIds, @Nullable String organizationId, @Nullable AirMapCallback<List<AirMapAvailablePermit>> callback) {
-        return PermitService.getPermits(permitIds, organizationId, callback);
-    }
-
-    /**
-     * Gets permits by a singular permit ID and/or organization ID. Either permitId or
-     * organizationId must be non-null
-     *
-     * @param permitId       The ID of the permit to get
-     * @param organizationId The organization to get permits for
-     * @param callback       The callback that is invoked on success or error
-     */
-    public static Call getPermits(@Nullable String permitId, @Nullable String organizationId,
-                                  @Nullable AirMapCallback<List<AirMapAvailablePermit>> callback) {
-        List<String> permitIds = new ArrayList<>();
-        if (permitId != null && !permitId.isEmpty()) {
-            permitIds.add(permitId);
-        }
-        return getPermits(permitIds, organizationId, callback);
-    }
-
-    /**
-     * Get a permit by a permit ID
-     *
-     * @param permitId The ID of the permit to get
-     * @param callback The callback that is invoked on success or error
-     */
-    public static Call getPermit(@NonNull String permitId, @Nullable AirMapCallback<List<AirMapAvailablePermit>> callback) {
-        return getPermits(permitId, null, callback);
-    }
-
-    /**
-     * Apply for a permit
-     *
-     * @param permit   The permit to apply for
-     * @param callback The callback that is invoked on success or error
-     */
-    public static Call applyForPermit(@NonNull AirMapAvailablePermit permit, @Nullable AirMapCallback<AirMapPilotPermit> callback) {
-        return PermitService.applyForPermit(permit, callback);
-    }
-
     //Pilot
 
     /**
@@ -744,25 +691,6 @@ public final class AirMap {
      */
     public static Call getPilot(@Nullable AirMapCallback<AirMapPilot> callback) {
         return getPilot(AirMap.getUserId(), callback);
-    }
-
-    /**
-     * Get permits that the authenticated pilot has obtained
-     *
-     * @param callback The callback that is invoked on success or error
-     */
-    public static Call getAuthenticatedPilotPermits(@Nullable AirMapCallback<List<AirMapPilotPermit>> callback) {
-        return PilotService.getPermits(callback);
-    }
-
-    /**
-     * Delete a permit from the pilot's profile
-     *
-     * @param permitId The ID of the permit to delete
-     * @param callback The callback that is invoked on success or error
-     */
-    public static Call deletePermit(@NonNull String permitId, @Nullable AirMapCallback<Void> callback) {
-        return PilotService.deletePermit(permitId, callback);
     }
 
     /**

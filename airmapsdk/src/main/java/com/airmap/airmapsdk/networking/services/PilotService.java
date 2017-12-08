@@ -1,7 +1,6 @@
 package com.airmap.airmapsdk.networking.services;
 
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
-import com.airmap.airmapsdk.models.permits.AirMapPilotPermit;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.GenericListOkHttpCallback;
@@ -149,17 +148,6 @@ class PilotService extends BaseService {
      */
     static Call deleteAircraft(AirMapAircraft aircraft, AirMapCallback<Void> listener) {
         String url = String.format(pilotAircraftByIdUrl, AirMap.getUserId(), aircraft.getAircraftId());
-        return AirMap.getClient().delete(url, new VoidCallback(listener));
-    }
-
-    //Permit related requests
-    static Call getPermits(AirMapCallback<List<AirMapPilotPermit>> listener) {
-        String url = String.format(pilotGetPermitsUrl, AirMap.getUserId());
-        return AirMap.getClient().get(url, new GenericListOkHttpCallback(listener, AirMapPilotPermit.class));
-    }
-
-    static Call deletePermit(String permitId, AirMapCallback<Void> listener) {
-        String url = String.format(pilotDeletePermitUrl, AirMap.getUserId(), permitId);
         return AirMap.getClient().delete(url, new VoidCallback(listener));
     }
 }
