@@ -22,7 +22,7 @@ public class AirMapConfig {
             return AirMap.getConfig().getJSONObject("airmap").getString("domain");
         } catch (JSONException e) {
             AirMapLog.e(TAG, "Error getting airmap domain from airmap.config.json", e);
-            throw new RuntimeException(e);
+            return "airmap.com";
         }
     }
 
@@ -67,6 +67,7 @@ public class AirMapConfig {
             JSONObject auth0 = AirMap.getConfig().getJSONObject("auth0");
             return auth0.getString("client_id");
         } catch (JSONException e) {
+            AirMapLog.e(TAG, "Error getting auth0 clientId from airmap.config.json", e);
             throw new RuntimeException("client_id and/or callback_url not found in airmap.config.json");
         }
     }
