@@ -39,7 +39,7 @@ import java.util.Locale;
  * Created by collin@airmap.com on 9/29/17.
  */
 
-public class TrafficDemoActivity extends BaseActivity implements AirMapMapView.MapListener, AirMapTrafficListener {
+public class TrafficDemoActivity extends BaseActivity implements AirMapMapView.OnMapLoadListener, AirMapTrafficListener {
 
     private static final String TAG = "TrafficDemoActivity";
 
@@ -66,11 +66,11 @@ public class TrafficDemoActivity extends BaseActivity implements AirMapMapView.M
 
         mapView = findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
-        mapView.setMapListener(this);
+        mapView.addOnMapLoadListener(this);
     }
 
     @Override
-    public void onMapReady() {
+    public void onMapLoaded() {
         mapView.getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(34.0195, -118.4912), 12.5));
 
         AirMap.getCurrentFlight(new AirMapCallback<AirMapFlight>() {
@@ -105,16 +105,8 @@ public class TrafficDemoActivity extends BaseActivity implements AirMapMapView.M
     }
 
     @Override
-    public void onMapLoaded() {}
-
-    @Override
-    public void onMapFailed(AirMapMapView.MapFailure failure) {}
-
-    @Override
-    public void onRulesetsChanged(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets) {}
-
-    @Override
-    public void onAdvisoryStatusChanged(AirMapAirspaceStatus status) {}
+    public void onMapFailed(AirMapMapView.MapFailure reason) {
+    }
 
     // Mapbox requires lifecycle
     @Override
@@ -139,6 +131,7 @@ public class TrafficDemoActivity extends BaseActivity implements AirMapMapView.M
     public void onStop() {
         super.onStop();
         mapView.onStop();
+        mapView.removeOnMapLoadListener(this);
 
         AirMap.disableTrafficAlerts();
         textToSpeech.shutdown();

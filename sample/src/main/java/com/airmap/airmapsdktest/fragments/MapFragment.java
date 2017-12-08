@@ -1,32 +1,30 @@
 package com.airmap.airmapsdktest.fragments;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
+import com.airmap.airmapsdk.ui.activities.MyLocationMapActivity;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
 import com.airmap.airmapsdktest.R;
 import com.airmap.airmapsdktest.activities.MapDemoActivity;
-import com.airmap.airmapsdktest.activities.MyLocationMapActivity;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
 import java.util.List;
 
-public class MapFragment extends Fragment implements AirMapMapView.MapListener {
+public class MapFragment extends Fragment implements AirMapMapView.OnMapDataChangeListener {
 
     private static final String TAG = "MapFragment";
 
     private AirMapMapView mapView;                  // mapbox MapView wrapper
     private FloatingActionButton myLocationFab;       // FAB to view/change selected rulesets
-    private FloatingActionButton themeFab;     // FAB to view advisories
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -38,75 +36,20 @@ public class MapFragment extends Fragment implements AirMapMapView.MapListener {
 
         mapView = view.findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
-        mapView.setMapListener(this);
+        mapView.addOnMapDataChangedListener(this);
+        ((MapDemoActivity) getActivity()).setMapView(mapView);
+        mapView.getMapAsync(null);
+
 
         myLocationFab = view.findViewById(R.id.my_location_fab);
         myLocationFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MyLocationMapActivity) getActivity()).goToMyLocation();
-            }
-        });
-
-        themeFab = view.findViewById(R.id.theme_fab);
-        themeFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
+                ((MyLocationMapActivity) getActivity()).goToLastLocation(true);
             }
         });
 
         return view;
-    }
-
-    @Override
-    public void onMapReady() {
-        ((MyLocationMapActivity) getActivity()).onMapReady(mapView.getMap());
-    }
-
-    @Override
-    public void onMapLoaded() {
-
-    }
-
-    @Override
-    public void onMapFailed(AirMapMapView.MapFailure failure) {
-        /**
-         *  Devices with an inaccurate date/time will not be able to load the mapbox map
-         *  If the "automatic date/time" is disabled on the device and the map fails to load, recommend the user enable it
-         */
-        if (failure == AirMapMapView.MapFailure.INACCURATE_DATE_TIME_FAILURE) {
-            // ask user to enabled "Automatic Date/Time"
-            new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.error_loading_map_title)
-                    .setMessage(R.string.error_loading_map_message)
-                    .setPositiveButton(R.string.error_loading_map_button, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // open settings and kill this activity
-                            startActivity(new Intent(Settings.ACTION_DATE_SETTINGS));
-                            getActivity().finish();
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show();
-
-        } else if (failure == AirMapMapView.MapFailure.NETWORK_CONNECTION_FAILURE) {
-            // ask user to turn on wifi/LTE
-            new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.error_loading_map_title)
-                    .setMessage(R.string.error_loading_map_network_message)
-                    .setPositiveButton(R.string.error_loading_map_network_button, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // open settings and kill this activity
-                            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                            getActivity().finish();
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show();
-        }
     }
 
     @Override
@@ -119,6 +62,10 @@ public class MapFragment extends Fragment implements AirMapMapView.MapListener {
         ((MapDemoActivity) getActivity()).setAdvisoryStatus(status);
     }
 
+    @Override
+    public void onAdvisoryStatusLoading() {
+    }
+
     public void onRulesetSelected(AirMapRuleset ruleset) {
         mapView.onRulesetSelected(ruleset);
     }
@@ -129,6 +76,10 @@ public class MapFragment extends Fragment implements AirMapMapView.MapListener {
 
     public void onRulesetSwitched(AirMapRuleset fromRuleset, AirMapRuleset toRuleset) {
         mapView.onRulesetSwitched(fromRuleset, toRuleset);
+    }
+
+    public AirMapMapView getMapView() {
+        return mapView;
     }
 
     // Mapbox requires lifecycle
@@ -157,9 +108,11 @@ public class MapFragment extends Fragment implements AirMapMapView.MapListener {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
+        super.onDestroyView();
         mapView.onDestroy();
+
+        mapView.removeOnMapDataChangedListener(this);
     }
 
     @Override

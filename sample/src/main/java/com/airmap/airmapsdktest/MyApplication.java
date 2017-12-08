@@ -16,7 +16,7 @@ public class MyApplication extends MultiDexApplication {
         super.onCreate();
 
         AirMap.init(this);
-        AirMap.enableLogging(true);
+
         Mapbox.getInstance(this, AirMapConfig.getMapboxApiKey());
     }
 }

@@ -135,7 +135,6 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
 
                 final FlightFeatureSeekbarViewHolder seekbarViewHolder = (FlightFeatureSeekbarViewHolder) holder;
                 seekbarViewHolder.descriptionTextView.setText(flightFeature.getDescription());
-                seekbarViewHolder.labelTextView.setText(flightFeature.getMeasurementType().getStringRes());
 
                 seekbarViewHolder.infoButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -449,7 +448,6 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private class FlightFeatureSeekbarViewHolder extends RecyclerView.ViewHolder {
         TextView descriptionTextView;
-        TextView labelTextView;
         TextView valueTextView;
         SeekBar seekBar;
         ImageButton infoButton;
@@ -458,7 +456,6 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
             super(itemView);
 
             descriptionTextView = itemView.findViewById(R.id.description_text_view);
-            labelTextView = itemView.findViewById(R.id.label_text_view);
             valueTextView = itemView.findViewById(R.id.value_text_view);
             seekBar = itemView.findViewById(R.id.seekbar);
             infoButton = itemView.findViewById(R.id.info_button);

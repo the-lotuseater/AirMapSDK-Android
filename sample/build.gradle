@@ -11,7 +11,9 @@ android {
         versionCode 2
         versionName "1.0.1"
         multiDexEnabled true
-        manifestPlaceholders = [auth0Domain: "@string/com_auth0_domain", auth0Scheme: "@string/com_auth0_scheme"]
+
+        manifestPlaceholders = [auth0Domain: "sso.airmap.com", auth0Scheme: "airmap"]
+        buildConfigField "boolean", "LOGGING", "true"
     }
     buildTypes {
         release {
@@ -25,8 +27,6 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:multidex:1.0.2'
-    compile 'com.android.support:appcompat-v7:27.0.0'
-    compile 'com.android.support:design:27.0.0'
     compile 'com.marshalchen.ultimaterecyclerview:library:0.7.3'
     compile project(':AirMapSDK-Android:airmapsdk')
 }
