@@ -93,4 +93,20 @@ public class RulesetsEvaluator {
 
         return selectedRulesetsList;
     }
+
+    public static boolean checkIfRulesetsHaveChanged(List<AirMapRuleset> oldSelectedRulesets, List<AirMapRuleset> newSelectedRulesets) {
+        for (AirMapRuleset newRuleset : newSelectedRulesets) {
+            if (!oldSelectedRulesets.contains(newRuleset)) {
+                return true;
+            }
+        }
+
+        for (AirMapRuleset oldRuleset : oldSelectedRulesets) {
+            if (!newSelectedRulesets.contains(oldRuleset)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
