@@ -14,7 +14,6 @@ import android.util.AttributeSet;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.controllers.MapDataController;
 import com.airmap.airmapsdk.controllers.MapStyleController;
-import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
 import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.map.AirMapFillLayerStyle;
@@ -61,20 +60,24 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     public AirMapMapView(@NonNull Context context) {
         super(context);
-        init();
+        configure();
     }
 
     public AirMapMapView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
+        configure();
     }
 
     public AirMapMapView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        configure();
     }
 
-    private void init() {
+    public void configureWithRulesets(String[] rulesetIds) {
+
+    }
+
+    private void configure() {
         mapLoadListeners = new ArrayList<>();
         mapDataChangeListeners = new ArrayList<>();
         advisoryClickListeners = new ArrayList<>();
@@ -138,10 +141,6 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     public void rotateMapTheme() {
         mapStyleController.rotateMapTheme();
-    }
-
-    public void useGeometry(AirMapGeometry geometry) {
-        mapDataController.useGeometry(geometry);
     }
 
     @Override
