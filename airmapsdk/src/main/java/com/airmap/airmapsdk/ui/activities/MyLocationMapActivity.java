@@ -61,7 +61,9 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
     public void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        getMapView().setOnMapLoadListener(this);
+        if (getMapView() != null) {
+            getMapView().addOnMapLoadListener(this);
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -81,6 +83,10 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         if (locationLayerPlugin != null) {
             locationLayerPlugin.onStop();
         }
+
+        if (getMapView() != null) {
+            getMapView().removeOnMapLoadListener(this);
+        }
     }
 
     @Override
@@ -91,7 +97,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             case REQUEST_TURN_ON_LOCATION: {
                 if (resultCode == Activity.RESULT_OK) {
                     AirMapLog.d(TAG, "Location setting turned on by user");
-                    goToLastLocation(3);
+                    goToLastLocation(false,3);
                 }
                 break;
             }
@@ -102,28 +108,28 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
     public void onConnected() {
         AirMapLog.d(TAG, "LocationEngine onConnected");
 
-        goToLastLocation();
+        goToLastLocation(false);
     }
 
 
     @Override
     public void onLocationChanged(Location location) {
         AirMapLog.d(TAG, "LocationEngine onLocationChanged: " + location);
-        zoomTo(location);
+        zoomTo(location, false);
     }
 
     @SuppressLint("MissingPermission")
-    public void goToLastLocation() {
+    public void goToLastLocation(boolean force) {
         if (requestLocationPermissionIfNeeded()) {
             if (locationEngine.getLastLocation() != null) {
-                zoomTo(locationEngine.getLastLocation());
+                zoomTo(locationEngine.getLastLocation(), force);
             } else {
                 turnOnLocation();
             }
         }
     }
 
-    private void goToLastLocation(final int retries) {
+    private void goToLastLocation(final boolean force, final int retries) {
         int delay = 2500 * Math.max((3 - retries), 1);
 
         new Handler().postDelayed(new Runnable() {
@@ -132,17 +138,17 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             public void run() {
                 AirMapLog.e(TAG, "goToLastLocation w/ " + retries + " retries");
                 if (locationEngine.getLastLocation() != null) {
-                    zoomTo(locationEngine.getLastLocation());
+                    zoomTo(locationEngine.getLastLocation(), false);
                 } else if (retries > 0) {
-                    goToLastLocation(retries - 1);
+                    goToLastLocation(force, retries - 1);
                 }
             }
         }, delay);
     }
 
-    private void zoomTo(Location location) {
+    private void zoomTo(Location location, boolean force) {
         // only zoom to user's location once
-        if (!hasLoadedMyLocation) {
+        if (!hasLoadedMyLocation || force) {
             AirMapLog.e(TAG, "zoomTo: " + location);
             getMapView().getMap().easeCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
             hasLoadedMyLocation = true;
@@ -153,13 +159,13 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
     @Override
     public void onMapLoaded() {
         AirMapLog.d(TAG, "onMapLoaded");
-
         locationEngine = new GoogleLocationEngine(MyLocationMapActivity.this);
         locationEngine.addLocationEngineListener(MyLocationMapActivity.this);
-        locationEngine.setPriority(LocationEnginePriority.HIGH_ACCURACY);
+        locationEngine.setPriority(LocationEnginePriority.BALANCED_POWER_ACCURACY);
         locationEngine.activate();
 
         locationLayerPlugin = new LocationLayerPlugin(getMapView(), getMapView().getMap(), locationEngine);
+        locationLayerPlugin.applyStyle(R.style.CustomLocationLayer);
 
         if (requestLocationPermissionIfNeeded()) {
             locationLayerPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
@@ -238,7 +244,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             for (int i = 0; i < permissions.length; i++) {
                 if ((permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION) || permissions[i].equals(Manifest.permission.ACCESS_COARSE_LOCATION))
                         && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    goToLastLocation();
+                    goToLastLocation(false);
                 }
             }
         }
@@ -268,7 +274,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
                         Log.e(TAG, "LocationSettings success: " + locationEngine.getLastLocation());
-                        goToLastLocation(3);
+                        goToLastLocation(false, 3);
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         Log.e(TAG, "LocationSettings resolution required");
@@ -286,4 +292,8 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
     }
 
     protected abstract AirMapMapView getMapView();
+
+    public void setMapView(AirMapMapView mapView) {
+        mapView.addOnMapLoadListener(this);
+    }
 }

@@ -1,28 +1,20 @@
 package com.airmap.airmapsdk.ui.views;
 
-import android.Manifest;
-import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresPermission;
-import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.widget.FrameLayout;
 
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.controllers.MapDataController;
 import com.airmap.airmapsdk.controllers.MapStyleController;
+import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
 import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.map.AirMapFillLayerStyle;
@@ -36,7 +28,6 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 import com.mapbox.mapboxsdk.style.layers.FillLayer;
 import com.mapbox.mapboxsdk.style.layers.Filter;
 import com.mapbox.mapboxsdk.style.layers.Layer;
@@ -45,6 +36,7 @@ import com.mapbox.mapboxsdk.style.sources.TileSet;
 import com.mapbox.mapboxsdk.style.sources.VectorSource;
 import com.mapbox.services.commons.geojson.Feature;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,11 +55,9 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     private MapDataController mapDataController;
 
     // optional callbacks
-    private OnMapLoadListener mapLoadListener;
-    private OnMapChangedListener mapChangedListener;
-    private OnAdvisoryClickListener advisoryClickListener;
-
-    private Set<AirMapRuleset> selectedRulesets;
+    private List<OnMapLoadListener> mapLoadListeners;
+    private List<OnMapDataChangeListener> mapDataChangeListeners;
+    private List<OnAdvisoryClickListener> advisoryClickListeners;
 
     public AirMapMapView(@NonNull Context context) {
         super(context);
@@ -85,32 +75,57 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     }
 
     private void init() {
-        selectedRulesets = new HashSet<>();
+        mapLoadListeners = new ArrayList<>();
+        mapDataChangeListeners = new ArrayList<>();
+        advisoryClickListeners = new ArrayList<>();
 
         mapDataController = new MapDataController(this, new MapDataController.Callback() {
             @Override
             public void onRulesetsUpdated(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets) {
-                if (mapChangedListener != null) {
-                    mapChangedListener.onRulesetsChanged(availableRulesets, selectedRulesets);
+                AirMapLog.e(TAG, "onRulesetsUpdated: " + (selectedRulesets != null ? TextUtils.join(",", selectedRulesets) : null));
+                //FIXME: do a zoom check or something? why are selected rulesets null?
+                if (selectedRulesets == null) {
+                    AirMapLog.e(TAG, "No rulesets found");
+                    return;
                 }
 
-                setLayers(selectedRulesets);
+                for (OnMapDataChangeListener mapDataChangeListener : mapDataChangeListeners) {
+                    mapDataChangeListener.onRulesetsChanged(availableRulesets, selectedRulesets);
+                }
+
+                List<AirMapRuleset> oldSelectedRulesets = mapDataController.getSelectedRulesets();
+                setLayers(selectedRulesets, oldSelectedRulesets);
             }
 
             @Override
             public void onAdvisoryStatusUpdated(AirMapAirspaceStatus advisoryStatus) {
-                if (mapChangedListener != null) {
-                    mapChangedListener.onAdvisoryStatusChanged(advisoryStatus);
+                for (OnMapDataChangeListener mapDataChangeListener : mapDataChangeListeners) {
+                    mapDataChangeListener.onAdvisoryStatusChanged(advisoryStatus);
+                }
+            }
+
+            @Override
+            public void onAdvisoryStatusLoading() {
+                for (OnMapDataChangeListener mapDataChangeListener : mapDataChangeListeners) {
+                    mapDataChangeListener.onAdvisoryStatusLoading();
                 }
             }
         });
 
         mapStyleController = new MapStyleController(this, new MapStyleController.Callback() {
             @Override
+            public void onMapStyleReset() {
+                mapDataController.onMapReset();
+            }
+
+            @Override
             public void onMapStyleLoaded() {
+                AirMapLog.e(TAG, "onMapStyleLoaded: " + getMap().getCameraPosition());
                 mapDataController.onMapLoaded(getMap().getCameraPosition().target);
 
-                mapLoadListener.onMapLoaded();
+                for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
+                    mapLoadListener.onMapLoaded();
+                }
             }
         });
 
@@ -119,6 +134,14 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     public void setRulesets(List<String> preferred, List<String> unpreferred) {
         mapDataController.setRulesets(preferred, unpreferred);
+    }
+
+    public void rotateMapTheme() {
+        mapStyleController.rotateMapTheme();
+    }
+
+    public void useGeometry(AirMapGeometry geometry) {
+        mapDataController.useGeometry(geometry);
     }
 
     @Override
@@ -143,20 +166,20 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         switch (change) {
             // check if map failed
             case MapView.DID_FAIL_LOADING_MAP: {
-                if (mapLoadListener != null) {
-                    MapFailure failure = MapFailure.UNKNOWN_FAILURE;
+                MapFailure failure = MapFailure.UNKNOWN_FAILURE;
 
-                    /**
-                     *  Devices with an inaccurate date/time will not be able to load the mapbox map
-                     *  If the "automatic date/time" is disabled on the device and the map fails to load, recommend the user enable it
-                     */
-                    int autoTimeSetting = Settings.Global.getInt(getContext().getContentResolver(), Settings.Global.AUTO_TIME, 0);
-                    if (autoTimeSetting == 0) {
-                        failure = MapFailure.INACCURATE_DATE_TIME_FAILURE;
-                    } else if (!Utils.isNetworkConnected(getContext())) {
-                        failure = MapFailure.NETWORK_CONNECTION_FAILURE;
-                    }
+                /**
+                 *  Devices with an inaccurate date/time will not be able to load the mapbox map
+                 *  If the "automatic date/time" is disabled on the device and the map fails to load, recommend the user enable it
+                 */
+                int autoTimeSetting = Settings.Global.getInt(getContext().getContentResolver(), Settings.Global.AUTO_TIME, 0);
+                if (autoTimeSetting == 0) {
+                    failure = MapFailure.INACCURATE_DATE_TIME_FAILURE;
+                } else if (!Utils.isNetworkConnected(getContext())) {
+                    failure = MapFailure.NETWORK_CONNECTION_FAILURE;
+                }
 
+                for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
                     mapLoadListener.onMapFailed(failure);
                 }
                 break;
@@ -215,30 +238,32 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         }
 
         if (clickedAdvisory != null) {
-            advisoryClickListener.onAdvisoryClicked(clickedAdvisory);
+            for (OnAdvisoryClickListener advisoryClickListener : advisoryClickListeners) {
+                advisoryClickListener.onAdvisoryClicked(clickedAdvisory);
+            }
         }
     }
 
-    private void setLayers(List<AirMapRuleset> newRulesets) {
-        for (AirMapRuleset oldRuleset : selectedRulesets) {
-            if (!newRulesets.contains(oldRuleset)) {
-                removeMapLayers(oldRuleset.getId(), oldRuleset.getLayers());
+    private void setLayers(List<AirMapRuleset> newRulesets, List<AirMapRuleset> oldRulesets) {
+        if (oldRulesets != null) {
+            for (AirMapRuleset oldRuleset : oldRulesets) {
+                if (!newRulesets.contains(oldRuleset)) {
+                    removeMapLayers(oldRuleset.getId(), oldRuleset.getLayers());
+                }
             }
         }
 
+
         for (AirMapRuleset newRuleset : newRulesets) {
-            if (!selectedRulesets.contains(newRuleset)) {
+            if (oldRulesets == null || !oldRulesets.contains(newRuleset)) {
                 addMapLayers(newRuleset.getId(), newRuleset.getLayers());
             }
         }
-
-        selectedRulesets = new HashSet<>(newRulesets);
     }
 
     private void addMapLayers(String sourceId, List<String> layers) {
-        //TODO: shouldn't need to add layers if source exists, see removeMapLayers
         if (getMap().getSource(sourceId) != null) {
-            AirMapLog.e(TAG, "source id isn't null for: " + sourceId);
+            AirMapLog.e(TAG, "Source already added for: " + sourceId);
         } else {
             String urlTemplates = AirMap.getRulesetTileUrlTemplate(sourceId, layers);
             TileSet tileSet = new TileSet("2.2.0", urlTemplates);
@@ -335,6 +360,10 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         return map;
     }
 
+    public List<AirMapRuleset> getSelectedRulesets() {
+        return mapDataController.getSelectedRulesets();
+    }
+
     public void onRulesetSelected(AirMapRuleset ruleset) {
         mapDataController.onRulesetSelected(ruleset);
     }
@@ -348,16 +377,38 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     }
 
     // callbacks
-    public void setOnMapLoadListener(OnMapLoadListener listener) {
-        mapLoadListener = listener;
+    public void addOnMapLoadListener(OnMapLoadListener listener) {
+        mapLoadListeners.add(listener);
+
+        if (getMap() != null) {
+            listener.onMapLoaded();
+        }
     }
 
-    public void setOnMapChangedListener(OnMapChangedListener listener) {
-        mapChangedListener = listener;
+    public void removeOnMapLoadListener(OnMapLoadListener listener) {
+        mapLoadListeners.remove(listener);
     }
 
-    public void setOnAdvisoryClickListener(OnAdvisoryClickListener listener) {
-        advisoryClickListener = listener;
+    public void addOnMapDataChangedListener(OnMapDataChangeListener listener) {
+        mapDataChangeListeners.add(listener);
+
+        if (getMap() != null) {
+            listener.onRulesetsChanged(mapDataController.getAvailableRulesets(), mapDataController.getSelectedRulesets());
+
+            listener.onAdvisoryStatusChanged(mapDataController.getCurrentStatus());
+        }
+    }
+
+    public void removeOnMapDataChangedListener(OnMapDataChangeListener listener) {
+        mapDataChangeListeners.remove(listener);
+    }
+
+    public void addOnAdvisoryClickListener(OnAdvisoryClickListener listener) {
+        advisoryClickListeners.add(listener);
+    }
+
+    public void removeOnAdvisoryClickListener(OnAdvisoryClickListener listener) {
+        advisoryClickListeners.remove(listener);
     }
 
     public interface OnMapLoadListener {
@@ -365,9 +416,10 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         void onMapFailed(MapFailure reason);
     }
 
-    public interface OnMapChangedListener {
+    public interface OnMapDataChangeListener {
         void onRulesetsChanged(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets);
         void onAdvisoryStatusChanged(AirMapAirspaceStatus status);
+        void onAdvisoryStatusLoading();
     }
 
     public interface OnAdvisoryClickListener {

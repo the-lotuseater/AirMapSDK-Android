@@ -64,8 +64,9 @@ public class MapDataController {
     private Set<String> preferredRulesets;
     private Set<String> unpreferredRulesets;
     private List<AirMapRuleset> selectedRulesets;
+    private List<AirMapRuleset> availableRulesets;
 
-    private List<AirMapAdvisory> currentAdvisories;
+    private AirMapAirspaceStatus currentStatus;
 
     private Callback callback;
 
@@ -83,7 +84,6 @@ public class MapDataController {
     }
 
     private void setupSubscriptions() {
-
         // observes changes to jurisdictions (map bounds) to query rulesets for the region
         Observable<Map<String, AirMapRuleset>> jurisdictionsObservable = jurisdictionsPublishSubject.asObservable()
                 .subscribeOn(Schedulers.io())
@@ -98,7 +98,9 @@ public class MapDataController {
                 .doOnNext(new Action1<Coordinate>() {
                     @Override
                     public void call(Coordinate coordinate) {
-                        // indicate loading or zoomed to far out
+                        if (callback != null) {
+                            callback.onAdvisoryStatusLoading();
+                        }
                     }
                 })
                 .map(new Func1<Coordinate, Pair<Map<String, AirMapRuleset>, List<AirMapJurisdiction>>>() {
@@ -172,8 +174,9 @@ public class MapDataController {
                     @Override
                     public void call(Pair<List<AirMapRuleset>, List<AirMapRuleset>> pair) {
                         AirMapLog.i(TAG, "Computed rulesets: " + TextUtils.join(",", pair.second));
+                        callback.onRulesetsUpdated(pair.first, pair.second);
+                        availableRulesets = pair.first;
                         selectedRulesets = pair.second;
-                        callback.onRulesetsUpdated(pair.first, selectedRulesets);
                     }
                 })
                 .map(new Func1<Pair<List<AirMapRuleset>,List<AirMapRuleset>>, List<AirMapRuleset>>() {
@@ -194,7 +197,7 @@ public class MapDataController {
                 .subscribe(new Action1<AirMapAirspaceStatus>() {
                     @Override
                     public void call(AirMapAirspaceStatus advisoryStatus) {
-                        currentAdvisories = advisoryStatus.getAdvisories();
+                        currentStatus = advisoryStatus;
                         callback.onAdvisoryStatusUpdated(advisoryStatus);
                     }
                 }, new Action1<Throwable>() {
@@ -275,7 +278,19 @@ public class MapDataController {
     }
 
     public List<AirMapAdvisory> getCurrentAdvisories() {
-        return currentAdvisories;
+        return currentStatus.getAdvisories();
+    }
+
+    public AirMapAirspaceStatus getCurrentStatus() {
+        return currentStatus;
+    }
+
+    public List<AirMapRuleset> getAvailableRulesets() {
+        return availableRulesets;
+    }
+
+    public List<AirMapRuleset> getSelectedRulesets() {
+        return selectedRulesets;
     }
 
     public void setRulesets(List<String> preferred, List<String> unpreferred) {
@@ -284,6 +299,11 @@ public class MapDataController {
         preferredRulesets.addAll(preferred);
         unpreferredRulesets.addAll(unpreferred);
         preferredRulesetsPublishSubject.onNext(preferredRulesets);
+    }
+
+    public void onMapReset() {
+        availableRulesets = new ArrayList<>();
+        selectedRulesets = new ArrayList<>();
     }
 
     public void onMapLoaded(LatLng latLng) {
@@ -319,5 +339,6 @@ public class MapDataController {
     public interface Callback {
         void onRulesetsUpdated(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets);
         void onAdvisoryStatusUpdated(AirMapAirspaceStatus advisoryStatus);
+        void onAdvisoryStatusLoading();
     }
 }

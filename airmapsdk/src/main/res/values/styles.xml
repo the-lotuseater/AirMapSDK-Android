@@ -46,4 +46,8 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="CustomLocationLayer" parent="LocationLayer">
+        <item name="accuracyAlpha">0</item>
+    </style>
+
 </resources>
