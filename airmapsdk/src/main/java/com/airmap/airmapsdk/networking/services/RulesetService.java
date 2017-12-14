@@ -96,7 +96,6 @@ public class RulesetService extends BaseService {
 
             @Override
             protected void onError(AirMapException e) {
-                Log.e("RulesetService", "parsing jurisdictions error", e);
                 callback.error(e);
             }
         }, AirMapRuleset.class));
