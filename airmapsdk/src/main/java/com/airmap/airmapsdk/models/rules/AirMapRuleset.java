@@ -77,9 +77,7 @@ public class AirMapRuleset implements Serializable, AirMapBaseModel, Comparable 
     private String id;
     private String name;
     private String shortName;
-    private int jurisdictionId;
-    private String jurisdictionName;
-    private AirMapJurisdiction.RegionCategory region;
+    private AirMapJurisdiction jurisdiction;
     private AirMapRuleset.Type type;
     private boolean isDefault;
     private String summary;
@@ -103,9 +101,7 @@ public class AirMapRuleset implements Serializable, AirMapBaseModel, Comparable 
 
             JSONObject jurisdictionObject = json.optJSONObject("jurisdiction");
             if (jurisdictionObject != null) {
-                setJurisdictionId(jurisdictionObject.optInt("id"));
-                setJurisdictionName(jurisdictionObject.optString("name"));
-                setRegion(AirMapJurisdiction.RegionCategory.fromString(jurisdictionObject.optString("region")));
+                setJurisdiction(new AirMapJurisdiction(jurisdictionObject));
             }
             setSummary(Utils.optString(json, "description"));
             setType(Type.fromString(json.optString("selection_type")));
@@ -146,21 +142,12 @@ public class AirMapRuleset implements Serializable, AirMapBaseModel, Comparable 
         return this;
     }
 
-    public int getJurisdictionId() {
-        return jurisdictionId;
+    public AirMapJurisdiction getJurisdiction() {
+        return jurisdiction;
     }
 
-    public AirMapRuleset setJurisdictionId(int jurisdictionId) {
-        this.jurisdictionId = jurisdictionId;
-        return this;
-    }
-
-    public String getJurisdictionName() {
-        return jurisdictionName;
-    }
-
-    public AirMapRuleset setJurisdictionName(String jurisdictionName) {
-        this.jurisdictionName = jurisdictionName;
+    public AirMapRuleset setJurisdiction(AirMapJurisdiction jurisdiction) {
+        this.jurisdiction = jurisdiction;
         return this;
     }
 
@@ -173,15 +160,6 @@ public class AirMapRuleset implements Serializable, AirMapBaseModel, Comparable 
 
     public AirMapRuleset setShortName(String shortName) {
         this.shortName = shortName;
-        return this;
-    }
-
-    public AirMapJurisdiction.RegionCategory getRegion() {
-        return region;
-    }
-
-    public AirMapRuleset setRegion(AirMapJurisdiction.RegionCategory region) {
-        this.region = region;
         return this;
     }
 

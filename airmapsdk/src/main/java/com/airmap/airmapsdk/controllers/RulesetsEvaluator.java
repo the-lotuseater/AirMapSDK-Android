@@ -66,7 +66,7 @@ public class RulesetsEvaluator {
                         // check if there's a sibling selected (only pick-one's have siblings)
                         for (String preferredRulesetId : preferredRulesets) {
                             AirMapRuleset preferredRuleset = availableRulesetsMap.get(preferredRulesetId);
-                            if (preferredRuleset != null && preferredRuleset.getType() == PickOne && preferredRuleset.getJurisdictionId() == newRuleset.getJurisdictionId()) {
+                            if (preferredRuleset != null && preferredRuleset.getType() == PickOne && preferredRuleset.getJurisdiction().getId() == newRuleset.getJurisdiction().getId()) {
                                 noSiblingsSelected = false;
                                 break;
                             }

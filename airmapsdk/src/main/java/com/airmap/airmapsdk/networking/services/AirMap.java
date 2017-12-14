@@ -17,6 +17,7 @@ import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
 import com.airmap.airmapsdk.models.airspace.AirMapAirspace;
+import com.airmap.airmapsdk.models.rules.AirMapJurisdiction;
 import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.comm.AirMapComm;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
@@ -716,10 +717,10 @@ public final class AirMap {
     /**
      * Verify the user's phone number
      *
-     * @param listener The callback that is invoked on success or error
+     * @param callback The callback that is invoked on success or error
      */
-    public static Call sendVerificationToken(@Nullable AirMapCallback<Void> listener) {
-        return PilotService.sendVerificationToken(listener);
+    public static Call sendVerificationToken(@Nullable AirMapCallback<Void> callback) {
+        return PilotService.sendVerificationToken(callback);
     }
 
     /**
@@ -858,66 +859,70 @@ public final class AirMap {
      * Get an airspace by its ID
      *
      * @param airspaceId The ID of the airspace to get
-     * @param listener   The callback that is invoked on success or error
+     * @param callback   The callback that is invoked on success or error
      */
     public static Call getAirspace(@NonNull String airspaceId,
-                                   @Nullable AirMapCallback<AirMapAirspace> listener) {
-        return AirspaceService.getAirspace(airspaceId, listener);
+                                   @Nullable AirMapCallback<AirMapAirspace> callback) {
+        return AirspaceService.getAirspace(airspaceId, callback);
     }
 
     /**
      * Get airspaces by a list of their IDs
      *
      * @param airspaceIds The IDs of the airspaces to get
-     * @param listener    The callback that is invoked on success or error
+     * @param callback    The callback that is invoked on success or error
      */
     public static Call getAirspace(@NonNull List<String> airspaceIds,
-                                   @Nullable AirMapCallback<List<AirMapAirspace>> listener) {
-        return AirspaceService.getAirspace(airspaceIds, listener);
+                                   @Nullable AirMapCallback<List<AirMapAirspace>> callback) {
+        return AirspaceService.getAirspace(airspaceIds, callback);
+    }
+
+    public static Call getJurisdictions(@NonNull AirMapPolygon polygon, @Nullable AirMapCallback<List<AirMapJurisdiction>> callback) {
+        return RulesetService.getJurisdictions(AirMapGeometry.getGeoJSONFromGeometry(polygon), callback);
     }
 
     /**
      * Get all the rulesets that apply for a specific coordinate
      *
      * @param coordinate
-     * @param listener
+     * @param callback
      * @return
      */
-    public static Call getRulesets(@NonNull Coordinate coordinate, @Nullable AirMapCallback<List<AirMapRuleset>> listener) {
-        return RulesetService.getRulesets(coordinate, listener);
+    public static Call getRulesets(@NonNull Coordinate coordinate, @Nullable AirMapCallback<List<AirMapRuleset>> callback) {
+        return RulesetService.getRulesets(coordinate, callback);
     }
 
     /**
      * Get all the rulesets that apply for a geometry (geoJSON)
      *
      * @param geometry
-     * @param listener
+     * @param callback
      * @return
      */
-    public static Call getRulesets(@NonNull JSONObject geometry, @Nullable AirMapCallback<List<AirMapRuleset>> listener) {
-        return RulesetService.getRulesets(geometry, listener);
+    public static Call getRulesets(@NonNull JSONObject geometry, @Nullable AirMapCallback<List<AirMapRuleset>> callback) {
+        return RulesetService.getRulesets(geometry, callback);
     }
 
     /**
      * Get the full ruleset objects for a list of ruleset ids
      *
      * @param rulesetIds
-     * @param listener
+     * @param callback
      * @return
      */
-    public static Call getRulesets(@NonNull List<String> rulesetIds, @Nullable AirMapCallback<List<AirMapRuleset>> listener) {
-        return RulesetService.getRulesets(rulesetIds, listener);
+    public static Call getRulesets(@NonNull List<String> rulesetIds, @Nullable AirMapCallback<List<AirMapRuleset>> callback) {
+        return RulesetService.getRulesets(rulesetIds, callback);
     }
 
     /**
      * Get the entire list of rules of a ruleset
      *
      * @param rulesetId
-     * @param listener
+     * @param callback
      * @return
      */
-    public static Call getRules(@NonNull String rulesetId, @Nullable AirMapCallback<AirMapRuleset> listener) {
-        return RulesetService.getRules(rulesetId, listener);
+    public static Call getRules(@NonNull String rulesetId, @Nullable AirMapCallback<AirMapRuleset> callback) {
+        return RulesetService.getRules(rulesetId, callback);
     }
 
     /**
@@ -930,40 +935,44 @@ public final class AirMap {
         FlightService.getFlightBriefing(flightPlanId, callback);
     }
 
-    public static void getFlightPlanEvaluation(@NonNull List<String> rulesets, @NonNull JSONObject geometry, @Nullable Map<String, Object> flightFeatures, AirMapCallback<AirMapFlightBriefing> listener) {
-        RulesetService.getEvaluation(rulesets, geometry, flightFeatures, listener);
+    public static void getFlightPlanEvaluation(@NonNull List<String> rulesets, @NonNull JSONObject geometry, @Nullable Map<String, Object> flightFeatures, AirMapCallback<AirMapFlightBriefing> callback) {
+        RulesetService.getEvaluation(rulesets, geometry, flightFeatures, callback);
     }
 
-    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull List<Coordinate> geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String, Object> flightFeatures, AirMapCallback<AirMapAirspaceStatus> listener) {
+    public static Call getAirspaceStatus( @NonNull AirMapPolygon polygon, @NonNull List<String> rulesetIds, AirMapCallback<AirMapAirspaceStatus> callback) {
+        return RulesetService.getAdvisories(rulesetIds, polygon, null, null, null, callback);
+    }
+
+    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull List<Coordinate> geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String, Object> flightFeatures, AirMapCallback<AirMapAirspaceStatus> callback) {
         List<String> rulesetIds = new ArrayList<>();
         for (AirMapRuleset ruleset : rulesets) {
             rulesetIds.add(ruleset.getId());
         }
 
-        return RulesetService.getAdvisories(rulesetIds, geometry, start, end, flightFeatures, listener);
+        return RulesetService.getAdvisories(rulesetIds, geometry, start, end, flightFeatures, callback);
     }
 
-    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String, Object> flightFeatures, AirMapCallback<AirMapAirspaceStatus> listener) {
+    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String, Object> flightFeatures, AirMapCallback<AirMapAirspaceStatus> callback) {
         List<String> rulesetIds = new ArrayList<>();
         for (AirMapRuleset ruleset : rulesets) {
             rulesetIds.add(ruleset.getId());
         }
 
-        return RulesetService.getAdvisories(rulesetIds, geometry, start, end, flightFeatures, listener);
+        return RulesetService.getAdvisories(rulesetIds, geometry, start, end, flightFeatures, callback);
     }
 
-    public static Call getAdvisories(@NonNull List<String> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceStatus> listener) {
-        return RulesetService.getAdvisories(rulesets, geometry, start, end, null, listener);
+    public static Call getAdvisories(@NonNull List<String> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceStatus> callback) {
+        return RulesetService.getAdvisories(rulesets, geometry, start, end, null, callback);
     }
 
-    public static Call getAdvisories(@NonNull List<String> rulesets, Coordinate southwest, Coordinate northwest, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceStatus> listener) {
+    public static Call getAdvisories(@NonNull List<String> rulesets, Coordinate southwest, Coordinate northwest, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceStatus> callback) {
         // create polygon based on Lat/Long bounds
         List<Coordinate> bounds = new ArrayList<>();
         bounds.add(southwest);
         bounds.add(northwest);
         AirMapPolygon polygon = new AirMapPolygon(bounds);
 
-        return RulesetService.getAdvisories(rulesets, AirMapGeometry.getGeoJSONFromGeometry(polygon), start, end, null, listener);
+        return RulesetService.getAdvisories(rulesets, AirMapGeometry.getGeoJSONFromGeometry(polygon), start, end, null, callback);
     }
 
     /**
@@ -1010,10 +1019,10 @@ public final class AirMap {
     /**
      * Adds a callback to the traffic service
      *
-     * @param callback The callback that is invoked when traffic is added, updated, and removed
+     * @param listener The callback that is invoked when traffic is added, updated, and removed
      */
-    public static void addTrafficListener(AirMapTrafficListener callback) {
-        getAirMapTrafficService().addListener(callback);
+    public static void addTrafficListener(AirMapTrafficListener listener) {
+        getAirMapTrafficService().addListener(listener);
     }
 
     /**
