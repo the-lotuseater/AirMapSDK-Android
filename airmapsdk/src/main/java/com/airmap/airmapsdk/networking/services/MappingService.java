@@ -366,8 +366,8 @@ public class MappingService extends BaseService {
 
     public enum AirMapMapTheme {
         Standard("standard"),
-        Light("light"),
         Dark("dark"),
+        Light("light"),
         Satellite("satellite");
 
         private final String text;
