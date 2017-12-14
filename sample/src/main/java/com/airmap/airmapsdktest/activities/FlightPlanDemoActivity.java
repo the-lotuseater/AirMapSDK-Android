@@ -139,8 +139,6 @@ public class FlightPlanDemoActivity extends AppCompatActivity {
     }
 
     public void createFlightPlan(JSONObject geometry, float buffer, Coordinate takeoff, List<AirMapRuleset> selectedRulesets) {
-        flightPlan = new AirMapFlightPlan();
-
         final List<String> selectedRulesetIds = new ArrayList<>();
         final List<AirMapFlightFeature> flightFeatures = new ArrayList<>();
 
