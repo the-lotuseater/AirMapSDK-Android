@@ -416,6 +416,11 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
         return geometry;
     }
 
+    public AirMapFlightPlan setGeometry(AirMapPolygon geometry) {
+        this.geometry = AirMapGeometry.getGeoJSONFromGeometry(geometry).toString();
+        return this;
+    }
+
     public AirMapFlightPlan setGeometry(String geometry) {
         this.geometry = geometry;
         return this;
