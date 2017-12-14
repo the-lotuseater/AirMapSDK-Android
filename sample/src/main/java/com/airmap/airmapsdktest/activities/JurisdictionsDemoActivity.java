@@ -97,13 +97,13 @@ public class JurisdictionsDemoActivity extends BaseActivity implements OnMapRead
                     AirMapLog.d(TAG, "Required rulesets: " + jurisdiction.getRequiredRulesets());
                 }
 
-                //TODO: display jurisdictions and their respective groups of rulesets
+                // Display jurisdictions and their respective groups of rulesets
             }
 
             @Override
             protected void onError(AirMapException e) {
                 AirMapLog.e(TAG, "Unable to get jurisdictions", e);
-                //TODO: handle error
+                // Handle error
             }
         });
 
@@ -112,13 +112,13 @@ public class JurisdictionsDemoActivity extends BaseActivity implements OnMapRead
         AirMap.getAirspaceStatus(polygon, rulesetIds, new AirMapCallback<AirMapAirspaceStatus>() {
             @Override
             protected void onSuccess(AirMapAirspaceStatus status) {
-                //TODO: show status advisories
+                // Show status advisories
                 AirMapLog.d(TAG, "Status: " + status);
             }
 
             @Override
             protected void onError(AirMapException e) {
-                //TODO: handle error
+                // Handle error
             }
         });
 
@@ -134,7 +134,7 @@ public class JurisdictionsDemoActivity extends BaseActivity implements OnMapRead
 
             @Override
             protected void onError(AirMapException e) {
-                //TODO: handle error
+                // Handle error
             }
         });
 
