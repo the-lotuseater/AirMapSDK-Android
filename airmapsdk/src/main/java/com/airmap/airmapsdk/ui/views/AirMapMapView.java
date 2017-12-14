@@ -10,17 +10,18 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.Gravity;
 
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.controllers.MapDataController;
 import com.airmap.airmapsdk.controllers.MapStyleController;
-import com.airmap.airmapsdk.models.status.AirMapAdvisory;
-import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.map.AirMapFillLayerStyle;
 import com.airmap.airmapsdk.models.map.AirMapLayerStyle;
 import com.airmap.airmapsdk.models.map.AirMapLineLayerStyle;
 import com.airmap.airmapsdk.models.map.AirMapSymbolLayerStyle;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
+import com.airmap.airmapsdk.models.status.AirMapAdvisory;
+import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.util.Utils;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -149,6 +150,8 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
                 map = mapboxMap;
+                map.getUiSettings().setLogoGravity(Gravity.BOTTOM | Gravity.END); // Move to bottom right
+                map.getUiSettings().setAttributionGravity(Gravity.BOTTOM | Gravity.END); // Move to bottom right
                 mapStyleController.onMapReady();
 
                 map.setOnMapClickListener(AirMapMapView.this);
@@ -156,6 +159,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                 if (callback != null) {
                     callback.onMapReady(mapboxMap);
                 }
+
             }
         });
     }
