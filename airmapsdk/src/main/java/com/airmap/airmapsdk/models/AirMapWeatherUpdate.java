@@ -38,7 +38,7 @@ public class AirMapWeatherUpdate implements AirMapBaseModel, Serializable {
         if (json != null) {
             String time = json.optString("time");
             setTime(Utils.getDateFromIso8601String(time));
-            setTimezone(json.optString("timeone"));
+            setTimezone(json.optString("timezone"));
             setCondition(json.optString("condition"));
             setIcon(json.optString("icon", "").replace("-", "_"));
 
