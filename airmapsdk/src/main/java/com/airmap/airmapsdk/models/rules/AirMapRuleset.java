@@ -217,7 +217,7 @@ public class AirMapRuleset implements Serializable, AirMapBaseModel, Comparable 
 
     @Override
     public String toString() {
-        return "Ruleset id: " + id + " name: " + name;
+        return id;
     }
 
     @Override
