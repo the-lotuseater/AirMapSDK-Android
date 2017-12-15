@@ -349,11 +349,11 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         public final List<String> unpreferredRulesetIds;
         public final boolean enableRecommendedRulesets;
 
-        public DynamicConfiguration(List<String> preferredRulesetIds, List<String> unpreferredRulesetIds, boolean enableRecommendedRulesets) {
+        public DynamicConfiguration(@Nullable List<String> preferredRulesetIds, @Nullable List<String> unpreferredRulesetIds, boolean enableRecommendedRulesets) {
             super(Type.DYNAMIC);
 
-            this.preferredRulesetIds = preferredRulesetIds;
-            this.unpreferredRulesetIds = unpreferredRulesetIds;
+            this.preferredRulesetIds = preferredRulesetIds != null ? preferredRulesetIds : new ArrayList<String>();
+            this.unpreferredRulesetIds = unpreferredRulesetIds != null ? unpreferredRulesetIds : new ArrayList<String>();
             this.enableRecommendedRulesets = enableRecommendedRulesets;
         }
     }
