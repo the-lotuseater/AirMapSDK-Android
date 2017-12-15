@@ -23,6 +23,7 @@ import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.controllers.RulesetsEvaluator;
+import com.airmap.airmapsdk.ui.views.AirMapMapView;
 import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdktest.R;
 import com.airmap.airmapsdktest.ui.FlightPlanDetailsAdapter;
@@ -123,7 +124,7 @@ public class FlightPlanDemoActivity extends AppCompatActivity {
                 if (!availableRulesets.isEmpty()) {
                     // Calculate selected rulesets based off preferred & unpreferred rulesets
                     // If no preferred/unpreferred, defaults are selected
-                    List<AirMapRuleset> selectedRulesets = RulesetsEvaluator.computeSelectedRulesets(availableRulesets, new HashSet<String>(), new HashSet<String>());
+                    List<AirMapRuleset> selectedRulesets = RulesetsEvaluator.computeSelectedRulesets(availableRulesets, new AirMapMapView.AutomaticConfiguration());
 
                     createFlightPlan(geometryJSON, 100, null, selectedRulesets);
 

@@ -11,7 +11,6 @@ import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.rules.AirMapJurisdiction;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
-import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
 import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
@@ -29,10 +28,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import okhttp3.Call;
 import rx.Observable;
@@ -58,43 +55,34 @@ public class MapDataController {
     private AirMapMapView map;
 
     private ThrottleablePublishSubject<Coordinate> jurisdictionsPublishSubject;
-    private PublishSubject<Set<String>> preferredRulesetsPublishSubject;
+    private PublishSubject<AirMapMapView.Configuration> configurationPublishSubject;
     private Subscription rulesetsSubscription;
 
-    private Set<String> preferredRulesets;
-    private Set<String> unpreferredRulesets;
     private List<AirMapRuleset> selectedRulesets;
     private List<AirMapRuleset> availableRulesets;
-
-    private AirMapAirspaceStatus currentStatus;
+    private AirMapAirspaceStatus airspaceStatus;
 
     private Callback callback;
 
-    public MapDataController(AirMapMapView map, Callback callback) {
+    public MapDataController(AirMapMapView map, AirMapMapView.Configuration configuration, Callback callback) {
         this.map = map;
         this.callback = callback;
 
         jurisdictionsPublishSubject = ThrottleablePublishSubject.create();
-        preferredRulesetsPublishSubject = PublishSubject.create();
+        configurationPublishSubject = PublishSubject.create();
 
-        preferredRulesets = new HashSet<>();
-        unpreferredRulesets = new HashSet<>();
-
-        setupSubscriptions();
+        setupSubscriptions(configuration);
     }
 
-    private void setupSubscriptions() {
+    public void configure(AirMapMapView.Configuration configuration) {
+        configurationPublishSubject.onNext(configuration);
+    }
+
+    private void setupSubscriptions(AirMapMapView.Configuration configuration) {
         // observes changes to jurisdictions (map bounds) to query rulesets for the region
         Observable<Map<String, AirMapRuleset>> jurisdictionsObservable = jurisdictionsPublishSubject.asObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .filter(new Func1<Coordinate, Boolean>() {
-                    @Override
-                    public Boolean call(Coordinate coordinate) {
-                        // check if fragment, activity or view are alive?
-                        return true;
-                    }
-                })
                 .doOnNext(new Action1<Coordinate>() {
                     @Override
                     public void call(Coordinate coordinate) {
@@ -139,25 +127,41 @@ public class MapDataController {
                 });
 
         // observes changes to preferred rulesets to trigger advisories fetch
-        Observable<Set<String>> preferredRulesetsObservable = preferredRulesetsPublishSubject
-                .startWith(preferredRulesets)
+        Observable<AirMapMapView.Configuration> preferredRulesetsObservable = configurationPublishSubject
+                .startWith(configuration)
                 .subscribeOn(Schedulers.io())
-                .doOnNext(new Action1<Set<String>>() {
+                .doOnNext(new Action1<AirMapMapView.Configuration>() {
                     @Override
-                    public void call(Set<String> strings) {
-                        AirMapLog.i(TAG, "Preferred rulesets updated to: " + TextUtils.join(",", preferredRulesets));
+                    public void call(AirMapMapView.Configuration configuration) {
+                        if (callback != null) {
+                            callback.onAdvisoryStatusLoading();
+                        }
+
+                        switch (configuration.type) {
+                            case AUTOMATIC:
+                                AirMapLog.i(TAG, "AirMapMapView updated to automatic configuration");
+                                break;
+                            case DYNAMIC:
+                                AirMapLog.i(TAG, "AirMapMapView updated to dynamic configuration w/ preferred rulesets: " +
+                                        TextUtils.join(",", ((AirMapMapView.DynamicConfiguration) configuration).preferredRulesetIds));
+                                break;
+                            case MANUAL:
+                                AirMapLog.i(TAG, "AirMapMapView updated to manual configuration w/ preferred rulesets: " +
+                                        TextUtils.join(",", ((AirMapMapView.ManualConfiguration) configuration).selectedRulesets));
+                                break;
+                        }
                     }
                 });
 
         // combines preferred rulesets and available rulesets changes
         // to calculate selected rulesets and advisories
         rulesetsSubscription = Observable.combineLatest(jurisdictionsObservable, preferredRulesetsObservable,
-                new Func2<Map<String, AirMapRuleset>, Set<String>, Pair<List<AirMapRuleset>,List<AirMapRuleset>>>() {
+                new Func2<Map<String, AirMapRuleset>, AirMapMapView.Configuration, Pair<List<AirMapRuleset>,List<AirMapRuleset>>>() {
                     @Override
-                    public Pair<List<AirMapRuleset>,List<AirMapRuleset>> call(Map<String, AirMapRuleset> availableRulesetsMap, Set<String> preferredRulesets) {
-                        AirMapLog.i(TAG, "combine available & preferred");
+                    public Pair<List<AirMapRuleset>,List<AirMapRuleset>> call(Map<String, AirMapRuleset> availableRulesetsMap, AirMapMapView.Configuration configuration) {
+                        AirMapLog.i(TAG, "combine available rulesets & configuration");
                         List<AirMapRuleset> availableRulesets = new ArrayList<>(availableRulesetsMap.values());
-                        List<AirMapRuleset> selectedRulesets = RulesetsEvaluator.computeSelectedRulesets(availableRulesets, preferredRulesets, unpreferredRulesets);
+                        List<AirMapRuleset> selectedRulesets = RulesetsEvaluator.computeSelectedRulesets(availableRulesets, configuration);
 
                         return new Pair<>(availableRulesets, selectedRulesets);
                     }
@@ -174,7 +178,11 @@ public class MapDataController {
                     @Override
                     public void call(Pair<List<AirMapRuleset>, List<AirMapRuleset>> pair) {
                         AirMapLog.i(TAG, "Computed rulesets: " + TextUtils.join(",", pair.second));
-                        callback.onRulesetsUpdated(pair.first, pair.second);
+                        List<AirMapRuleset> availableRulesetsList = pair.first != null ? new ArrayList<>(pair.first) : null;
+                        List<AirMapRuleset> selectedRulesetsList = pair.second != null ? new ArrayList<>(pair.second) : null;
+                        List<AirMapRuleset> previouslySelectedRulesetsList = selectedRulesets != null ? new ArrayList<>(selectedRulesets) : null;
+
+                        callback.onRulesetsUpdated(availableRulesetsList, selectedRulesetsList, previouslySelectedRulesetsList);
                         availableRulesets = pair.first;
                         selectedRulesets = pair.second;
                     }
@@ -197,7 +205,7 @@ public class MapDataController {
                 .subscribe(new Action1<AirMapAirspaceStatus>() {
                     @Override
                     public void call(AirMapAirspaceStatus advisoryStatus) {
-                        currentStatus = advisoryStatus;
+                        airspaceStatus = advisoryStatus;
                         callback.onAdvisoryStatusUpdated(advisoryStatus);
                     }
                 }, new Action1<Throwable>() {
@@ -226,13 +234,9 @@ public class MapDataController {
                 coordinates.add(new Coordinate(bounds.getLatSouth(), bounds.getLonWest()));
                 coordinates.add(new Coordinate(bounds.getLatNorth(), bounds.getLonWest()));
 
-                /**
-                 *  Note: These coordinates happen to be the map bounds
-                 *  however, they could be a flight path or polygon
-                 */
                 AirMapPolygon polygon = new AirMapPolygon(coordinates);
 
-                return getAdvisories(selectedRulesets, AirMapGeometry.getGeoJSONFromGeometry(polygon), null)
+                return getAdvisories(selectedRulesets, polygon)
                         .onErrorResumeNext(new Func1<Throwable, Observable<? extends AirMapAirspaceStatus>>() {
                             @Override
                             public Observable<? extends AirMapAirspaceStatus> call(Throwable throwable) {
@@ -243,13 +247,19 @@ public class MapDataController {
         };
     }
 
-    private Observable<AirMapAirspaceStatus> getAdvisories(final List<AirMapRuleset> rulesets, final JSONObject geoJSON, final Map<String,Object> flightFeatures) {
+    private Observable<AirMapAirspaceStatus> getAdvisories(final List<AirMapRuleset> rulesets, final AirMapPolygon polygon) {
         return Observable.create(new Observable.OnSubscribe<AirMapAirspaceStatus>() {
             @Override
             public void call(final Subscriber<? super AirMapAirspaceStatus> subscriber) {
                 Date start = new Date();
                 Date end = new Date(start.getTime() + (4 * 60 * 60 * 1000));
-                final Call statusCall = AirMap.getAdvisories(rulesets, geoJSON, start, end, flightFeatures, new AirMapCallback<AirMapAirspaceStatus>() {
+
+                List<String> rulesetIds = new ArrayList<>();
+                for (AirMapRuleset ruleset : rulesets) {
+                    rulesetIds.add(ruleset.getId());
+                }
+
+                final Call statusCall = AirMap.getAirspaceStatus(polygon, rulesetIds, start, end, new AirMapCallback<AirMapAirspaceStatus>() {
                     @Override
                     public void onSuccess(final AirMapAirspaceStatus response) {
                         subscriber.onNext(response);
@@ -278,11 +288,11 @@ public class MapDataController {
     }
 
     public List<AirMapAdvisory> getCurrentAdvisories() {
-        return currentStatus.getAdvisories();
+        return airspaceStatus.getAdvisories();
     }
 
-    public AirMapAirspaceStatus getCurrentStatus() {
-        return currentStatus;
+    public AirMapAirspaceStatus getAirspaceStatus() {
+        return airspaceStatus;
     }
 
     public List<AirMapRuleset> getAvailableRulesets() {
@@ -291,14 +301,6 @@ public class MapDataController {
 
     public List<AirMapRuleset> getSelectedRulesets() {
         return selectedRulesets;
-    }
-
-    public void setRulesets(List<String> preferred, List<String> unpreferred) {
-        preferredRulesets.clear();
-        unpreferredRulesets.clear();
-        preferredRulesets.addAll(preferred);
-        unpreferredRulesets.addAll(unpreferred);
-        preferredRulesetsPublishSubject.onNext(preferredRulesets);
     }
 
     public void onMapReset() {
@@ -318,26 +320,8 @@ public class MapDataController {
         rulesetsSubscription.unsubscribe();
     }
 
-    public void onRulesetSelected(AirMapRuleset ruleset) {
-        preferredRulesets.add(ruleset.getId());
-        unpreferredRulesets.remove(ruleset.getId());
-        preferredRulesetsPublishSubject.onNext(preferredRulesets);
-    }
-
-    public void onRulesetDeselected(AirMapRuleset ruleset) {
-        preferredRulesets.remove(ruleset.getId());
-        unpreferredRulesets.add(ruleset.getId());
-        preferredRulesetsPublishSubject.onNext(preferredRulesets);
-    }
-
-    public void onRulesetSwitched(AirMapRuleset fromRuleset, AirMapRuleset toRuleset) {
-        preferredRulesets.remove(fromRuleset.getId());
-        preferredRulesets.add(toRuleset.getId());
-        preferredRulesetsPublishSubject.onNext(preferredRulesets);
-    }
-
     public interface Callback {
-        void onRulesetsUpdated(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets);
+        void onRulesetsUpdated(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets, List<AirMapRuleset> previouslySelectedRulesets);
         void onAdvisoryStatusUpdated(AirMapAirspaceStatus advisoryStatus);
         void onAdvisoryStatusLoading();
     }

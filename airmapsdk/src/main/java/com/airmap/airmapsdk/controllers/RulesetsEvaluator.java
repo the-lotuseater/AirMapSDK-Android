@@ -2,7 +2,9 @@ package com.airmap.airmapsdk.controllers;
 
 import android.support.annotation.NonNull;
 
+import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
+import com.airmap.airmapsdk.ui.views.AirMapMapView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,6 +23,24 @@ import static com.airmap.airmapsdk.models.rules.AirMapRuleset.Type.PickOne;
 
 public class RulesetsEvaluator {
 
+    public static List<AirMapRuleset> computeSelectedRulesets(@NonNull List<AirMapRuleset> availableRulesets, @NonNull AirMapMapView.Configuration configuration) {
+        switch (configuration.type) {
+            case AUTOMATIC:
+                return computeSelectedRulesets(availableRulesets, new HashSet<String>(), new HashSet<String>(), true);
+            case DYNAMIC:
+                //TODO: whitelist/blacklist?
+                AirMapMapView.DynamicConfiguration dynamicConfig = (AirMapMapView.DynamicConfiguration) configuration;
+                HashSet<String> preferredRulesets = new HashSet<>(dynamicConfig.preferredRulesetIds);
+                HashSet<String> unpreferredRulesets = new HashSet<>(dynamicConfig.unpreferredRulesetIds);
+
+                return computeSelectedRulesets(availableRulesets, preferredRulesets, unpreferredRulesets, dynamicConfig.enableRecommendedRulesets);
+            case MANUAL:
+                return ((AirMapMapView.ManualConfiguration) configuration).selectedRulesets;
+        }
+
+        return null;
+    }
+
     /**
      *  Calculate selected rulesets from rulesets available and preferred/unpreferred rulesets
      *
@@ -30,7 +50,7 @@ public class RulesetsEvaluator {
      *
      *  @return selectedRulesets
      */
-    public static List<AirMapRuleset> computeSelectedRulesets(@NonNull List<AirMapRuleset> availableRulesets, @NonNull Set<String> preferredRulesets, @NonNull Set<String> unpreferredRulesets) {
+    public static List<AirMapRuleset> computeSelectedRulesets(@NonNull List<AirMapRuleset> availableRulesets, @NonNull Set<String> preferredRulesets, @NonNull Set<String> unpreferredRulesets, boolean enableRecommendedRulesets) {
         Set<AirMapRuleset> selectedRulesets = new HashSet<>();
 
         Map<String,AirMapRuleset> availableRulesetsMap = new HashMap<>();
@@ -49,7 +69,7 @@ public class RulesetsEvaluator {
             switch (newRuleset.getType()) {
                 case Optional: {
                     // select optional rulesets that default on and haven't been manually deselected by user
-                    if (newRuleset.isDefault() && !unpreferredRulesets.contains(newRuleset.getId())) {
+                    if (newRuleset.isDefault() && !unpreferredRulesets.contains(newRuleset.getId()) && enableRecommendedRulesets) {
                         selectedRulesets.add(newRuleset);
                     }
                     break;
@@ -90,6 +110,8 @@ public class RulesetsEvaluator {
                 return o1.compareTo(o2);
             }
         });
+
+        AirMapLog.e("RulesetsEvaluator", "Rulesets evaluated: " + selectedRulesets);
 
         return selectedRulesetsList;
     }

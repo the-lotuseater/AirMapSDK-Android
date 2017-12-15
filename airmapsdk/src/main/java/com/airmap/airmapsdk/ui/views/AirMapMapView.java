@@ -11,8 +11,10 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.controllers.MapDataController;
 import com.airmap.airmapsdk.controllers.MapStyleController;
 import com.airmap.airmapsdk.models.map.AirMapFillLayerStyle;
@@ -60,45 +62,40 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     private List<OnAdvisoryClickListener> advisoryClickListeners;
 
     public AirMapMapView(@NonNull Context context) {
-        super(context);
-        configure();
+        this(context, null, 0);
     }
 
     public AirMapMapView(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        configure();
+        this(context, attrs, 0);
     }
 
     public AirMapMapView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        configure();
+
+        Configuration defaultConfig = new AutomaticConfiguration();
+        init(defaultConfig);
     }
 
-    public void configureWithRulesets(String[] rulesetIds) {
-
-    }
-
-    private void configure() {
+    public void init(Configuration configuration) {
         mapLoadListeners = new ArrayList<>();
         mapDataChangeListeners = new ArrayList<>();
         advisoryClickListeners = new ArrayList<>();
 
-        mapDataController = new MapDataController(this, new MapDataController.Callback() {
+        mapDataController = new MapDataController(this, configuration, new MapDataController.Callback() {
             @Override
-            public void onRulesetsUpdated(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets) {
-                AirMapLog.e(TAG, "onRulesetsUpdated: " + (selectedRulesets != null ? TextUtils.join(",", selectedRulesets) : null));
+            public void onRulesetsUpdated(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets, List<AirMapRuleset> previouslySelectedRulesetsSelectedRulesets) {
+                AirMapLog.e(TAG, "onRulesetsUpdated to: " + selectedRulesets + " from: " + previouslySelectedRulesetsSelectedRulesets);
                 //FIXME: do a zoom check or something? why are selected rulesets null?
                 if (selectedRulesets == null) {
                     AirMapLog.e(TAG, "No rulesets found");
                     return;
                 }
 
+                setLayers(selectedRulesets, previouslySelectedRulesetsSelectedRulesets);
+
                 for (OnMapDataChangeListener mapDataChangeListener : mapDataChangeListeners) {
                     mapDataChangeListener.onRulesetsChanged(availableRulesets, selectedRulesets);
                 }
-
-                List<AirMapRuleset> oldSelectedRulesets = mapDataController.getSelectedRulesets();
-                setLayers(selectedRulesets, oldSelectedRulesets);
             }
 
             @Override
@@ -136,8 +133,9 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         addOnMapChangedListener(this);
     }
 
-    public void setRulesets(List<String> preferred, List<String> unpreferred) {
-        mapDataController.setRulesets(preferred, unpreferred);
+
+    public void configure(Configuration configuration) {
+        mapDataController.configure(configuration);
     }
 
     public void rotateMapTheme() {
@@ -153,8 +151,6 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                 map.getUiSettings().setLogoGravity(Gravity.BOTTOM | Gravity.END); // Move to bottom right
                 map.getUiSettings().setAttributionGravity(Gravity.BOTTOM | Gravity.END); // Move to bottom right
                 mapStyleController.onMapReady();
-
-                map.setOnMapClickListener(AirMapMapView.this);
 
                 if (callback != null) {
                     callback.onMapReady(mapboxMap);
@@ -202,7 +198,9 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     @Override
     public void onMapClick(@NonNull LatLng point) {
-        // Launch the Advisory Details Activity
+        if (advisoryClickListeners == null || advisoryClickListeners.isEmpty()) {
+            return;
+        }
 
         PointF clickPoint = map.getProjection().toScreenLocation(point);
         RectF clickRect = new RectF(clickPoint.x - 10, clickPoint.y - 10, clickPoint.x + 10, clickPoint.y + 10);
@@ -211,8 +209,6 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         List<Feature> allFeatures = map.queryRenderedFeatures(mapRect, filter);
 
         if (allFeatures.size() > 400) {
-            //TODO:
-//            Toast.makeText(MainActivity.this, R.string.zoom_for_advisory_details, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -251,7 +247,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         if (oldRulesets != null) {
             for (AirMapRuleset oldRuleset : oldRulesets) {
                 if (!newRulesets.contains(oldRuleset)) {
-                    removeMapLayers(oldRuleset.getId(), oldRuleset.getLayers());
+                    mapStyleController.removeMapLayers(oldRuleset.getId(), oldRuleset.getLayers());
                 }
             }
         }
@@ -259,102 +255,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
         for (AirMapRuleset newRuleset : newRulesets) {
             if (oldRulesets == null || !oldRulesets.contains(newRuleset)) {
-                addMapLayers(newRuleset.getId(), newRuleset.getLayers());
-            }
-        }
-    }
-
-    private void addMapLayers(String sourceId, List<String> layers) {
-        if (getMap().getSource(sourceId) != null) {
-            AirMapLog.e(TAG, "Source already added for: " + sourceId);
-        } else {
-            String urlTemplates = AirMap.getRulesetTileUrlTemplate(sourceId, layers);
-            TileSet tileSet = new TileSet("2.2.0", urlTemplates);
-            tileSet.setMaxZoom(15f);
-            tileSet.setMinZoom(7f);
-            VectorSource tileSource = new VectorSource(sourceId, tileSet);
-            getMap().addSource(tileSource);
-        }
-
-        for (String sourceLayer : layers) {
-            if (TextUtils.isEmpty(sourceLayer)) {
-                continue;
-            }
-
-            for (AirMapLayerStyle layerStyle : mapStyleController.getMapStyle().getLayerStyles()) {
-                if (layerStyle == null || !layerStyle.sourceLayer.equals(sourceLayer) || getMap().getLayer(layerStyle.id + "|" + sourceId + "|new") != null) {
-                    continue;
-                }
-
-                Layer layer = getMap().getLayerAs(layerStyle.id);
-                if (layerStyle instanceof AirMapFillLayerStyle) {
-                    FillLayer newLayer = (FillLayer) layerStyle.toMapboxLayer(layer, sourceId);
-                    if (newLayer.getId().contains("airmap|tfr")) {
-                        addTfrFilter(newLayer);
-                    } else if (newLayer.getId().contains("notam")) {
-                        addNotamFilter(newLayer);
-                    }
-                    getMap().addLayerAbove(newLayer, layerStyle.id);
-                } else if (layerStyle instanceof AirMapLineLayerStyle) {
-                    LineLayer newLayer = (LineLayer) layerStyle.toMapboxLayer(layer, sourceId);
-                    if (newLayer.getId().contains("airmap|tfr")) {
-                        addTfrFilter(newLayer);
-                    } else if (newLayer.getId().contains("notam")) {
-                        addNotamFilter(newLayer);
-                    }
-                    getMap().addLayerAbove(newLayer, layerStyle.id);
-                } else if (layerStyle instanceof AirMapSymbolLayerStyle) {
-                    getMap().addLayerAbove(layerStyle.toMapboxLayer(layer, sourceId), layerStyle.id);
-                }
-            }
-        }
-    }
-
-    private void addTfrFilter(Layer layer) {
-        long now = System.currentTimeMillis() / 1000;
-        long in4Hrs = now + (4 * 60 * 60);
-        Filter.Statement validNowFilter = Filter.all(Filter.lt("start", now), Filter.gt("end", now));
-        Filter.Statement startsSoonFilter = Filter.all(Filter.gt("start", now), Filter.lt("start", in4Hrs));
-        Filter.Statement permanent = Filter.eq("permanent", "true");
-        Filter.Statement hasNoEnd = Filter.all(Filter.notHas("end"), Filter.notHas("base"));
-        Filter.Statement filter = Filter.any(validNowFilter, startsSoonFilter, permanent, hasNoEnd);
-        if (layer instanceof FillLayer) {
-            ((FillLayer) layer).setFilter(filter);
-        } else if (layer instanceof LineLayer) {
-            ((LineLayer) layer).setFilter(filter);
-        }
-    }
-
-    private void addNotamFilter(Layer layer) {
-        long now = System.currentTimeMillis() / 1000;
-        long in4Hrs = now + (4 * 60 * 60);
-        Filter.Statement validNowFilter = Filter.all(Filter.lt("start", now), Filter.gt("end", now));
-        Filter.Statement startsSoonFilter = Filter.all(Filter.gt("start", now), Filter.lt("start", in4Hrs));
-        Filter.Statement permanent = Filter.eq("permanent", "true");
-        Filter.Statement hasNoEnd = Filter.all(Filter.notHas("end"), Filter.notHas("base"));
-        Filter.Statement filter = Filter.any(validNowFilter, startsSoonFilter, permanent, hasNoEnd);
-        if (layer instanceof FillLayer) {
-            ((FillLayer) layer).setFilter(filter);
-        } else if (layer instanceof LineLayer) {
-            ((LineLayer) layer).setFilter(filter);
-        }
-    }
-
-    public void removeMapLayers(String sourceId, List<String> sourceLayers) {
-        //TODO: file bug against mapbox, remove source doesn't seem to be working or at least not after just adding source
-        //TODO: to reproduce, open app w/ active flight. adds map layers, removes layers, adds flight map layers
-        AirMapLog.e(TAG, "remove source: " + sourceId + " layers: " + TextUtils.join(",", sourceLayers));
-        getMap().removeSource(sourceId);
-
-        if (sourceLayers == null || sourceLayers.isEmpty()) {
-            return;
-        }
-
-        for (String sourceLayer : sourceLayers) {
-            for (AirMapLayerStyle layerStyle : mapStyleController.getMapStyle().getLayerStyles()) {
-                if (layerStyle != null && layerStyle.sourceLayer.equals(sourceLayer)) {
-                    getMap().removeLayer(layerStyle.id + "|" + sourceId + "|new");
-                }
+                mapStyleController.addMapLayers(newRuleset.getId(), newRuleset.getLayers());
             }
         }
     }
@@ -365,18 +266,6 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     public List<AirMapRuleset> getSelectedRulesets() {
         return mapDataController.getSelectedRulesets();
-    }
-
-    public void onRulesetSelected(AirMapRuleset ruleset) {
-        mapDataController.onRulesetSelected(ruleset);
-    }
-
-    public void onRulesetDeselected(AirMapRuleset ruleset) {
-        mapDataController.onRulesetDeselected(ruleset);
-    }
-
-    public void onRulesetSwitched(AirMapRuleset fromRuleset, AirMapRuleset toRuleset) {
-        mapDataController.onRulesetSwitched(fromRuleset, toRuleset);
     }
 
     // callbacks
@@ -398,7 +287,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         if (getMap() != null) {
             listener.onRulesetsChanged(mapDataController.getAvailableRulesets(), mapDataController.getSelectedRulesets());
 
-            listener.onAdvisoryStatusChanged(mapDataController.getCurrentStatus());
+            listener.onAdvisoryStatusChanged(mapDataController.getAirspaceStatus());
         }
     }
 
@@ -431,5 +320,52 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     public enum MapFailure {
         INACCURATE_DATE_TIME_FAILURE, NETWORK_CONNECTION_FAILURE, UNKNOWN_FAILURE
+    }
+
+    public abstract static class Configuration {
+        public enum Type {
+            AUTOMATIC,
+            DYNAMIC,
+            MANUAL
+        }
+
+        public final Type type;
+
+        public Configuration(Type type) {
+            this.type = type;
+        }
+    }
+
+    public static class AutomaticConfiguration extends Configuration {
+
+        public AutomaticConfiguration() {
+            super(Type.AUTOMATIC);
+        }
+    }
+
+    public static class DynamicConfiguration extends Configuration {
+
+        public final List<String> preferredRulesetIds;
+        public final List<String> unpreferredRulesetIds;
+        public final boolean enableRecommendedRulesets;
+
+        public DynamicConfiguration(List<String> preferredRulesetIds, List<String> unpreferredRulesetIds, boolean enableRecommendedRulesets) {
+            super(Type.DYNAMIC);
+
+            this.preferredRulesetIds = preferredRulesetIds;
+            this.unpreferredRulesetIds = unpreferredRulesetIds;
+            this.enableRecommendedRulesets = enableRecommendedRulesets;
+        }
+    }
+
+    public static class ManualConfiguration extends Configuration {
+
+        public final List<AirMapRuleset> selectedRulesets;
+
+        private ManualConfiguration(List<AirMapRuleset> selectedRulesets) {
+            super(Type.MANUAL);
+
+            this.selectedRulesets = selectedRulesets;
+        }
     }
 }
