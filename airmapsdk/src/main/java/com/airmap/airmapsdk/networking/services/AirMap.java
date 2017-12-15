@@ -938,40 +938,16 @@ public final class AirMap {
         RulesetService.getEvaluation(rulesets, geometry, flightFeatures, callback);
     }
 
-    public static Call getAirspaceStatus( @NonNull AirMapPolygon polygon, @NonNull List<String> rulesetIds, AirMapCallback<AirMapAirspaceStatus> callback) {
+    public static Call getAirspaceStatus(@NonNull AirMapPolygon polygon, @NonNull List<String> rulesetIds, AirMapCallback<AirMapAirspaceStatus> callback) {
         return RulesetService.getAdvisories(rulesetIds, polygon, null, null, null, callback);
     }
 
-    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull List<Coordinate> geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String, Object> flightFeatures, AirMapCallback<AirMapAirspaceStatus> callback) {
-        List<String> rulesetIds = new ArrayList<>();
-        for (AirMapRuleset ruleset : rulesets) {
-            rulesetIds.add(ruleset.getId());
-        }
-
-        return RulesetService.getAdvisories(rulesetIds, geometry, start, end, flightFeatures, callback);
+    public static Call getAirspaceStatus(@NonNull AirMapPolygon polygon, @NonNull List<String> rulesetIds, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceStatus> callback) {
+        return RulesetService.getAdvisories(rulesetIds, polygon, start, end, null, callback);
     }
 
-    public static Call getAdvisories(@NonNull List<AirMapRuleset> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, @Nullable Map<String, Object> flightFeatures, AirMapCallback<AirMapAirspaceStatus> callback) {
-        List<String> rulesetIds = new ArrayList<>();
-        for (AirMapRuleset ruleset : rulesets) {
-            rulesetIds.add(ruleset.getId());
-        }
-
-        return RulesetService.getAdvisories(rulesetIds, geometry, start, end, flightFeatures, callback);
-    }
-
-    public static Call getAdvisories(@NonNull List<String> rulesets, @NonNull JSONObject geometry, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceStatus> callback) {
-        return RulesetService.getAdvisories(rulesets, geometry, start, end, null, callback);
-    }
-
-    public static Call getAdvisories(@NonNull List<String> rulesets, Coordinate southwest, Coordinate northwest, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceStatus> callback) {
-        // create polygon based on Lat/Long bounds
-        List<Coordinate> bounds = new ArrayList<>();
-        bounds.add(southwest);
-        bounds.add(northwest);
-        AirMapPolygon polygon = new AirMapPolygon(bounds);
-
-        return RulesetService.getAdvisories(rulesets, AirMapGeometry.getGeoJSONFromGeometry(polygon), start, end, null, callback);
+    public static Call getAirspaceStatus(@NonNull JSONObject geometry, @NonNull List<String> rulesetIds, @Nullable Date start, @Nullable Date end, AirMapCallback<AirMapAirspaceStatus> callback) {
+        return RulesetService.getAdvisories(rulesetIds, geometry, start, end, null, callback);
     }
 
     /**
