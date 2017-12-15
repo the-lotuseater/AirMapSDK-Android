@@ -26,6 +26,8 @@ public class MapFragment extends Fragment implements AirMapMapView.OnMapDataChan
     private AirMapMapView mapView;                  // mapbox MapView wrapper
     private FloatingActionButton myLocationFab;       // FAB to view/change selected rulesets
 
+    private AirMapMapView.DynamicConfiguration configuration;
+
     public static MapFragment newInstance() {
         return new MapFragment();
     }
@@ -37,8 +39,6 @@ public class MapFragment extends Fragment implements AirMapMapView.OnMapDataChan
         mapView = view.findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
         mapView.addOnMapDataChangedListener(this);
-        ((MapDemoActivity) getActivity()).setMapView(mapView);
-        mapView.getMapAsync(null);
 
 
         myLocationFab = view.findViewById(R.id.my_location_fab);
@@ -50,6 +50,17 @@ public class MapFragment extends Fragment implements AirMapMapView.OnMapDataChan
         });
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        ((MapDemoActivity) getActivity()).setMapView(mapView);
+        mapView.getMapAsync(null);
+
+        configuration = new AirMapMapView.DynamicConfiguration(null, null, true);
+        mapView.configure(configuration);
     }
 
     @Override
@@ -67,15 +78,21 @@ public class MapFragment extends Fragment implements AirMapMapView.OnMapDataChan
     }
 
     public void onRulesetSelected(AirMapRuleset ruleset) {
-        mapView.onRulesetSelected(ruleset);
+        configuration.preferredRulesetIds.add(ruleset.getId());
+        configuration.unpreferredRulesetIds.remove(ruleset.getId());
+        mapView.configure(configuration);
     }
 
     public void onRulesetDeselected(AirMapRuleset ruleset) {
-        mapView.onRulesetDeselected(ruleset);
+        configuration.preferredRulesetIds.remove(ruleset.getId());
+        configuration.unpreferredRulesetIds.add(ruleset.getId());
+        mapView.configure(configuration);
     }
 
     public void onRulesetSwitched(AirMapRuleset fromRuleset, AirMapRuleset toRuleset) {
-        mapView.onRulesetSwitched(fromRuleset, toRuleset);
+        configuration.preferredRulesetIds.remove(fromRuleset.getId());
+        configuration.preferredRulesetIds.add(toRuleset.getId());
+        mapView.configure(configuration);
     }
 
     public AirMapMapView getMapView() {
