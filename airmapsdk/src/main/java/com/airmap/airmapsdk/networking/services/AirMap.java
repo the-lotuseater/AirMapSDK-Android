@@ -512,6 +512,15 @@ public final class AirMap {
     /**
      * Get a list of all public flights combined with the authenticated pilot's private flights
      *
+     * @param callback The callback that is invoked on success or error
+     */
+    public static Call getPublicFlights(@Nullable AirMapCallback<List<AirMapFlight>> callback) {
+        return FlightService.getPublicFlights(1000,null,null, callback);
+    }
+
+    /**
+     * Get a list of all public flights combined with the authenticated pilot's private flights
+     *
      * @param limit    Max number of flights to return
      * @param from     Search for flights from this date
      * @param to       Search for flights to this date
@@ -594,7 +603,7 @@ public final class AirMap {
      *
      * @param callback The callback that is invoked on success or error
      */
-    public static Call getFlights(@Nullable AirMapCallback<List<AirMapFlight>> callback) {
+    public static Call getMyFlights(@Nullable AirMapCallback<List<AirMapFlight>> callback) {
         return FlightService.getFlights(null, AirMap.getUserId(), null, null, null, null, null, null, null, null, null, null, null, true, callback);
     }
 
