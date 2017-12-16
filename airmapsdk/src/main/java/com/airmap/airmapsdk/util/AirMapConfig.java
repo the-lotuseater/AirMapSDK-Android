@@ -58,7 +58,7 @@ public class AirMapConfig {
             return AirMap.getConfig().getJSONObject("auth0").getString("host");
         } catch (JSONException e) {
             AirMapLog.e(TAG, "Error getting auth0 host from airmap.config.json", e);
-            throw new RuntimeException("Error getting auth0 host from airmap.config.json");
+            return "sso.airmap.io";
         }
     }
 
