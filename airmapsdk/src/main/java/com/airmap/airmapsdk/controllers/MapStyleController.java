@@ -81,10 +81,6 @@ public class MapStyleController implements MapView.OnMapChangedListener {
                     }
                 }
 
-                if (map.getMap().getSource("airmap") == null) {
-                    map.getMap().addSource(new VectorSource("airmap", "mapbox://mapbox.mapbox-terrain-v2,mapbox.mapbox-streets-v7"));
-                }
-
                 try {
                     mapStyle = new MapStyle(map.getMap().getStyleJson());
                 } catch (JSONException e) {
