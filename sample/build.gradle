@@ -1,16 +1,19 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.0'
 
     defaultConfig {
         applicationId "com.airmap.airmapsdktest"
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode 2
         versionName "1.0.1"
         multiDexEnabled true
+
+        manifestPlaceholders = [auth0Domain: "sso.airmap.com", auth0Scheme: "airmap"]
+        buildConfigField "boolean", "LOGGING", "true"
     }
     buildTypes {
         release {
@@ -23,12 +26,7 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-//    compile('com.airmap.airmapsdk:airmapsdk:1.0.7') { exclude module: 'support-v4' }
-    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:5.1.3@aar') { transitive = true }
-    compile('com.mapbox.mapboxsdk:mapbox-android-services:2.1.3@aar') { transitive = true }
-    compile('com.mapbox.mapboxsdk:mapbox-android-ui:2.0.0@aar') { transitive = true }
-    compile project(':airmapsdk')
+    compile 'com.android.support:multidex:1.0.2'
+    compile 'com.marshalchen.ultimaterecyclerview:library:0.7.3'
+    compile project(':AirMapSDK-Android:airmapsdk')
 }

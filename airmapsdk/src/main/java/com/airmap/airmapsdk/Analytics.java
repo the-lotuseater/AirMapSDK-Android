@@ -20,7 +20,7 @@ public class Analytics {
         if (tracker != null) {
             tracker.logEvent(section, action, label);
         } else {
-            Log.e(TAG, "No tracker set!");
+            AirMapLog.d(TAG, "No tracker set!");
         }
     }
 
@@ -28,7 +28,7 @@ public class Analytics {
         if (tracker != null) {
             tracker.logEvent(section, action, label, value);
         } else {
-            Log.e(TAG, "No tracker set!");
+            AirMapLog.d(TAG, "No tracker set!");
         }
     }
 
@@ -36,7 +36,15 @@ public class Analytics {
         if (tracker != null) {
             tracker.logEvent(section, action, label, value);
         } else {
-            Log.e(TAG, "No tracker set!");
+            AirMapLog.d(TAG, "No tracker set!");
+        }
+    }
+
+    public static void report(Exception e) {
+        if (tracker != null) {
+            tracker.report(e);
+        } else {
+            AirMapLog.d(TAG, "No tracker set!");
         }
     }
 
@@ -96,6 +104,14 @@ public class Analytics {
         public static final String flightRequirmentsForm = "flight_requirements_form";
         public static final String statusBottomSheet = "status_bottom_sheet";
         public static final String logout = "logout";
+        public static final String drawer = "drawer";
+        public static final String rules = "rules";
+        public static final String advisories = "advisories";
+        public static final String flightPlanDraw = "flight_plan_draw";
+        public static final String flightPlanCheck = "flight_plan_check";
+        public static final String flightPlanBrief = "flight_plan_brief";
+        public static final String fly = "fly";
+        public static final String deeplink_create_flight = "deeplink_create_flight";
     }
 
     public static class Action {
@@ -117,6 +133,12 @@ public class Analytics {
         public static final String drop = "drop";
         public static final String start = "start";
         public static final String save = "save";
+        public static final String deselect = "deselect";
+        public static final String expand = "expand";
+        public static final String change = "change";
+        public static final String result = "result";
+        public static final String success = "success";
+        public static final String cancelled = "cancelled";
     }
 
     public static class Label {
@@ -174,9 +196,44 @@ public class Analytics {
         public static final String REVIEW_DETAILS_TAB = "Review Details Tab";
         public static final String REVIEW_PERMITS_TAB = "Review Permits Tab";
         public static final String REVIEW_NOTICES_TAB = "Review Notices Tab";
+
+        public static final String CREATE_FLIGHT_BUTTON = "Create Flight Button";
+        public static final String ADVISORY_BUTTON = "Advisory Button";
+        public static final String MISSION_TAGS = "Mission Tags";
+        public static final String RULES_TAB = "Rules Tab";
+        public static final String ADVISORIES_TAB = "Advisories Tab";
+        public static final String PICK_ONE = "Pick One";
+        public static final String OPTIONAL = "Optional";
+        public static final String RULES_INFO = "Rules Info";
+        public static final String HEADER = "Header";
+        public static final String NEXT_BUTTON = "Next Button";
+        public static final String START_TIME = "Start Time";
+        public static final String ALTITUDE = "Altitude";
+        public static final String PILOT = "Pilot";
+        public static final String AIRCRAFT = "Aircraft";
+        public static final String FEATURE = "Feature";
+        public static final String TOP_NEXT_BUTTON = "Top Next Button";
+        public static final String BOTTOM_NEXT_BUTTON = "Bottom Next Button";
+        public static final String RULES_VIOLATING = "Rules you may be violating";
+        public static final String BOTTOM_SUBMIT_BUTTON = "Bottom Submit Button";
+        public static final String TOP_SUBMIT_BUTTON = "Top Submit Button";
+        public static final String BRIEF_BUTTON = "Brief Button";
+        public static final String END_FLIGHT_BUTTON = "End Flight Button";
+        public static final String CANCEL_FLIGHT_BUTTON = "Cancel Flight Button";
+        public static final String CONFIRM_END_FLIGHT_BUTTON = "Confirm End Flight Button";
+        public static final String CANCEL_END_FLIGHT_BUTTON = "Cancel End Flight Button";
+        public static final String PATH_DRAWING_TOOLS = "Path Drawing Tools";
+        public static final String POINT_DRAWING_TOOLS = "Point Drawing Tools";
+        public static final String POLYGON_DRAWING_TOOLS = "Polygon Drawing Tools";
+        public static final String CONFLICTING = "Conflicting Header";
+        public static final String NON_CONFLICTING = "Non Conflicting Header";
+        public static final String NEEDS_MORE_INFO = "Needing More Info Header";
+        public static final String INFORMATIONAL = "Informational Header";
     }
 
     public static final class Value {
         public static final String AIRMAP = "AirMap";
+        public static final String RULES = "Rules";
+        public static final String ADVISORIES = "Advisories";
     }
 }

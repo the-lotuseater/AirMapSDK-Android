@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.airmap.airmapsdk.networking.callbacks.AirMapAuthenticationCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.networking.services.AuthService;
-import com.airmap.airmapsdk.util.AirMapAuthenticationCallback;
+import com.airmap.airmapsdk.util.AirMapConfig;
 import com.airmap.airmapsdk.util.PreferenceUtils;
 import com.airmap.airmapsdk.util.SecuredPreferenceException;
 import com.airmap.airmapsdk.util.Utils;
@@ -28,6 +30,8 @@ import org.jose4j.jwt.consumer.JwtConsumerBuilder;
  */
 public class Auth {
 
+    private static final String TAG = "Auth";
+
     public enum ErrorType {
         DomainBlackList,
         EmailVerification,
@@ -35,12 +39,13 @@ public class Auth {
     }
 
     public static void loginOrSignup(Activity activity, AirMapAuthenticationCallback callback) {
-        Auth0 auth0 = new Auth0(Utils.getClientId(), "sso.airmap.io");
+        Auth0 auth0 = new Auth0(AirMapConfig.getAuth0ClientId(), AirMapConfig.getAuth0Host());
+        auth0.setOIDCConformant(false);
 
         Lock lock = Lock.newBuilder(auth0, callback)
                 .hideMainScreenTitle(true)
-                .setTermsURL("https://www.airmap.com/terms")
-                .setPrivacyURL("https://www.airmap.com/privacy")
+                .setTermsURL(AirMapConfig.getTermsUrl())
+                .setPrivacyURL(AirMapConfig.getPrivacyUrl())
                 .withScope("openid offline_access")
                 .withScheme("airmap")
                 .closable(true)
@@ -68,7 +73,7 @@ public class Auth {
         // return if refresh token is empty
         if (TextUtils.isEmpty(refreshToken)) {
             if (callback != null) {
-                callback.onError(new AirMapException("Invalid Refresh Token"));
+                callback.error(new AirMapException("Invalid Refresh Token"));
             }
             return;
         }
@@ -99,9 +104,23 @@ public class Auth {
         AuthService.refreshAccessToken(refreshToken);
     }
 
-    public static boolean isTokenExpired() {
+    public static void clearRefreshToken(final Context context) {
         try {
-            String token = AirMap.getAuthToken();
+            SharedPreferences preferences = PreferenceUtils.getPreferences(context);
+            preferences.edit().putString(Utils.REFRESH_TOKEN_KEY, "").apply();
+        } catch (SecuredPreferenceException e) {
+            AirMapLog.e("Auth", "Unable to get clear refresh token from secure prefs", e);
+        }
+    }
+
+    public static boolean isTokenExpired() {
+        String token = AirMap.getAuthToken();
+        if (TextUtils.isEmpty(token)) {
+            AirMapLog.d(TAG, "No auth token");
+            return true;
+        }
+
+        try {
             JwtConsumer consumer = new JwtConsumerBuilder()
                     .setSkipAllValidators()
                     .setDisableRequireSignature()
@@ -110,7 +129,7 @@ public class Auth {
             JwtClaims claims = consumer.processToClaims(token);
             return claims.getExpirationTime().isBefore(NumericDate.now());
         } catch (InvalidJwtException | MalformedClaimException e) {
-            e.printStackTrace();
+            AirMapLog.e(TAG, "Unable to process token", e);
             return true;
         }
     }

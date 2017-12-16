@@ -1,7 +1,9 @@
 package com.airmap.airmapsdk.models;
 
 import com.mapbox.mapboxsdk.annotations.Polygon;
+import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.annotations.Polyline;
+import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 
 /**
  * Created by Vansh Gandhi on 10/30/16.
@@ -14,8 +16,8 @@ public class PolygonContainer implements Container {
 
     @Override
     public void clear() {
-        polygon = null;
-        outline = null;
+        polygon = new PolygonOptions().getPolygon();
+        outline = new PolylineOptions().getPolyline();
     }
 
     @Override

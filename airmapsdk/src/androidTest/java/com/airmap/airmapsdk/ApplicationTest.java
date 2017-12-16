@@ -146,7 +146,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     }
 
     public void testGetAllFlights() throws InterruptedException {
-        AirMap.getFlights(new AirMapCallback<List<AirMapFlight>>() {
+        AirMap.getMyFlights(new AirMapCallback<List<AirMapFlight>>() {
             @Override
             public void onSuccess(List<AirMapFlight> response) {
                 assertNotNull(response);

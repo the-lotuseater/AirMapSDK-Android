@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#344052</color>
-    <!--<color name="colorPrimaryDark">#263238</color>-->
-    <color name="colorPrimaryDark">#19202b</color>
+    <color name="colorPrimary">@color/airmap_navy</color>
+    <color name="colorPrimaryDark">@color/airmap_navy_dark</color>
     <color name="colorAccent">#13A4FA</color>
     <color name="colorTextAndIcons">#FFFFFF</color>
-    <color name="airmap_red">#FF0000</color>
-    <color name="airmap_yellow">#ffeb3b</color>
-    <color name="airmap_green">#7ED321</color>
-    <color name="airmap_colorFill">#B8E1E3</color>
-    <color name="airmap_tipBackground">#d519202b</color>
+    <color name="airmap_colorFill">#B9E4E7</color>
+    <color name="airmap_tipBackground">#AA19202b</color>
     <color name="airmap_errorTipBackground">#c8d50000</color>
     <color name="colorLightGray">#fcfcfc</color>
     <color name="colorLinkBlue">@color/colorAccent</color>
@@ -22,10 +18,23 @@
     <color name="redDark">#D32F2F</color>
     <color name="red">#FF0000</color>
 
+    <color name="status_red">#EE0000</color>
+    <color name="status_yellow">#ffeb3b</color>
+    <color name="status_green">#7ED321</color>
+    <color name="status_orange">#FF7C15</color>
+
     <color name="light_grey">#E6E6E6</color>
-    <color name="font_light_grey">#E6E6E6</color>
+
+    <color name="font_white">#EFEFEF</color>
+    <color name="font_black">#111111</color>
+    <color name="font_grey">#999999</color>
+    <color name="font_light_grey">#AAAAAA</color>
 
     <color name="airmap_aqua">#88DBDF</color>
+    <color name="airmap_aqua_translucent">#D9B9E4E7</color>
     <color name="airmap_navy">#333F48</color>
     <color name="airmap_navy_dark">#2A313C</color>
+    <color name="airmap_navy_light">#444d54</color>
+    <color name="airmap_orange">#FC4C02</color>
+    <color name="airmap_yellow">#F9E547</color>
 </resources>

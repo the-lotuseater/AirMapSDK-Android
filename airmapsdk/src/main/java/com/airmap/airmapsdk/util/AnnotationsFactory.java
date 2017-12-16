@@ -38,10 +38,10 @@ public class AnnotationsFactory {
     private Context context;
 
     public AnnotationsFactory(Context context) {
+        this.context = context;
         cornerIcon = IconFactory.getInstance(context).fromBitmap(getBitmapForDrawable(context, R.drawable.white_circle));
         midpointIcon = IconFactory.getInstance(context).fromBitmap(getBitmapForDrawable(context, R.drawable.gray_circle));
         intersectionIcon = IconFactory.getInstance(context).fromBitmap(getBitmapForDrawable(context, R.drawable.intersection_circle));
-        this.context = context;
     }
 
     public static PolygonOptions getMapboxPolygon(AirMapPolygon airMapPolygon) {
@@ -56,13 +56,13 @@ public class AnnotationsFactory {
     public PolygonOptions getDefaultPolygonOptions() {
         PolygonOptions options = new PolygonOptions();
         options.fillColor(ContextCompat.getColor(context, R.color.airmap_colorFill));
-        options.alpha(0.66f);
+        options.alpha(0.75f);
         return options;
     }
 
     private PolygonOptions getDefaultRedPolygonOptions() {
         PolygonOptions options = new PolygonOptions();
-        options.fillColor(ContextCompat.getColor(context, R.color.airmap_red));
+        options.fillColor(ContextCompat.getColor(context, R.color.status_red));
         options.alpha(0.66f);
         return options;
     }
@@ -103,7 +103,7 @@ public class AnnotationsFactory {
 
     //Emulate a circle as a polygon with a bunch of sides
     public ArrayList<LatLng> polygonCircleForCoordinate(LatLng location, double radius) {
-        int degreesBetweenPoints = 2;
+        int degreesBetweenPoints = 8;
         int numberOfPoints = (int) Math.floor(360 / degreesBetweenPoints);
         double distRadians = radius / 6371000.0; // earth radius in meters
         double centerLatRadians = location.getLatitude() * Math.PI / 180;

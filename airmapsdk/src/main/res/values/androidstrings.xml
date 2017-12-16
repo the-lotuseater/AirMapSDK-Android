@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="read_full_rules">Read Full Rules</string>
+    <string name="rejected_upon_submission">Rejected Upon Submission</string>
     <string name="learn_more">Learn More</string>
     <string name="rules_hint">Learn about federal, state, and local rules that may impact operations in this area</string>
 
@@ -36,6 +37,7 @@
     <string name="resend_email">Resend Email</string>
     <string name="sent_email">Sent email</string>
     <string name="successfully_updated">Successfully updated</string>
+    <string name="phone_verification_mismatch">Verification code does not match the one sent. Send a new SMS for the verification code and try again?</string>
 
     <string name="select_manufacturer">Select Manufacturer</string>
     <string name="select_model">Select Model</string>
@@ -59,7 +61,82 @@
         <item quantity="other">%1$s hours</item>
     </plurals>
     <string name="duration_in_minutes">%1$s mins</string>
+
+    <string name="no_advisories">No Advisories</string>
+
+    <string name="pick_one">Pick One</string>
+    <string name="optional">Optional</string>
+    <string name="required">Required</string>
+
+    <string name="tile_layer_class_f">Class F</string>
+    <string name="tile_layer_did">Densely Populated Region</string>
+    <string name="tile_layer_seaplane_base">Seaplane Base</string>
+    <string name="notams">NOTAMS</string>
+    <string name="airspace_type_ama">AMA Field</string>
+    <string name="amas">AMA Fields</string>
+    <string name="tile_layer_unknown">Unknown</string>
+    <string name="airspace_type_unknown">Unknown</string>
+
     <string name="units_meter_short">%1$s m</string>
     <string name="units_feet_short">%1$s ft</string>
+
+    <string name="no">NO</string>
+    <string name="yes">YES</string>
+
+    <string name="advisory_type_quantity">%1$s (%2$s)</string>
+    <string name="null_feature_value">—</string>
+    <string name="flight_feature_speed">Speed</string>
+    <string name="flight_feature_weight">Weight</string>
+    <string name="flight_feature_distance">Distance</string>
+    <string name="flight_feature_kilograms">kg</string>
+    <string name="flight_feature_pounds">lb</string>
+    <string name="flight_feature_meters">m</string>
+    <string name="flight_feature_feet">ft</string>
+    <string name="flight_feature_km_per_hour">km/h</string>
+    <string name="flight_feature_miles_per_hour">mph</string>
+
+    <string name="kilometers_short">%d km</string>
+    <string name="miles_short">%d mi</string>
+
+    <string name="authorizations_header">Authorization &amp; Validation</string>
+    <string name="rules_header">Rules &amp; Compliance</string>
+
+    <string name="time">Time</string>
+    <string name="wind">Wind</string>
+    <string name="visibility">Visibility</string>
+    <string name="temperature">Temperature</string>
+    <string name="dew_point">Dew Point</string>
+    <string name="pressure">Pressure</string>
+
+    <string name="airspace_laanc_authorization_automated">FAA authorization available</string>
+
+    <string name="country">Country</string>
+    <string name="county">County</string>
+    <string name="embassy">Embassy</string>
+    <string name="fir">Flight Information Region</string>
+    <string name="federal_building">Federal Building</string>
+    <string name="glider_port">Gliderport</string>
+    <string name="highway">Highway</string>
+    <string name="industrial_property">Industrial Property</string>
+    <string name="military_property">Military Property</string>
+    <string name="police_station">Police Station</string>
+    <string name="powerline">Power Line</string>
+    <string name="railway">Railway</string>
+    <string name="residential_property">Residential Property</string>
+    <string name="stadium">Stadium</string>
+    <string name="state">State</string>
+    <string name="subprefecture">Subprefecture</string>
+    <string name="supercity">Supercity</string>
+    <string name="ulm_field">Ulm Field</string>
+    <string name="waterway">Waterway</string>
+    <string name="japan_base_admin">Japan Base Admin</string>
+
+
+    <string name="com_auth0_lock_description_change_password">Please enter your email address. We will send you an email to reset your password.</string>
+    <string name="com_auth0_lock_sign_up_terms_dialog_title">Terms &amp; Policy</string>
+    <string name="com_auth0_lock_sign_up_terms_dialog_message" formatted="false"><![CDATA[
+    By signing up, you agree to our <a href=\'%s\'>terms of service</a> and <a href=\'%s\'>privacy policy</a>
+    ]]></string>
+    <string name="com_auth0_lock_password_strength_title_at_least">And contain at least 3 of the following 4 types of characters:</string>
 
 </resources>

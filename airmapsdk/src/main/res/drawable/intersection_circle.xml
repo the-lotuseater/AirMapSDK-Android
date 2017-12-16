@@ -9,6 +9,6 @@
 
     <stroke
             android:width="2dp"
-            android:color="@color/airmap_red"/>
+            android:color="#ff0000"/>
 
 </shape>

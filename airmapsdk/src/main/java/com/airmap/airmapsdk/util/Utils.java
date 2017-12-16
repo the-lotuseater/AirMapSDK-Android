@@ -2,12 +2,8 @@ package com.airmap.airmapsdk.util;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
-import android.os.Build;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
 import android.support.graphics.drawable.VectorDrawableCompat;
@@ -19,7 +15,6 @@ import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.Coordinate;
-import com.airmap.airmapsdk.models.status.AirMapStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
@@ -38,6 +33,7 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -46,6 +42,9 @@ import java.util.Locale;
  */
 @SuppressWarnings("unused")
 public class Utils {
+
+    private static final String TAG = "Utils (SDK)";
+
     public static final String REFRESH_TOKEN_KEY = "AIRMAP_SDK_REFRESH_TOKEN";
 
     /** Return the value mapped by the given key, or {@code null} if not present or null. */
@@ -62,7 +61,7 @@ public class Utils {
     }
 
     public static boolean useMetric(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.MEASUREMENT_SYSTEM, Constants.IMPERIAL_SYSTEM).equals(Constants.METRIC_SYSTEM);
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(AirMapConstants.MEASUREMENT_SYSTEM, AirMapConstants.IMPERIAL_SYSTEM).equals(AirMapConstants.METRIC_SYSTEM);
     }
 
     public static String titleCase(String s) {
@@ -89,6 +88,45 @@ public class Utils {
 
     public static double metersToFeet(double meters) {
         return meters * 3.2808399;
+    }
+
+    public static double celsiusToFahrenheit(double celsius) {
+        return 32 + (celsius * 9 / 5);
+    }
+
+    public static String getTemperatureString(Context context, double tempInCelsius, boolean useFahrenheit) {
+        if (useFahrenheit) {
+            return context.getString(R.string.units_temperature_fahrenheit_format, Long.toString(Math.round(celsiusToFahrenheit(tempInCelsius))));
+        }
+        return context.getString(R.string.units_temperature_celcius_format, Long.toString(Math.round(tempInCelsius)));
+    }
+
+    public static int convertToDp(Context context, int px) {
+        float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (px * scale + 0.5f);
+    }
+
+    public static double metersToMiles(double meters) {
+        return meters * 0.000621371;
+    }
+
+    public static int milesToKilometers(int miles) {
+        return (int) (miles * 1.609344);
+    }
+
+    public static int kilometersToMiles(int kilometers) {
+        return (int) (kilometers / 1.609344);
+    }
+
+    public static int metersPerSecondToKts(int metersPerSecond) {
+        return (int) (metersPerSecond * 1.94384);
+    }
+
+    public static int metersPerSecondToKmph(int metersPerSecond) {
+        return (int) (metersPerSecond * 3.6);
+    }
+    public static int metersPerSecondToMph(int metersPerSecond) {
+        return (int) (metersPerSecond * 2.23694);
     }
 
     public static DateFormat getDateTimeFormat() {
@@ -128,8 +166,7 @@ public class Utils {
             DateTime dateTime = dateTimeFormatter.parseDateTime(iso8601);
             return dateTime.toDate();
         } catch (UnsupportedOperationException | IllegalArgumentException e) {
-            AirMapLog.e("AirMap Utils", "Error parsing date: " + e.getMessage());
-            e.printStackTrace();
+            AirMapLog.e("AirMap Utils", "Error parsing date: " + iso8601, e);
         }
         return null;
     }
@@ -141,9 +178,9 @@ public class Utils {
     public static void error(AirMapCallback listener, Exception e) {
         if (e != null && listener != null) {
             if (e.getMessage().toLowerCase().startsWith("unable to resolve host")) {
-                listener.onError(new AirMapException("No internet connection"));
+                listener.error(new AirMapException("No internet connection"));
             } else if (!e.getMessage().toLowerCase().contains("canceled")) { //Not an error if it was canceled
-                listener.onError(new AirMapException(e.getMessage()));
+                listener.error(new AirMapException(e.getMessage()));
             }
         }
     }
@@ -151,7 +188,7 @@ public class Utils {
     //So we don't have to be doing null checks constantly
     public static void error(AirMapCallback listener, int code, JSONObject json) {
         if (listener != null) {
-            listener.onError(new AirMapException(code, json));
+            listener.error(new AirMapException(code, json));
         }
     }
 
@@ -291,18 +328,32 @@ public class Utils {
         return context.getString(useMetric ? R.string.units_meter_short : R.string.units_feet_short, buffer);
     }
 
-    public static int indexOfMeterPreset(double meters, double[] presets) {
+    public static int indexOfNearestMatch(double meters, double[] presets) {
         for (int i = 0; i < presets.length; i++) {
-            if (presets[i] == meters) {
+            if (Math.round(presets[i]) >= Math.round(meters)) {
                 return i;
             }
         }
-        return -1;
+        return presets.length - 1;
+    }
+
+    public static int indexOfNearestMatch(double meters, List<Double> presets) {
+        for (int i = 0; i < presets.size(); i++) {
+            if (round(presets.get(i), 2) >= round(meters, 2)) {
+                return i;
+            }
+        }
+        return presets.size() - 1;
+    }
+
+    private static double round(double value, int precision) {
+        int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
     }
 
     public static int indexOfDurationPreset(long millis) {
         for (int i = 0; i < getDurationPresets().length; i++) {
-            if (getDurationPresets()[i] == millis) {
+            if (getDurationPresets()[i] >= millis) {
                 return i;
             }
         }
@@ -342,23 +393,6 @@ public class Utils {
         return new PolygonOptions().addAll(points).strokeColor(color).alpha(0.66f).fillColor(color);
     }
 
-    public static int getStatusCircleColor(AirMapStatus latestStatus, Context context) {
-        int color = 0;
-        if (latestStatus != null) {
-            AirMapStatus.StatusColor statusColor = latestStatus.getAdvisoryColor();
-            if (statusColor == AirMapStatus.StatusColor.Red) {
-                color = ContextCompat.getColor(context, R.color.airmap_red);
-            } else if (statusColor == AirMapStatus.StatusColor.Yellow) {
-                color = ContextCompat.getColor(context, R.color.airmap_yellow);
-            } else if (statusColor == AirMapStatus.StatusColor.Green) {
-                color = ContextCompat.getColor(context, R.color.airmap_green);
-            }
-        } else {
-            color = 0x1E88E5;
-        }
-        return color;
-    }
-
     public static String readInputStreamAsString(InputStream in) throws IOException {
         BufferedInputStream bis = new BufferedInputStream(in);
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
@@ -371,29 +405,22 @@ public class Utils {
         return buf.toString();
     }
 
-    public static String getMapboxApiKey() {
-        try {
-            return AirMap.getConfig().getJSONObject("mapbox").getString("access_token");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error getting mapbox key from airmap.config.json");
-        }
+    /**
+     * Formats a list of Coordinates into WKT format
+     *
+     * @param coordinates The list of coordinates to include in the result
+     * @return A WKT formatted string of coordinates
+     */
+    public static String makeGeoString(List<Coordinate> coordinates) {
+        return TextUtils.join(",", coordinates);
     }
 
-    public static String getClientId() {
-        try {
-            JSONObject auth0 = AirMap.getConfig().getJSONObject("auth0");
-            return auth0.getString("client_id");
-        } catch (JSONException e) {
-            throw new RuntimeException("client_id and/or callback_url not found in airmap.config.json");
-        }
-    }
 
-    public static String getDebugUrl() {
+    public static String getStagingUrl() {
         try {
             return AirMap.getConfig().getJSONObject("internal").getString("debug_url");
         } catch (JSONException e) {
-            return "v2/";
+            return "stage/";
         }
     }
 
@@ -413,35 +440,9 @@ public class Utils {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private static Bitmap getBitmap(VectorDrawable vectorDrawable) {
-        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
-                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        vectorDrawable.draw(canvas);
-        return bitmap;
-    }
-
-    private static Bitmap getBitmap(VectorDrawableCompat vectorDrawable) {
-        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
-                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        vectorDrawable.draw(canvas);
-        return bitmap;
-    }
-
-    public static Bitmap getBitmap(Context context, @DrawableRes int drawableResId) {
-        Drawable drawable = ContextCompat.getDrawable(context, drawableResId);
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable) drawable).getBitmap();
-        } else if (drawable instanceof VectorDrawableCompat) {
-            return getBitmap((VectorDrawableCompat) drawable);
-        } else if (drawable instanceof VectorDrawable) {
-            return getBitmap((VectorDrawable) drawable);
-        } else {
-            throw new IllegalArgumentException("Unsupported drawable type");
-        }
+    public static boolean isNetworkConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 }
