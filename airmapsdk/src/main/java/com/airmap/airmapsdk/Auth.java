@@ -30,6 +30,8 @@ import org.jose4j.jwt.consumer.JwtConsumerBuilder;
  */
 public class Auth {
 
+    private static final String TAG = "Auth";
+
     public enum ErrorType {
         DomainBlackList,
         EmailVerification,
@@ -112,8 +114,13 @@ public class Auth {
     }
 
     public static boolean isTokenExpired() {
+        String token = AirMap.getAuthToken();
+        if (TextUtils.isEmpty(token)) {
+            AirMapLog.d(TAG, "No auth token");
+            return true;
+        }
+
         try {
-            String token = AirMap.getAuthToken();
             JwtConsumer consumer = new JwtConsumerBuilder()
                     .setSkipAllValidators()
                     .setDisableRequireSignature()
@@ -122,6 +129,7 @@ public class Auth {
             JwtClaims claims = consumer.processToClaims(token);
             return claims.getExpirationTime().isBefore(NumericDate.now());
         } catch (InvalidJwtException | MalformedClaimException e) {
+            AirMapLog.e(TAG, "Unable to process token", e);
             return true;
         }
     }
