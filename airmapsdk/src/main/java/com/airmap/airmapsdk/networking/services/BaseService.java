@@ -102,6 +102,7 @@ class BaseService {
     //Rules
     protected static final String rulesetsVersion = STAGING ? getStagingUrl() : "v1/";
     protected static final String rulesetBaseUrl = AirMapConfig.getApiOverride("rules", baseUrl + "rules/" + rulesetsVersion);
+    protected static final String rulesetsByIdUrl = rulesetBaseUrl + "rule/"; //Replace %s with id using String.format
     protected static final String rulesetByIdUrl = rulesetBaseUrl + "%s/"; //Replace %s with id using String.format
     protected static final String rulesByIdUrl = rulesetBaseUrl + "%s/"; //Replace %s with id using String.format
     protected static final String advisoriesUrl = baseUrl + "advisory/" + rulesetsVersion + "airspace";

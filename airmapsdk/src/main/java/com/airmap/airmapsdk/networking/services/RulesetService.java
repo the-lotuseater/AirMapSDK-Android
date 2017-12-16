@@ -117,7 +117,7 @@ public class RulesetService extends BaseService {
     static Call getRulesets(List<String> rulesetIds, AirMapCallback<List<AirMapRuleset>> listener) {
         Map<String, String> params = new HashMap<>();
         params.put("rulesets", TextUtils.join(",",rulesetIds));
-        return AirMap.getClient().get(rulesetBaseUrl, params, new GenericListOkHttpCallback(listener, AirMapRuleset.class));
+        return AirMap.getClient().get(rulesetsByIdUrl, params, new GenericListOkHttpCallback(listener, AirMapRuleset.class));
     }
 
     static Call getRuleset(String rulesetId, AirMapCallback<AirMapRuleset> callback) {
