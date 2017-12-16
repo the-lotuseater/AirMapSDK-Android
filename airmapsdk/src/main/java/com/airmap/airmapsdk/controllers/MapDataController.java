@@ -7,17 +7,16 @@ import android.text.TextUtils;
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.Coordinate;
-import com.airmap.airmapsdk.models.status.AirMapAdvisory;
-import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.rules.AirMapJurisdiction;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
+import com.airmap.airmapsdk.models.status.AirMapAdvisory;
+import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
 import com.airmap.airmapsdk.util.ThrottleablePublishSubject;
 import com.google.gson.JsonObject;
-import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.geometry.VisibleRegion;
 import com.mapbox.services.commons.geojson.Feature;
@@ -52,11 +51,11 @@ public class MapDataController {
 
     private static final String TAG = "MapDataController";
 
-    private AirMapMapView map;
-
-    private ThrottleablePublishSubject<Coordinate> jurisdictionsPublishSubject;
-    private PublishSubject<AirMapMapView.Configuration> configurationPublishSubject;
+    protected ThrottleablePublishSubject<AirMapPolygon> jurisdictionsPublishSubject;
+    protected PublishSubject<AirMapMapView.Configuration> configurationPublishSubject;
     private Subscription rulesetsSubscription;
+
+    private AirMapMapView map;
 
     private List<AirMapRuleset> selectedRulesets;
     private List<AirMapRuleset> availableRulesets;
@@ -64,9 +63,9 @@ public class MapDataController {
 
     private Callback callback;
 
-    public MapDataController(AirMapMapView map, AirMapMapView.Configuration configuration, Callback callback) {
+    public MapDataController(AirMapMapView map, AirMapMapView.Configuration configuration) {
         this.map = map;
-        this.callback = callback;
+        this.callback = map;
 
         jurisdictionsPublishSubject = ThrottleablePublishSubject.create();
         configurationPublishSubject = PublishSubject.create();
@@ -83,35 +82,29 @@ public class MapDataController {
         Observable<Map<String, AirMapRuleset>> jurisdictionsObservable = jurisdictionsPublishSubject.asObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Action1<Coordinate>() {
+                .doOnNext(new Action1<AirMapPolygon>() {
                     @Override
-                    public void call(Coordinate coordinate) {
+                    public void call(AirMapPolygon polygon) {
                         if (callback != null) {
                             callback.onAdvisoryStatusLoading();
                         }
                     }
                 })
-                .map(new Func1<Coordinate, Pair<Map<String, AirMapRuleset>, List<AirMapJurisdiction>>>() {
+                .flatMap(getJurisdictions())
+                .filter(new Func1<List<AirMapJurisdiction>, Boolean>() {
                     @Override
-                    public Pair<Map<String, AirMapRuleset>,List<AirMapJurisdiction>> call(Coordinate coordinate) {
-                        // query map for jurisdictions
-                        List<Feature> features = map.getMap().queryRenderedFeatures(new RectF(map.getLeft(),
-                                map.getTop(), map.getRight(), map.getBottom()), "jurisdictions");
-
+                    public Boolean call(List<AirMapJurisdiction> jurisdictions) {
+                        return jurisdictions != null && !jurisdictions.isEmpty();
+                    }
+                })
+                .map(new Func1<List<AirMapJurisdiction>, Pair<Map<String, AirMapRuleset>, List<AirMapJurisdiction>>>() {
+                    @Override
+                    public Pair<Map<String, AirMapRuleset>,List<AirMapJurisdiction>> call(List<AirMapJurisdiction> jurisdictions) {
                         Map<String, AirMapRuleset> jurisdictionRulesets = new HashMap<>();
-                        List<AirMapJurisdiction> jurisdictions = new ArrayList<>();
-                        for (Feature feature : features) {
-                            try {
-                                JsonObject propertiesJSON = feature.getProperties();
-                                JSONObject jurisdictionJSON = new JSONObject(propertiesJSON.get("jurisdiction").getAsString());
 
-                                AirMapJurisdiction jurisdiction = new AirMapJurisdiction(jurisdictionJSON);
-                                jurisdictions.add(jurisdiction);
-                                for (AirMapRuleset ruleset : jurisdiction.getRulesets()) {
-                                    jurisdictionRulesets.put(ruleset.getId(), ruleset);
-                                }
-                            } catch (JSONException e) {
-                                AirMapLog.e(TAG, "Unable to get jurisdiction json", e);
+                        for (AirMapJurisdiction jurisdiction : jurisdictions) {
+                            for (AirMapRuleset ruleset : jurisdiction.getRulesets()) {
+                                jurisdictionRulesets.put(ruleset.getId(), ruleset);
                             }
                         }
                         AirMapLog.i(TAG, "Jurisdictions loaded: " + TextUtils.join(",", jurisdictionRulesets.keySet()));
@@ -127,9 +120,10 @@ public class MapDataController {
                 });
 
         // observes changes to preferred rulesets to trigger advisories fetch
-        Observable<AirMapMapView.Configuration> preferredRulesetsObservable = configurationPublishSubject
+        Observable<AirMapMapView.Configuration> configurationObservable = configurationPublishSubject
                 .startWith(configuration)
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Action1<AirMapMapView.Configuration>() {
                     @Override
                     public void call(AirMapMapView.Configuration configuration) {
@@ -155,7 +149,7 @@ public class MapDataController {
 
         // combines preferred rulesets and available rulesets changes
         // to calculate selected rulesets and advisories
-        rulesetsSubscription = Observable.combineLatest(jurisdictionsObservable, preferredRulesetsObservable,
+        rulesetsSubscription = Observable.combineLatest(jurisdictionsObservable, configurationObservable,
                 new Func2<Map<String, AirMapRuleset>, AirMapMapView.Configuration, Pair<List<AirMapRuleset>,List<AirMapRuleset>>>() {
                     @Override
                     public Pair<List<AirMapRuleset>,List<AirMapRuleset>> call(Map<String, AirMapRuleset> availableRulesetsMap, AirMapMapView.Configuration configuration) {
@@ -216,6 +210,49 @@ public class MapDataController {
                 });
     }
 
+    public void onMapLoaded() {
+        jurisdictionsPublishSubject.onNext(null);
+    }
+
+    public void onMapRegionChanged() {
+        jurisdictionsPublishSubject.onNextThrottled(null);
+    }
+
+    protected Func1<AirMapPolygon, Observable<List<AirMapJurisdiction>>> getJurisdictions() {
+        return new Func1<AirMapPolygon, Observable<List<AirMapJurisdiction>>>() {
+            @Override
+            public Observable<List<AirMapJurisdiction>> call(AirMapPolygon polygon) {
+                return Observable.create(new Observable.OnSubscribe<List<AirMapJurisdiction>>() {
+                    @Override
+                    public void call(final Subscriber<? super List<AirMapJurisdiction>> subscriber) {
+                        // query map for jurisdictions
+                        List<Feature> features = map.getMap().queryRenderedFeatures(new RectF(map.getLeft(),
+                                map.getTop(), map.getRight(), map.getBottom()), "jurisdictions");
+
+                        if (features == null || features.isEmpty()) {
+                            AirMapLog.e(TAG, "Features are empty");
+                        }
+
+                        List<AirMapJurisdiction> jurisdictions = new ArrayList<>();
+                        for (Feature feature : features) {
+                            try {
+                                JsonObject propertiesJSON = feature.getProperties();
+                                JSONObject jurisdictionJSON = new JSONObject(propertiesJSON.get("jurisdiction").getAsString());
+
+                                jurisdictions.add(new AirMapJurisdiction(jurisdictionJSON));
+                            } catch (JSONException e) {
+                                AirMapLog.e(TAG, "Unable to get jurisdiction json", e);
+                            }
+                        }
+
+                        subscriber.onNext(jurisdictions);
+                        subscriber.onCompleted();
+                    }
+                });
+            }
+        };
+    }
+
     /**
      *  Fetches advisories based on map bounds and selected rulesets
      *
@@ -225,18 +262,7 @@ public class MapDataController {
         return new Func1<List<AirMapRuleset>, Observable<AirMapAirspaceStatus>>() {
             @Override
             public Observable<AirMapAirspaceStatus> call(List<AirMapRuleset> selectedRulesets) {
-                VisibleRegion region = map.getMap().getProjection().getVisibleRegion();
-                LatLngBounds bounds = region.latLngBounds;
-                List<Coordinate> coordinates = new ArrayList<>();
-                coordinates.add(new Coordinate(bounds.getLatNorth(), bounds.getLonWest()));
-                coordinates.add(new Coordinate(bounds.getLatNorth(), bounds.getLonEast()));
-                coordinates.add(new Coordinate(bounds.getLatSouth(), bounds.getLonEast()));
-                coordinates.add(new Coordinate(bounds.getLatSouth(), bounds.getLonWest()));
-                coordinates.add(new Coordinate(bounds.getLatNorth(), bounds.getLonWest()));
-
-                AirMapPolygon polygon = new AirMapPolygon(coordinates);
-
-                return getAdvisories(selectedRulesets, polygon)
+                return getAdvisories(selectedRulesets, getPolygon())
                         .onErrorResumeNext(new Func1<Throwable, Observable<? extends AirMapAirspaceStatus>>() {
                             @Override
                             public Observable<? extends AirMapAirspaceStatus> call(Throwable throwable) {
@@ -245,6 +271,20 @@ public class MapDataController {
                         });
             }
         };
+    }
+
+    protected AirMapPolygon getPolygon() {
+        VisibleRegion region = map.getMap().getProjection().getVisibleRegion();
+        LatLngBounds bounds = region.latLngBounds;
+
+        List<Coordinate> coordinates = new ArrayList<>();
+        coordinates.add(new Coordinate(bounds.getLatNorth(), bounds.getLonWest()));
+        coordinates.add(new Coordinate(bounds.getLatNorth(), bounds.getLonEast()));
+        coordinates.add(new Coordinate(bounds.getLatSouth(), bounds.getLonEast()));
+        coordinates.add(new Coordinate(bounds.getLatSouth(), bounds.getLonWest()));
+        coordinates.add(new Coordinate(bounds.getLatNorth(), bounds.getLonWest()));
+
+        return new AirMapPolygon(coordinates);
     }
 
     private Observable<AirMapAirspaceStatus> getAdvisories(final List<AirMapRuleset> rulesets, final AirMapPolygon polygon) {
@@ -306,14 +346,6 @@ public class MapDataController {
     public void onMapReset() {
         availableRulesets = new ArrayList<>();
         selectedRulesets = new ArrayList<>();
-    }
-
-    public void onMapLoaded(LatLng latLng) {
-        jurisdictionsPublishSubject.onNext(new Coordinate(latLng));
-    }
-
-    public void onMapMoved(LatLng latLng) {
-        jurisdictionsPublishSubject.onNextThrottled(new Coordinate(latLng));
     }
 
     public void onDestroy() {
