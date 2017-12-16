@@ -227,6 +227,9 @@ public class AirMapRuleset implements Serializable, AirMapBaseModel, Comparable 
 
     @Override
     public int hashCode() {
+        if (id == null) {
+            return 0;
+        }
         return id.hashCode();
     }
 }
