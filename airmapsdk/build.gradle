@@ -36,40 +36,48 @@ android {
 }
 
 dependencies {
-    androidTestCompile 'com.android.support.test:runner:1.0.1'
-    testCompile 'junit:junit:4.12'
-    testCompile "org.mockito:mockito-core:2.10.0"
-    testCompile "org.robolectric:robolectric:3.4.2"
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    testImplementation 'junit:junit:4.12'
+    testImplementation "org.mockito:mockito-core:2.10.0"
+    testImplementation "org.robolectric:robolectric:3.4.2"
 
+    // support
     def supportLibraryVersion = '27.0.2'
+    api "com.android.support:appcompat-v7:$supportLibraryVersion"
+    api "com.android.support:design:$supportLibraryVersion"
+    api "com.android.support:cardview-v7:$supportLibraryVersion"
+    api "com.android.support:recyclerview-v7:$supportLibraryVersion"
+    api "com.android.support:support-annotations:$supportLibraryVersion"
+    api "com.android.support:support-fragment:$supportLibraryVersion"
+    api "com.android.support:support-v13:$supportLibraryVersion"
+
+    // play services
     def playServicesVersion = '11.6.2'
-    compile "com.android.support:appcompat-v7:$supportLibraryVersion"
-    compile "com.android.support:design:$supportLibraryVersion"
-    compile "com.android.support:cardview-v7:$supportLibraryVersion"
-    compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
-    compile "com.android.support:support-annotations:$supportLibraryVersion"
-    compile "com.android.support:support-fragment:$supportLibraryVersion"
-    compile "com.android.support:support-v13:$supportLibraryVersion"
-    compile "com.google.android.gms:play-services-location:$playServicesVersion"
-    compile 'com.squareup.okhttp3:okhttp:3.9.1'
-    compile 'com.github.bumptech.glide:glide:3.8.0' //Using Glide instead of Picasso because it is more efficient for the app's tutorial images
-    compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
-    compile 'com.nakama.arraypageradapter:arraypageradapter:0.1.1'
-    compile 'de.hdodenhof:circleimageview:2.1.0'
-    compile 'org.bitbucket.b_c:jose4j:0.6.1'
-    compile 'com.google.protobuf:protobuf-java:3.5.0'
-    compile 'joda-time:joda-time:2.9.9'
-    compile 'com.googlecode.libphonenumber:libphonenumber:8.8.2'
-    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:5.2.0@aar') { transitive = true }
-    compile 'com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.2.0'
-    compile('com.mapbox.mapboxsdk:mapbox-android-services:2.2.9@aar') { transitive = true }
-    compile('com.mapbox.mapboxsdk:mapbox-android-ui:2.2.9@aar') { transitive = true }
-    compile 'com.github.lzyzsd:jsbridge:1.0.4'
-    compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
-    compile('org.eclipse.paho:org.eclipse.paho.android.service:1.1.1')
-    compile 'io.reactivex:rxandroid:1.2.1'
-    compile 'online.devliving:securedpreferencestore:0.3.1' // Newer version available, but updating requires making some api changes within our code
-    compile('com.auth0.android:lock:2.8.0') { exclude module: 'support-v4' }
+    api "com.google.android.gms:play-services-location:$playServicesVersion"
+
+    // mapbox
+    api('com.mapbox.mapboxsdk:mapbox-android-sdk:5.2.0@aar') { transitive = true }
+    api('com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.2.0') { transitive = true }
+    api('com.mapbox.mapboxsdk:mapbox-android-services:2.2.9@aar') { transitive = true }
+    api('com.mapbox.mapboxsdk:mapbox-android-ui:2.2.9@aar') { transitive = true }
+
+    // shared libraries
+    api 'joda-time:joda-time:2.9.9'
+    api 'io.reactivex:rxandroid:1.2.1'
+    api 'com.googlecode.libphonenumber:libphonenumber:8.8.2'
+    api 'online.devliving:securedpreferencestore:0.3.1' // Newer version available, but updating requires making some api changes within our code
+
+    // other
+    implementation 'com.squareup.okhttp3:okhttp:3.9.1'
+    implementation 'com.github.bumptech.glide:glide:3.8.0' //Using Glide instead of Picasso because it is more efficient for the app's tutorial images
+    implementation 'com.github.bumptech.glide:okhttp3-integration:1.5.0@aar'
+    implementation 'com.nakama.arraypageradapter:arraypageradapter:0.1.1'
+    implementation 'org.bitbucket.b_c:jose4j:0.6.1'
+    implementation 'com.google.protobuf:protobuf-java:3.5.0'
+    implementation 'com.github.lzyzsd:jsbridge:1.0.4'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
+    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+    implementation 'com.auth0.android:lock:2.8.0'
 }
 
 configurations {
