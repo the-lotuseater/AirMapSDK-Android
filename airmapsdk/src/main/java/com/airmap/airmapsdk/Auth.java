@@ -11,6 +11,7 @@ import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.networking.services.AuthService;
 import com.airmap.airmapsdk.util.AirMapConfig;
+import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdk.util.PreferenceUtils;
 import com.airmap.airmapsdk.util.SecuredPreferenceException;
 import com.airmap.airmapsdk.util.Utils;
@@ -36,6 +37,16 @@ public class Auth {
         DomainBlackList,
         EmailVerification,
         Unknown,
+    }
+
+    public static boolean isUserLoggedIn(Context context) {
+        try {
+            SharedPreferences preferences = PreferenceUtils.getPreferences(context);
+            return preferences.getBoolean(AirMapConstants.LOGGED_IN, false);
+        } catch (SecuredPreferenceException e) {
+            Log.e("Auth", "SecurePref", e);
+            return false;
+        }
     }
 
     public static void loginOrSignup(Activity activity, AirMapAuthenticationCallback callback) {

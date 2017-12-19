@@ -6,6 +6,14 @@ package com.airmap.airmapsdk.util;
 
 public class AirMapConstants {
 
+    //Secured Shared Preferences Keys
+    public static final String EMAIL = "email";
+    public static final String LOGGED_IN = "loggedIn";
+    public static final String AUTHENTICATED_USER_ID = "userId";
+    public static final String REFRESH_TOKEN = "refreshToken";
+    public static final String AUTH_TOKEN = "authToken";
+    public static final String AUTH_TOKEN_EXPIRES_AT = "authTokenExpiresAt";
+
     //Shared Preferences Keys
     public static final String MAP_STYLE = "mapStyle";
 
