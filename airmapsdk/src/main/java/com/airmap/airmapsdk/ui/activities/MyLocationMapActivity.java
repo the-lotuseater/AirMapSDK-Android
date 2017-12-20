@@ -15,20 +15,19 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode;
@@ -53,10 +52,22 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
     private LocationEngine locationEngine;
 
     private boolean hasLoadedMyLocation;
+    private boolean isLocationDialogShowing;
 
     @Override
     public void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+
+        if (getMapView() != null) {
+            getMapView().addOnMapLoadListener(this);
+        }
+
+        requestLocationPermissionIfNeeded();
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
 
         if (getMapView() != null) {
             getMapView().addOnMapLoadListener(this);
@@ -96,6 +107,8 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
                     AirMapLog.d(TAG, "Location setting turned on by user");
                     goToLastLocation(false,3);
                 }
+
+                isLocationDialogShowing = false;
                 break;
             }
         }
@@ -118,7 +131,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
     @SuppressLint("MissingPermission")
     public void goToLastLocation(boolean force) {
         if (requestLocationPermissionIfNeeded()) {
-            if (locationEngine.getLastLocation() != null) {
+            if (locationEngine != null && locationEngine.getLastLocation() != null) {
                 zoomTo(locationEngine.getLastLocation(), force);
             } else {
                 turnOnLocation();
@@ -126,21 +139,21 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         }
     }
 
+    @SuppressLint("MissingPermission")
     private void goToLastLocation(final boolean force, final int retries) {
-        int delay = 2500 * Math.max((3 - retries), 1);
-
-        new Handler().postDelayed(new Runnable() {
-            @SuppressLint("MissingPermission")
-            @Override
-            public void run() {
-                AirMapLog.e(TAG, "goToLastLocation w/ " + retries + " retries");
-                if (locationEngine.getLastLocation() != null) {
-                    zoomTo(locationEngine.getLastLocation(), false);
-                } else if (retries > 0) {
+        if (locationEngine != null && locationEngine.getLastLocation() != null) {
+            zoomTo(locationEngine.getLastLocation(), false);
+        } else if (retries > 0) {
+            int delay = 2500 * Math.max((3 - retries), 1);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    AirMapLog.e(TAG, "goToLastLocation w/ " + retries + " retries");
+                    locationEngine.requestLocationUpdates();
                     goToLastLocation(force, retries - 1);
                 }
-            }
-        }, delay);
+            }, delay);
+        }
     }
 
     private void zoomTo(Location location, boolean force) {
@@ -149,16 +162,19 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             AirMapLog.e(TAG, "zoomTo: " + location);
             getMapView().getMap().easeCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
             hasLoadedMyLocation = true;
+            locationEngine.removeLocationUpdates();
         }
     }
 
     @SuppressLint("MissingPermission")
     @Override
     public void onMapLoaded() {
-        AirMapLog.d(TAG, "onMapLoaded");
+        AirMapLog.e(TAG, "onMapLoaded");
         locationEngine = new GoogleLocationEngine(MyLocationMapActivity.this);
         locationEngine.addLocationEngineListener(MyLocationMapActivity.this);
         locationEngine.setPriority(LocationEnginePriority.BALANCED_POWER_ACCURACY);
+        locationEngine.setFastestInterval(250);
+        locationEngine.setInterval(250);
         locationEngine.activate();
 
         locationLayerPlugin = new LocationLayerPlugin(getMapView(), getMapView().getMap(), locationEngine);
@@ -252,37 +268,44 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
      * It shows a dismissable dialog for users that don't have location already enabled
      */
     public void turnOnLocation() {
-        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(com.google.android.gms.location.LocationServices.API).build();
-        googleApiClient.connect();
-
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setNumUpdates(1);
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
         builder.setAlwaysShow(true);
 
-        PendingResult<LocationSettingsResult> result = com.google.android.gms.location.LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+        Task<LocationSettingsResponse> task = LocationServices.getSettingsClient(this).checkLocationSettings(builder.build());
+        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
             @SuppressLint("MissingPermission")
             @Override
-            public void onResult(@NonNull LocationSettingsResult result) {
-                final Status status = result.getStatus();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        Log.e(TAG, "LocationSettings success: " + locationEngine.getLastLocation());
-                        goToLastLocation(false, 3);
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        Log.e(TAG, "LocationSettings resolution required");
-                        try {
-                            status.startResolutionForResult(MyLocationMapActivity.this, REQUEST_TURN_ON_LOCATION);
-                        } catch (IntentSender.SendIntentException e) {
-                            Log.i(TAG, "PendingIntent unable to execute request.");
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        break;
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                // All location settings are satisfied. The client can initialize
+                // location requests here.
+                locationEngine.requestLocationUpdates();
+                goToLastLocation(false, 3);
+            }
+        });
+
+        task.addOnFailureListener(this, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (e instanceof ResolvableApiException) {
+                    if (isLocationDialogShowing) {
+                        return;
+                    }
+
+                    // Location settings are not satisfied, but this can be fixed
+                    // by showing the user a dialog.
+                    try {
+                        // Show the dialog by calling startResolutionForResult(),
+                        // and check the result in onActivityResult().
+                        ResolvableApiException resolvable = (ResolvableApiException) e;
+                        resolvable.startResolutionForResult(MyLocationMapActivity.this, REQUEST_TURN_ON_LOCATION);
+
+                        isLocationDialogShowing = true;
+                    } catch (IntentSender.SendIntentException sendEx) {
+                        // Ignore the error.
+                    }
                 }
             }
         });
