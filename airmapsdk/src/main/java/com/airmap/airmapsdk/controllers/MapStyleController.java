@@ -69,7 +69,6 @@ public class MapStyleController implements MapView.OnMapChangedListener {
     @Override
     public void onMapChanged(int change) {
         switch (change) {
-            case MapView.DID_FINISH_LOADING_MAP:
             case MapView.DID_FINISH_LOADING_STYLE: {
                 // Adjust the background overlay opacity to improve map visually on Android
                 BackgroundLayer backgroundLayer = map.getMap().getLayerAs("background-overlay");
