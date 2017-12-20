@@ -56,10 +56,10 @@ dependencies {
     api "com.google.android.gms:play-services-location:$playServicesVersion"
 
     // mapbox
-    api('com.mapbox.mapboxsdk:mapbox-android-sdk:5.2.0@aar') { transitive = true }
-    api('com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.2.0') { transitive = true }
-    api('com.mapbox.mapboxsdk:mapbox-android-services:2.2.9@aar') { transitive = true }
-    api('com.mapbox.mapboxsdk:mapbox-android-ui:2.2.9@aar') { transitive = true }
+    api('com.mapbox.mapboxsdk:mapbox-android-sdk:5.3.0')
+    api('com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.2.0')
+    api('com.mapbox.mapboxsdk:mapbox-android-services:2.2.9')
+    api('com.mapbox.mapboxsdk:mapbox-android-ui:2.2.9')
 
     // shared libraries
     api 'joda-time:joda-time:2.9.9'
