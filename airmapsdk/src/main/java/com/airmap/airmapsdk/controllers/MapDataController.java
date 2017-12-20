@@ -82,6 +82,12 @@ public class MapDataController {
         Observable<Map<String, AirMapRuleset>> jurisdictionsObservable = jurisdictionsPublishSubject.asObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .filter(new Func1<AirMapPolygon, Boolean>() {
+                    @Override
+                    public Boolean call(AirMapPolygon polygon) {
+                        return map != null && map.getMap() != null;
+                    }
+                })
                 .doOnNext(new Action1<AirMapPolygon>() {
                     @Override
                     public void call(AirMapPolygon polygon) {
@@ -225,6 +231,7 @@ public class MapDataController {
                 return Observable.create(new Observable.OnSubscribe<List<AirMapJurisdiction>>() {
                     @Override
                     public void call(final Subscriber<? super List<AirMapJurisdiction>> subscriber) {
+
                         // query map for jurisdictions
                         List<Feature> features = map.getMap().queryRenderedFeatures(new RectF(map.getLeft(),
                                 map.getTop(), map.getRight(), map.getBottom()), "jurisdictions");
