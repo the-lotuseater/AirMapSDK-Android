@@ -155,7 +155,9 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
                 @Override
                 public void run() {
                     AirMapLog.e(TAG, "goToLastLocation w/ " + retries + " retries");
-                    locationEngine.requestLocationUpdates();
+                    if (locationEngine != null) {
+                        locationEngine.requestLocationUpdates();
+                    }
                     goToLastLocation(force, retries - 1);
                 }
             }, delay);
@@ -308,7 +310,10 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                 // All location settings are satisfied. The client can initialize
                 // location requests here.
-                locationEngine.requestLocationUpdates();
+                if (locationEngine != null) {
+                    locationEngine.requestLocationUpdates();
+                }
+
                 goToLastLocation(false, 3);
             }
         });
