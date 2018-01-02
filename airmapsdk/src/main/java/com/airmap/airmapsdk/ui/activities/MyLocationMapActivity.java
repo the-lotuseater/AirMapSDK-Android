@@ -6,10 +6,12 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -20,6 +22,7 @@ import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
+import com.airmap.airmapsdk.util.AirMapConstants;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -160,9 +163,17 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         // only zoom to user's location once
         if (!hasLoadedMyLocation || force) {
             AirMapLog.e(TAG, "zoomTo: " + location);
+
             getMapView().getMap().easeCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
-            hasLoadedMyLocation = true;
             locationEngine.removeLocationUpdates();
+            hasLoadedMyLocation = true;
+
+            // save location to prefs
+            PreferenceManager.getDefaultSharedPreferences(this)
+                    .edit()
+                    .putFloat(AirMapConstants.LAST_LOCATION_LATITUDE, (float) location.getLatitude())
+                    .putFloat(AirMapConstants.LAST_LOCATION_LONGITUDE, (float) location.getLongitude())
+                    .apply();
         }
     }
 
@@ -170,6 +181,16 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
     @Override
     public void onMapLoaded() {
         AirMapLog.e(TAG, "onMapLoaded");
+
+        // use saved location is there is one
+        float savedLatitude = PreferenceManager.getDefaultSharedPreferences(this)
+                .getFloat(AirMapConstants.LAST_LOCATION_LATITUDE, 0);
+        float savedLongitude = PreferenceManager.getDefaultSharedPreferences(this)
+                .getFloat(AirMapConstants.LAST_LOCATION_LONGITUDE, 0);
+        if (savedLatitude != 0 && savedLongitude != 0) {
+            getMapView().getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(savedLatitude, savedLongitude), 13));
+        }
+
         locationEngine = new GoogleLocationEngine(MyLocationMapActivity.this);
         locationEngine.addLocationEngineListener(MyLocationMapActivity.this);
         locationEngine.setPriority(LocationEnginePriority.BALANCED_POWER_ACCURACY);

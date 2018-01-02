@@ -16,6 +16,8 @@ public class AirMapConstants {
 
     //Shared Preferences Keys
     public static final String MAP_STYLE = "mapStyle";
+    public static final String LAST_LOCATION_LATITUDE = "last_location_latitude";
+    public static final String LAST_LOCATION_LONGITUDE = "last_location_longitude";
 
     //Intent extras
     public static final String URL_EXTRA = "url_extra";

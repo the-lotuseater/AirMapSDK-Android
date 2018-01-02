@@ -43,7 +43,6 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     private MapStyleController mapStyleController;
     private MapDataController mapDataController;
-    private MapDataController.Callback dataControllerCallback;
 
     // optional callbacks
     private List<OnMapLoadListener> mapLoadListeners;
