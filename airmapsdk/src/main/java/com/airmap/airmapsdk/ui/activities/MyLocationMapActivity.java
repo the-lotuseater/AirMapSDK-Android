@@ -109,6 +109,9 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
                 if (resultCode == Activity.RESULT_OK) {
                     AirMapLog.d(TAG, "Location setting turned on by user");
                     goToLastLocation(false,3);
+                } else {
+                    AirMapLog.d(TAG, "Location setting not turned on by user");
+                    hasLoadedMyLocation = true;
                 }
 
                 isLocationDialogShowing = false;
@@ -180,6 +183,9 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
     @SuppressLint("MissingPermission")
     @Override
     public void onMapLoaded() {
+        if (hasLoadedMyLocation) {
+            return;
+        }
         AirMapLog.e(TAG, "onMapLoaded");
 
         // use saved location is there is one
