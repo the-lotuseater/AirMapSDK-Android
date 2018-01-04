@@ -1,7 +1,10 @@
 package com.airmap.airmapsdk.models.rules;
 
+import android.text.TextUtils;
+
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
@@ -90,5 +93,63 @@ public class AirMapAuthorization implements AirMapBaseModel, Serializable{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject authorizationObject = new JSONObject();
+
+        if (!TextUtils.isEmpty(getDescription())) {
+            authorizationObject.put("description", getDescription());
+        }
+
+        String statusString = null;
+        switch (getStatus()) {
+            case NOT_REQUESTED:
+                statusString = "not_requested";
+                break;
+            case REJECTED_UPON_SUBMISSION:
+                statusString = "rejected_upon_submission";
+                break;
+            case AUTHORIZED_UPON_SUBMISSION:
+                statusString = "authorized_upon_submission";
+                break;
+            case MANUAL_AUTHORIZATION:
+                statusString = "manual_authorization";
+                break;
+            case PENDING:
+                statusString = "pending";
+                break;
+            case ACCEPTED:
+                statusString = "accepted";
+                break;
+            case REJECTED:
+                statusString = "rejected";
+                break;
+            case CANCELLED:
+                statusString = "cancelled";
+                break;
+        }
+        if (!TextUtils.isEmpty(statusString)) {
+            authorizationObject.put("status", statusString);
+        }
+
+        if (!TextUtils.isEmpty(getMessage())) {
+            authorizationObject.put("message", getMessage());
+        }
+
+        if (getAuthority() != null) {
+            JSONObject authorityObject = new JSONObject();
+            if (!TextUtils.isEmpty(getAuthority().getId())) {
+                authorityObject.put("id", authority.getId());
+            }
+
+            if (!TextUtils.isEmpty(getAuthority().getName())) {
+                authorityObject.put("name", authority.getName());
+            }
+
+            authorizationObject.put("authority", authorityObject);
+        }
+
+        return authorizationObject;
     }
 }
