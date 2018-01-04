@@ -107,7 +107,7 @@ public class FlightPlanDataController extends MapDataController {
         this.takeoffCoordinate = takeoffCoordinate;
         this.buffer = buffer;
 
-        jurisdictionsPublishSubject.onNextThrottled(polygon);
+        jurisdictionsPublishSubject.onNext(polygon);
     }
 
     public AirMapPolygon getPolygon() {
