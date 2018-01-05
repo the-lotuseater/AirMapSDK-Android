@@ -10,6 +10,7 @@ import com.airmap.airmapsdk.models.status.properties.AirMapControlledAirspacePro
 import com.airmap.airmapsdk.models.status.properties.AirMapEmergencyProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapHeliportProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapNotamProperties;
+import com.airmap.airmapsdk.models.status.properties.AirMapOptionalProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapParkProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapPowerPlantProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapSchoolProperties;
@@ -59,6 +60,8 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
     private AirMapWildfireProperties wildfireProperties;
     private AirMapEmergencyProperties emergencyProperties;
     private AirMapNotamProperties notamProperties;
+    private AirMapOptionalProperties optionalProperties;
+
 
     /**
      * Initialize an AirMapAdvisory from JSON
@@ -112,6 +115,7 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
                 switch (type) {
                     case Airport: {
                         setAirportProperties(new AirMapAirportProperties(properties));
+                        setOptionalProperties(new AirMapOptionalProperties(properties));
                         break;
                     }
                     case Park: {
@@ -153,6 +157,12 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
                     }
                     case Notam: {
                         setNotamProperties(new AirMapNotamProperties(properties));
+                        break;
+                    }
+                    case City:
+                    case University:
+                    case Custom: {
+                        setOptionalProperties(new AirMapOptionalProperties(properties));
                         break;
                     }
                 }
@@ -371,8 +381,18 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
         return notamProperties;
     }
 
-    public void setNotamProperties(AirMapNotamProperties notamProperties) {
+    public AirMapAdvisory setNotamProperties(AirMapNotamProperties notamProperties) {
         this.notamProperties = notamProperties;
+        return this;
+    }
+
+    public AirMapOptionalProperties getOptionalProperties() {
+        return optionalProperties;
+    }
+
+    public AirMapAdvisory setOptionalProperties(AirMapOptionalProperties optionalProperties) {
+        this.optionalProperties = optionalProperties;
+        return this;
     }
 
     /**
