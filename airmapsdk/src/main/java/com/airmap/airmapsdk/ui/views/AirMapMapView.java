@@ -103,6 +103,9 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
      *  @param controller
      */
     public void setMapDataController(MapDataController controller) {
+        // destroy old data controller (unsubscribe from rx)
+        mapDataController.onDestroy();
+
         this.mapDataController = controller;
     }
 

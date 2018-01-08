@@ -48,6 +48,7 @@ public class FlightPlanDataController extends MapDataController {
     private AirMapPolygon polygon;
     private Coordinate takeoffCoordinate;
     private float buffer;
+    private float altitude;
 
     public FlightPlanDataController(AirMapMapView map, AirMapMapView.Configuration configuration) {
         super(map, configuration);
@@ -110,6 +111,10 @@ public class FlightPlanDataController extends MapDataController {
         jurisdictionsPublishSubject.onNext(polygon);
     }
 
+    public void onAltitudeChanged(float altitude) {
+        this.altitude = altitude;
+    }
+
     public AirMapPolygon getPolygon() {
         return polygon;
     }
@@ -120,5 +125,9 @@ public class FlightPlanDataController extends MapDataController {
 
     public float getBuffer() {
         return buffer;
+    }
+
+    public float getAltitude() {
+        return altitude;
     }
 }
