@@ -23,7 +23,7 @@ class BaseService {
     //Base Urls
     protected static final String baseUrl = "https://api." + getDomain() + "/";
     protected static final String mapTilesVersion = STAGING ? getStagingUrl() : "v1/";
-    protected static final String mapTilesBaseUrl = baseUrl + "maps/" + mapTilesVersion + "tilejson/";
+    protected static final String mapTilesBaseUrl = baseUrl + "maps/" + "v4/" + "tilejson/";
     protected static final String mapTilesRulesUrl = baseUrl + "tiledata/" + mapTilesVersion;
 
     //Aircraft

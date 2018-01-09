@@ -966,16 +966,13 @@ public final class AirMap {
      * @param theme  The theme of the map
      * @return the map tile url
      */
+    @Deprecated
     public static String getTileSourceUrl(List<MappingService.AirMapLayerType> layers, MappingService.AirMapMapTheme theme) {
         return airMapMapMappingService.getTileSourceUrl(layers, theme);
     }
 
     public static String getMapStylesUrl(MappingService.AirMapMapTheme theme) {
         return airMapMapMappingService.getStylesUrl(theme);
-    }
-
-    public static String getJurisdictionsTileUrlTemplate() {
-        return airMapMapMappingService.getJurisdictionsTileUrlTemplate();
     }
 
     public static String getRulesetTileUrlTemplate(String rulesetId, List<String> layers) {

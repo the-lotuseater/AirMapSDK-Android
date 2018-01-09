@@ -397,13 +397,10 @@ public class MappingService extends BaseService {
         }
     }
 
+    @Deprecated
     protected String getTileSourceUrl(@Nullable List<AirMapLayerType> layers, AirMapMapTheme theme) {
         String tiles = (layers == null || layers.size() == 0) ? "_-_" : TextUtils.join(",", layers);
         return mapTilesBaseUrl + tiles + "?&theme=" + theme.toString() + "&apikey=" + AirMap.getInstance().getApiKey() + "&token=" + AirMap.getInstance().getApiKey();
-    }
-
-    protected String getJurisdictionsTileUrlTemplate() {
-        return mapTilesRulesUrl + "/base-jurisdiction/{z}/{x}/{y}";
     }
 
     protected String getRulesetTileUrlTemplate(String rulesetId, List<String> layers) {
