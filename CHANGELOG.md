@@ -1,9 +1,9 @@
-##`2.0.0 (12/21/17)`
+##`2.0.0 Beta (12/21/17)`
 * New Rulesets API
 * New Flight Plan API
 * Update Advisory API
-* Updated Mapbox to 5.3.0
-* New AirMapMapView (experimental)
+* Updated Mapbox to 5.3.1
+* New AirMapMapView (beta)
 
 ##`1.0.10 (8/21/17)`
 * Updated Mapbox to 5.1.3

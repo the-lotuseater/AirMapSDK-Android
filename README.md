@@ -22,7 +22,7 @@ Start by adding the Android SDK to your project:
 
 * Add 
 ```groovy
-implementation 'com.airmap.sdk:airmapsdk:2.0.0-beta.1'
+implementation 'com.airmap.sdk:airmapsdk:2.0.0-beta.3'
 ``` 
 
 to your module level `build.gradle` file
