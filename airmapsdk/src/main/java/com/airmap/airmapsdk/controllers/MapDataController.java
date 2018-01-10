@@ -1,6 +1,7 @@
 package com.airmap.airmapsdk.controllers;
 
 import android.graphics.RectF;
+import android.os.Handler;
 import android.support.v4.util.Pair;
 import android.text.TextUtils;
 
@@ -57,6 +58,7 @@ public class MapDataController {
 
     private AirMapMapView map;
 
+    private boolean hasJurisdictions;
     private List<AirMapRuleset> selectedRulesets;
     private List<AirMapRuleset> availableRulesets;
     private AirMapAirspaceStatus airspaceStatus;
@@ -103,6 +105,12 @@ public class MapDataController {
                         return jurisdictions != null && !jurisdictions.isEmpty();
                     }
                 })
+                .doOnNext(new Action1<List<AirMapJurisdiction>>() {
+                    @Override
+                    public void call(List<AirMapJurisdiction> jurisdictions) {
+                        hasJurisdictions = true;
+                    }
+                })
                 .map(new Func1<List<AirMapJurisdiction>, Pair<Map<String, AirMapRuleset>, List<AirMapJurisdiction>>>() {
                     @Override
                     public Pair<Map<String, AirMapRuleset>,List<AirMapJurisdiction>> call(List<AirMapJurisdiction> jurisdictions) {
@@ -115,7 +123,7 @@ public class MapDataController {
                         }
                         AirMapLog.i(TAG, "Jurisdictions loaded: " + TextUtils.join(",", jurisdictionRulesets.keySet()));
 
-                        return new Pair<>(jurisdictionRulesets,jurisdictions);
+                        return new Pair<>(jurisdictionRulesets, jurisdictions);
                     }
                 })
                 .map(new Func1<Pair<Map<String, AirMapRuleset>, List<AirMapJurisdiction>>, Map<String, AirMapRuleset>>() {
@@ -224,6 +232,17 @@ public class MapDataController {
         jurisdictionsPublishSubject.onNextThrottled(null);
     }
 
+    public void onMapFinishedRendering() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!hasJurisdictions) {
+                    onMapLoaded();
+                }
+            }
+        }, 500);
+    }
+
     protected Func1<AirMapPolygon, Observable<List<AirMapJurisdiction>>> getJurisdictions() {
         return new Func1<AirMapPolygon, Observable<List<AirMapJurisdiction>>>() {
             @Override
@@ -236,7 +255,7 @@ public class MapDataController {
                         List<Feature> features = map.getMap().queryRenderedFeatures(new RectF(map.getLeft(),
                                 map.getTop(), map.getRight(), map.getBottom()), "jurisdictions");
 
-                        if (features == null || features.isEmpty()) {
+                        if (features.isEmpty()) {
                             AirMapLog.e(TAG, "Features are empty");
                         }
 
@@ -335,7 +354,7 @@ public class MapDataController {
     }
 
     public List<AirMapAdvisory> getCurrentAdvisories() {
-        return airspaceStatus.getAdvisories();
+        return airspaceStatus == null || airspaceStatus.getAdvisories() == null ? null : new ArrayList<>(airspaceStatus.getAdvisories());
     }
 
     public AirMapAirspaceStatus getAirspaceStatus() {
@@ -343,11 +362,11 @@ public class MapDataController {
     }
 
     public List<AirMapRuleset> getAvailableRulesets() {
-        return availableRulesets;
+        return availableRulesets == null ? null : new ArrayList<>(availableRulesets);
     }
 
     public List<AirMapRuleset> getSelectedRulesets() {
-        return selectedRulesets;
+        return selectedRulesets == null ? null : new ArrayList<>(selectedRulesets);
     }
 
     public void onMapReset() {

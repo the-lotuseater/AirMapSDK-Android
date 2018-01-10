@@ -161,6 +161,12 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                 }
                 break;
             }
+            case MapView.DID_FINISH_RENDERING_MAP_FULLY_RENDERED: {
+                if (mapDataController != null) {
+                    mapDataController.onMapFinishedRendering();
+                }
+                break;
+            }
             default: {
                 break;
             }

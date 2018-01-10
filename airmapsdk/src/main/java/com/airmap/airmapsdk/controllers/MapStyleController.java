@@ -48,14 +48,12 @@ public class MapStyleController implements MapView.OnMapChangedListener {
     private MapStyle mapStyle;
     private Callback callback;
 
-    private SharedPreferences prefs;
-
     public MapStyleController(AirMapMapView map, Callback callback) {
         this.map = map;
         this.callback = callback;
 
         // use last used theme or Standard if none has be saved
-        prefs = PreferenceManager.getDefaultSharedPreferences(map.getContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(map.getContext());
         String savedTheme = prefs.getString(AirMapConstants.MAP_STYLE, MappingService.AirMapMapTheme.Standard.toString());
         currentTheme = MappingService.AirMapMapTheme.fromString(savedTheme);
 
@@ -210,7 +208,6 @@ public class MapStyleController implements MapView.OnMapChangedListener {
         //TODO: file bug against mapbox, remove source doesn't seem to be working or at least not after just adding source
         //TODO: to reproduce, open app w/ active flight. adds map layers, removes layers, adds flight map layers
         AirMapLog.e(TAG, "remove source: " + sourceId + " layers: " + TextUtils.join(",", sourceLayers));
-        map.getMap().removeSource(sourceId);
 
         if (sourceLayers == null || sourceLayers.isEmpty()) {
             return;
@@ -223,6 +220,8 @@ public class MapStyleController implements MapView.OnMapChangedListener {
                 }
             }
         }
+
+        map.getMap().removeSource(sourceId);
     }
 
     private void loadStyleJSON() {
