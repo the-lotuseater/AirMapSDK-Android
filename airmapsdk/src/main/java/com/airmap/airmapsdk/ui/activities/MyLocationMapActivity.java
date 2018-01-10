@@ -206,8 +206,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         locationEngine.setInterval(250);
         locationEngine.activate();
 
-        locationLayerPlugin = new LocationLayerPlugin(getMapView(), getMapView().getMap(), locationEngine);
-        locationLayerPlugin.applyStyle(R.style.CustomLocationLayer);
+        locationLayerPlugin = new LocationLayerPlugin(getMapView(), getMapView().getMap(), locationEngine, R.style.CustomLocationLayer);
 
         if (requestLocationPermissionIfNeeded()) {
             locationLayerPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
