@@ -138,15 +138,15 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             case MapView.DID_FAIL_LOADING_MAP: {
                 MapFailure failure = MapFailure.UNKNOWN_FAILURE;
 
-                /**
-                 *  Devices with an inaccurate date/time will not be able to load the mapbox map
-                 *  If the "automatic date/time" is disabled on the device and the map fails to load, recommend the user enable it
-                 */
-                int autoTimeSetting = Settings.Global.getInt(getContext().getContentResolver(), Settings.Global.AUTO_TIME, 0);
-                if (autoTimeSetting == 0) {
-                    failure = MapFailure.INACCURATE_DATE_TIME_FAILURE;
-                } else if (!Utils.isNetworkConnected(getContext())) {
+                // Devices without internet connection will not be able to load the mapbox map
+                //TODO: add more sophisticated check (like actually check style url for 200)
+                if (!Utils.isNetworkConnected(getContext())) {
                     failure = MapFailure.NETWORK_CONNECTION_FAILURE;
+
+                // Devices with an inaccurate date/time will not be able to load the mapbox map
+                // If the "automatic date/time" is disabled on the device and the map fails to load, recommend the user enable it
+                } else if (Settings.Global.getInt(getContext().getContentResolver(), Settings.Global.AUTO_TIME, 0) == 0) {
+                    failure = MapFailure.INACCURATE_DATE_TIME_FAILURE;
                 }
 
                 for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
