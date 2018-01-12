@@ -194,6 +194,15 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                                     call(holder.itemView.getContext(), advisory.getName(), airport.getPhone());
                                 }
                             });
+                        } else if (advisory.getOptionalProperties() != null && !TextUtils.isEmpty(advisory.getOptionalProperties().getUrl())) {
+                            description = advisory.getOptionalProperties().getUrl();
+                            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(advisory.getOptionalProperties().getUrl()));
+                                    holder.itemView.getContext().startActivity(intent);
+                                }
+                            });
                         }
                         break;
                     }
@@ -244,6 +253,21 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                             ((AdvisoryViewHolder) holder).infoTextView.setTextColor(ContextCompat.getColor(((AdvisoryViewHolder) holder).infoTextView.getContext(), R.color.airmap_aqua));
                         }
                         break;
+                    }
+                    case Custom:
+                    case University:
+                    case City:
+                    case Park: {
+                        if (advisory.getOptionalProperties() != null && !TextUtils.isEmpty(advisory.getOptionalProperties().getUrl())) {
+                            description = advisory.getOptionalProperties().getUrl();
+                            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(advisory.getOptionalProperties().getUrl()));
+                                    holder.itemView.getContext().startActivity(intent);
+                                }
+                            });
+                        }
                     }
                 }
             }

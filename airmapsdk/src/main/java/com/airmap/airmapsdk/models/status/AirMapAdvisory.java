@@ -112,10 +112,14 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
 
             if (type != null) {
                 JSONObject properties = json.optJSONObject("properties");
+
+                // set generic properties (url, description, etc)
+                setOptionalProperties(new AirMapOptionalProperties(properties));
+
+                // set type specific properties
                 switch (type) {
                     case Airport: {
                         setAirportProperties(new AirMapAirportProperties(properties));
-                        setOptionalProperties(new AirMapOptionalProperties(properties));
                         break;
                     }
                     case Park: {
@@ -157,12 +161,6 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
                     }
                     case Notam: {
                         setNotamProperties(new AirMapNotamProperties(properties));
-                        break;
-                    }
-                    case City:
-                    case University:
-                    case Custom: {
-                        setOptionalProperties(new AirMapOptionalProperties(properties));
                         break;
                     }
                 }
