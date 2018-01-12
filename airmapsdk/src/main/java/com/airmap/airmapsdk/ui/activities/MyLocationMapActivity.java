@@ -23,6 +23,7 @@ import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
 import com.airmap.airmapsdk.util.AirMapConstants;
+import com.airmap.airmapsdk.util.Utils;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -260,8 +261,9 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             case UNKNOWN_FAILURE:
             default:
                 // record issue in firebase & logs
-                Analytics.report(new Exception("Mapbox map failed to load due to unknown reason"));
-                AirMapLog.e(TAG, "Mapbox map failed to load due to unknown reason");
+                String logs = Utils.getMapboxLogs();
+                Analytics.report(new Exception("Mapbox map failed to load due to unknown reason: " + logs));
+                AirMapLog.e(TAG, "Mapbox map failed to load due to unknown reason: " + logs);
 
                 //TODO: show generic error to user?
                 break;

@@ -9,6 +9,7 @@ import android.support.annotation.DrawableRes;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 
 import com.airmap.airmapsdk.AirMapException;
@@ -27,9 +28,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -444,5 +447,33 @@ public class Utils {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
+
+    public static String getMapboxLogs() {
+        StringBuilder builder = new StringBuilder();
+
+        String processId = Integer.toString(android.os.Process.myPid());
+
+        try {
+            String[] command = new String[] { "logcat", "-d", "-v", "threadtime" };
+
+            Process process = Runtime.getRuntime().exec(command);
+
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (line.contains(processId)) {
+                    if ((line.toLowerCase().contains("mbgl") || line.toLowerCase().contains("mapbox")) && line.toLowerCase().contains("fail")) {
+                        builder.insert(0 ,line + "\n");
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            Log.e(TAG, "getLog failed", ex);
+        }
+
+        return builder.substring(0, Math.min(1000, builder.length() - 2));
     }
 }
