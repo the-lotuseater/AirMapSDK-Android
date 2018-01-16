@@ -9,11 +9,11 @@ import static com.airmap.airmapsdk.util.Utils.getStagingUrl;
 import static com.airmap.airmapsdk.util.Utils.getTelemetryDebugUrl;
 
 @SuppressWarnings({"ConstantConditions", "WeakerAccess"})
-class BaseService {
+public class BaseService {
 
     //URLs should end with a /
     protected static final boolean OVERRIDE_TO_STAGING = false;
-    protected static final boolean STAGING = AirMapConfig.isStage() || OVERRIDE_TO_STAGING;
+    public static final boolean STAGING = AirMapConfig.isStage() || OVERRIDE_TO_STAGING;
 
     //Base Urls
     protected static final String baseUrl = "https://api." + getDomain() + "/";
