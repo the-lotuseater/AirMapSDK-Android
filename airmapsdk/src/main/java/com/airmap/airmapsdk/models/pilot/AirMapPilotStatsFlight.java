@@ -9,10 +9,6 @@ import java.util.Date;
 
 import static com.airmap.airmapsdk.util.Utils.getDateFromIso8601String;
 
-/**
- * Created by Vansh Gandhi on 7/26/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @SuppressWarnings("unused")
 public class AirMapPilotStatsFlight implements Serializable, AirMapBaseModel {
 

@@ -34,9 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by collin@airmap.com on 5/22/17.
- */
 public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = "FlightDetailsAdapter";

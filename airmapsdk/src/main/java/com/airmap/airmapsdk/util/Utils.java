@@ -1,13 +1,9 @@
 package com.airmap.airmapsdk.util;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-import android.support.annotation.DrawableRes;
-import android.support.graphics.drawable.VectorDrawableCompat;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -39,10 +35,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Created by Vansh Gandhi on 7/25/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @SuppressWarnings("unused")
 public class Utils {
 

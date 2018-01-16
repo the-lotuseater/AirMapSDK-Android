@@ -10,10 +10,6 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
-/**
- * Created by collin@airmap.com on 5/22/17.
- */
-
 public class AirMapFlightFeature implements Serializable, AirMapBaseModel {
 
     public InputType getInputType() {

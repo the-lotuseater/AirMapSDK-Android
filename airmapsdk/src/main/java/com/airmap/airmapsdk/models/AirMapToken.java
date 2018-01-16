@@ -2,11 +2,6 @@ package com.airmap.airmapsdk.models;
 
 import org.json.JSONObject;
 
-/**
- * Created by Vansh Gandhi on 4/6/17.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
-
 public class AirMapToken implements AirMapBaseModel {
 
     private String authToken;

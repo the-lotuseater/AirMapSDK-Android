@@ -7,10 +7,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by collin@airmap.com on 4/17/17.
- */
-
 public class MapStyle {
 
     private List<AirMapLayerStyle> layerStyles;

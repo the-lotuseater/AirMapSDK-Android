@@ -1,16 +1,11 @@
 package com.airmap.airmapsdk.util;
 
 import com.airmap.airmapsdk.AirMapLog;
-import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.networking.services.AirMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-/**
- * Created by collin@airmap.com on 8/30/17.
- */
 
 public class AirMapConfig {
 

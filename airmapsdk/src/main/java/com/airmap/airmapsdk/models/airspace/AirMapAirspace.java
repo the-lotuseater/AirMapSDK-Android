@@ -9,11 +9,6 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Created by Vansh Gandhi on 11/7/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
-
 public class AirMapAirspace implements Serializable, AirMapBaseModel {
 
     private String airspaceId;

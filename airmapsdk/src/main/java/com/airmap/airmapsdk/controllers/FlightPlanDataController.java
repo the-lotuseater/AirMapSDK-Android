@@ -1,45 +1,21 @@
 package com.airmap.airmapsdk.controllers;
 
-import android.support.v4.util.Pair;
-import android.text.TextUtils;
-import android.util.Log;
-
 import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.Coordinate;
-import com.airmap.airmapsdk.models.flight.AirMapFlightPlan;
 import com.airmap.airmapsdk.models.rules.AirMapJurisdiction;
-import com.airmap.airmapsdk.models.rules.AirMapRuleset;
-import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
 import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
-import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
-import com.airmap.airmapsdk.util.ThrottleablePublishSubject;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.Call;
 import rx.Observable;
 import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
-import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.functions.Func2;
-import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
 import rx.subscriptions.Subscriptions;
-
-/**
- * Created by collin@airmap.com on 12/14/17.
- */
 
 public class FlightPlanDataController extends MapDataController {
 

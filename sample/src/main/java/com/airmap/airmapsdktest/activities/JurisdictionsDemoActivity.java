@@ -30,10 +30,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by collin@airmap.com on 12/13/17.
- */
-
 public class JurisdictionsDemoActivity extends BaseActivity implements OnMapReadyCallback {
 
     private static final String TAG = "JurisdictionsDemo";

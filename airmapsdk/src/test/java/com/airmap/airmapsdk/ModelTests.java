@@ -20,10 +20,6 @@ import org.junit.Test;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 
-/**
- * Created by Vansh Gandhi on 6/15/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 public class ModelTests {
     @Test
     public void AirMapTrafficTest() throws Exception {

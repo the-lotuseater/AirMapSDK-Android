@@ -24,10 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created by Collin Vance on 4/20/17.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 public class RulesetRecyclerViewAdapter extends SectionedRecyclerViewAdapter<RulesetRecyclerViewAdapter.HeaderViewHolder, RulesetRecyclerViewAdapter.ViewHolder, RecyclerView.ViewHolder>
         implements EmptyableAdapter {
 

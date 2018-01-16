@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
@@ -14,10 +13,6 @@ import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdktest.R;
 
 import java.util.UUID;
-
-/**
- * Created by collin@airmap.com on 9/27/17.
- */
 
 public class AnonymousLoginDemoActivity extends AppCompatActivity {
 

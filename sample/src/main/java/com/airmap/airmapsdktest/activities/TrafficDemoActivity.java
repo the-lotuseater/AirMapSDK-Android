@@ -13,18 +13,16 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
-import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
-import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.models.traffic.AirMapTraffic;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapTrafficListener;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
 import com.airmap.airmapsdktest.R;
+import com.airmap.airmapsdktest.Utils;
 import com.airmap.airmapsdktest.ui.TrafficMarker;
 import com.airmap.airmapsdktest.ui.TrafficMarkerOptions;
-import com.airmap.airmapsdktest.Utils;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -34,10 +32,6 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-/**
- * Created by collin@airmap.com on 9/29/17.
- */
 
 public class TrafficDemoActivity extends BaseActivity implements AirMapMapView.OnMapLoadListener, AirMapTrafficListener {
 

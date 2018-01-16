@@ -10,10 +10,6 @@ import android.view.ViewGroup;
 
 import com.airmap.airmapsdk.R;
 
-/**
- * Created by collin@airmap.com on 5/24/17.
- */
-
 public class ToggleButton extends AppCompatButton implements View.OnClickListener {
 
     private OnClickListener clickListener;

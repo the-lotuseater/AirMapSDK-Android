@@ -1,6 +1,5 @@
 package com.airmap.airmapsdk.controllers;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -35,9 +34,6 @@ import static com.airmap.airmapsdk.networking.services.MappingService.AirMapMapT
 import static com.airmap.airmapsdk.networking.services.MappingService.AirMapMapTheme.Satellite;
 import static com.airmap.airmapsdk.networking.services.MappingService.AirMapMapTheme.Standard;
 
-/**
- * Created by collin@airmap.com on 9/26/17.
- */
 public class MapStyleController implements MapView.OnMapChangedListener {
 
     private static final String TAG = "MapStyleController";

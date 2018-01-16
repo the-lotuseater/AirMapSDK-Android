@@ -3,7 +3,6 @@ package com.airmap.airmapsdk.models.rules;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
@@ -15,10 +14,6 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Created by collin@airmap.com on 3/28/17.
- */
 
 public class AirMapRuleset implements Serializable, AirMapBaseModel, Comparable {
 

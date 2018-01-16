@@ -4,28 +4,12 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.text.TextUtils;
 
-import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.util.AirMapConfig;
-import com.airmap.airmapsdk.util.Utils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
-
-/**
- * Created by Vansh Gandhi on 7/7/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @SuppressWarnings("unused")
 public class MappingService extends BaseService {
 

@@ -10,13 +10,7 @@ import com.mapbox.mapboxsdk.style.layers.PropertyValue;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
-/**
- * Created by collin@airmap.com on 4/17/17.
- */
 
 public abstract class AirMapLayerStyle {
 

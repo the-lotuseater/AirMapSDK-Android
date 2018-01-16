@@ -24,11 +24,6 @@ import okhttp3.Response;
 
 import static com.airmap.airmapsdk.networking.services.AirMap.getClient;
 
-/**
- * Created by Vansh Gandhi on 4/6/17.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
-
 @SuppressWarnings("WeakerAccess")
 public class AuthService extends BaseService {
 

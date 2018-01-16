@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.controllers.RulesetsEvaluator;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.flight.AirMapFlightFeature;
 import com.airmap.airmapsdk.models.flight.AirMapFlightPlan;
@@ -22,24 +23,19 @@ import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
 import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
-import com.airmap.airmapsdk.controllers.RulesetsEvaluator;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
 import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdktest.R;
 import com.airmap.airmapsdktest.ui.FlightPlanDetailsAdapter;
+
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
-/**
- * Created by collin@airmap.com on 9/27/17.
- */
 
 public class FlightPlanDemoActivity extends AppCompatActivity {
 

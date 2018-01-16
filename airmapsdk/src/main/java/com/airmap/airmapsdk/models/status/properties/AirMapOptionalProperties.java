@@ -6,10 +6,6 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
-/**
- * Created by Collin Vance on 1/4/18.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @SuppressWarnings("unused")
 public class AirMapOptionalProperties implements AirMapBaseModel, Serializable {
 

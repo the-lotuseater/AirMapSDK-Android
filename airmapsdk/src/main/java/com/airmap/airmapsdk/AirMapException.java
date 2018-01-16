@@ -4,8 +4,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * Created by Vansh Gandhi on 6/22/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
  * An Exception wrapper class
  */
 @SuppressWarnings("unused")

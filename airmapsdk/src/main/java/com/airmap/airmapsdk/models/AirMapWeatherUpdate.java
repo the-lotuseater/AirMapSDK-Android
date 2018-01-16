@@ -1,17 +1,11 @@
 package com.airmap.airmapsdk.models;
 
-import android.util.Log;
-
 import com.airmap.airmapsdk.util.Utils;
 
 import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.Date;
-
-/**
- * Created by collin@airmap.com on 6/16/17.
- */
 
 public class AirMapWeatherUpdate implements AirMapBaseModel, Serializable {
 

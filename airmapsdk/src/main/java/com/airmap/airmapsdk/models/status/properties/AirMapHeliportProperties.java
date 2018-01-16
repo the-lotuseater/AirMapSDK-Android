@@ -6,10 +6,6 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
-/**
- * Created by Vansh Gandhi on 8/8/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @SuppressWarnings("unused")
 public class AirMapHeliportProperties implements Serializable, AirMapBaseModel {
     private boolean publicUse;

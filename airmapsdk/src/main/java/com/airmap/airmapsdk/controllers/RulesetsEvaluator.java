@@ -17,10 +17,6 @@ import java.util.Set;
 
 import static com.airmap.airmapsdk.models.rules.AirMapRuleset.Type.PickOne;
 
-/**
- * Created by collin@airmap.com on 10/4/17.
- */
-
 public class RulesetsEvaluator {
 
     public static List<AirMapRuleset> computeSelectedRulesets(@NonNull List<AirMapRuleset> availableRulesets, @NonNull AirMapMapView.Configuration configuration) {

@@ -1,7 +1,5 @@
 package com.airmap.airmapsdk.models.rules;
 
-import android.util.Log;
-
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 
 import org.json.JSONArray;
@@ -12,10 +10,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-/**
- * Created by collin@airmap.com on 4/6/17.
- */
 
 public class AirMapJurisdiction implements Serializable, AirMapBaseModel {
 

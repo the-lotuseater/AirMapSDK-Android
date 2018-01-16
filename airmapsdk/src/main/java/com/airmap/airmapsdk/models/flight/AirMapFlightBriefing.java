@@ -1,10 +1,10 @@
 package com.airmap.airmapsdk.models.flight;
 
 import com.airmap.airmapsdk.models.AirMapBaseModel;
-import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.rules.AirMapAuthorization;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.models.rules.AirMapValidation;
+import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,10 +15,6 @@ import java.util.Date;
 import java.util.List;
 
 import static com.airmap.airmapsdk.util.Utils.getDateFromIso8601String;
-
-/**
- * Created by collin@airmap.com on 5/22/17.
- */
 
 public class AirMapFlightBriefing implements Serializable, AirMapBaseModel {
 

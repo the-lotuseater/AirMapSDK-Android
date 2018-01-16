@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -40,10 +39,6 @@ import com.mapbox.services.android.telemetry.location.GoogleLocationEngine;
 import com.mapbox.services.android.telemetry.location.LocationEngine;
 import com.mapbox.services.android.telemetry.location.LocationEngineListener;
 import com.mapbox.services.android.telemetry.location.LocationEnginePriority;
-
-/**
- * Created by collin@airmap.com on 11/27/17.
- */
 
 public abstract class MyLocationMapActivity extends AppCompatActivity implements LocationEngineListener, AirMapMapView.OnMapLoadListener {
 

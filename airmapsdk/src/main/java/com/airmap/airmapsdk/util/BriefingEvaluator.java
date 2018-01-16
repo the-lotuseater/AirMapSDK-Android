@@ -1,6 +1,5 @@
 package com.airmap.airmapsdk.util;
 
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.flight.AirMapFlightBriefing;
 import com.airmap.airmapsdk.models.flight.AirMapFlightFeature;
 import com.airmap.airmapsdk.models.rules.AirMapRule;
@@ -15,10 +14,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-/**
- * Created by collin@airmap.com on 10/5/17.
- */
 
 public class BriefingEvaluator {
 

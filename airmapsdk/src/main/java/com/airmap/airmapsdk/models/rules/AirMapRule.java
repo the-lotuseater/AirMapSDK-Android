@@ -13,11 +13,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- * Created by collin@airmap.com on 3/28/17.
- */
-
 public class AirMapRule implements Serializable, AirMapBaseModel {
 
     public enum Status {

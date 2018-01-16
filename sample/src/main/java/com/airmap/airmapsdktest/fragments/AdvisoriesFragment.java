@@ -10,10 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
-import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.status.AirMapAdvisory;
+import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.networking.services.MappingService;
@@ -25,10 +24,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
-
-/**
- * Created by collin@airmap.com on 9/7/17.
- */
 
 public class AdvisoriesFragment extends Fragment {
 

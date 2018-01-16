@@ -8,10 +8,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Vansh Gandhi on 7/26/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 public class AirMapAircraft implements Serializable, AirMapBaseModel {
 
     private String aircraftId;

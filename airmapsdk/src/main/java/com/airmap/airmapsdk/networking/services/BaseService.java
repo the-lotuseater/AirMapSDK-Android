@@ -1,7 +1,6 @@
 package com.airmap.airmapsdk.networking.services;
 
 import com.airmap.airmapsdk.util.AirMapConfig;
-import com.airmap.airmapsdk.util.Utils;
 
 import static com.airmap.airmapsdk.util.AirMapConfig.getAuth0Host;
 import static com.airmap.airmapsdk.util.AirMapConfig.getDomain;
@@ -9,10 +8,6 @@ import static com.airmap.airmapsdk.util.Utils.getMqttDebugUrl;
 import static com.airmap.airmapsdk.util.Utils.getStagingUrl;
 import static com.airmap.airmapsdk.util.Utils.getTelemetryDebugUrl;
 
-/**
- * Created by Vansh Gandhi on 6/23/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @SuppressWarnings({"ConstantConditions", "WeakerAccess"})
 class BaseService {
 

@@ -27,10 +27,6 @@ import com.airmap.airmapsdktest.R;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-/**
- * Created by collin@airmap.com on 9/27/17.
- */
-
 public class FlightBriefDemoActivity extends BaseActivity {
 
     private static final String TAG = "FlightBriefActivity";

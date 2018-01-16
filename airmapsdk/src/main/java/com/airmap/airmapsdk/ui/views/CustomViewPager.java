@@ -6,13 +6,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 /**
- * Created by Vansh Gandhi on 11/16/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- *
  * Prevent ViewPager from consuming any touch events when isPagingEnabled is false. This prevents
  * buggy behavior when dragging annotations in the FreehandMap.
  */
-
 public class CustomViewPager extends ViewPager {
 
     private boolean isPagingEnabled = false;

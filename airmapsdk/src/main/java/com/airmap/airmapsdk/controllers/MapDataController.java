@@ -44,10 +44,6 @@ import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subscriptions.Subscriptions;
 
-/**
- * Created by collin@airmap.com on 9/26/17.
- */
-
 public class MapDataController {
 
     private static final String TAG = "MapDataController";

@@ -1,8 +1,8 @@
 package com.airmap.airmapsdk.models.flight;
 
 import com.airmap.airmapsdk.models.AirMapBaseModel;
-import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.Coordinate;
+import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
 import com.airmap.airmapsdk.models.shapes.AirMapPath;
@@ -24,10 +24,6 @@ import java.util.Map;
 import static com.airmap.airmapsdk.util.Utils.getDateFromIso8601String;
 import static com.airmap.airmapsdk.util.Utils.getIso8601StringFromDate;
 
-/**
- * Created by Vansh Gandhi on 6/15/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @SuppressWarnings("unused")
 public class AirMapFlight implements Serializable, AirMapBaseModel {
 

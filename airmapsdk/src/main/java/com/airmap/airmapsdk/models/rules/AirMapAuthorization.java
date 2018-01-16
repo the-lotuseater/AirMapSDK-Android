@@ -9,10 +9,6 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
-/**
- * Created by collin@airmap.com on 8/11/17.
- */
-
 public class AirMapAuthorization implements AirMapBaseModel, Serializable{
 
     public enum Status {

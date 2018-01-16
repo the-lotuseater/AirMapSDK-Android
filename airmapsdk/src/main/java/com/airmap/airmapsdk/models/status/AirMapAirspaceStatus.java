@@ -12,10 +12,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Vansh Gandhi on 6/15/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @SuppressWarnings("unused")
 public class AirMapAirspaceStatus implements Serializable, AirMapBaseModel {
     public enum StatusColor {

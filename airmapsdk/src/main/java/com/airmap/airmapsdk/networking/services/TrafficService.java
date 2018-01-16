@@ -1,7 +1,6 @@
 package com.airmap.airmapsdk.networking.services;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
@@ -31,10 +30,6 @@ import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * Created by Vansh Gandhi on 6/27/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @SuppressWarnings("unused")
 public class TrafficService extends BaseService {
     //The current state of the connection

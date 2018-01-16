@@ -1,6 +1,5 @@
 package com.airmap.airmapsdk.ui.views;
 
-import android.arch.lifecycle.LifecycleObserver;
 import android.content.Context;
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -10,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.controllers.MapDataController;
@@ -30,10 +28,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-/**
- * Created by collin@airmap.com on 9/21/17.
- */
 
 public class AirMapMapView extends MapView implements MapView.OnMapChangedListener, MapboxMap.OnMapClickListener, MapDataController.Callback {
 

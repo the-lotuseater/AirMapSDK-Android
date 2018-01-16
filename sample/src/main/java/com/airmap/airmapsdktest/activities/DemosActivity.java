@@ -17,10 +17,6 @@ import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdktest.R;
 
-/**
- * Created by collin@airmap.com on 9/8/17.
- */
-
 public class DemosActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "DemosActivity";

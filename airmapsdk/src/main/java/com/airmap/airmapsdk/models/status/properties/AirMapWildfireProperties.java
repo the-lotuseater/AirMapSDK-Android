@@ -8,10 +8,6 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * Created by Vansh Gandhi on 7/27/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @SuppressWarnings("unused")
 public class AirMapWildfireProperties implements AirMapBaseModel, Serializable {
 

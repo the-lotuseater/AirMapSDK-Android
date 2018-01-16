@@ -19,11 +19,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by Vansh Gandhi on 6/20/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
-
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk=23, manifest = "src/main/AndroidManifest.xml")
 public class Tests extends AndroidTestCase {

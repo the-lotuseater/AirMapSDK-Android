@@ -25,10 +25,6 @@ import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 
-/**
- * Created by Vansh Gandhi on 8/10/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 public class Auth {
 
     private static final String TAG = "Auth";

@@ -7,21 +7,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.widget.Toolbar;
 
-import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
+import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.ui.activities.MyLocationMapActivity;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
 import com.airmap.airmapsdk.ui.views.CustomViewPager;
+import com.airmap.airmapsdktest.R;
 import com.airmap.airmapsdktest.fragments.AdvisoriesFragment;
 import com.airmap.airmapsdktest.fragments.MapFragment;
-import com.airmap.airmapsdktest.R;
 import com.airmap.airmapsdktest.fragments.RulesetsFragment;
 
 import java.util.List;
-
-/**
- * Created by collin@airmap.com on 9/8/17.
- */
 
 public class MapDemoActivity extends MyLocationMapActivity {
 

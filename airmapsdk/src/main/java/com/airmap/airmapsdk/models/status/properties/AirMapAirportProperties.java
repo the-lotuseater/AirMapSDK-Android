@@ -9,10 +9,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Vansh Gandhi on 7/15/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @SuppressWarnings("unused")
 public class AirMapAirportProperties implements Serializable, AirMapBaseModel {
     private String icao;

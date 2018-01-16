@@ -4,7 +4,6 @@ import android.os.Build;
 import android.text.TextUtils;
 
 import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.Auth;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.util.Utils;
@@ -34,10 +33,6 @@ import okhttp3.Response;
 import rx.Observable;
 import rx.functions.Func0;
 
-/**
- * Created by Vansh Gandhi on 6/16/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @SuppressWarnings("unused")
 public class AirMapClient {
 

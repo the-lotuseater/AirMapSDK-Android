@@ -23,16 +23,10 @@ import java.util.List;
 import java.util.Map;
 
 import okhttp3.Call;
-import okhttp3.Response;
 import rx.Observable;
 
 import static com.airmap.airmapsdk.util.Utils.getIso8601StringFromDate;
 
-/**
- * Created by Vansh Gandhi on 6/23/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- * This class handles all flight related requests.
- */
 @SuppressWarnings("unused")
 class FlightService extends BaseService {
 

@@ -1,8 +1,5 @@
 package com.airmap.airmapsdk.models.status;
 
-import android.text.TextUtils;
-import android.util.Log;
-
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.status.properties.AirMapAirportProperties;
@@ -19,21 +16,13 @@ import com.airmap.airmapsdk.models.status.properties.AirMapTfrProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapWildfireProperties;
 import com.airmap.airmapsdk.networking.services.MappingService;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import static com.airmap.airmapsdk.networking.services.MappingService.AirMapAirspaceType.Park;
 import static com.airmap.airmapsdk.util.Utils.getDateFromIso8601String;
 
-/**
- * Created by Vansh Gandhi on 6/15/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 public class AirMapAdvisory implements Serializable, AirMapBaseModel {
     private String id;
     private String name;

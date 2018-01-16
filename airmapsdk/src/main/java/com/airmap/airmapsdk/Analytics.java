@@ -1,11 +1,5 @@
 package com.airmap.airmapsdk;
 
-import android.util.Log;
-
-/**
- * Created by collin@airmap.com on 12/19/16.
- */
-
 public class Analytics {
 
     private static final String TAG = "SDKAnalytics";

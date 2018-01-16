@@ -2,10 +2,6 @@ package com.airmap.airmapsdk;
 
 import android.util.Log;
 
-/**
- * Created by Vansh Gandhi on 6/21/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @SuppressWarnings("unused")
 public class AirMapLog {
     public static boolean ENABLED = false;

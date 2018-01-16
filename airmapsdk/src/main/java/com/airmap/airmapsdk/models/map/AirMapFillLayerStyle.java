@@ -1,7 +1,6 @@
 package com.airmap.airmapsdk.models.map;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.mapbox.mapboxsdk.style.functions.Function;
 import com.mapbox.mapboxsdk.style.layers.FillLayer;
@@ -9,10 +8,6 @@ import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 
 import org.json.JSONObject;
-
-/**
- * Created by collin@airmap.com on 4/17/17.
- */
 
 public class AirMapFillLayerStyle extends AirMapLayerStyle {
 

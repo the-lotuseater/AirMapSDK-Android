@@ -1,7 +1,5 @@
 package com.airmap.airmapsdk.networking.services;
 
-import com.google.protobuf.Message;
-
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import android.util.Log;
@@ -10,6 +8,7 @@ import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.Telemetry;
 import com.airmap.airmapsdk.models.comm.AirMapComm;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
+import com.google.protobuf.Message;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -45,10 +44,6 @@ import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
-/**
- * Created by Vansh Gandhi on 7/1/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @SuppressWarnings("unused")
 public class TelemetryService extends BaseService {
 

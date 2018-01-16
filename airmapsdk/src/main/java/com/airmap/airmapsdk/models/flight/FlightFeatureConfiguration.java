@@ -8,10 +8,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by collin@airmap.com on 6/1/17.
- */
-
 public class FlightFeatureConfiguration implements AirMapBaseModel {
 
     private String flightFeatureId;

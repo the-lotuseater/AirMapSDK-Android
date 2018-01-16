@@ -1,8 +1,5 @@
 package com.airmap.airmapsdk.networking.callbacks;
 
-import android.os.Handler;
-import android.os.Looper;
-
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.util.Utils;
@@ -15,10 +12,6 @@ import java.io.IOException;
 import okhttp3.Call;
 import okhttp3.Response;
 
-/**
- * Created by Vansh Gandhi on 7/21/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 public class GenericOkHttpCallback extends GenericBaseOkHttpCallback {
 
     private static final String TAG = "GenericOkHttpCallback";

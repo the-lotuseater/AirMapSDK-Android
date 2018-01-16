@@ -5,8 +5,6 @@ import android.util.Log;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
-import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
-import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.util.PreferenceUtils;
 import com.airmap.airmapsdk.util.SecuredPreferenceException;
@@ -15,10 +13,6 @@ import com.auth0.android.lock.AuthenticationCallback;
 import com.auth0.android.lock.Lock;
 import com.auth0.android.lock.utils.LockException;
 import com.auth0.android.result.Credentials;
-
-/**
- * Created by collin@airmap.com on 5/8/17.
- */
 
 public class AirMapAuthenticationCallback extends AuthenticationCallback {
 

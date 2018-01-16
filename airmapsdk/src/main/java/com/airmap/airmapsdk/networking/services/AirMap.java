@@ -17,22 +17,22 @@ import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
 import com.airmap.airmapsdk.models.airspace.AirMapAirspace;
-import com.airmap.airmapsdk.models.rules.AirMapJurisdiction;
-import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.comm.AirMapComm;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.flight.AirMapFlightBriefing;
 import com.airmap.airmapsdk.models.flight.AirMapFlightPlan;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
+import com.airmap.airmapsdk.models.rules.AirMapJurisdiction;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
 import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
+import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.models.status.AirMapStatus;
+import com.airmap.airmapsdk.networking.callbacks.AirMapAuthenticationCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapTrafficListener;
 import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
 import com.airmap.airmapsdk.networking.callbacks.LoginListener;
-import com.airmap.airmapsdk.networking.callbacks.AirMapAuthenticationCallback;
 import com.airmap.airmapsdk.util.Utils;
 
 import org.jose4j.jwt.JwtClaims;
@@ -46,17 +46,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import okhttp3.Call;
 
-/**
- * Created by Vansh Gandhi on 6/16/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @SuppressWarnings({"unused", "ConstantConditions"})
 public final class AirMap {
     private Context context;

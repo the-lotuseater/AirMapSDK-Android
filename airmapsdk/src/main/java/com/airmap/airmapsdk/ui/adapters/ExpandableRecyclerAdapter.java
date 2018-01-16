@@ -2,24 +2,12 @@ package com.airmap.airmapsdk.ui.adapters;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.airmap.airmapsdk.R;
-import com.airmap.airmapsdk.models.rules.AirMapRule;
-import com.airmap.airmapsdk.networking.services.MappingService;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
-/**
- * Created by collin@airmap.com on 5/26/17.
- */
 
 public abstract class ExpandableRecyclerAdapter<P,C> extends RecyclerView.Adapter {
 

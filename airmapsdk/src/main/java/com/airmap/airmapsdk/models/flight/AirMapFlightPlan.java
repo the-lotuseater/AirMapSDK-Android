@@ -1,7 +1,6 @@
 package com.airmap.airmapsdk.models.flight;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
@@ -25,10 +24,6 @@ import java.util.Map;
 
 import static com.airmap.airmapsdk.util.Utils.getDateFromIso8601String;
 import static com.airmap.airmapsdk.util.Utils.getIso8601StringFromDate;
-
-/**
- * Created by collin@airmap.com on 5/19/17.
- */
 
 public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
 

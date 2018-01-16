@@ -1,15 +1,10 @@
 package com.airmap.airmapsdk.models.rules;
 
 import com.airmap.airmapsdk.models.AirMapBaseModel;
-import com.airmap.airmapsdk.models.flight.AirMapFlightFeature;
 
 import org.json.JSONObject;
 
 import java.io.Serializable;
-
-/**
- * Created by collin@airmap.com on 8/11/17.
- */
 
 public class AirMapValidation implements AirMapBaseModel, Serializable {
 

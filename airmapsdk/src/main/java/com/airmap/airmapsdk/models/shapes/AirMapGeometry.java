@@ -11,10 +11,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Vansh Gandhi on 7/26/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @SuppressWarnings("unused")
 public abstract class AirMapGeometry implements Serializable {
     public static AirMapGeometry getGeometryFromGeoJSON(JSONObject geoJson) {

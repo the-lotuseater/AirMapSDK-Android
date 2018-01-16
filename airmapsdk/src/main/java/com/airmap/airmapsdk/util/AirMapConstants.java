@@ -1,9 +1,5 @@
 package com.airmap.airmapsdk.util;
 
-/**
- * Created by collinvance on 11/4/16.
- */
-
 public class AirMapConstants {
 
     //Secured Shared Preferences Keys

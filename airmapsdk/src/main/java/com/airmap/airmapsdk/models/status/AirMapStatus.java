@@ -19,10 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Vansh Gandhi on 6/15/16.
- * Copyright © 2016 AirMap, Inc. All rights reserved.
- */
 @Deprecated
 public class AirMapStatus implements Serializable, AirMapBaseModel {
     public enum StatusColor {

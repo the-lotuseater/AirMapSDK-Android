@@ -11,14 +11,10 @@ import android.view.ViewGroup;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdktest.R;
-import com.airmap.airmapsdktest.ui.RulesetRecyclerViewAdapter;
 import com.airmap.airmapsdktest.activities.MapDemoActivity;
+import com.airmap.airmapsdktest.ui.RulesetRecyclerViewAdapter;
 
 import java.util.List;
-
-/**
- * Created by collin@airmap.com on 9/7/17.
- */
 
 public class RulesetsFragment extends Fragment {
 

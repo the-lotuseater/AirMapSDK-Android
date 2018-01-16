@@ -47,10 +47,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * Created by collin@airmap.com on 5/30/17.
- */
-
 public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>, AirMapAdvisory> {
 
     public ExpandableAdvisoriesAdapter(LinkedHashMap<MappingService.AirMapAirspaceType, List<AirMapAdvisory>> advisories) {
