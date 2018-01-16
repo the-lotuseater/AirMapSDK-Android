@@ -9,15 +9,15 @@ import android.view.MotionEvent;
  * Prevent ViewPager from consuming any touch events when isPagingEnabled is false. This prevents
  * buggy behavior when dragging annotations in the FreehandMap.
  */
-public class CustomViewPager extends ViewPager {
+public class SwipeDisableableViewPager extends ViewPager {
 
     private boolean isPagingEnabled = false;
 
-    public CustomViewPager(Context context) {
+    public SwipeDisableableViewPager(Context context) {
         super(context);
     }
 
-    public CustomViewPager(Context context, AttributeSet attrs) {
+    public SwipeDisableableViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
