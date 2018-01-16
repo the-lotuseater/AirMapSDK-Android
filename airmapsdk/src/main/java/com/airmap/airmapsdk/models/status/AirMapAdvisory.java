@@ -38,6 +38,8 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
     private String geometryString;
     private AirMapStatusRequirement requirements;
 
+    private AirMapOptionalProperties optionalProperties;
+
     private AirMapAirportProperties airportProperties;
     private AirMapHeliportProperties heliportProperties;
     private AirMapControlledAirspaceProperties controlledAirspaceProperties;
@@ -49,7 +51,6 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
     private AirMapWildfireProperties wildfireProperties;
     private AirMapEmergencyProperties emergencyProperties;
     private AirMapNotamProperties notamProperties;
-    private AirMapOptionalProperties optionalProperties;
 
 
     /**

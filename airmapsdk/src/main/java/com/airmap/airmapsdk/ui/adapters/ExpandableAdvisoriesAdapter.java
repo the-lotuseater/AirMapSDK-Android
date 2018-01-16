@@ -250,6 +250,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                         }
                         break;
                     }
+                    case AMA:
                     case Custom:
                     case University:
                     case City:
