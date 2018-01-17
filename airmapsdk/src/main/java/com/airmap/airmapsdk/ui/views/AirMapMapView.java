@@ -10,12 +10,15 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 
+import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.controllers.MapDataController;
 import com.airmap.airmapsdk.controllers.MapStyleController;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.util.Utils;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
@@ -130,21 +133,41 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         switch (change) {
             // check if map failed
             case MapView.DID_FAIL_LOADING_MAP: {
-                MapFailure failure = MapFailure.UNKNOWN_FAILURE;
-
                 // Devices without internet connection will not be able to load the mapbox map
                 //TODO: add more sophisticated check (like actually check style url for 200)
                 if (!Utils.isNetworkConnected(getContext())) {
-                    failure = MapFailure.NETWORK_CONNECTION_FAILURE;
+                    for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
+                        mapLoadListener.onMapFailed(MapFailure.NETWORK_CONNECTION_FAILURE);
+                    }
 
                 // Devices with an inaccurate date/time will not be able to load the mapbox map
                 // If the "automatic date/time" is disabled on the device and the map fails to load, recommend the user enable it
                 } else if (Settings.Global.getInt(getContext().getContentResolver(), Settings.Global.AUTO_TIME, 0) == 0) {
-                    failure = MapFailure.INACCURATE_DATE_TIME_FAILURE;
-                }
+                    for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
+                        mapLoadListener.onMapFailed(MapFailure.INACCURATE_DATE_TIME_FAILURE);
+                    }
 
-                for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
-                    mapLoadListener.onMapFailed(failure);
+                // check connection by requesting the styles json directly (async)
+                } else {
+                    mapStyleController.checkConnection(new AirMapCallback<Void>() {
+                        @Override
+                        protected void onSuccess(Void response) {
+                            for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
+                                mapLoadListener.onMapFailed(MapFailure.UNKNOWN_FAILURE);
+                            }
+
+                            String logs = Utils.getMapboxLogs();
+                            Analytics.report(new Exception("Mapbox map failed to load due to no network connection but able to access styles directly: " + logs));
+                        }
+
+                        @Override
+                        protected void onError(AirMapException e) {
+                            for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
+                                mapLoadListener.onMapFailed(MapFailure.NETWORK_CONNECTION_FAILURE);
+                            }
+                        }
+                    });
+                    return;
                 }
                 break;
             }

@@ -974,6 +974,10 @@ public final class AirMap {
         return airMapMapMappingService.getStylesUrl(theme);
     }
 
+    public static Call getMapStylesJson(MappingService.AirMapMapTheme theme, AirMapCallback<JSONObject> listener) {
+        return airMapMapMappingService.getStylesJson(theme, listener);
+    }
+
     public static String getRulesetTileUrlTemplate(String rulesetId, List<String> layers) {
         return airMapMapMappingService.getRulesetTileUrlTemplate(rulesetId, layers);
     }

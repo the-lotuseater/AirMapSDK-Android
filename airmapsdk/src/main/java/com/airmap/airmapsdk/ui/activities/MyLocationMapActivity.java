@@ -52,6 +52,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
 
     private boolean hasLoadedMyLocation;
     private boolean isLocationDialogShowing;
+    private boolean isMapFailureDialogShowing;
 
     @Override
     public void onPostCreate(Bundle savedInstanceState) {
@@ -234,8 +235,14 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
                 break;
             case NETWORK_CONNECTION_FAILURE:
                 // record issue in firebase & logs
-                Analytics.report(new Exception("Mapbox map failed to load due to no network connection"));
+                String log = Utils.getMapboxLogs();
+                Analytics.report(new Exception("Mapbox map failed to load due to no network connection: " + log));
                 AirMapLog.e(TAG, "Mapbox map failed to load due to no network connection");
+
+                // check if dialog is already showing
+                if (isMapFailureDialogShowing) {
+                    return;
+                }
 
                 // ask user to turn on wifi/LTE
                 new AlertDialog.Builder(this)
@@ -244,13 +251,22 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
                         .setPositiveButton(R.string.error_loading_map_network_button, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                isMapFailureDialogShowing = false;
                                 // open settings and kill this activity
                                 startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                                 finish();
                             }
                         })
                         .setNegativeButton(android.R.string.cancel, null)
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                isMapFailureDialogShowing = false;
+                            }
+                        })
                         .show();
+
+                isMapFailureDialogShowing = true;
 
                 break;
             case UNKNOWN_FAILURE:

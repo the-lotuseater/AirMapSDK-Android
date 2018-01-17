@@ -4,11 +4,23 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.text.TextUtils;
 
+import com.airmap.airmapsdk.AirMapException;
+import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.R;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.util.AirMapConfig;
+import com.airmap.airmapsdk.util.Utils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 @SuppressWarnings("unused")
 public class MappingService extends BaseService {
@@ -416,5 +428,34 @@ public class MappingService extends BaseService {
         }
 
         return stylesUrl;
+    }
+
+    protected Call getStylesJson(AirMapMapTheme theme, final AirMapCallback<JSONObject> listener) {
+        return AirMap.getClient().get(getStylesUrl(theme), new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                listener.error(new AirMapException(e.getMessage()));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String jsonString;
+                try {
+                    jsonString = response.body().string();
+                } catch (IOException e) {
+                    Utils.error(listener, e);
+                    return;
+                }
+                response.body().close();
+                JSONObject result = null;
+                try {
+                    result = new JSONObject(jsonString);
+                    listener.success(result);
+                } catch (JSONException e) {
+                    AirMapLog.e("AirMapCallback", "Unable to parse map style:" + jsonString, e);
+                    listener.error(new AirMapException(e.getMessage()));
+                }
+            }
+        });
     }
 }

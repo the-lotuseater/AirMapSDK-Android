@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.models.map.AirMapFillLayerStyle;
@@ -11,6 +12,7 @@ import com.airmap.airmapsdk.models.map.AirMapLayerStyle;
 import com.airmap.airmapsdk.models.map.AirMapLineLayerStyle;
 import com.airmap.airmapsdk.models.map.AirMapSymbolLayerStyle;
 import com.airmap.airmapsdk.models.map.MapStyle;
+import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
@@ -26,6 +28,7 @@ import com.mapbox.mapboxsdk.style.sources.TileSet;
 import com.mapbox.mapboxsdk.style.sources.VectorSource;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -222,6 +225,20 @@ public class MapStyleController implements MapView.OnMapChangedListener {
 
     private void loadStyleJSON() {
         map.getMap().setStyleUrl(AirMap.getMapStylesUrl(currentTheme));
+    }
+
+    public void checkConnection(final AirMapCallback<Void> callback) {
+        AirMap.getMapStylesJson(MappingService.AirMapMapTheme.Standard, new AirMapCallback<JSONObject>() {
+            @Override
+            protected void onSuccess(JSONObject response) {
+                callback.success(null);
+            }
+
+            @Override
+            protected void onError(AirMapException e) {
+                callback.error(e);
+            }
+        });
     }
 
     public interface Callback {
