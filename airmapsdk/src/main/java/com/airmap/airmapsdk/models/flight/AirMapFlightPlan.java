@@ -47,6 +47,7 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
     private List<String> permitIds;
 
     public AirMapFlightPlan() {
+        isPublic = true;
     }
 
     public AirMapFlightPlan(JSONObject flightJson) {
@@ -175,8 +176,8 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
         }
 
         params.put("buffer", buffer);
-
         params.put("max_altitude_agl", getMaxAltitude());
+        
         Iterator<Map.Entry<String, Object>> iterator = params.entrySet().iterator();
         while (iterator.hasNext()) { //Remove any null values
             Map.Entry<String, Object> entry = iterator.next();

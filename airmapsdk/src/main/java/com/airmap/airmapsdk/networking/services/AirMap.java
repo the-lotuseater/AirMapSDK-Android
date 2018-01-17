@@ -614,6 +614,10 @@ public final class AirMap {
         return FlightService.getFlightPlanByFlightId(flightId, callback);
     }
 
+    public static Call submitFlightPlan(String flightPlanId, boolean isPublic, AirMapCallback<AirMapFlightPlan> callback) {
+        return FlightService.submitFlightPlan(flightPlanId, isPublic, callback);
+    }
+
     public static Call submitFlightPlan(String flightPlanId, AirMapCallback<AirMapFlightPlan> callback) {
         return FlightService.submitFlightPlan(flightPlanId, true, callback);
     }
