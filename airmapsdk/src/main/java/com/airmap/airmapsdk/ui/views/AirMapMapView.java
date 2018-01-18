@@ -108,7 +108,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     }
 
     /**
-     *  Go to next theme (Standard > Dark > Light > Satellite > Standard > Dark, etc)
+     *  Go to next theme (Standard to Dark to Light to Satellite to Standard to Dark...)
      */
     public void rotateMapTheme() {
         // check if map is ready yet
