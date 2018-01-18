@@ -83,7 +83,7 @@ public class BaseService {
     protected static final String situationalAwarenessChannel = "uav/traffic/sa/%s"; //Replace %s with id using String.format
 
     //Telemetry
-    protected static final String telemetryBaseUrl = STAGING ? getTelemetryDebugUrl() : "api-udp-telemetry.prod." + getDomain();
+    protected static final String telemetryBaseUrl = "api-udp-telemetry." + (STAGING ? "stage." : "") + getDomain();
     protected static final int telemetryPort = 16060;
 
     //Auth
