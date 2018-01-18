@@ -111,6 +111,10 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
      *  Go to next theme (Standard > Dark > Light > Satellite > Standard > Dark, etc)
      */
     public void rotateMapTheme() {
+        // check if map is ready yet
+        if (map == null) {
+            return;
+        }
         mapStyleController.rotateMapTheme();
     }
 
@@ -118,6 +122,10 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
      *  Explicitly set theme (Standard, Dark, Light, Satellite
      */
     public void setMapTheme(MappingService.AirMapMapTheme theme) {
+        // check if map is ready yet
+        if (map == null) {
+            return;
+        }
         mapStyleController.updateMapTheme(theme);
     }
 
