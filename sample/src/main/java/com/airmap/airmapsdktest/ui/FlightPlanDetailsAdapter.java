@@ -39,7 +39,6 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
     private static final String TAG = "FlightDetailsAdapter";
 
     private static final int BINARY_VIEW_TYPE = 2;
-    private static final int SLIDER_VIEW_TYPE = 3;
     private static final int FIELD_VIEW_TYPE = 4;
     private static final int TEXT_VIEW_TYPE = 5;
     private static final int SAVE_BUTTON_TYPE = 6;
@@ -102,9 +101,6 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
             case BINARY_VIEW_TYPE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_flight_plan_feature_binary, parent, false);
                 return new FlightFeatureBinaryViewHolder(view);
-            case SLIDER_VIEW_TYPE:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_flight_plan_feature_slider, parent, false);
-                return new FlightFeatureSeekbarViewHolder(view);
             case FIELD_VIEW_TYPE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_flight_plan_feature_field, parent, false);
                 return new FlightFeatureFieldViewHolder(view);
@@ -122,68 +118,6 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (getItemViewType(position)) {
-            case SLIDER_VIEW_TYPE: {
-                final AirMapFlightFeature flightFeature = (AirMapFlightFeature) getItem(position);
-                final FlightFeatureConfiguration config = flightFeaturesConfigMap.get(flightFeature.getFlightFeature());
-                final FlightFeatureConfiguration.ValueConfiguration valueConfig = config.getValueConfig(useMetric);
-                final List<Double> presets = valueConfig.getPresets();
-
-                FlightFeatureValue<Double> savedValue = flightPlan.getFlightFeatureValues() != null ? flightPlan.getFlightFeatureValues().get(flightFeature.getFlightFeature()) : null;
-
-                final FlightFeatureSeekbarViewHolder seekbarViewHolder = (FlightFeatureSeekbarViewHolder) holder;
-                seekbarViewHolder.descriptionTextView.setText(flightFeature.getDescription());
-
-                seekbarViewHolder.infoButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showFlightFeatureInfo(flightFeature);
-                    }
-                });
-
-                seekbarViewHolder.seekBar.setOnSeekBarChangeListener(null);
-                seekbarViewHolder.seekBar.setMax(presets.size());
-                seekbarViewHolder.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        FlightFeatureValue<Double> value;
-                        if (progress == 0) {
-                            value = new FlightFeatureValue<>(flightFeature.getFlightFeature(), null);
-                            seekbarViewHolder.valueTextView.setText(R.string.null_feature_value);
-                            flightPlanChangeListener.onFlightFeatureRemoved(flightFeature.getFlightFeature());
-                        } else {
-                            double adjustedValue = presets.get(progress - 1);
-                            value = new FlightFeatureValue<>(flightFeature.getFlightFeature(), adjustedValue * valueConfig.getConversionFactor());
-                            seekbarViewHolder.valueTextView.setText(getMeasurementWithUnits(adjustedValue, config));
-                        }
-
-                        if (fromUser) {
-                            flightPlan.setFlightFeatureValue(value);
-
-                            Analytics.logEvent(Analytics.Event.flightPlanCheck, Analytics.Action.change, flightFeature.getFlightFeature());
-                        }
-                    }
-
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {}
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-                        onFlightPlanChanged();
-                    }
-                });
-
-                int progress = 0;
-                String text = holder.itemView.getContext().getString(R.string.null_feature_value);
-                if (savedValue != null) {
-                    double measurement = savedValue.getValue() / valueConfig.getConversionFactor();
-                    progress = Utils.indexOfNearestMatch(measurement, presets) + 1;
-                    text = getMeasurementWithUnits(presets.get(progress - 1), config);
-                }
-                seekbarViewHolder.valueTextView.setText(text);
-                seekbarViewHolder.seekBar.setProgress(progress);
-
-                break;
-            }
             case BINARY_VIEW_TYPE: {
                 final AirMapFlightFeature flightFeature = (AirMapFlightFeature) getItem(position);
                 FlightFeatureValue<Boolean> savedValue = flightPlan.getFlightFeatureValues() != null ? flightPlan.getFlightFeatureValues().get(flightFeature.getFlightFeature()) : null;
@@ -253,7 +187,14 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
 
                     @Override
                     public void afterTextChanged(Editable s) {
-                        FlightFeatureValue<String> flightFeatureValue = new FlightFeatureValue<>(flightFeature.getFlightFeature(), s.toString());
+                        FlightFeatureValue flightFeatureValue;
+                        try {
+                            float floatValue = Float.parseFloat(s.toString());
+                            flightFeatureValue = new FlightFeatureValue<>(flightFeature.getFlightFeature(), floatValue);
+                        } catch (NumberFormatException e) {
+                             flightFeatureValue = new FlightFeatureValue<>(flightFeature.getFlightFeature(), s.toString());
+                        }
+
                         flightPlan.setFlightFeatureValue(flightFeatureValue);
                         onFlightPlanChanged();
 
@@ -382,7 +323,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         if (item instanceof AirMapFlightFeature) {
             switch (((AirMapFlightFeature) item).getInputType()) {
                 case Double:
-                    return SLIDER_VIEW_TYPE;
+                    return FIELD_VIEW_TYPE;
                 case String:
                     return FIELD_VIEW_TYPE;
                 case Boolean:
