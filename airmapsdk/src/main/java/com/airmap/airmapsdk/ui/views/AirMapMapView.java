@@ -19,6 +19,7 @@ import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.util.Utils;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
@@ -106,8 +107,18 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         this.mapDataController = controller;
     }
 
+    /**
+     *  Go to next theme (Standard > Dark > Light > Satellite > Standard > Dark, etc)
+     */
     public void rotateMapTheme() {
         mapStyleController.rotateMapTheme();
+    }
+
+    /**
+     *  Explicitly set theme (Standard, Dark, Light, Satellite
+     */
+    public void setMapTheme(MappingService.AirMapMapTheme theme) {
+        mapStyleController.updateMapTheme(theme);
     }
 
     @Override
