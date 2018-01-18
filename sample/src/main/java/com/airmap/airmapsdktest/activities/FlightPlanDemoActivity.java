@@ -172,6 +172,8 @@ public class FlightPlanDemoActivity extends AppCompatActivity {
         flightPlan.setTakeoffCoordinate(takeoff);
         flightPlan.setRulesetIds(selectedRulesetIds);
 
+        flightPlan.setPublic(true);
+
         // default max alt - 100m
         flightPlan.setMaxAltitude(100);
         altitudeTextView.setText("100m");
@@ -185,7 +187,6 @@ public class FlightPlanDemoActivity extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
         startTimeTextView.setText(sdf.format(flightPlan.getStartsAt()));
         endTimeTextView.setText(sdf.format(flightPlan.getEndsAt()));
-
 
         FlightPlanDetailsAdapter detailsAdapter = new FlightPlanDetailsAdapter(this, flightPlan, featuresMap, null, new FlightPlanDetailsAdapter.FlightPlanChangeListener() {
             @Override
