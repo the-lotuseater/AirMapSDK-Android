@@ -90,6 +90,11 @@ public abstract class ExpandableRecyclerAdapter<P,C> extends RecyclerView.Adapte
         return expandedParents.contains(parent);
     }
 
+    public void expandAll() {
+        expandedParents.addAll(dataMap.keySet());
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         if (dataMap == null) {

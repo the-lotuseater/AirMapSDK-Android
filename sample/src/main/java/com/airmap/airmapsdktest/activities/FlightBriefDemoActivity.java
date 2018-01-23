@@ -14,9 +14,12 @@ import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.AirMapLog;
+import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.flight.AirMapFlightBriefing;
 import com.airmap.airmapsdk.models.flight.AirMapFlightPlan;
 import com.airmap.airmapsdk.models.rules.AirMapRule;
+import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
+import com.airmap.airmapsdk.models.shapes.AirMapPolygon;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.ui.adapters.ExpandableRulesAdapter;
@@ -24,6 +27,11 @@ import com.airmap.airmapsdk.util.AirMapConstants;
 import com.airmap.airmapsdk.util.BriefingEvaluator;
 import com.airmap.airmapsdktest.R;
 
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -52,28 +60,36 @@ public class FlightBriefDemoActivity extends BaseActivity {
         loadingView = findViewById(R.id.loading_view);
 
         flightPlanId = getIntent().getStringExtra(AirMapConstants.FLIGHT_PLAN_ID_EXTRA);
-        AirMap.getFlightBrief(flightPlanId, new AirMapCallback<AirMapFlightBriefing>() {
-            @Override
-            protected void onSuccess(AirMapFlightBriefing briefing) {
-                loadingView.setVisibility(View.GONE);
 
-                // calculate which rules are being violated, followed, etc
-                LinkedHashMap<AirMapRule.Status, List<AirMapRule>> sortedRulesMap = BriefingEvaluator.computeRulesViolations(briefing);
+        // no flight plan, create one
+        if (TextUtils.isEmpty(flightPlanId)) {
+            AirMapFlightPlan flightPlan = getSampleFlightPlan();
+            AirMap.createFlightPlan(flightPlan, new AirMapCallback<AirMapFlightPlan>() {
+                @Override
+                protected void onSuccess(AirMapFlightPlan response) {
+                    if (!isActive()) {
+                        return;
+                    }
 
-                ExpandableRulesAdapter rulesRecyclerAdapter = new BriefingAdapter(sortedRulesMap);
-                rulesRecyclerView.setAdapter(rulesRecyclerAdapter);
-            }
+                    flightPlanId = response.getPlanId();
+                    loadBrief();
 
-            @Override
-            protected void onError(AirMapException e) {
-                AirMapLog.e(TAG, "flight brief failed", e);
-                if (!isActive()) {
-                    return;
+                    invalidateOptionsMenu();
                 }
 
-                showErrorDialog("An error occurred while creating your flight plan or retrieving your flight brief.");
-            }
-        });
+                @Override
+                protected void onError(AirMapException e) {
+                    AirMapLog.e(TAG, "flight plan failed", e);
+                    if (!isActive()) {
+                        return;
+                    }
+
+                    showErrorDialog("An error occurred while creating your flight plan or retrieving your flight brief.");
+                }
+            });
+        } else {
+            loadBrief();
+        }
     }
 
     @Override
@@ -113,6 +129,66 @@ public class FlightBriefDemoActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(menuItem);
+    }
+
+    private void loadBrief() {
+        AirMap.getFlightBrief(flightPlanId, new AirMapCallback<AirMapFlightBriefing>() {
+            @Override
+            protected void onSuccess(AirMapFlightBriefing briefing) {
+                loadingView.setVisibility(View.GONE);
+
+                // calculate which rules are being violated, followed, etc
+                LinkedHashMap<AirMapRule.Status, List<AirMapRule>> sortedRulesMap = BriefingEvaluator.computeRulesViolations(briefing);
+
+                ExpandableRulesAdapter rulesRecyclerAdapter = new BriefingAdapter(sortedRulesMap);
+                rulesRecyclerView.setAdapter(rulesRecyclerAdapter);
+                rulesRecyclerAdapter.expandAll();
+            }
+
+            @Override
+            protected void onError(AirMapException e) {
+                AirMapLog.e(TAG, "flight brief failed", e);
+                if (!isActive()) {
+                    return;
+                }
+
+                showErrorDialog("An error occurred while creating your flight plan or retrieving your flight brief.");
+            }
+        });
+    }
+
+    private AirMapFlightPlan getSampleFlightPlan() {
+        // create polygon from coordinates
+        List<Coordinate> coordinates = new ArrayList<>();
+        coordinates.add(new Coordinate(34.02440874647921, -117.49167761708696));
+        coordinates.add(new Coordinate(34.020040687842254, -117.4968401460024));
+        coordinates.add(new Coordinate(34.01648293903452, -117.4923151205652));
+        coordinates.add(new Coordinate(34.02080536486173, -117.48725884231055));
+        coordinates.add(new Coordinate(34.02440874647921, -117.49167761708696));
+        AirMapPolygon polygon = new AirMapPolygon();
+        polygon.setCoordinates(coordinates);
+        JSONObject geometryJSON = AirMapGeometry.getGeoJSONFromGeometry(polygon);
+
+        AirMapFlightPlan flightPlan = new AirMapFlightPlan();
+        flightPlan.setPilotId(AirMap.getUserId());
+        flightPlan.setGeometry(geometryJSON.toString());
+        flightPlan.setBuffer(0);
+        flightPlan.setTakeoffCoordinate(coordinates.get(0));
+
+        String[] rulesetIds = {"usa_national_marine_sanctuary", "usa_ama", "usa_sec_91", "usa_national_park", "usa_airmap_rules", "usa_sec_336"};
+        flightPlan.setRulesetIds(Arrays.asList(rulesetIds));
+
+        flightPlan.setPublic(true);
+
+        // default max alt - 100m
+        flightPlan.setMaxAltitude(100);
+
+        // default start & end time - now to 4 hours from now
+        long duration = 4 * 60 * 60 * 1000;
+        flightPlan.setDurationInMillis(duration);
+        flightPlan.setStartsAt(new Date());
+        flightPlan.setEndsAt(new Date(System.currentTimeMillis() + duration));
+        return flightPlan;
     }
 
     /**

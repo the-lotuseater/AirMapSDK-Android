@@ -89,29 +89,30 @@ public class FlightPlanDemoActivity extends AppCompatActivity {
 
         // create polygon from coordinates
         List<Coordinate> coordinates = new ArrayList<>();
-        coordinates.add(new Coordinate(34.02440874647921, -118.49167761708696));
-        coordinates.add(new Coordinate(34.020040687842254, -118.4968401460024));
-        coordinates.add(new Coordinate(34.01648293903452, -118.4923151205652));
-        coordinates.add(new Coordinate(34.02080536486173, -118.48725884231055));
-        coordinates.add(new Coordinate(34.02440874647921, -118.49167761708696));
+        coordinates.add(new Coordinate(34.02440874647921, -117.49167761708696));
+        coordinates.add(new Coordinate(34.020040687842254, -117.4968401460024));
+        coordinates.add(new Coordinate(34.01648293903452, -117.4923151205652));
+        coordinates.add(new Coordinate(34.02080536486173, -117.48725884231055));
+        coordinates.add(new Coordinate(34.02440874647921, -117.49167761708696));
 
         AirMapPolygon polygon = new AirMapPolygon();
         polygon.setCoordinates(coordinates);
 
         final JSONObject geometryJSON = AirMapGeometry.getGeoJSONFromGeometry(polygon);
-        // or use raw json
-//        {
-//            "type": "Polygon",
-//            "coordinates": [
-//                [
-//                    [-118.49167761708696, 34.02440874647921],
-//                    [-118.4968401460024, 34.020040687842254],
-//                    [-118.4923151205652, 34.01648293903452],
-//                    [-118.48725884231055, 34.02080536486173],
-//                    [-118.49167761708696, 34.02440874647921]
-//                ]
-//            ]
-//        }
+        /** or use raw json
+            {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [-118.49167761708696, 34.02440874647921],
+                        [-118.4968401460024, 34.020040687842254],
+                        [-118.4923151205652, 34.01648293903452],
+                        [-118.48725884231055, 34.02080536486173],
+                        [-118.49167761708696, 34.02440874647921]
+                    ]
+                ]
+            }
+         **/
 
         // get rulesets (from jurisdictions) from geometry
         AirMap.getRulesets(geometryJSON, new AirMapCallback<List<AirMapRuleset>>() {

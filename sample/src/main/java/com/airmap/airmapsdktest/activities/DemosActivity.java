@@ -28,6 +28,7 @@ public class DemosActivity extends BaseActivity implements View.OnClickListener 
     private CardView flightPlanCardView;
     private CardView briefingCardView;
     private CardView trafficCardView;
+    private CardView telemetryCardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,9 @@ public class DemosActivity extends BaseActivity implements View.OnClickListener 
 
         trafficCardView = findViewById(R.id.traffic_card_view);
         trafficCardView.setOnClickListener(this);
+
+        telemetryCardView = findViewById(R.id.telemetry_card_view);
+        telemetryCardView.setOnClickListener(this);
     }
 
     @Override
@@ -92,6 +96,8 @@ public class DemosActivity extends BaseActivity implements View.OnClickListener 
             startActivity(new Intent(this, TrafficDemoActivity.class));
         } else if (view.getId() == R.id.flight_plan_card_view) {
             startActivity(new Intent(this, FlightPlanDemoActivity.class));
+        } else if (view.getId() == R.id.telemetry_card_view) {
+            startActivity(new Intent(this, TelemetryDemoActivity.class));
         } else {
             String flightPlanId = PreferenceManager.getDefaultSharedPreferences(this).getString(AirMapConstants.FLIGHT_PLAN_ID_EXTRA, null);
 

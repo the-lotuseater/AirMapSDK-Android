@@ -65,6 +65,13 @@
         </activity>
 
         <activity
+            android:name=".activities.TelemetryDemoActivity"
+            android:label="Telemetry Demo"
+            android:parentActivityName=".activities.DemosActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <activity
             android:name=".activities.AnonymousLoginDemoActivity"
             android:label="Anonymous Login Demo"
             android:parentActivityName=".activities.DemosActivity"
