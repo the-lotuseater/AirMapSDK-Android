@@ -219,7 +219,7 @@ public class TelemetryService extends BaseService {
                 .subscribe(Actions.empty(), new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        Log.e(TAG, "latestMessages Error", throwable);
+                        AirMapLog.e(TAG, "latestMessages Error", throwable);
                     }
                 });
 
@@ -236,6 +236,7 @@ public class TelemetryService extends BaseService {
             messages.add(p.second);
         }
         session.send(messages);
+        AirMapLog.d(TAG, "Send telemetry messages");
     }
 
     private void onException(Exception e) {
