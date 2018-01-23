@@ -54,7 +54,7 @@ public class Auth {
                 .setTermsURL(AirMapConfig.getTermsUrl())
                 .setPrivacyURL(AirMapConfig.getPrivacyUrl())
                 .withScope("openid offline_access")
-                .withScheme("airmap")
+                .withScheme(activity.getString(R.string.com_auth0_scheme))
                 .closable(true)
                 .build(activity);
 
