@@ -16,7 +16,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("airmap").getString("domain");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "Error getting airmap domain from airmap.config.json", e);
+            AirMapLog.w(TAG, "Error getting airmap domain from airmap.config.json using fallback");
             return "airmap.com";
         }
     }
@@ -34,7 +34,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("airmap").optString("environment", "prod").equals("stage");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "Error getting environment key from airmap.config.json", e);
+            AirMapLog.d(TAG, "No environment key from airmap.config.json");
             return false;
         }
     }
@@ -43,7 +43,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("mapbox").getString("access_token");
         } catch (JSONException e) {
-            e.printStackTrace();
+            AirMapLog.e(TAG, "Error getting mapbox key from airmap.config.json", e);
             throw new RuntimeException("Error getting mapbox key from airmap.config.json");
         }
     }
@@ -52,7 +52,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("auth0").getString("host");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "Error getting auth0 host from airmap.config.json", e);
+            AirMapLog.w(TAG, "Error getting auth0 host from airmap.config.json using fallback");
             return "sso.airmap.io";
         }
     }
@@ -71,7 +71,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("airmap").getString("mqtt_domain");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No mqtt domain found in airmap.config.json, defaulting to airmap.io", e);
+            AirMapLog.w(TAG, "No mqtt domain found in airmap.config.json, defaulting to airmap.io");
 
             return "airmap.io";
         }
@@ -81,7 +81,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("airmap").getJSONObject("api_overrides").optString(key, fallback);
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No overridden end point found in airmap.config.json for: " + key, e);
+            AirMapLog.w(TAG, "No overridden end point found in airmap.config.json for: " + key);
 
             return fallback;
         }
@@ -91,7 +91,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("airmap").getString("map_style");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No map style found in airmap.config.json for", e);
+            AirMapLog.w(TAG, "No map style found in airmap.config.json using fallback");
             return null;
         }
     }
@@ -100,7 +100,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("app").getString("about_url");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No map style found in airmap.config.json for about url", e);
+            AirMapLog.w(TAG, "No About URL found in airmap.config.json using fallback");
             return "https://" + getDomain() + "/about-us";
         }
     }
@@ -109,7 +109,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("app").getString("faq_url");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No map style found in airmap.config.json for FAQ url", e);
+            AirMapLog.w(TAG, "No FAQ in airmap.config.json using fallback");
             return "https://airmap.typeform.com/to/ljGZpe";
         }
     }
@@ -118,7 +118,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("app").getString("privacy_url");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No map style found in airmap.config.json for privacy url", e);
+            AirMapLog.w(TAG, "No Privacy URL found in airmap.config.json using fallback");
             return "https://" + getDomain() + "/privacy";
         }
     }
@@ -127,7 +127,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("app").getString("terms_url");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No map style found in airmap.config.json for terms url", e);
+            AirMapLog.w(TAG, "No Terms URL found in airmap.config.json using fallback");
             return "https://" + getDomain() + "/terms";
         }
     }
@@ -136,7 +136,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("app").getString("feedback_url");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No map style found in airmap.config.json for feedback url", e);
+            AirMapLog.w(TAG, "No Feedback URL found in airmap.config.json using fallback");
             return "https://airmap.typeform.com/to/r6MaMO";
         }
     }
@@ -151,7 +151,7 @@ public class AirMapConfig {
             }
             return urls;
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No intro images found in airmap.config.json", e);
+            AirMapLog.w(TAG, "No intro images found in airmap.config.json using fallback");
             
             //fallback urls
             return new String[] {
