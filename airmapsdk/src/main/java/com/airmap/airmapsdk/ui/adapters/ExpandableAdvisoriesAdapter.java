@@ -47,6 +47,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.airmap.airmapsdk.util.Utils.checkAndStartIntent;
+
 public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>, AirMapAdvisory> {
 
     public ExpandableAdvisoriesAdapter(LinkedHashMap<MappingService.AirMapAirspaceType, List<AirMapAdvisory>> advisories) {
@@ -156,7 +158,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                                     Analytics.logEvent(Analytics.Page.ADVISORIES, Analytics.Action.tap, Analytics.Label.TFR_DETAILS);
 
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                    holder.itemView.getContext().startActivity(intent);
+                                    checkAndStartIntent(holder.itemView.getContext(), intent);
                                 }
                             });
                         }
@@ -196,7 +198,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                                 @Override
                                 public void onClick(View v) {
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(advisory.getOptionalProperties().getUrl()));
-                                    holder.itemView.getContext().startActivity(intent);
+                                    checkAndStartIntent(holder.itemView.getContext(), intent);
                                 }
                             });
                         }
@@ -235,7 +237,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                                     Analytics.logEvent(Analytics.Page.ADVISORIES, Analytics.Action.tap, Analytics.Label.TFR_DETAILS);
 
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                    holder.itemView.getContext().startActivity(intent);
+                                    checkAndStartIntent(holder.itemView.getContext(), intent);
                                 }
                             });
                         }
@@ -261,7 +263,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                                 @Override
                                 public void onClick(View v) {
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(advisory.getOptionalProperties().getUrl()));
-                                    holder.itemView.getContext().startActivity(intent);
+                                    checkAndStartIntent(holder.itemView.getContext(), intent);
                                 }
                             });
                         }
@@ -308,9 +310,8 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
-                        if (intent.resolveActivity(context.getPackageManager()) != null) {
-                            context.startActivity(intent); //Only start activity if the device has a phone (e.g. A tablet might not)
-                        } else {
+                        boolean handled = checkAndStartIntent(context, intent);
+                        if (!handled) {
                             Toast.makeText(context, R.string.no_dialer_found, Toast.LENGTH_SHORT).show();
                         }
                     }

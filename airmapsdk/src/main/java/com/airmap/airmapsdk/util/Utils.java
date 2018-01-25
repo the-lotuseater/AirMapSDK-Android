@@ -1,6 +1,7 @@
 package com.airmap.airmapsdk.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
@@ -467,5 +468,13 @@ public class Utils {
         }
 
         return builder.substring(0, Math.min(1000, builder.length() - 2));
+    }
+
+    public static boolean checkAndStartIntent(Context context, Intent intent) {
+        boolean canHandle = context.getPackageManager().queryIntentActivities(intent, 0).size() > 0;
+        if (canHandle) {
+            context.startActivity(intent);
+        }
+        return canHandle;
     }
 }
