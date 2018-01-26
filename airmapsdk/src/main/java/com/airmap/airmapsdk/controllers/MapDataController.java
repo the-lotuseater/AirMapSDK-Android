@@ -16,6 +16,7 @@ import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
+import com.airmap.airmapsdk.util.RetryWithDelay;
 import com.airmap.airmapsdk.util.ThrottleablePublishSubject;
 import com.google.gson.JsonObject;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
@@ -30,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import rx.Observable;
@@ -253,6 +255,8 @@ public class MapDataController {
 
                         if (features.isEmpty()) {
                             AirMapLog.e(TAG, "Features are empty");
+                            hasJurisdictions = false;
+                            subscriber.onError(new Throwable("Features are empty"));
                         }
 
                         List<AirMapJurisdiction> jurisdictions = new ArrayList<>();
@@ -269,6 +273,14 @@ public class MapDataController {
 
                         subscriber.onNext(jurisdictions);
                         subscriber.onCompleted();
+                    }
+                })
+                .retryWhen(new RetryWithDelay(4, 400))
+                .onErrorReturn(new Func1<Throwable, List<AirMapJurisdiction>>() {
+                    @Override
+                    public List<AirMapJurisdiction> call(Throwable throwable) {
+                        AirMapLog.w(TAG, "Ran out of attempts to query jurisdictions");
+                        return null;
                     }
                 });
             }
