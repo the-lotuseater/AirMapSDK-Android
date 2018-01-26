@@ -12,8 +12,10 @@ import com.airmap.airmapsdk.models.map.AirMapLayerStyle;
 import com.airmap.airmapsdk.models.map.AirMapLineLayerStyle;
 import com.airmap.airmapsdk.models.map.AirMapSymbolLayerStyle;
 import com.airmap.airmapsdk.models.map.MapStyle;
+import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
+import com.airmap.airmapsdk.networking.services.BaseService;
 import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
 import com.airmap.airmapsdk.util.AirMapConstants;
@@ -24,8 +26,10 @@ import com.mapbox.mapboxsdk.style.layers.Filter;
 import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
+import com.mapbox.mapboxsdk.style.layers.PropertyValue;
 import com.mapbox.mapboxsdk.style.sources.TileSet;
 import com.mapbox.mapboxsdk.style.sources.VectorSource;
+import com.mapbox.services.commons.geojson.Feature;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,6 +50,7 @@ public class MapStyleController implements MapView.OnMapChangedListener {
     private MappingService.AirMapMapTheme currentTheme;
     private MapStyle mapStyle;
     private Callback callback;
+    private LineLayer highlightLayer;
 
     public MapStyleController(AirMapMapView map, Callback callback) {
         this.map = map;
@@ -130,6 +135,7 @@ public class MapStyleController implements MapView.OnMapChangedListener {
     public void addMapLayers(String sourceId, List<String> layers) {
         if (map.getMap().getSource(sourceId) != null) {
             AirMapLog.e(TAG, "Source already added for: " + sourceId);
+            return;
         } else {
             String urlTemplates = AirMap.getRulesetTileUrlTemplate(sourceId, layers);
             TileSet tileSet = new TileSet("2.2.0", urlTemplates);
@@ -171,6 +177,16 @@ public class MapStyleController implements MapView.OnMapChangedListener {
                 }
             }
         }
+
+        // add highlight layer
+        LineLayer highlightLayer = new LineLayer("airmap|highlight|line|" + sourceId, sourceId);
+        highlightLayer.setProperties(PropertyFactory.lineColor("#f9e547"));
+        highlightLayer.setProperties(PropertyFactory.lineWidth(4f));
+        highlightLayer.setProperties(PropertyFactory.lineOpacity(0.9f));
+        Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
+        highlightLayer.setFilter(filter);
+
+        map.getMap().addLayer(highlightLayer);
     }
 
     private void addTfrFilter(Layer layer) {
@@ -204,13 +220,11 @@ public class MapStyleController implements MapView.OnMapChangedListener {
     }
 
     public void removeMapLayers(String sourceId, List<String> sourceLayers) {
-        //TODO: file bug against mapbox, remove source doesn't seem to be working or at least not after just adding source
-        //TODO: to reproduce, open app w/ active flight. adds map layers, removes layers, adds flight map layers
-        AirMapLog.e(TAG, "remove source: " + sourceId + " layers: " + TextUtils.join(",", sourceLayers));
-
         if (sourceLayers == null || sourceLayers.isEmpty()) {
             return;
         }
+
+        AirMapLog.e(TAG, "remove source: " + sourceId + " layers: " + TextUtils.join(",", sourceLayers));
 
         for (String sourceLayer : sourceLayers) {
             for (AirMapLayerStyle layerStyle : mapStyle.getLayerStyles()) {
@@ -220,7 +234,69 @@ public class MapStyleController implements MapView.OnMapChangedListener {
             }
         }
 
+        // remove highlight
+        map.getMap().removeLayer("airmap|highlight|line|" + sourceId);
+        if (highlightLayer != null && highlightLayer.getId().equals("airmap|highlight|line|" + sourceId)) {
+            highlightLayer = null;
+        }
+
         map.getMap().removeSource(sourceId);
+    }
+
+    public void highlight(Feature feature, AirMapAdvisory advisory) {
+            // remove old highlight
+            if (highlightLayer != null) {
+                Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
+                highlightLayer.setFilter(filter);
+            }
+
+            // add new highlight
+            String sourceId = feature.getStringProperty("ruleset_id");
+            highlightLayer = map.getMap().getLayerAs("airmap|highlight|line|" + sourceId);
+            highlightLayer.setSourceLayer(sourceId + "_" + advisory.getType().toString());
+
+            // feature's airspace_id can be an int or string (tile server bug), so match on either
+            Filter.Statement filter;
+            try {
+                int airspaceId = Integer.parseInt(advisory.getId());
+                filter = Filter.any(Filter.eq("airspace_id", advisory.getId()), Filter.eq("airspace_id", airspaceId));
+            } catch (NumberFormatException e) {
+                filter = Filter.any(Filter.eq("airspace_id", advisory.getId()));
+            }
+            highlightLayer.setFilter(filter);
+    }
+
+    public void highlight(Feature feature) {
+        String id = feature.getStringProperty("airspace_id");
+        String type = feature.getStringProperty("category");
+
+        // remove old highlight
+        if (highlightLayer != null) {
+            Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
+            highlightLayer.setFilter(filter);
+        }
+
+        // add new highlight
+        String sourceId = feature.getStringProperty("ruleset_id");
+        highlightLayer = map.getMap().getLayerAs("airmap|highlight|line|" + sourceId);
+        highlightLayer.setSourceLayer(sourceId + "_" + type);
+
+        // feature's airspace_id can be an int or string (tile server bug), so match on either
+        Filter.Statement filter;
+        try {
+            int airspaceId = Integer.parseInt(id);
+            filter = Filter.any(Filter.eq("airspace_id", id), Filter.eq("airspace_id", airspaceId));
+        } catch (NumberFormatException e) {
+            filter = Filter.any(Filter.eq("airspace_id", id));
+        }
+        highlightLayer.setFilter(filter);
+    }
+
+    public void unhighlight() {
+        if (highlightLayer != null) {
+            Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
+            highlightLayer.setFilter(filter);
+        }
     }
 
     private void loadStyleJSON() {

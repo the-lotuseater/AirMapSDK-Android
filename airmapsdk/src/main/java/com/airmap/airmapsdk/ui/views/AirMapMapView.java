@@ -26,11 +26,15 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.style.layers.Filter;
+import com.mapbox.mapboxsdk.style.layers.Layer;
+import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.services.commons.geojson.Feature;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class AirMapMapView extends MapView implements MapView.OnMapChangedListener, MapboxMap.OnMapClickListener, MapDataController.Callback {
@@ -135,10 +139,11 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
                 map = mapboxMap;
+                map.addOnMapClickListener(AirMapMapView.this);
                 map.getUiSettings().setLogoGravity(Gravity.BOTTOM | Gravity.END); // Move to bottom right
                 map.getUiSettings().setAttributionGravity(Gravity.BOTTOM | Gravity.END); // Move to bottom right
-                mapStyleController.onMapReady();
 
+                mapStyleController.onMapReady();
                 if (callback != null) {
                     callback.onMapReady(mapboxMap);
                 }
@@ -211,49 +216,164 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     @Override
     public void onMapClick(@NonNull LatLng point) {
-        if (advisoryClickListeners == null || advisoryClickListeners.isEmpty()) {
+        if (advisoryClickListeners == null || advisoryClickListeners.isEmpty() || map.getCameraPosition().zoom < 10) {
             return;
         }
 
         PointF clickPoint = map.getProjection().toScreenLocation(point);
-        RectF clickRect = new RectF(clickPoint.x - 10, clickPoint.y - 10, clickPoint.x + 10, clickPoint.y + 10);
-        RectF mapRect = new RectF(getLeft(), getTop(), getRight(), getBottom());
+        int slop = Utils.dpToPixels(getContext(), 10).intValue();
+        RectF clickRect = new RectF(clickPoint.x - slop, clickPoint.y - slop, clickPoint.x + slop, clickPoint.y + slop);
         Filter.Statement filter = Filter.has("airspace_id");
-        List<Feature> allFeatures = map.queryRenderedFeatures(mapRect, filter);
 
-        if (allFeatures.size() > 400) {
+        final List<Feature> selectedFeatures = map.queryRenderedFeatures(clickRect, filter);
+        if (selectedFeatures.isEmpty()) {
             return;
         }
 
-        List<Feature> selectedFeatures = map.queryRenderedFeatures(clickRect, filter);
         List<AirMapAdvisory> allAdvisories = mapDataController.getCurrentAdvisories();
-        if (allAdvisories == null) {
-            return;
-        }
 
-        Set<AirMapAdvisory> filteredAdvisories = new HashSet<>(); // Include only those with features on map
-        AirMapAdvisory clickedAdvisory = null;
-        for (AirMapAdvisory advisory : allAdvisories) {
-            for (Feature feature : selectedFeatures) {
-                if (feature.hasProperty("airspace_id") && advisory.getId().equals(feature.getStringProperty("airspace_id"))) {
-                    clickedAdvisory = advisory;
-                    break;
-                }
+        Feature featureClicked = null;
+        AirMapAdvisory advisoryClicked = null;
+        Set<AirMapAdvisory> filteredAdvisories = new HashSet<>();
+
+        for (Feature feature : selectedFeatures) {
+            if (allAdvisories == null) {
+                break;
             }
 
-            for (Feature feature : allFeatures) {
-                if (feature.getStringProperty("airspace_id").equals(advisory.getId())) {
+            for (AirMapAdvisory advisory : allAdvisories) {
+                if (advisory.getId().equals(feature.getStringProperty("airspace_id"))) {
+                    // set as the clicked advisory based on size/importance
+                    if (advisoryClicked == null || hasHigherPriority(advisory, advisoryClicked)) {
+                        featureClicked = feature;
+                        advisoryClicked = advisory;
+
+                    }
                     filteredAdvisories.add(advisory);
                 }
             }
-
         }
 
-        if (clickedAdvisory != null) {
-            for (OnAdvisoryClickListener advisoryClickListener : advisoryClickListeners) {
-                advisoryClickListener.onAdvisoryClicked(clickedAdvisory);
+        if (featureClicked != null) {
+            mapStyleController.highlight(featureClicked, advisoryClicked);
+
+            for (AirMapMapView.OnAdvisoryClickListener advisoryClickListener : advisoryClickListeners) {
+                advisoryClickListener.onAdvisoryClicked(advisoryClicked, new ArrayList<>(filteredAdvisories));
+            }
+        } else {
+            // highlight the feature
+            for (Feature feature : selectedFeatures) {
+                // set as the clicked advisory based on size/importance
+                if (featureClicked == null || hasHigherPriority(feature, featureClicked)) {
+                    featureClicked = feature;
+                }
+            }
+            mapStyleController.highlight(featureClicked);
+
+            // if advisory is missing, show loading until advisories loaded
+            for (AirMapMapView.OnAdvisoryClickListener advisoryClickListener : advisoryClickListeners) {
+                advisoryClickListener.onAdvisoryClicked(null, null);
+            }
+
+            // callback for when advisories are loaded
+            addOnMapDataChangedListener(new OnMapDataChangeListener() {
+                int count = 0;
+                @Override
+                public void onRulesetsChanged(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets) {}
+
+                @Override
+                public void onAdvisoryStatusChanged(AirMapAirspaceStatus status) {
+                    Feature featureClicked = null;
+                    AirMapAdvisory advisoryClicked = null;
+                    Set<AirMapAdvisory> filteredAdvisories = new HashSet<>();
+
+                    for (Feature feature : selectedFeatures) {
+                        if (status == null || status.getAdvisories() == null || status.getAdvisories().isEmpty()) {
+                            break;
+                        }
+
+                        for (AirMapAdvisory advisory : status.getAdvisories()) {
+                            if (advisory.getId().equals(feature.getStringProperty("airspace_id"))) {
+                                // set as the clicked advisory based on size/importance
+                                if (advisoryClicked == null || hasHigherPriority(advisory, advisoryClicked)) {
+                                    featureClicked = feature;
+                                    advisoryClicked = advisory;
+                                }
+
+                                filteredAdvisories.add(advisory);
+                            }
+                        }
+                    }
+
+                    if (featureClicked != null) {
+                        mapStyleController.highlight(featureClicked, advisoryClicked);
+
+                        for (AirMapMapView.OnAdvisoryClickListener advisoryClickListener : advisoryClickListeners) {
+                            advisoryClickListener.onAdvisoryClicked(advisoryClicked, new ArrayList<>(filteredAdvisories));
+                        }
+
+                        removeOnMapDataChangedListener(this);
+                    } else {
+                        if (count > 3) {
+                            removeOnMapDataChangedListener(this);
+                        }
+                    }
+
+                    count++;
+                }
+
+                @Override
+                public void onAdvisoryStatusLoading() {}
+            });
+        }
+    }
+
+    private boolean hasHigherPriority(AirMapAdvisory advisory, AirMapAdvisory selectedAdvisory) {
+        switch (selectedAdvisory.getType()) {
+            case Emergencies:
+            case School:
+            case Fires:
+            case Prison:
+            case Wildfires:
+            case PowerPlant:
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    private boolean hasHigherPriority(Feature feature, Feature selectedFeature) {
+        String type = selectedFeature.getStringProperty("category");
+        switch (type) {
+            case "emergency":
+            case "school":
+            case "fire":
+            case "prison":
+            case "wildfire":
+            case "power_plant":
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    public void highlight(AirMapAdvisory advisory) {
+        RectF mapRectF = new RectF(getLeft(), getTop(), getRight(), getBottom());
+        Filter.Statement filter = Filter.has("airspace_id");
+        List<Feature> selectedFeatures = map.queryRenderedFeatures(mapRectF, filter);
+
+        Feature featureToHighlight = null;
+
+        for (Feature feature : selectedFeatures) {
+            if (advisory.getId().equals(feature.getStringProperty("airspace_id"))) {
+                featureToHighlight = feature;
             }
         }
+        mapStyleController.highlight(featureToHighlight, advisory);
+    }
+
+    public void unhighlight() {
+        mapStyleController.unhighlight();
     }
 
     @Override
@@ -269,7 +389,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     @Override
     public void onAdvisoryStatusUpdated(AirMapAirspaceStatus advisoryStatus) {
-        for (OnMapDataChangeListener mapDataChangeListener : mapDataChangeListeners) {
+        for (OnMapDataChangeListener mapDataChangeListener : new ArrayList<>(mapDataChangeListeners)) {
             mapDataChangeListener.onAdvisoryStatusChanged(advisoryStatus);
         }
     }
@@ -353,7 +473,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     }
 
     public interface OnAdvisoryClickListener {
-        void onAdvisoryClicked(AirMapAdvisory advisory);
+        void onAdvisoryClicked(@Nullable AirMapAdvisory advisoryClicked, @Nullable List<AirMapAdvisory> advisoriesFiltered);
     }
 
     public enum MapFailure {
