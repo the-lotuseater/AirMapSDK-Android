@@ -21,20 +21,19 @@ import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.util.Utils;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.style.layers.Filter;
-import com.mapbox.mapboxsdk.style.layers.Layer;
-import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.services.commons.geojson.Feature;
+import com.mapbox.services.commons.models.Position;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class AirMapMapView extends MapView implements MapView.OnMapChangedListener, MapboxMap.OnMapClickListener, MapDataController.Callback {
@@ -254,12 +253,17 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             }
         }
 
+        // if feature has matching advisory
         if (featureClicked != null) {
+            // draw yellow outline & zoom
             mapStyleController.highlight(featureClicked, advisoryClicked);
+            zoomToFeatureIfNecessary(featureClicked);
 
             for (AirMapMapView.OnAdvisoryClickListener advisoryClickListener : advisoryClickListeners) {
                 advisoryClickListener.onAdvisoryClicked(advisoryClicked, new ArrayList<>(filteredAdvisories));
             }
+
+        // if feature doesn't have matching advisory, wait
         } else {
             // highlight the feature
             for (Feature feature : selectedFeatures) {
@@ -269,6 +273,8 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                 }
             }
             mapStyleController.highlight(featureClicked);
+
+            AirMapLog.e(TAG, "Feature clicked doesn't have matching advisory yet");
 
             // if advisory is missing, show loading until advisories loaded
             for (AirMapMapView.OnAdvisoryClickListener advisoryClickListener : advisoryClickListeners) {
@@ -306,7 +312,9 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                     }
 
                     if (featureClicked != null) {
+                        AirMapLog.e(TAG, "Matching advisory found for feature");
                         mapStyleController.highlight(featureClicked, advisoryClicked);
+                        zoomToFeatureIfNecessary(featureClicked);
 
                         for (AirMapMapView.OnAdvisoryClickListener advisoryClickListener : advisoryClickListeners) {
                             advisoryClickListener.onAdvisoryClicked(advisoryClicked, new ArrayList<>(filteredAdvisories));
@@ -357,6 +365,31 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         }
     }
 
+    private void zoomToFeatureIfNecessary(Feature featureClicked) {
+        try {
+            LatLngBounds cameraBounds = map.getProjection().getVisibleRegion().latLngBounds;
+            LatLngBounds.Builder advisoryLatLngsBuilder = new LatLngBounds.Builder();
+            boolean zoom = false;
+
+            List<Position> positions = Utils.getPositionsFromFeature((ArrayList) featureClicked.getGeometry().getCoordinates());
+            for (Position position : positions) {
+                LatLng latLng = new LatLng(position.getLatitude(), position.getLongitude());
+                advisoryLatLngsBuilder.include(latLng);
+                if (!cameraBounds.contains(latLng)) {
+                    AirMapLog.e(TAG, "Camera position doesn't contain point");
+                    zoom = true;
+                }
+            }
+
+            if (zoom) {
+                int padding = Utils.dpToPixels(getContext(), 72).intValue();
+                map.animateCamera(CameraUpdateFactory.newLatLngBounds(advisoryLatLngsBuilder.build(), padding));
+            }
+        } catch (ClassCastException e) {
+            AirMapLog.e(TAG, "Unable to get feature geometry", e);
+        }
+    }
+
     public void highlight(AirMapAdvisory advisory) {
         RectF mapRectF = new RectF(getLeft(), getTop(), getRight(), getBottom());
         Filter.Statement filter = Filter.has("airspace_id");
@@ -370,6 +403,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             }
         }
         mapStyleController.highlight(featureToHighlight, advisory);
+        zoomToFeatureIfNecessary(featureToHighlight);
     }
 
     public void unhighlight() {
