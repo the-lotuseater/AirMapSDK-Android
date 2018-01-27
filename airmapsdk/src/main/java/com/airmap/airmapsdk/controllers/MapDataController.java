@@ -183,7 +183,7 @@ public class MapDataController {
                 .doOnNext(new Action1<Pair<List<AirMapRuleset>,List<AirMapRuleset>>>() {
                     @Override
                     public void call(Pair<List<AirMapRuleset>, List<AirMapRuleset>> pair) {
-                        AirMapLog.i(TAG, "Computed rulesets: " + TextUtils.join(",", pair.second));
+                        AirMapLog.d(TAG, "Computed rulesets: " + TextUtils.join(",", pair.second));
                         List<AirMapRuleset> availableRulesetsList = pair.first != null ? new ArrayList<>(pair.first) : null;
                         List<AirMapRuleset> selectedRulesetsList = pair.second != null ? new ArrayList<>(pair.second) : null;
                         List<AirMapRuleset> previouslySelectedRulesetsList = selectedRulesets != null ? new ArrayList<>(selectedRulesets) : null;
@@ -254,7 +254,7 @@ public class MapDataController {
                                 map.getTop(), map.getRight(), map.getBottom()), "jurisdictions");
 
                         if (features.isEmpty()) {
-                            AirMapLog.e(TAG, "Features are empty");
+                            AirMapLog.d(TAG, "Features are empty");
                             hasJurisdictions = false;
                             subscriber.onError(new Throwable("Features are empty"));
                         }
