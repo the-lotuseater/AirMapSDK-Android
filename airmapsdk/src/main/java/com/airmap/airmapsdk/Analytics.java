@@ -2,8 +2,6 @@ package com.airmap.airmapsdk;
 
 public class Analytics {
 
-    private static final String TAG = "SDKAnalytics";
-
     private static AnalyticsTracker tracker;
 
     public static void init(AnalyticsTracker analyticsTracker) {
@@ -13,32 +11,24 @@ public class Analytics {
     public static void logEvent(String section, String action, String label) {
         if (tracker != null) {
             tracker.logEvent(section, action, label);
-        } else {
-            AirMapLog.d(TAG, "No tracker set!");
         }
     }
 
     public static void logEvent(String section, String action, String label, int value) {
         if (tracker != null) {
             tracker.logEvent(section, action, label, value);
-        } else {
-            AirMapLog.d(TAG, "No tracker set!");
         }
     }
 
     public static void logEvent(String section, String action, String label, String value) {
         if (tracker != null) {
             tracker.logEvent(section, action, label, value);
-        } else {
-            AirMapLog.d(TAG, "No tracker set!");
         }
     }
 
     public static void report(Exception e) {
         if (tracker != null) {
             tracker.report(e);
-        } else {
-            AirMapLog.d(TAG, "No tracker set!");
         }
     }
 

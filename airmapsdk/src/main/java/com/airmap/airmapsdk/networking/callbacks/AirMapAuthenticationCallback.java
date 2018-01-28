@@ -1,7 +1,6 @@
 package com.airmap.airmapsdk.networking.callbacks;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
@@ -14,9 +13,9 @@ import com.auth0.android.lock.Lock;
 import com.auth0.android.lock.utils.LockException;
 import com.auth0.android.result.Credentials;
 
-public class AirMapAuthenticationCallback extends AuthenticationCallback {
+import timber.log.Timber;
 
-    private static final String TAG = "AirMapAuthCallback";
+public class AirMapAuthenticationCallback extends AuthenticationCallback {
 
     private Activity activity;
     private LoginCallback callback;
@@ -34,7 +33,7 @@ public class AirMapAuthenticationCallback extends AuthenticationCallback {
                     .putString(Utils.REFRESH_TOKEN_KEY, credentials.getRefreshToken())
                     .apply();
         } catch (SecuredPreferenceException e) {
-            Log.e(TAG, "Secured Preferences Failed", e);
+            Timber.e(e, "Secured Preferences Failed");
         }
 
         AirMap.setAuthToken(credentials.getIdToken());
@@ -42,7 +41,7 @@ public class AirMapAuthenticationCallback extends AuthenticationCallback {
             @Override
             public void onSuccess(final AirMapPilot response) {
                 if (activity == null || activity.isDestroyed() || activity.isFinishing()) {
-                    Log.e(TAG, "Activity was killed before login returned. However auth token was saved.");
+                    Timber.d("Activity was killed before login returned. However auth token was saved.");
                     return;
                 }
 
@@ -56,7 +55,7 @@ public class AirMapAuthenticationCallback extends AuthenticationCallback {
 
             @Override
             public void onError(final AirMapException e) {
-                Log.e(TAG, "get pilot failed", e);
+                Timber.e(e, "get pilot failed");
                 if (activity == null || activity.isDestroyed() || activity.isFinishing()) {
                     return;
                 }
@@ -90,7 +89,7 @@ public class AirMapAuthenticationCallback extends AuthenticationCallback {
 
     @Override
     public void onError(LockException error) {
-        Log.e(TAG, "Error authenticating with auth0", error);
+        Timber.e(error, "Error authenticating with auth0");
         callback.onError(new AirMapException(error.getMessage()));
 
         if (lock != null) {

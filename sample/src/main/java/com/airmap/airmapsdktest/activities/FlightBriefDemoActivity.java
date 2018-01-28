@@ -38,8 +38,6 @@ import timber.log.Timber;
 
 public class FlightBriefDemoActivity extends BaseActivity {
 
-    private static final String TAG = "FlightBriefActivity";
-
     private Toolbar toolbar;
     private RecyclerView rulesRecyclerView;
     private View loadingView;

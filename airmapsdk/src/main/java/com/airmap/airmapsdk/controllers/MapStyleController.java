@@ -5,7 +5,6 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.models.map.AirMapFillLayerStyle;
 import com.airmap.airmapsdk.models.map.AirMapLayerStyle;
@@ -32,14 +31,14 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 import static com.airmap.airmapsdk.networking.services.MappingService.AirMapMapTheme.Dark;
 import static com.airmap.airmapsdk.networking.services.MappingService.AirMapMapTheme.Light;
 import static com.airmap.airmapsdk.networking.services.MappingService.AirMapMapTheme.Satellite;
 import static com.airmap.airmapsdk.networking.services.MappingService.AirMapMapTheme.Standard;
 
 public class MapStyleController implements MapView.OnMapChangedListener {
-
-    private static final String TAG = "MapStyleController";
 
     private AirMapMapView map;
 
@@ -80,7 +79,7 @@ public class MapStyleController implements MapView.OnMapChangedListener {
                 try {
                     mapStyle = new MapStyle(map.getMap().getStyleJson());
                 } catch (JSONException e) {
-                    AirMapLog.e(TAG, "Failed to parse style json", e);
+                    Timber.e(e, "Failed to parse style json");
                 }
 
                 callback.onMapStyleLoaded();
@@ -129,7 +128,7 @@ public class MapStyleController implements MapView.OnMapChangedListener {
 
     public void addMapLayers(String sourceId, List<String> layers) {
         if (map.getMap().getSource(sourceId) != null) {
-            AirMapLog.e(TAG, "Source already added for: " + sourceId);
+            Timber.d("Source already added for: %s", sourceId);
         } else {
             String urlTemplates = AirMap.getRulesetTileUrlTemplate(sourceId, layers);
             TileSet tileSet = new TileSet("2.2.0", urlTemplates);
@@ -206,7 +205,7 @@ public class MapStyleController implements MapView.OnMapChangedListener {
     public void removeMapLayers(String sourceId, List<String> sourceLayers) {
         //TODO: file bug against mapbox, remove source doesn't seem to be working or at least not after just adding source
         //TODO: to reproduce, open app w/ active flight. adds map layers, removes layers, adds flight map layers
-        AirMapLog.e(TAG, "remove source: " + sourceId + " layers: " + TextUtils.join(",", sourceLayers));
+        Timber.v("remove source: %s layers: %s", sourceId, TextUtils.join(",", sourceLayers));
 
         if (sourceLayers == null || sourceLayers.isEmpty()) {
             return;
@@ -243,6 +242,7 @@ public class MapStyleController implements MapView.OnMapChangedListener {
 
     public interface Callback {
         void onMapStyleLoaded();
+
         void onMapStyleReset();
     }
 }

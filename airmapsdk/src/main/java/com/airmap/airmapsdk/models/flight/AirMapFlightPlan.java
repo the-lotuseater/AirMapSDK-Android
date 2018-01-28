@@ -2,7 +2,6 @@ package com.airmap.airmapsdk.models.flight;
 
 import android.text.TextUtils;
 
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.shapes.AirMapGeometry;
@@ -21,6 +20,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import timber.log.Timber;
 
 import static com.airmap.airmapsdk.util.Utils.getDateFromIso8601String;
 import static com.airmap.airmapsdk.util.Utils.getIso8601StringFromDate;
@@ -172,12 +173,12 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
                 params.put("takeoff_longitude", coordinate.getLongitude());
             }
         } catch (JSONException e) {
-            AirMapLog.e("AirMapFlightPlan", "Failed to parse geojson: " + getGeometry(), e);
+            Timber.e(e, "Failed to parse geojson: %s", getGeometry());
         }
 
         params.put("buffer", buffer);
         params.put("max_altitude_agl", getMaxAltitude());
-        
+
         Iterator<Map.Entry<String, Object>> iterator = params.entrySet().iterator();
         while (iterator.hasNext()) { //Remove any null values
             Map.Entry<String, Object> entry = iterator.next();

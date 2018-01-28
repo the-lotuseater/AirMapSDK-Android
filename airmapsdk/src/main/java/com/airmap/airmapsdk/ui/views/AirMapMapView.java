@@ -11,7 +11,6 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 
 import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.controllers.MapDataController;
 import com.airmap.airmapsdk.controllers.MapStyleController;
@@ -33,9 +32,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class AirMapMapView extends MapView implements MapView.OnMapChangedListener, MapboxMap.OnMapClickListener, MapDataController.Callback {
+import timber.log.Timber;
 
-    private static final String TAG = "AirMapMapView";
+public class AirMapMapView extends MapView implements MapView.OnMapChangedListener, MapboxMap.OnMapClickListener, MapDataController.Callback {
 
     private MapboxMap map;
 
@@ -78,7 +77,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
             @Override
             public void onMapStyleLoaded() {
-                AirMapLog.e(TAG, "onMapStyleLoaded: " + getMap().getCameraPosition());
+                Timber.v("onMapStyleLoaded: %s", getMap().getCameraPosition());
                 mapDataController.onMapLoaded();
 
                 for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
@@ -96,9 +95,9 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     }
 
     /**
-     *  Override data controller
+     * Override data controller
      *
-     *  @param controller
+     * @param controller
      */
     public void setMapDataController(MapDataController controller) {
         // destroy old data controller (unsubscribe from rx)
@@ -108,7 +107,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     }
 
     /**
-     *  Go to next theme (Standard to Dark to Light to Satellite to Standard to Dark...)
+     * Go to next theme (Standard to Dark to Light to Satellite to Standard to Dark...)
      */
     public void rotateMapTheme() {
         // check if map is ready yet
@@ -119,7 +118,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     }
 
     /**
-     *  Explicitly set theme (Standard, Dark, Light, Satellite
+     * Explicitly set theme (Standard, Dark, Light, Satellite
      */
     public void setMapTheme(MappingService.AirMapMapTheme theme) {
         // check if map is ready yet
@@ -159,14 +158,14 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                         mapLoadListener.onMapFailed(MapFailure.NETWORK_CONNECTION_FAILURE);
                     }
 
-                // Devices with an inaccurate date/time will not be able to load the mapbox map
-                // If the "automatic date/time" is disabled on the device and the map fails to load, recommend the user enable it
+                    // Devices with an inaccurate date/time will not be able to load the mapbox map
+                    // If the "automatic date/time" is disabled on the device and the map fails to load, recommend the user enable it
                 } else if (Settings.Global.getInt(getContext().getContentResolver(), Settings.Global.AUTO_TIME, 0) == 0) {
                     for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
                         mapLoadListener.onMapFailed(MapFailure.INACCURATE_DATE_TIME_FAILURE);
                     }
 
-                // check connection by requesting the styles json directly (async)
+                    // check connection by requesting the styles json directly (async)
                 } else {
                     mapStyleController.checkConnection(new AirMapCallback<Void>() {
                         @Override
@@ -258,7 +257,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     @Override
     public void onRulesetsUpdated(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets, List<AirMapRuleset> previouslySelectedRulesetsSelectedRulesets) {
-        AirMapLog.e(TAG, "onRulesetsUpdated to: " + selectedRulesets + " from: " + previouslySelectedRulesetsSelectedRulesets);
+        Timber.i("onRulesetsUpdated to: %s from: %s", selectedRulesets, previouslySelectedRulesetsSelectedRulesets);
 
         setLayers(selectedRulesets, previouslySelectedRulesetsSelectedRulesets);
 
@@ -343,12 +342,15 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     public interface OnMapLoadListener {
         void onMapLoaded();
+
         void onMapFailed(MapFailure reason);
     }
 
     public interface OnMapDataChangeListener {
         void onRulesetsChanged(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets);
+
         void onAdvisoryStatusChanged(AirMapAirspaceStatus status);
+
         void onAdvisoryStatusLoading();
     }
 

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.airmap.airmapsdk.networking.callbacks.AirMapAuthenticationCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
@@ -25,9 +24,9 @@ import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 
-public class Auth {
+import timber.log.Timber;
 
-    private static final String TAG = "Auth";
+public class Auth {
 
     public enum ErrorType {
         DomainBlackList,
@@ -40,7 +39,7 @@ public class Auth {
             SharedPreferences preferences = PreferenceUtils.getPreferences(context);
             return preferences.getBoolean(AirMapConstants.LOGGED_IN, false);
         } catch (SecuredPreferenceException e) {
-            Log.e("Auth", "SecurePref", e);
+            Timber.e(e, "SecurePref");
             return false;
         }
     }
@@ -67,14 +66,14 @@ public class Auth {
      * Refreshes the saved access token. Non-blocking
      */
     public static void refreshAccessToken(final Context context, final AirMapCallback<Void> callback) {
-        AirMapLog.i("AuthServices", "Trying to refresh token");
+        Timber.v("Trying to refresh token");
 
         String refreshToken = null;
         try {
             SharedPreferences preferences = PreferenceUtils.getPreferences(context);
             refreshToken = preferences.getString(Utils.REFRESH_TOKEN_KEY, "");
         } catch (SecuredPreferenceException e) {
-            AirMapLog.e("Auth", "Unable to get refresh token from secure prefs", e);
+            Timber.e(e, "Unable to get refresh token from secure prefs");
         }
 
         // return if refresh token is empty
@@ -92,14 +91,14 @@ public class Auth {
      * Refresh Access Token. Blocking
      */
     public static void refreshAccessToken(final Context context) {
-        AirMapLog.i("AuthServices", "Trying to refresh token");
+        Timber.v("Trying to refresh token");
 
         String refreshToken = null;
         try {
             SharedPreferences preferences = PreferenceUtils.getPreferences(context);
             refreshToken = preferences.getString(Utils.REFRESH_TOKEN_KEY, "");
         } catch (SecuredPreferenceException e) {
-            AirMapLog.e("Auth", "Unable to get refresh token from secure prefs", e);
+            Timber.e(e, "Unable to get refresh token from secure prefs");
         }
 
         // return if refresh token is empty
@@ -116,14 +115,14 @@ public class Auth {
             SharedPreferences preferences = PreferenceUtils.getPreferences(context);
             preferences.edit().putString(Utils.REFRESH_TOKEN_KEY, "").apply();
         } catch (SecuredPreferenceException e) {
-            AirMapLog.e("Auth", "Unable to get clear refresh token from secure prefs", e);
+            Timber.e(e, "Unable to get clear refresh token from secure prefs");
         }
     }
 
     public static boolean isTokenExpired() {
         String token = AirMap.getAuthToken();
         if (TextUtils.isEmpty(token)) {
-            AirMapLog.d(TAG, "No auth token");
+            Timber.v("No auth token");
             return true;
         }
 
@@ -136,7 +135,7 @@ public class Auth {
             JwtClaims claims = consumer.processToClaims(token);
             return claims.getExpirationTime().isBefore(NumericDate.now());
         } catch (InvalidJwtException | MalformedClaimException e) {
-            AirMapLog.e(TAG, "Unable to process token", e);
+            Timber.e(e, "Unable to process token");
             return true;
         }
     }

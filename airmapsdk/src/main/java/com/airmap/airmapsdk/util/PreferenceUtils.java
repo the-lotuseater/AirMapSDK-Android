@@ -19,8 +19,6 @@ import devliving.online.securedpreferencestore.SecuredPreferenceStore;
 
 public class PreferenceUtils {
 
-    private static final String TAG = "PreferenceUtils";
-
     public static SharedPreferences getPreferences(Context context) throws SecuredPreferenceException {
         try {
             return SecuredPreferenceStore.getSharedInstance(context);

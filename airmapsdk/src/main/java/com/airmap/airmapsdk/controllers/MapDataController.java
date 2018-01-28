@@ -6,7 +6,6 @@ import android.support.v4.util.Pair;
 import android.text.TextUtils;
 
 import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.rules.AirMapJurisdiction;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
@@ -43,10 +42,9 @@ import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subscriptions.Subscriptions;
+import timber.log.Timber;
 
 public class MapDataController {
-
-    private static final String TAG = "MapDataController";
 
     protected ThrottleablePublishSubject<AirMapPolygon> jurisdictionsPublishSubject;
     protected PublishSubject<AirMapMapView.Configuration> configurationPublishSubject;
@@ -109,7 +107,7 @@ public class MapDataController {
                 })
                 .map(new Func1<List<AirMapJurisdiction>, Pair<Map<String, AirMapRuleset>, List<AirMapJurisdiction>>>() {
                     @Override
-                    public Pair<Map<String, AirMapRuleset>,List<AirMapJurisdiction>> call(List<AirMapJurisdiction> jurisdictions) {
+                    public Pair<Map<String, AirMapRuleset>, List<AirMapJurisdiction>> call(List<AirMapJurisdiction> jurisdictions) {
                         Map<String, AirMapRuleset> jurisdictionRulesets = new HashMap<>();
 
                         for (AirMapJurisdiction jurisdiction : jurisdictions) {
@@ -117,7 +115,7 @@ public class MapDataController {
                                 jurisdictionRulesets.put(ruleset.getId(), ruleset);
                             }
                         }
-                        AirMapLog.i(TAG, "Jurisdictions loaded: " + TextUtils.join(",", jurisdictionRulesets.keySet()));
+                        Timber.i("Jurisdictions loaded: %s", TextUtils.join(",", jurisdictionRulesets.keySet()));
 
                         return new Pair<>(jurisdictionRulesets, jurisdictions);
                     }
@@ -143,15 +141,13 @@ public class MapDataController {
 
                         switch (configuration.type) {
                             case AUTOMATIC:
-                                AirMapLog.i(TAG, "AirMapMapView updated to automatic configuration");
+                                Timber.i("AirMapMapView updated to automatic configuration");
                                 break;
                             case DYNAMIC:
-                                AirMapLog.i(TAG, "AirMapMapView updated to dynamic configuration w/ preferred rulesets: " +
-                                        TextUtils.join(",", ((AirMapMapView.DynamicConfiguration) configuration).preferredRulesetIds));
+                                Timber.i("AirMapMapView updated to dynamic configuration w/ preferred rulesets: %s", TextUtils.join(",", ((AirMapMapView.DynamicConfiguration) configuration).preferredRulesetIds));
                                 break;
                             case MANUAL:
-                                AirMapLog.i(TAG, "AirMapMapView updated to manual configuration w/ preferred rulesets: " +
-                                        TextUtils.join(",", ((AirMapMapView.ManualConfiguration) configuration).selectedRulesets));
+                                Timber.i("AirMapMapView updated to manual configuration w/ preferred rulesets: %s", TextUtils.join(",", ((AirMapMapView.ManualConfiguration) configuration).selectedRulesets));
                                 break;
                         }
                     }
@@ -160,10 +156,10 @@ public class MapDataController {
         // combines preferred rulesets and available rulesets changes
         // to calculate selected rulesets and advisories
         rulesetsSubscription = Observable.combineLatest(jurisdictionsObservable, configurationObservable,
-                new Func2<Map<String, AirMapRuleset>, AirMapMapView.Configuration, Pair<List<AirMapRuleset>,List<AirMapRuleset>>>() {
+                new Func2<Map<String, AirMapRuleset>, AirMapMapView.Configuration, Pair<List<AirMapRuleset>, List<AirMapRuleset>>>() {
                     @Override
-                    public Pair<List<AirMapRuleset>,List<AirMapRuleset>> call(Map<String, AirMapRuleset> availableRulesetsMap, AirMapMapView.Configuration configuration) {
-                        AirMapLog.i(TAG, "combine available rulesets & configuration");
+                    public Pair<List<AirMapRuleset>, List<AirMapRuleset>> call(Map<String, AirMapRuleset> availableRulesetsMap, AirMapMapView.Configuration configuration) {
+                        Timber.i("combine available rulesets & configuration");
                         List<AirMapRuleset> availableRulesets = new ArrayList<>(availableRulesetsMap.values());
                         List<AirMapRuleset> selectedRulesets = RulesetsEvaluator.computeSelectedRulesets(availableRulesets, configuration);
 
@@ -172,16 +168,16 @@ public class MapDataController {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .filter(new Func1<Pair<List<AirMapRuleset>,List<AirMapRuleset>>, Boolean>() {
+                .filter(new Func1<Pair<List<AirMapRuleset>, List<AirMapRuleset>>, Boolean>() {
                     @Override
-                    public Boolean call(Pair<List<AirMapRuleset>,List<AirMapRuleset>> rulesets) {
+                    public Boolean call(Pair<List<AirMapRuleset>, List<AirMapRuleset>> rulesets) {
                         return rulesets != null;
                     }
                 })
-                .doOnNext(new Action1<Pair<List<AirMapRuleset>,List<AirMapRuleset>>>() {
+                .doOnNext(new Action1<Pair<List<AirMapRuleset>, List<AirMapRuleset>>>() {
                     @Override
                     public void call(Pair<List<AirMapRuleset>, List<AirMapRuleset>> pair) {
-                        AirMapLog.i(TAG, "Computed rulesets: " + TextUtils.join(",", pair.second));
+                        Timber.i("Computed rulesets: %s", TextUtils.join(",", pair.second));
                         List<AirMapRuleset> availableRulesetsList = pair.first != null ? new ArrayList<>(pair.first) : null;
                         List<AirMapRuleset> selectedRulesetsList = pair.second != null ? new ArrayList<>(pair.second) : null;
                         List<AirMapRuleset> previouslySelectedRulesetsList = selectedRulesets != null ? new ArrayList<>(selectedRulesets) : null;
@@ -191,7 +187,7 @@ public class MapDataController {
                         selectedRulesets = pair.second;
                     }
                 })
-                .map(new Func1<Pair<List<AirMapRuleset>,List<AirMapRuleset>>, List<AirMapRuleset>>() {
+                .map(new Func1<Pair<List<AirMapRuleset>, List<AirMapRuleset>>, List<AirMapRuleset>>() {
                     @Override
                     public List<AirMapRuleset> call(Pair<List<AirMapRuleset>, List<AirMapRuleset>> pair) {
                         return pair.second;
@@ -202,7 +198,7 @@ public class MapDataController {
                 .onErrorReturn(new Func1<Throwable, AirMapAirspaceStatus>() {
                     @Override
                     public AirMapAirspaceStatus call(Throwable throwable) {
-                        AirMapLog.e(TAG, "onErrorReturn", throwable);
+                        Timber.e(throwable, "onErrorReturn");
                         return null;
                     }
                 })
@@ -215,7 +211,7 @@ public class MapDataController {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        AirMapLog.e(TAG, "Unknown error on jurisdictions observable", throwable);
+                        Timber.e(throwable, "Unknown error on jurisdictions observable");
                     }
                 });
     }
@@ -252,7 +248,7 @@ public class MapDataController {
                                 map.getTop(), map.getRight(), map.getBottom()), "jurisdictions");
 
                         if (features.isEmpty()) {
-                            AirMapLog.e(TAG, "Features are empty");
+                            Timber.d("Features are empty");
                         }
 
                         List<AirMapJurisdiction> jurisdictions = new ArrayList<>();
@@ -263,7 +259,7 @@ public class MapDataController {
 
                                 jurisdictions.add(new AirMapJurisdiction(jurisdictionJSON));
                             } catch (JSONException e) {
-                                AirMapLog.e(TAG, "Unable to get jurisdiction json", e);
+                                Timber.e(e, "Unable to get jurisdiction json");
                             }
                         }
 
@@ -276,9 +272,9 @@ public class MapDataController {
     }
 
     /**
-     *  Fetches advisories based on map bounds and selected rulesets
+     * Fetches advisories based on map bounds and selected rulesets
      *
-     *  @return
+     * @return
      */
     private Func1<List<AirMapRuleset>, Observable<AirMapAirspaceStatus>> convertRulesetsToAdvisories() {
         return new Func1<List<AirMapRuleset>, Observable<AirMapAirspaceStatus>>() {
@@ -376,7 +372,9 @@ public class MapDataController {
 
     public interface Callback {
         void onRulesetsUpdated(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets, List<AirMapRuleset> previouslySelectedRulesets);
+
         void onAdvisoryStatusUpdated(AirMapAirspaceStatus advisoryStatus);
+
         void onAdvisoryStatusLoading();
     }
 }

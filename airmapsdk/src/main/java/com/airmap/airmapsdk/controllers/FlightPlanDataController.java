@@ -19,8 +19,6 @@ import rx.subscriptions.Subscriptions;
 
 public class FlightPlanDataController extends MapDataController {
 
-    private static final String TAG = "FlightPlanDataController";
-
     private AirMapPolygon polygon;
     private Coordinate takeoffCoordinate;
     private float buffer;

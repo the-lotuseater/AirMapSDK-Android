@@ -14,8 +14,6 @@ import java.util.Arrays;
 
 public abstract class AirMapLayerStyle {
 
-    protected static final String TAG = "AirMapLayerStyle";
-
     public final String id;
     public final String source;
     public final String sourceLayer;

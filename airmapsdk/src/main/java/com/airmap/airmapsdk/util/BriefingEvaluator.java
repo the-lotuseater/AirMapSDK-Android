@@ -17,8 +17,6 @@ import java.util.Set;
 
 public class BriefingEvaluator {
 
-    private static final String TAG = "BriefingEvaluator";
-
     public static LinkedHashMap<AirMapRule.Status, List<AirMapRule>> computeRulesViolations(AirMapFlightBriefing briefing) {
         List<AirMapRuleset> rulesets = briefing.getRulesets();
         Map<AirMapRule.Status, List<AirMapRule>> rulesMap = new HashMap<>();

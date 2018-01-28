@@ -2,7 +2,6 @@ package com.airmap.airmapsdk.controllers;
 
 import android.support.annotation.NonNull;
 
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
 
@@ -14,6 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import timber.log.Timber;
 
 import static com.airmap.airmapsdk.models.rules.AirMapRuleset.Type.PickOne;
 
@@ -38,18 +39,17 @@ public class RulesetsEvaluator {
     }
 
     /**
-     *  Calculate selected rulesets from rulesets available and preferred/unpreferred rulesets
+     * Calculate selected rulesets from rulesets available and preferred/unpreferred rulesets
      *
-     *  @param availableRulesets - All potential rulesets for the given jurisdictions
-     *  @param preferredRulesets - Optional or Pick-One rulesets that the user has manually enabled
-     *  @param unpreferredRulesets - Optional rulesets that the user has manually disabled
-     *
-     *  @return selectedRulesets
+     * @param availableRulesets   - All potential rulesets for the given jurisdictions
+     * @param preferredRulesets   - Optional or Pick-One rulesets that the user has manually enabled
+     * @param unpreferredRulesets - Optional rulesets that the user has manually disabled
+     * @return selectedRulesets
      */
     public static List<AirMapRuleset> computeSelectedRulesets(@NonNull List<AirMapRuleset> availableRulesets, @NonNull Set<String> preferredRulesets, @NonNull Set<String> unpreferredRulesets, boolean enableRecommendedRulesets) {
         Set<AirMapRuleset> selectedRulesets = new HashSet<>();
 
-        Map<String,AirMapRuleset> availableRulesetsMap = new HashMap<>();
+        Map<String, AirMapRuleset> availableRulesetsMap = new HashMap<>();
         for (AirMapRuleset availableRuleset : availableRulesets) {
             availableRulesetsMap.put(availableRuleset.getId(), availableRuleset);
         }
@@ -107,7 +107,7 @@ public class RulesetsEvaluator {
             }
         });
 
-        AirMapLog.e("RulesetsEvaluator", "Rulesets evaluated: " + selectedRulesets);
+        Timber.v("Rulesets evaluated: %s", selectedRulesets);
 
         return selectedRulesetsList;
     }

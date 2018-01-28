@@ -16,8 +16,6 @@ import okhttp3.Response;
 
 public class GenericListOkHttpCallback extends GenericBaseOkHttpCallback {
 
-    private static final String TAG = "GenericListOkHttpCallback";
-
     public GenericListOkHttpCallback(AirMapCallback listener, Class<? extends AirMapBaseModel> classToInstantiate) {
         super(listener, classToInstantiate);
     }

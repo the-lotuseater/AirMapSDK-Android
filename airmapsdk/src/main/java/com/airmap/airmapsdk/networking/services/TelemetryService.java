@@ -2,9 +2,7 @@ package com.airmap.airmapsdk.networking.services;
 
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
-import android.util.Log;
 
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.Telemetry;
 import com.airmap.airmapsdk.models.comm.AirMapComm;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
@@ -43,11 +41,10 @@ import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
+import timber.log.Timber;
 
 @SuppressWarnings("unused")
 public class TelemetryService extends BaseService {
-
-    private static final String TAG = "Telemetry Service";
 
     // frequencies in milliseconds
     private static final long POSITION_FREQUENCY = 200;
@@ -134,7 +131,7 @@ public class TelemetryService extends BaseService {
                                 .doOnError(new Action1<Throwable>() {
                                     @Override
                                     public void call(Throwable throwable) {
-                                        Log.e(TAG, "getCommKey failed", throwable);
+                                        Timber.e(throwable, "getCommKey failed");
                                     }
                                 })
                                 .onErrorResumeNext(Observable.<AirMapComm>empty())
@@ -151,11 +148,11 @@ public class TelemetryService extends BaseService {
         Observable<Pair<Session, Message>> flightMessages = Observable
                 .combineLatest(session, telemetry, new Func2<Session, Pair<AirMapFlight, Message>, Pair<Session, Pair<AirMapFlight, Message>>>() {
                     @Override
-                    public Pair<Session,Pair<AirMapFlight, Message>> call(Session s, Pair<AirMapFlight, Message> p) {
+                    public Pair<Session, Pair<AirMapFlight, Message>> call(Session s, Pair<AirMapFlight, Message> p) {
                         return new Pair<>(s, p);
                     }
                 })
-                .filter(new Func1<Pair<Session, Pair<AirMapFlight,Message>>, Boolean>() {
+                .filter(new Func1<Pair<Session, Pair<AirMapFlight, Message>>, Boolean>() {
                     @Override
                     public Boolean call(Pair<Session, Pair<AirMapFlight, Message>> p) {
                         AirMapFlight sessionFlight = p.first.flight;
@@ -165,13 +162,13 @@ public class TelemetryService extends BaseService {
                 })
                 .map(new Func1<Pair<Session, Pair<AirMapFlight, Message>>, Pair<Session, Message>>() {
                     @Override
-                    public Pair<Session,Message> call(Pair<Session, Pair<AirMapFlight, Message>> pair) {
+                    public Pair<Session, Message> call(Pair<Session, Pair<AirMapFlight, Message>> pair) {
                         return new Pair<>(pair.first, pair.second.second);
                     }
                 });
 
-        Observable<Pair<Session,Message>> position = flightMessages
-                .filter(new Func1<Pair<Session,Message>,Boolean>() {
+        Observable<Pair<Session, Message>> position = flightMessages
+                .filter(new Func1<Pair<Session, Message>, Boolean>() {
                     @Override
                     public Boolean call(Pair<Session, Message> p) {
                         return p.second instanceof Telemetry.Position;
@@ -179,8 +176,8 @@ public class TelemetryService extends BaseService {
                 })
                 .sample(Observable.interval(POSITION_FREQUENCY, TimeUnit.MILLISECONDS));
 
-        Observable<Pair<Session,Message>> attitude = flightMessages
-                .filter(new Func1<Pair<Session,Message>,Boolean>() {
+        Observable<Pair<Session, Message>> attitude = flightMessages
+                .filter(new Func1<Pair<Session, Message>, Boolean>() {
                     @Override
                     public Boolean call(Pair<Session, Message> p) {
                         return p.second instanceof Telemetry.Attitude;
@@ -188,8 +185,8 @@ public class TelemetryService extends BaseService {
                 })
                 .sample(Observable.interval(ATTITUDE_FREQUENCY, TimeUnit.MILLISECONDS));
 
-        Observable<Pair<Session,Message>> speed = flightMessages
-                .filter(new Func1<Pair<Session,Message>,Boolean>() {
+        Observable<Pair<Session, Message>> speed = flightMessages
+                .filter(new Func1<Pair<Session, Message>, Boolean>() {
                     @Override
                     public Boolean call(Pair<Session, Message> p) {
                         return p.second instanceof Telemetry.Speed;
@@ -197,8 +194,8 @@ public class TelemetryService extends BaseService {
                 })
                 .sample(Observable.interval(SPEED_FREQUENCY, TimeUnit.MILLISECONDS));
 
-        Observable<Pair<Session,Message>> barometer = flightMessages
-                .filter(new Func1<Pair<Session,Message>,Boolean>() {
+        Observable<Pair<Session, Message>> barometer = flightMessages
+                .filter(new Func1<Pair<Session, Message>, Boolean>() {
                     @Override
                     public Boolean call(Pair<Session, Message> p) {
                         return p.second instanceof Telemetry.Barometer;
@@ -208,9 +205,9 @@ public class TelemetryService extends BaseService {
 
         Subscription latestMessages = Observable.merge(position, attitude, speed, barometer)
                 .buffer(1, TimeUnit.SECONDS, 20)
-                .doOnNext(new Action1<List<Pair<Session,Message>>>() {
+                .doOnNext(new Action1<List<Pair<Session, Message>>>() {
                     @Override
-                    public void call(List<Pair<Session,Message>> sessionMessages) {
+                    public void call(List<Pair<Session, Message>> sessionMessages) {
                         sendMessages(sessionMessages);
                     }
                 })
@@ -219,16 +216,16 @@ public class TelemetryService extends BaseService {
                 .subscribe(Actions.empty(), new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        AirMapLog.e(TAG, "latestMessages Error", throwable);
+                        Timber.e(throwable, "latestMessages Error");
                     }
                 });
 
     }
 
-    private void sendMessages(List<Pair<Session,Message>> sessionMessages) {
+    private void sendMessages(List<Pair<Session, Message>> sessionMessages) {
         if (sessionMessages == null || sessionMessages.isEmpty()) return;
 
-        Pair<Session,Message> pair = sessionMessages.get(0);
+        Pair<Session, Message> pair = sessionMessages.get(0);
         Session session = pair.first;
 
         List<Message> messages = new ArrayList<>();
@@ -236,11 +233,11 @@ public class TelemetryService extends BaseService {
             messages.add(p.second);
         }
         session.send(messages);
-        AirMapLog.d(TAG, "Send telemetry messages");
+        Timber.d("Sending telemetry messages");
     }
 
     private void onException(Exception e) {
-        AirMapLog.e("TelemetryService", e.getMessage());
+        Timber.e(e);
         e.printStackTrace();
     }
 
@@ -280,7 +277,7 @@ public class TelemetryService extends BaseService {
                 try {
                     connect();
                 } catch (UnknownHostException | SocketException e) {
-                    Log.e(TAG, "Unable to connect to telemetry socket", e);
+                    Timber.e(e, "Unable to connect to telemetry socket");
                 }
             }
         }
@@ -299,7 +296,7 @@ public class TelemetryService extends BaseService {
                 socket.send(packet);
                 packetNumber++;
             } catch (IOException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
-                Log.e(TAG, "Unable to build or send packet", e);
+                Timber.e(e, "Unable to build or send packet");
             }
         }
 
@@ -321,7 +318,7 @@ public class TelemetryService extends BaseService {
             daos.writeByte(flightIdLength);
             daos.writeBytes(flightId);
 
-            switch(encryption) {
+            switch (encryption) {
                 case AES256CBC:
                     daos.writeByte(1);
                     daos.write(iv.getIV());

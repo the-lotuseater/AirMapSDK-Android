@@ -1,6 +1,5 @@
 package com.airmap.airmapsdk.networking.callbacks;
 
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.util.Utils;
 
@@ -11,10 +10,9 @@ import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Response;
+import timber.log.Timber;
 
 public class GenericOkHttpCallback extends GenericBaseOkHttpCallback {
-
-    private static final String TAG = "GenericOkHttpCallback";
 
     public GenericOkHttpCallback(AirMapCallback listener, Class<? extends AirMapBaseModel> classToInstantiate) {
         super(listener, classToInstantiate);
@@ -40,7 +38,7 @@ public class GenericOkHttpCallback extends GenericBaseOkHttpCallback {
         try {
             result = new JSONObject(jsonString);
         } catch (JSONException e) {
-            AirMapLog.e("AirMapCallback", jsonString);
+            Timber.e(e, "JSON parsing error for jsonString: %s", jsonString);
         }
 
         if (!response.isSuccessful() || !Utils.statusSuccessful(result)) {

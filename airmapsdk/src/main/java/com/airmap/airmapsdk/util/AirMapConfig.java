@@ -1,22 +1,20 @@
 package com.airmap.airmapsdk.util;
 
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.networking.services.AirMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import timber.log.Timber;
+
 public class AirMapConfig {
-
-    private static final String TAG = "AirMapConfig";
-
 
     public static String getDomain() {
         try {
             return AirMap.getConfig().getJSONObject("airmap").getString("domain");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "Error getting airmap domain from airmap.config.json", e);
+            Timber.e(e, "Error getting airmap domain from airmap.config.json");
             return "airmap.com";
         }
     }
@@ -25,7 +23,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("airmap").getString("api_key");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "Error getting api key from airmap.config.json", e);
+            Timber.e(e, "Error getting api key from airmap.config.json");
             throw new RuntimeException("Error getting api key from airmap.config.json");
         }
     }
@@ -34,7 +32,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("airmap").optString("environment", "prod").equals("stage");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "Error getting environment key from airmap.config.json", e);
+            Timber.e(e, "Error getting environment key from airmap.config.json");
             return false;
         }
     }
@@ -52,7 +50,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("auth0").getString("host");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "Error getting auth0 host from airmap.config.json", e);
+            Timber.e(e, "Error getting auth0 host from airmap.config.json");
             return "sso.airmap.io";
         }
     }
@@ -62,7 +60,7 @@ public class AirMapConfig {
             JSONObject auth0 = AirMap.getConfig().getJSONObject("auth0");
             return auth0.getString("client_id");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "Error getting auth0 clientId from airmap.config.json", e);
+            Timber.e(e, "Error getting auth0 clientId from airmap.config.json");
             throw new RuntimeException("client_id and/or callback_url not found in airmap.config.json");
         }
     }
@@ -71,8 +69,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("airmap").getString("mqtt_domain");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No mqtt domain found in airmap.config.json, defaulting to airmap.io", e);
-
+            Timber.e(e, "No mqtt domain found in airmap.config.json, defaulting to airmap.io");
             return "airmap.io";
         }
     }
@@ -81,8 +78,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("airmap").getJSONObject("api_overrides").optString(key, fallback);
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No overridden end point found in airmap.config.json for: " + key, e);
-
+            Timber.e(e, "No overridden end point found in airmap.config.json for: %s", key);
             return fallback;
         }
     }
@@ -91,7 +87,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("airmap").getString("map_style");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No map style found in airmap.config.json for", e);
+            Timber.e(e, "No map style found in airmap.config.json for");
             return null;
         }
     }
@@ -100,7 +96,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("app").getString("about_url");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No map style found in airmap.config.json for about url", e);
+            Timber.e(e, "No map style found in airmap.config.json for about url");
             return "https://" + getDomain() + "/about-us";
         }
     }
@@ -109,7 +105,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("app").getString("faq_url");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No map style found in airmap.config.json for FAQ url", e);
+            Timber.e(e, "No map style found in airmap.config.json for FAQ url");
             return "https://airmap.typeform.com/to/ljGZpe";
         }
     }
@@ -118,7 +114,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("app").getString("privacy_url");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No map style found in airmap.config.json for privacy url", e);
+            Timber.e(e, "No map style found in airmap.config.json for privacy url");
             return "https://" + getDomain() + "/privacy";
         }
     }
@@ -127,7 +123,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("app").getString("terms_url");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No map style found in airmap.config.json for terms url", e);
+            Timber.e(e, "No map style found in airmap.config.json for terms url");
             return "https://" + getDomain() + "/terms";
         }
     }
@@ -136,7 +132,7 @@ public class AirMapConfig {
         try {
             return AirMap.getConfig().getJSONObject("app").getString("feedback_url");
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No map style found in airmap.config.json for feedback url", e);
+            Timber.e(e, "No map style found in airmap.config.json for feedback url");
             return "https://airmap.typeform.com/to/r6MaMO";
         }
     }
@@ -151,7 +147,7 @@ public class AirMapConfig {
             }
             return urls;
         } catch (JSONException e) {
-            AirMapLog.e(TAG, "No intro images found in airmap.config.json", e);
+            Timber.e(e, "No intro images found in airmap.config.json");
             
             //fallback urls
             return new String[] {

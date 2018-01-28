@@ -4,10 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.AnalyticsTracker;
 import com.airmap.airmapsdk.Auth;
@@ -51,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 import okhttp3.Call;
+import timber.log.Timber;
 
 @SuppressWarnings({"unused", "ConstantConditions"})
 public final class AirMap {
@@ -88,7 +87,10 @@ public final class AirMap {
         ourInstance = new AirMap(context, authToken, pinCertificates);
         airMapTrafficService = new TrafficService(context); //Initialized here because TrafficService requires AirMap to be initialized already, so it is called after the constructor
         airMapMapMappingService = new MappingService(); //Initialized here because MappingService requires AirMap to be initialized already, so it is called after the constructor
-        AirMapLog.ENABLED = BaseService.STAGING;
+        // TODO: Check if library debug is set to false on app release, and if so, use BuildConfig.DEBUG instead of STAGING
+        if (BaseService.STAGING) {
+            Timber.plant(new Timber.DebugTree());
+        }
         return ourInstance;
     }
 
@@ -187,7 +189,7 @@ public final class AirMap {
             JwtClaims claims = consumer.processToClaims(authToken);
             return claims.getExpirationTime();
         } catch (InvalidJwtException | MalformedClaimException e) {
-            AirMapLog.v("AirMap", "Invalid auth token");
+            Timber.v("Invalid auth token");
             return NumericDate.now();
         }
     }
@@ -233,7 +235,7 @@ public final class AirMap {
             JwtClaims claims = consumer.processToClaims(jwt);
             userId = claims.getSubject();
         } catch (InvalidJwtException | MalformedClaimException e) {
-            Log.e("AirMap", "Invalid auth token");
+            Timber.e(e, "Invalid auth token");
         }
     }
 
@@ -363,9 +365,9 @@ public final class AirMap {
      *
      * @param enable whether to enable logging or not
      */
-    public static void enableLogging(boolean enable) {
-        AirMapLog.ENABLED = enable;
-    }
+//    public static void enableLogging(boolean enable) {
+//        // TODO: Enable Timber logging
+//    }
 
     /**
      * @return the traffic service

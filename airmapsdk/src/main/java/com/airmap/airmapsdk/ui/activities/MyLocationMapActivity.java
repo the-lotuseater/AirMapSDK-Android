@@ -17,7 +17,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
@@ -40,9 +39,9 @@ import com.mapbox.services.android.telemetry.location.LocationEngine;
 import com.mapbox.services.android.telemetry.location.LocationEngineListener;
 import com.mapbox.services.android.telemetry.location.LocationEnginePriority;
 
-public abstract class MyLocationMapActivity extends AppCompatActivity implements LocationEngineListener, AirMapMapView.OnMapLoadListener {
+import timber.log.Timber;
 
-    private static final String TAG = "MyLocationMapActivity";
+public abstract class MyLocationMapActivity extends AppCompatActivity implements LocationEngineListener, AirMapMapView.OnMapLoadListener {
 
     private static final int REQUEST_LOCATION_PERMISSION = 7737;
     private static final int REQUEST_TURN_ON_LOCATION = 8849;
@@ -104,10 +103,10 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         switch (requestCode) {
             case REQUEST_TURN_ON_LOCATION: {
                 if (resultCode == Activity.RESULT_OK) {
-                    AirMapLog.d(TAG, "Location setting turned on by user");
-                    goToLastLocation(false,3);
+                    Timber.i("Location setting turned on by user");
+                    goToLastLocation(false, 3);
                 } else {
-                    AirMapLog.d(TAG, "Location setting not turned on by user");
+                    Timber.i("Location setting not turned on by user");
                     hasLoadedMyLocation = true;
                 }
 
@@ -119,15 +118,14 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
 
     @Override
     public void onConnected() {
-        AirMapLog.d(TAG, "LocationEngine onConnected");
-
+        Timber.i("LocationEngine onConnected");
         goToLastLocation(false);
     }
 
 
     @Override
     public void onLocationChanged(Location location) {
-        AirMapLog.d(TAG, "LocationEngine onLocationChanged: " + location);
+        Timber.i("LocationEngine onLocationChanged: %s", location);
         zoomTo(location, false);
     }
 
@@ -151,7 +149,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    AirMapLog.e(TAG, "goToLastLocation w/ " + retries + " retries");
+                    Timber.d("goToLastLocation w/ %s retries", retries);
                     if (locationEngine != null) {
                         locationEngine.requestLocationUpdates();
                     }
@@ -164,7 +162,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
     private void zoomTo(Location location, boolean force) {
         // only zoom to user's location once
         if (!hasLoadedMyLocation || force) {
-            AirMapLog.e(TAG, "zoomTo: " + location);
+            Timber.i("zoomTo: %s", location);
 
             getMapView().getMap().easeCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
             locationEngine.removeLocationUpdates();
@@ -185,7 +183,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         if (hasLoadedMyLocation) {
             return;
         }
-        AirMapLog.e(TAG, "onMapLoaded");
+        Timber.i("onMapLoaded");
 
         // use saved location is there is one
         float savedLatitude = PreferenceManager.getDefaultSharedPreferences(this)
@@ -216,7 +214,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             case INACCURATE_DATE_TIME_FAILURE:
                 // record issue in firebase & logs
                 Analytics.report(new Exception("Mapbox map failed to load due to invalid date/time"));
-                AirMapLog.e(TAG, "Mapbox map failed to load due to invalid date/time");
+                Timber.e("Mapbox map failed to load due to invalid date/time");
 
                 // ask user to enable "Automatic Date/Time"
                 new AlertDialog.Builder(this)
@@ -237,7 +235,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
                 // record issue in firebase & logs
                 String log = Utils.getMapboxLogs();
                 Analytics.report(new Exception("Mapbox map failed to load due to no network connection: " + log));
-                AirMapLog.e(TAG, "Mapbox map failed to load due to no network connection");
+                Timber.e("Mapbox map failed to load due to no network connection");
 
                 // check if dialog is already showing
                 if (isMapFailureDialogShowing) {
@@ -274,7 +272,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
                 // record issue in firebase & logs
                 String logs = Utils.getMapboxLogs();
                 Analytics.report(new Exception("Mapbox map failed to load due to unknown reason: " + logs));
-                AirMapLog.e(TAG, "Mapbox map failed to load due to unknown reason: " + logs);
+                Timber.e("Mapbox map failed to load due to unknown reason: %s", logs);
 
                 //TODO: show generic error to user?
                 break;

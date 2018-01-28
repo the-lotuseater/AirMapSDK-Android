@@ -11,8 +11,6 @@ import java.util.Set;
 
 public abstract class ExpandableRecyclerAdapter<P,C> extends RecyclerView.Adapter {
 
-    private static final String TAG = "ExpandableAdapter";
-
     protected static final int PARENT_VIEW_TYPE = 0;
     protected static final int CHILD_VIEW_TYPE = 1;
 

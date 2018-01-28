@@ -5,7 +5,6 @@ import android.support.annotation.StringRes;
 import android.text.TextUtils;
 
 import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.util.AirMapConfig;
@@ -21,6 +20,7 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import timber.log.Timber;
 
 @SuppressWarnings("unused")
 public class MappingService extends BaseService {
@@ -144,7 +144,7 @@ public class MappingService extends BaseService {
                 case "notam":
                     return Notam;
                 case "ama":
-                case  "ama_field":
+                case "ama_field":
                     return AMA;
                 default:
                     return Unknown;
@@ -452,7 +452,7 @@ public class MappingService extends BaseService {
                     result = new JSONObject(jsonString);
                     listener.success(result);
                 } catch (JSONException e) {
-                    AirMapLog.e("AirMapCallback", "Unable to parse map style:" + jsonString, e);
+                    Timber.e(e, "Unable to parse map style:%s", jsonString);
                     listener.error(new AirMapException(e.getMessage()));
                 }
             }

@@ -6,11 +6,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 
 import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
@@ -36,14 +34,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import timber.log.Timber;
+
 @SuppressWarnings("unused")
 public class Utils {
 
-    private static final String TAG = "Utils (SDK)";
-
     public static final String REFRESH_TOKEN_KEY = "AIRMAP_SDK_REFRESH_TOKEN";
 
-    /** Return the value mapped by the given key, or {@code null} if not present or null. */
+    /**
+     * Return the value mapped by the given key, or {@code null} if not present or null.
+     */
     public static String optString(JSONObject json, String key) {
         // http://code.google.com/p/android/issues/detail?id=13830
         if (json.isNull(key))
@@ -121,6 +121,7 @@ public class Utils {
     public static int metersPerSecondToKmph(int metersPerSecond) {
         return (int) (metersPerSecond * 3.6);
     }
+
     public static int metersPerSecondToMph(int metersPerSecond) {
         return (int) (metersPerSecond * 2.23694);
     }
@@ -162,7 +163,7 @@ public class Utils {
             DateTime dateTime = dateTimeFormatter.parseDateTime(iso8601);
             return dateTime.toDate();
         } catch (UnsupportedOperationException | IllegalArgumentException e) {
-            AirMapLog.e("AirMap Utils", "Error parsing date: " + iso8601, e);
+            Timber.e(e, "Error parsing date: %s", iso8601);
         }
         return null;
     }
@@ -448,7 +449,7 @@ public class Utils {
         String processId = Integer.toString(android.os.Process.myPid());
 
         try {
-            String[] command = new String[] { "logcat", "-d", "-v", "threadtime" };
+            String[] command = new String[]{"logcat", "-d", "-v", "threadtime"};
 
             Process process = Runtime.getRuntime().exec(command);
 
@@ -459,12 +460,12 @@ public class Utils {
             while ((line = bufferedReader.readLine()) != null) {
                 if (line.contains(processId)) {
                     if ((line.toLowerCase().contains("mbgl") || line.toLowerCase().contains("mapbox")) && line.toLowerCase().contains("fail")) {
-                        builder.insert(0 ,line + "\n");
+                        builder.insert(0, line + "\n");
                     }
                 }
             }
-        } catch (IOException ex) {
-            Log.e(TAG, "getLog failed", ex);
+        } catch (IOException e) {
+            Timber.e(e, "getMapboxLogs failed");
         }
 
         return builder.substring(0, Math.min(1000, builder.length() - 2));

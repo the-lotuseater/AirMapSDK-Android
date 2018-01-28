@@ -36,8 +36,6 @@ import rx.functions.Func0;
 @SuppressWarnings("unused")
 public class AirMapClient {
 
-    private static final String TAG = "AirMapClient";
-
     private OkHttpClient client;
 
     /**
