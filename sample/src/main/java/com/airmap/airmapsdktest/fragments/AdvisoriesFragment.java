@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +24,9 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class AdvisoriesFragment extends Fragment {
+import timber.log.Timber;
 
-    private static final String TAG = "AdvisoriesFragment";
+public class AdvisoriesFragment extends Fragment {
 
     private RecyclerView advisoriesRecyclerView;
     private ExpandableAdvisoriesAdapter advisoriesAdapter;
@@ -95,7 +94,7 @@ public class AdvisoriesFragment extends Fragment {
 
             @Override
             public void onError(AirMapException e) {
-                Log.e(TAG, "Getting advisories failed", e);
+                Timber.e(e, "Getting advisories failed");
 
                 //TODO: show error
             }

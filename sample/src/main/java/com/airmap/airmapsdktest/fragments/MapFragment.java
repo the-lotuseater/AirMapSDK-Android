@@ -18,8 +18,6 @@ import java.util.List;
 
 public class MapFragment extends Fragment implements AirMapMapView.OnMapDataChangeListener {
 
-    private static final String TAG = "MapFragment";
-
     private AirMapMapView mapView;                  // mapbox MapView wrapper
     private FloatingActionButton myLocationFab;       // FAB to view/change selected rulesets
 

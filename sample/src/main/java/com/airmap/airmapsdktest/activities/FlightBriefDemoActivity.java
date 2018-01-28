@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.flight.AirMapFlightBriefing;
 import com.airmap.airmapsdk.models.flight.AirMapFlightPlan;
@@ -34,6 +33,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import timber.log.Timber;
 
 public class FlightBriefDemoActivity extends BaseActivity {
 
@@ -79,12 +80,10 @@ public class FlightBriefDemoActivity extends BaseActivity {
 
                 @Override
                 protected void onError(AirMapException e) {
-                    AirMapLog.e(TAG, "flight plan failed", e);
-                    if (!isActive()) {
-                        return;
+                    Timber.e(e, "Flight plan creation failed: %s", e.getDetailedMessage());
+                    if (isActive()) {
+                        showErrorDialog("An error occurred while creating your flight plan or retrieving your flight brief.");
                     }
-
-                    showErrorDialog("An error occurred while creating your flight plan or retrieving your flight brief.");
                 }
             });
         } else {
@@ -108,22 +107,20 @@ public class FlightBriefDemoActivity extends BaseActivity {
             AirMap.submitFlightPlan(flightPlanId, new AirMapCallback<AirMapFlightPlan>() {
                 @Override
                 protected void onSuccess(AirMapFlightPlan response) {
-                    AirMapLog.e(TAG, "Successfully created " + response.getFlightId() + " from flight plan");
-                    if (!isActive()) {
-                        return;
+                    Timber.i("Successfully created flight with flight ID %s from flight plan", response.getFlightId());
+                    if (isActive()) {
+                        Toast.makeText(FlightBriefDemoActivity.this, "Flight created!", Toast.LENGTH_SHORT).show();
                     }
 
-                    Toast.makeText(FlightBriefDemoActivity.this, "Flight created!", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 protected void onError(AirMapException e) {
-                    AirMapLog.e(TAG, "Failed to create flight from flight plan", e);
-                    if (!isActive()) {
-                        return;
+                    Timber.e(e, "Error submitting flight plan: %s", e.getDetailedMessage());
+                    if (isActive()) {
+                        Toast.makeText(FlightBriefDemoActivity.this, "Failed to create flight", Toast.LENGTH_SHORT).show();
                     }
 
-                    Toast.makeText(FlightBriefDemoActivity.this, "Failed to create flight", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -147,12 +144,11 @@ public class FlightBriefDemoActivity extends BaseActivity {
 
             @Override
             protected void onError(AirMapException e) {
-                AirMapLog.e(TAG, "flight brief failed", e);
-                if (!isActive()) {
-                    return;
+                Timber.e(e, "Erring getting flight brief: %s", e.getDetailedMessage());
+                if (isActive()) {
+                    showErrorDialog("An error occurred while creating your flight plan or retrieving your flight brief.");
                 }
 
-                showErrorDialog("An error occurred while creating your flight plan or retrieving your flight brief.");
             }
         });
     }
@@ -192,7 +188,7 @@ public class FlightBriefDemoActivity extends BaseActivity {
     }
 
     /**
-     *  You can customize the UI of the briefing rows by overriding onCreateViewHolder
+     * You can customize the UI of the briefing rows by overriding onCreateViewHolder
      */
     private class BriefingAdapter extends ExpandableRulesAdapter {
 

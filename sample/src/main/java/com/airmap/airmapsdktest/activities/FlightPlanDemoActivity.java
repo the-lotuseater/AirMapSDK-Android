@@ -12,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.controllers.RulesetsEvaluator;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.flight.AirMapFlightFeature;
@@ -37,9 +36,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FlightPlanDemoActivity extends AppCompatActivity {
+import timber.log.Timber;
 
-    private static final String TAG = "FlightPlanActivity";
+public class FlightPlanDemoActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private TextView startTimeTextView;
@@ -99,7 +98,7 @@ public class FlightPlanDemoActivity extends AppCompatActivity {
         polygon.setCoordinates(coordinates);
 
         final JSONObject geometryJSON = AirMapGeometry.getGeoJSONFromGeometry(polygon);
-        /** or use raw json
+        /* or use raw json
             {
                 "type": "Polygon",
                 "coordinates": [
@@ -112,7 +111,7 @@ public class FlightPlanDemoActivity extends AppCompatActivity {
                     ]
                 ]
             }
-         **/
+         */
 
         // get rulesets (from jurisdictions) from geometry
         AirMap.getRulesets(geometryJSON, new AirMapCallback<List<AirMapRuleset>>() {
@@ -131,7 +130,7 @@ public class FlightPlanDemoActivity extends AppCompatActivity {
 
             @Override
             protected void onError(AirMapException e) {
-                AirMapLog.e(TAG, "Unable to get rulesets from geometry: " + geometryJSON, e);
+                Timber.e(e, "Error getting rulesets from geometry %s : %s", geometryJSON, e.getDetailedMessage());
             }
         });
     }

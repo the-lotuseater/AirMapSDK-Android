@@ -21,8 +21,6 @@ import java.util.List;
 
 public class MapDemoActivity extends MyLocationMapActivity {
 
-    private static final String TAG = "MapDemoActivity";
-
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private MapPagerAdapter pagerAdapter;
@@ -120,7 +118,7 @@ public class MapDemoActivity extends MyLocationMapActivity {
                 case 0:
                     return MapFragment.newInstance();
                 case 1:
-                   return RulesetsFragment.newInstance();
+                    return RulesetsFragment.newInstance();
                 case 2:
                     return AdvisoriesFragment.newInstance();
             }

@@ -27,8 +27,6 @@ import java.util.Set;
 public class RulesetRecyclerViewAdapter extends SectionedRecyclerViewAdapter<RulesetRecyclerViewAdapter.HeaderViewHolder, RulesetRecyclerViewAdapter.ViewHolder, RecyclerView.ViewHolder>
         implements EmptyableAdapter {
 
-    private static final String TAG = "RulesetRecyclerAdapter";
-
     private Context context;
     private RulesetListener listener;
 
@@ -191,7 +189,7 @@ public class RulesetRecyclerViewAdapter extends SectionedRecyclerViewAdapter<Rul
                         Analytics.logEvent(Analytics.Event.rules, Analytics.Action.deselect, Analytics.Label.OPTIONAL, ruleset.getId());
                     }
 
-                // not yet selected
+                    // not yet selected
                 } else {
                     // if pick one is selected, need to deselect its selected sibling(s)
                     if (ruleset.getType() == AirMapRuleset.Type.PickOne) {
@@ -291,7 +289,7 @@ public class RulesetRecyclerViewAdapter extends SectionedRecyclerViewAdapter<Rul
             }
             currentSection++;
         }
-        return new int[] {sectionTop, indexOfItem, sectionBottom};
+        return new int[]{sectionTop, indexOfItem, sectionBottom};
     }
 
     @Override
@@ -356,8 +354,11 @@ public class RulesetRecyclerViewAdapter extends SectionedRecyclerViewAdapter<Rul
 
     public interface RulesetListener {
         void onRulesetSelected(AirMapRuleset ruleset);
+
         void onRulesetDeselected(AirMapRuleset ruleset);
+
         void onRulesetSwitched(AirMapRuleset fromRuleset, AirMapRuleset toRuleset);
+
         void onRulesetInfoPressed(AirMapRuleset ruleset);
     }
 }

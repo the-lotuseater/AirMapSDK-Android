@@ -12,7 +12,6 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.traffic.AirMapTraffic;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
@@ -33,9 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class TrafficDemoActivity extends BaseActivity implements AirMapMapView.OnMapLoadListener, AirMapTrafficListener {
+import timber.log.Timber;
 
-    private static final String TAG = "TrafficDemoActivity";
+public class TrafficDemoActivity extends BaseActivity implements AirMapMapView.OnMapLoadListener, AirMapTrafficListener {
 
     private Toolbar toolbar;
     private AirMapMapView mapView;
@@ -85,7 +84,7 @@ public class TrafficDemoActivity extends BaseActivity implements AirMapMapView.O
                     AirMap.enableTrafficAlerts(TrafficDemoActivity.this);
                     Toast.makeText(TrafficDemoActivity.this, "Enabling traffic alerts", Toast.LENGTH_SHORT).show();
 
-                // if not, user needs to create flight first
+                    // if not, user needs to create flight first
                 } else {
                     Toast.makeText(TrafficDemoActivity.this, "No active flight. Please create a flight first.", Toast.LENGTH_SHORT).show();
                 }
@@ -93,7 +92,7 @@ public class TrafficDemoActivity extends BaseActivity implements AirMapMapView.O
 
             @Override
             protected void onError(AirMapException e) {
-                AirMapLog.e(TAG, "Get current flight failed", e);
+                Timber.e(e, "Get current flight failed");
             }
         });
     }
@@ -212,7 +211,7 @@ public class TrafficDemoActivity extends BaseActivity implements AirMapMapView.O
     }
 
     /**
-     *  Audio alert
+     * Audio alert
      */
     protected void sayTraffic() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {

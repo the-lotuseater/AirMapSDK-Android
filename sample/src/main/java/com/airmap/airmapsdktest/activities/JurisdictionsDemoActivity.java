@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.AirMapWeather;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
@@ -30,9 +29,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class JurisdictionsDemoActivity extends BaseActivity implements OnMapReadyCallback {
+import timber.log.Timber;
 
-    private static final String TAG = "JurisdictionsDemo";
+public class JurisdictionsDemoActivity extends BaseActivity implements OnMapReadyCallback {
 
     private Toolbar toolbar;
     private MapView mapView;
@@ -83,14 +82,13 @@ public class JurisdictionsDemoActivity extends BaseActivity implements OnMapRead
         AirMap.getJurisdictions(polygon, new AirMapCallback<List<AirMapJurisdiction>>() {
             @Override
             protected void onSuccess(List<AirMapJurisdiction> jurisdictions) {
-                AirMapLog.d(TAG, "Jurisdictions: " + jurisdictions);
-
+                Timber.v("Jurisdictions: %s", jurisdictions);
                 // Available jurisdictions and their rulesets
                 for (AirMapJurisdiction jurisdiction : jurisdictions) {
-                    AirMapLog.d(TAG, "Jurisdiction: " + jurisdiction);
-                    AirMapLog.d(TAG, "Pick One rulesets: " + jurisdiction.getPickOneRulesets());
-                    AirMapLog.d(TAG, "Optional rulesets: " + jurisdiction.getOptionalRulesets());
-                    AirMapLog.d(TAG, "Required rulesets: " + jurisdiction.getRequiredRulesets());
+                    Timber.v("Jurisdiction: %s", jurisdiction);
+                    Timber.v("Pick One rulesets: %s", jurisdiction.getPickOneRulesets());
+                    Timber.v("Optional rulesets: %s", jurisdiction.getOptionalRulesets());
+                    Timber.v("Required rulesets: %s", jurisdiction.getRequiredRulesets());
                 }
 
                 // Display jurisdictions and their respective groups of rulesets
@@ -98,8 +96,7 @@ public class JurisdictionsDemoActivity extends BaseActivity implements OnMapRead
 
             @Override
             protected void onError(AirMapException e) {
-                AirMapLog.e(TAG, "Unable to get jurisdictions", e);
-                // Handle error
+                Timber.e(e, "Unable to get jurisdictions");
             }
         });
 
@@ -109,12 +106,12 @@ public class JurisdictionsDemoActivity extends BaseActivity implements OnMapRead
             @Override
             protected void onSuccess(AirMapAirspaceStatus status) {
                 // Show status advisories
-                AirMapLog.d(TAG, "Status: " + status);
+                Timber.v("Status: %s", status);
             }
 
             @Override
             protected void onError(AirMapException e) {
-                // Handle error
+                Timber.e(e, "Error getting AirspaceStatus");
             }
         });
 
@@ -125,12 +122,12 @@ public class JurisdictionsDemoActivity extends BaseActivity implements OnMapRead
         AirMap.getWeather(coordinate, startTime, endTime, new AirMapCallback<AirMapWeather>() {
             @Override
             protected void onSuccess(AirMapWeather weather) {
-                AirMapLog.d(TAG, "Weather: " + weather.getUpdates());
+                Timber.v("Weather: %s", weather.getUpdates());
             }
 
             @Override
             protected void onError(AirMapException e) {
-                // Handle error
+                Timber.e(e, "Error getting weather");
             }
         });
 
@@ -139,7 +136,7 @@ public class JurisdictionsDemoActivity extends BaseActivity implements OnMapRead
         AirMap.performAnonymousLogin(userId, new AirMapCallback<Void>() {
             @Override
             public void onSuccess(Void response) {
-                AirMapLog.v(TAG, "Token is: " + AirMap.getAuthToken());
+                Timber.v("Token is: %s", AirMap.getAuthToken());
 
                 // handle login
                 createFlightPlan(polygon, coordinate, rulesetIds);
@@ -147,9 +144,7 @@ public class JurisdictionsDemoActivity extends BaseActivity implements OnMapRead
 
             @Override
             public void onError(AirMapException e) {
-                AirMapLog.e(TAG, e.getDetailedMessage(), e);
-
-                // handle error here
+                Timber.e(e, "Error performing anonymous login: %s", e.getDetailedMessage());
             }
         });
     }
@@ -174,7 +169,7 @@ public class JurisdictionsDemoActivity extends BaseActivity implements OnMapRead
         AirMap.createFlightPlan(flightPlan, new AirMapCallback<AirMapFlightPlan>() {
             @Override
             protected void onSuccess(AirMapFlightPlan response) {
-                AirMapLog.d(TAG, "Flight plan created: " + response.getPlanId());
+                Timber.v("Flight plan created: %s", response.getPlanId());
                 // Handle success
 
                 fly(response.getPlanId());
@@ -182,7 +177,7 @@ public class JurisdictionsDemoActivity extends BaseActivity implements OnMapRead
 
             @Override
             protected void onError(AirMapException e) {
-                AirMapLog.e(TAG, "Failed to create flight plan", e);
+                Timber.e(e, "Failed to create flight plan");
                 // Handle error
             }
         });
@@ -192,12 +187,12 @@ public class JurisdictionsDemoActivity extends BaseActivity implements OnMapRead
         AirMap.getFlightBrief(flightPlanId, new AirMapCallback<AirMapFlightBriefing>() {
             @Override
             protected void onSuccess(AirMapFlightBriefing briefing) {
-                // Show user advisory status, authorizations and validations
+                Timber.v("Got flight briefing");
             }
 
             @Override
             protected void onError(AirMapException e) {
-                // Handle error
+                Timber.e(e, "Error getting flight briefing");
             }
         });
     }
@@ -206,12 +201,12 @@ public class JurisdictionsDemoActivity extends BaseActivity implements OnMapRead
         AirMap.submitFlightPlan(flightPlanId, new AirMapCallback<AirMapFlightPlan>() {
             @Override
             protected void onSuccess(AirMapFlightPlan flightPlan) {
-                AirMapLog.d(TAG, "Flight id: " + flightPlan.getFlightId());
+                Timber.v("Flight id: %s", flightPlan.getFlightId());
             }
 
             @Override
             protected void onError(AirMapException e) {
-                // Handle error case
+                Timber.e(e, "Error submitting flight plan");
             }
         });
     }

@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.airmap.airmapsdk.AirMapException;
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
@@ -29,9 +28,9 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import java.util.Collections;
 import java.util.List;
 
-public class TelemetryDemoActivity extends BaseActivity {
+import timber.log.Timber;
 
-    private static final String TAG = "TrafficDemoActivity";
+public class TelemetryDemoActivity extends BaseActivity {
 
     private Toolbar toolbar;
     private MapView mapView;
@@ -81,7 +80,7 @@ public class TelemetryDemoActivity extends BaseActivity {
 
                     @Override
                     protected void onError(AirMapException e) {
-                        AirMapLog.e(TAG, "Get current flight failed", e);
+                        Timber.e(e, "Get current flight failed");
                     }
                 });
             }

@@ -36,8 +36,6 @@ import java.util.Set;
 
 public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final String TAG = "FlightDetailsAdapter";
-
     private static final int BINARY_VIEW_TYPE = 2;
     private static final int FIELD_VIEW_TYPE = 4;
     private static final int TEXT_VIEW_TYPE = 5;
@@ -45,7 +43,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private Context context;
     private AirMapFlightPlan flightPlan;
-    private Map<AirMapFlightFeature,List<AirMapRule>> flightFeaturesMap;
+    private Map<AirMapFlightFeature, List<AirMapRule>> flightFeaturesMap;
     private List<AirMapFlightFeature> flightFeatures;
     private List<AirMapFlightFeature> duplicateFlightFeatures;
     private Map<String, FlightFeatureConfiguration> flightFeaturesConfigMap;
@@ -192,7 +190,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
                             float floatValue = Float.parseFloat(s.toString());
                             flightFeatureValue = new FlightFeatureValue<>(flightFeature.getFlightFeature(), floatValue);
                         } catch (NumberFormatException e) {
-                             flightFeatureValue = new FlightFeatureValue<>(flightFeature.getFlightFeature(), s.toString());
+                            flightFeatureValue = new FlightFeatureValue<>(flightFeature.getFlightFeature(), s.toString());
                         }
 
                         flightPlan.setFlightFeatureValue(flightFeatureValue);
@@ -438,7 +436,9 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public interface FlightPlanChangeListener {
         void onFlightPlanChanged();
+
         void onFlightFeatureRemoved(String flightFeature);
+
         void onFlightPlanSave();
     }
 }
