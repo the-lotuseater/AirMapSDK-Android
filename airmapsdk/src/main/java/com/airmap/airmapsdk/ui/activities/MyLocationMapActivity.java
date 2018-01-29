@@ -35,7 +35,6 @@ import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
-import com.mapbox.services.android.telemetry.location.AndroidLocationEngine;
 import com.mapbox.services.android.telemetry.location.GoogleLocationEngine;
 import com.mapbox.services.android.telemetry.location.LocationEngine;
 import com.mapbox.services.android.telemetry.location.LocationEngineListener;
@@ -205,7 +204,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             getMapView().getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(savedLatitude, savedLongitude), 13));
         }
 
-        locationEngine = new AndroidLocationEngine(MyLocationMapActivity.this);
+        locationEngine = new GoogleLocationEngine(MyLocationMapActivity.this);
         locationEngine.addLocationEngineListener(MyLocationMapActivity.this);
         locationEngine.setPriority(LocationEnginePriority.BALANCED_POWER_ACCURACY);
         locationEngine.setFastestInterval(250);
