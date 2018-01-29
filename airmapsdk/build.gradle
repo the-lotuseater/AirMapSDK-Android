@@ -52,12 +52,12 @@ dependencies {
     compile "com.android.support:support-v13:$supportLibraryVersion"
 
     // play services
-    def playServicesVersion = '11.6.2'
+    def playServicesVersion = '11.8.0'
     compile "com.google.android.gms:play-services-location:$playServicesVersion"
 
     // mapbox
-    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:5.3.1')
-    compile ('com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.2.0')
+    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:5.3.2')
+    compile ('com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.3.0')
     compile('com.mapbox.mapboxsdk:mapbox-android-services:2.2.9')
     compile('com.mapbox.mapboxsdk:mapbox-android-ui:2.2.9')
 
