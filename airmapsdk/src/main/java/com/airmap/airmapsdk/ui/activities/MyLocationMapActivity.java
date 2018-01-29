@@ -35,6 +35,9 @@ import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
+import com.mapbox.mapboxsdk.style.layers.CannotAddLayerException;
+import com.mapbox.mapboxsdk.style.sources.CannotAddSourceException;
+import com.mapbox.services.android.telemetry.location.AndroidLocationEngine;
 import com.mapbox.services.android.telemetry.location.GoogleLocationEngine;
 import com.mapbox.services.android.telemetry.location.LocationEngine;
 import com.mapbox.services.android.telemetry.location.LocationEngineListener;
@@ -204,17 +207,22 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             getMapView().getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(savedLatitude, savedLongitude), 13));
         }
 
-        locationEngine = new GoogleLocationEngine(MyLocationMapActivity.this);
+        locationEngine = new AndroidLocationEngine(MyLocationMapActivity.this);
         locationEngine.addLocationEngineListener(MyLocationMapActivity.this);
         locationEngine.setPriority(LocationEnginePriority.BALANCED_POWER_ACCURACY);
         locationEngine.setFastestInterval(250);
         locationEngine.setInterval(250);
         locationEngine.activate();
 
-        locationLayerPlugin = new LocationLayerPlugin(getMapView(), getMapView().getMap(), locationEngine, R.style.CustomLocationLayer);
+        try {
+            locationLayerPlugin = new LocationLayerPlugin(getMapView(), getMapView().getMap(), locationEngine, R.style.CustomLocationLayer);
 
-        if (requestLocationPermissionIfNeeded()) {
-            locationLayerPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
+            if (requestLocationPermissionIfNeeded()) {
+                locationLayerPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
+            }
+        } catch (CannotAddLayerException | CannotAddSourceException e) {
+            AirMapLog.e(TAG, "Unable to add location layer", e);
+            Analytics.report(e);
         }
     }
 
