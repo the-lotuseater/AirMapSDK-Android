@@ -31,6 +31,7 @@ import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.AirMapTrafficListener;
 import com.airmap.airmapsdk.networking.callbacks.LoginCallback;
 import com.airmap.airmapsdk.networking.callbacks.LoginListener;
+import com.airmap.airmapsdk.util.AirMapTree;
 import com.airmap.airmapsdk.util.Utils;
 
 import org.jose4j.jwt.JwtClaims;
@@ -50,6 +51,8 @@ import java.util.Map;
 
 import okhttp3.Call;
 import timber.log.Timber;
+
+import static com.airmap.airmapsdk.util.Utils.timberContainsDebugTree;
 
 @SuppressWarnings({"unused", "ConstantConditions"})
 public final class AirMap {
@@ -87,10 +90,6 @@ public final class AirMap {
         ourInstance = new AirMap(context, authToken, pinCertificates);
         airMapTrafficService = new TrafficService(context); //Initialized here because TrafficService requires AirMap to be initialized already, so it is called after the constructor
         airMapMapMappingService = new MappingService(); //Initialized here because MappingService requires AirMap to be initialized already, so it is called after the constructor
-        // TODO: Check if library debug is set to false on app release, and if so, use BuildConfig.DEBUG instead of STAGING
-        if (BaseService.STAGING) {
-            Timber.plant(new Timber.DebugTree());
-        }
         return ourInstance;
     }
 
@@ -361,13 +360,15 @@ public final class AirMap {
     }
 
     /**
-     * Enables logging from the network requests for debugging purposes
-     *
-     * @param enable whether to enable logging or not
+     * Enables logging for debugging purposes. Currently cannot be disabled once enabled. This should not need to be
+     * called if you are using Timber yourself and have already planted a DebugTree
      */
-//    public static void enableLogging(boolean enable) {
-//        // TODO: Enable Timber logging
-//    }
+    public static void enableLogging() {
+        // Don't want to double log
+        if (!timberContainsDebugTree()) {
+            Timber.plant(new AirMapTree());
+        }
+    }
 
     /**
      * @return the traffic service

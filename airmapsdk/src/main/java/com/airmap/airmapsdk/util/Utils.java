@@ -478,4 +478,13 @@ public class Utils {
         }
         return canHandle;
     }
+
+    public static boolean timberContainsDebugTree() {
+        for (Timber.Tree tree : Timber.forest()) {
+            if (tree instanceof Timber.DebugTree) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
