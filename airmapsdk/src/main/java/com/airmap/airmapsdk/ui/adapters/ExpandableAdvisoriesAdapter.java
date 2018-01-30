@@ -139,7 +139,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
             if (advisory.getType() != null) {
                 switch (advisory.getType()) {
                     case TFR: {
-                        AirMapTfrProperties tfr = advisory.getTfrProperties();
+                        final AirMapTfrProperties tfr = advisory.getTfrProperties();
                         SimpleDateFormat dateFormat;
                         if (tfr.getStartTime() != null && tfr.getEndTime() != null) {
                             if (DateUtils.isToday(tfr.getStartTime().getTime())) {
@@ -150,13 +150,16 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                             description = dateFormat.format(tfr.getStartTime()) + " - " + dateFormat.format(tfr.getEndTime());
                         }
 
-                        final String url = tfr.getUrl();
-                        if (!TextUtils.isEmpty(url)) {
+                        if (!TextUtils.isEmpty(tfr.getUrl())) {
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     Analytics.logEvent(Analytics.Page.ADVISORIES, Analytics.Action.tap, Analytics.Label.TFR_DETAILS);
 
+                                    String url = tfr.getUrl();
+                                    if (!url.contains("http") && !url.contains("https")) {
+                                        url = "http://" + url;
+                                    }
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                                     checkAndStartIntent(holder.itemView.getContext(), intent);
                                 }
@@ -220,7 +223,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                         break;
                     }
                     case Notam: {
-                        AirMapNotamProperties notam = advisory.getNotamProperties();
+                        final AirMapNotamProperties notam = advisory.getNotamProperties();
                         SimpleDateFormat dateFormat;
                         if (notam.getStartTime() != null && DateUtils.isToday(notam.getStartTime().getTime())) {
                             dateFormat = new SimpleDateFormat("h:mm a");
@@ -229,13 +232,16 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                         }
                         description = dateFormat.format(notam.getStartTime()) + " - " + dateFormat.format(notam.getEndTime());
 
-                        final String url = notam.getUrl();
-                        if (!TextUtils.isEmpty(url)) {
+                        if (!TextUtils.isEmpty(notam.getUrl())) {
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     Analytics.logEvent(Analytics.Page.ADVISORIES, Analytics.Action.tap, Analytics.Label.TFR_DETAILS);
 
+                                    String url = notam.getUrl();
+                                    if (!url.contains("http") && !url.contains("https")) {
+                                        url = "http://" + url;
+                                    }
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                                     checkAndStartIntent(holder.itemView.getContext(), intent);
                                 }
@@ -262,8 +268,12 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(advisory.getOptionalProperties().getUrl()));
-                                    checkAndStartIntent(holder.itemView.getContext(), intent);
+                                    String url = advisory.getOptionalProperties().getUrl();
+                                    if (!url.contains("http") && !url.contains("https")) {
+                                        url = "http://" + url;
+                                    }
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                    holder.itemView.getContext().startActivity(intent);
                                 }
                             });
                         }

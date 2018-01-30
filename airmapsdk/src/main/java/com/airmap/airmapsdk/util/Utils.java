@@ -15,6 +15,7 @@ import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.services.commons.models.Position;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -486,5 +487,19 @@ public class Utils {
             }
         }
         return false;
+    }
+
+    public static List<Position> getPositionsFromFeature(ArrayList coordinates) {
+            List<Position> positions = new ArrayList<>();
+            for (Object o : coordinates) {
+                if (o instanceof ArrayList) {
+                    positions.addAll(getPositionsFromFeature((ArrayList) o));
+                } else if (o instanceof Position) {
+                    Position position = (Position) o;
+                    positions.add(position);
+                }
+            }
+
+            return positions;
     }
 }
