@@ -262,7 +262,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                 advisoryClickListener.onAdvisoryClicked(advisoryClicked, new ArrayList<>(filteredAdvisories));
             }
 
-        // if feature doesn't have matching advisory, wait
+            // if feature doesn't have matching advisory, wait
         } else {
             // highlight the feature
             for (Feature feature : selectedFeatures) {
@@ -273,7 +273,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             }
             mapStyleController.highlight(featureClicked);
 
-            AirMapLog.e(TAG, "Feature clicked doesn't have matching advisory yet");
+            Timber.w("Feature clicked doesn't have matching advisory yet");
 
             // if advisory is missing, show loading until advisories loaded
             for (AirMapMapView.OnAdvisoryClickListener advisoryClickListener : advisoryClickListeners) {
@@ -283,8 +283,10 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             // callback for when advisories are loaded
             addOnMapDataChangedListener(new OnMapDataChangeListener() {
                 int count = 0;
+
                 @Override
-                public void onRulesetsChanged(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets) {}
+                public void onRulesetsChanged(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets) {
+                }
 
                 @Override
                 public void onAdvisoryStatusChanged(AirMapAirspaceStatus status) {
@@ -311,7 +313,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                     }
 
                     if (featureClicked != null) {
-                        AirMapLog.e(TAG, "Matching advisory found for feature");
+                        Timber.w("Matching advisory found for feature");
                         mapStyleController.highlight(featureClicked, advisoryClicked);
                         zoomToFeatureIfNecessary(featureClicked);
 
@@ -330,7 +332,8 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                 }
 
                 @Override
-                public void onAdvisoryStatusLoading() {}
+                public void onAdvisoryStatusLoading() {
+                }
             });
         }
     }
@@ -375,7 +378,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                 LatLng latLng = new LatLng(position.getLatitude(), position.getLongitude());
                 advisoryLatLngsBuilder.include(latLng);
                 if (!cameraBounds.contains(latLng)) {
-                    AirMapLog.e(TAG, "Camera position doesn't contain point");
+                    Timber.w("Camera position doesn't contain point");
                     zoom = true;
                 }
             }
@@ -385,7 +388,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                 map.animateCamera(CameraUpdateFactory.newLatLngBounds(advisoryLatLngsBuilder.build(), padding));
             }
         } catch (ClassCastException e) {
-            AirMapLog.e(TAG, "Unable to get feature geometry", e);
+            Timber.e(e, "Unable to get feature geometry");
         }
     }
 
