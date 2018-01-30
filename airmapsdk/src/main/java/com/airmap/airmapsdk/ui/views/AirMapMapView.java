@@ -462,6 +462,13 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         return mapDataController.getSelectedRulesets();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mapDataController.onDestroy();
+    }
+
     // callbacks
     public void addOnMapLoadListener(OnMapLoadListener listener) {
         mapLoadListeners.add(listener);

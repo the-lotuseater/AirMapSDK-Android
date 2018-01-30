@@ -15,6 +15,7 @@ import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
+import com.airmap.airmapsdk.util.CopyCollections;
 import com.airmap.airmapsdk.util.RetryWithDelay;
 import com.airmap.airmapsdk.util.ThrottleablePublishSubject;
 import com.google.gson.JsonObject;
@@ -180,9 +181,9 @@ public class MapDataController {
                     @Override
                     public void call(Pair<List<AirMapRuleset>, List<AirMapRuleset>> pair) {
                         Timber.i("Computed rulesets: %s", TextUtils.join(",", pair.second));
-                        List<AirMapRuleset> availableRulesetsList = pair.first != null ? new ArrayList<>(pair.first) : null;
-                        List<AirMapRuleset> selectedRulesetsList = pair.second != null ? new ArrayList<>(pair.second) : null;
-                        List<AirMapRuleset> previouslySelectedRulesetsList = selectedRulesets != null ? new ArrayList<>(selectedRulesets) : null;
+                        List<AirMapRuleset> availableRulesetsList = CopyCollections.copy(pair.first);
+                        List<AirMapRuleset> selectedRulesetsList = CopyCollections.copy(pair.second);
+                        List<AirMapRuleset> previouslySelectedRulesetsList = CopyCollections.copy(selectedRulesets);
 
                         callback.onRulesetsUpdated(availableRulesetsList, selectedRulesetsList, previouslySelectedRulesetsList);
                         availableRulesets = pair.first;
@@ -358,7 +359,7 @@ public class MapDataController {
     }
 
     public List<AirMapAdvisory> getCurrentAdvisories() {
-        return airspaceStatus == null || airspaceStatus.getAdvisories() == null ? null : new ArrayList<>(airspaceStatus.getAdvisories());
+        return airspaceStatus == null ? null : CopyCollections.copy(airspaceStatus.getAdvisories());
     }
 
     public AirMapAirspaceStatus getAirspaceStatus() {
@@ -366,11 +367,11 @@ public class MapDataController {
     }
 
     public List<AirMapRuleset> getAvailableRulesets() {
-        return availableRulesets == null ? null : new ArrayList<>(availableRulesets);
+        return CopyCollections.copy(availableRulesets);
     }
 
     public List<AirMapRuleset> getSelectedRulesets() {
-        return selectedRulesets == null ? null : new ArrayList<>(selectedRulesets);
+        return CopyCollections.copy(selectedRulesets);
     }
 
     public void onMapReset() {

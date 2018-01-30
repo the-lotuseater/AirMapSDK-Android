@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
+import com.airmap.airmapsdk.util.CopyCollections;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +50,9 @@ public class RulesetsEvaluator {
     public static List<AirMapRuleset> computeSelectedRulesets(@NonNull List<AirMapRuleset> availableRulesets, @NonNull Set<String> preferredRulesets, @NonNull Set<String> unpreferredRulesets, boolean enableRecommendedRulesets) {
         Set<AirMapRuleset> selectedRulesets = new HashSet<>();
 
-        Map<String, AirMapRuleset> availableRulesetsMap = new HashMap<>();
+        availableRulesets = CopyCollections.copy(availableRulesets);
+
+        Map<String,AirMapRuleset> availableRulesetsMap = new HashMap<>();
         for (AirMapRuleset availableRuleset : availableRulesets) {
             availableRulesetsMap.put(availableRuleset.getId(), availableRuleset);
         }
