@@ -138,6 +138,11 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
     @Override
     public void onLocationChanged(Location location) {
         Timber.i("LocationEngine onLocationChanged: %s", location);
+
+        if (hasLoadedMyLocation) {
+            locationEngine.removeLocationUpdates();
+        }
+
         zoomTo(location, false);
     }
 
