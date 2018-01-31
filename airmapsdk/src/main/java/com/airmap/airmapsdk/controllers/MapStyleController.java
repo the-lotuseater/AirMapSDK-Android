@@ -59,12 +59,12 @@ public class MapStyleController implements MapView.OnMapChangedListener {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(map.getContext());
         String savedTheme = prefs.getString(AirMapConstants.MAP_STYLE, MappingService.AirMapMapTheme.Standard.toString());
         currentTheme = MappingService.AirMapMapTheme.fromString(savedTheme);
-
-        map.addOnMapChangedListener(this);
     }
 
     public void onMapReady() {
         loadStyleJSON();
+
+        map.addOnMapChangedListener(this);
     }
 
     @Override
@@ -177,14 +177,16 @@ public class MapStyleController implements MapView.OnMapChangedListener {
         }
 
         // add highlight layer
-        LineLayer highlightLayer = new LineLayer("airmap|highlight|line|" + sourceId, sourceId);
-        highlightLayer.setProperties(PropertyFactory.lineColor("#f9e547"));
-        highlightLayer.setProperties(PropertyFactory.lineWidth(4f));
-        highlightLayer.setProperties(PropertyFactory.lineOpacity(0.9f));
-        Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
-        highlightLayer.setFilter(filter);
+        if (map.getMap().getLayer("airmap|highlight|line|" + sourceId) == null) {
+            LineLayer highlightLayer = new LineLayer("airmap|highlight|line|" + sourceId, sourceId);
+            highlightLayer.setProperties(PropertyFactory.lineColor("#f9e547"));
+            highlightLayer.setProperties(PropertyFactory.lineWidth(4f));
+            highlightLayer.setProperties(PropertyFactory.lineOpacity(0.9f));
+            Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
+            highlightLayer.setFilter(filter);
 
-        map.getMap().addLayer(highlightLayer);
+            map.getMap().addLayer(highlightLayer);
+        }
     }
 
     private void addTfrFilter(Layer layer) {
