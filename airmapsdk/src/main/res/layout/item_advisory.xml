@@ -20,11 +20,11 @@
         android:minHeight="56dp"
         android:background="?selectableItemBackground">
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/link_button"
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
             android:orientation="vertical">
@@ -38,6 +38,17 @@
                 android:textColor="@color/font_title"
                 android:textSize="14sp"
                 tools:text="Los Angeles Class B"/>
+
+            <TextView
+                android:id="@+id/description_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:textColor="@color/font_light_grey"
+                android:textSize="11sp"
+                android:visibility="gone"
+                tools:text="Controlled Airspace - Class Bravo"/>
 
             <TextView
                 android:id="@+id/info_text_view"
@@ -57,6 +68,16 @@
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
             android:background="@color/colorPrimaryDark"/>
+
+        <ImageView android:id="@id/link_button"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_info"
+            android:tint="@color/font_white" />
 
     </RelativeLayout>
 

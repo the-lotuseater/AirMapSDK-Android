@@ -135,7 +135,10 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
             ((AdvisoryViewHolder) holder).infoTextView.setOnClickListener(null);
             ((AdvisoryViewHolder) holder).infoTextView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.font_light_grey));
 
-            String description = "";
+            ((AdvisoryViewHolder) holder).descriptionTextView.setVisibility(View.GONE);
+            ((AdvisoryViewHolder) holder).linkButton.setVisibility(View.GONE);
+
+            String info = "";
             if (advisory.getType() != null) {
                 switch (advisory.getType()) {
                     case TFR: {
@@ -147,7 +150,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                             } else {
                                 dateFormat = new SimpleDateFormat("MMM d h:mm a");
                             }
-                            description = dateFormat.format(tfr.getStartTime()) + " - " + dateFormat.format(tfr.getEndTime());
+                            info = dateFormat.format(tfr.getStartTime()) + " - " + dateFormat.format(tfr.getEndTime());
                         }
 
                         if (!TextUtils.isEmpty(tfr.getUrl())) {
@@ -169,7 +172,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                     }
                     case PowerPlant: {
                         AirMapPowerPlantProperties powerPlant = advisory.getPowerPlantProperties();
-                        description = powerPlant.getTech();
+                        info = powerPlant.getTech();
                         break;
                     }
                     case Fires:
@@ -179,13 +182,13 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                         String unknownSize = holder.itemView.getContext().getString(R.string.unknown_size);
 
                         if (wildfire != null && wildfire.getEffectiveDate() != null) {
-                            description = dateFormat.format(wildfire.getEffectiveDate())  + " - " + (wildfire.getSize() == -1 ? unknownSize : String.format(Locale.US, "%d acres", wildfire.getSize()));
+                            info = dateFormat.format(wildfire.getEffectiveDate())  + " - " + (wildfire.getSize() == -1 ? unknownSize : String.format(Locale.US, "%d acres", wildfire.getSize()));
                         }
                         break;
                     }
                     case Airport: {
                         final AirMapAirportProperties airport = advisory.getAirportProperties();
-                        description = formatPhoneNumber(holder.itemView.getContext(), airport.getPhone());
+                        info = formatPhoneNumber(holder.itemView.getContext(), airport.getPhone());
 
                         if (!TextUtils.isEmpty(airport.getPhone())) {
                             ((AdvisoryViewHolder) holder).infoTextView.setTextColor(ContextCompat.getColor(((AdvisoryViewHolder) holder).infoTextView.getContext(), R.color.airmap_aqua));
@@ -195,21 +198,30 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                                     call(holder.itemView.getContext(), advisory.getName(), airport.getPhone());
                                 }
                             });
-                        } else if (advisory.getOptionalProperties() != null && !TextUtils.isEmpty(advisory.getOptionalProperties().getUrl())) {
-                            description = advisory.getOptionalProperties().getUrl();
-                            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(advisory.getOptionalProperties().getUrl()));
-                                    checkAndStartIntent(holder.itemView.getContext(), intent);
-                                }
-                            });
+                        } else if (advisory.getOptionalProperties() != null) {
+                            if (!TextUtils.isEmpty(advisory.getOptionalProperties().getUrl())) {
+                                info = advisory.getOptionalProperties().getUrl();
+                                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(advisory.getOptionalProperties().getUrl()));
+                                        checkAndStartIntent(holder.itemView.getContext(), intent);
+                                    }
+                                });
+                            }
+
+                            if (!TextUtils.isEmpty(advisory.getOptionalProperties().getDescription())) {
+                                ((AdvisoryViewHolder) holder).descriptionTextView.setText(advisory.getOptionalProperties().getDescription());
+                                ((AdvisoryViewHolder) holder).descriptionTextView.setVisibility(View.VISIBLE);
+                            }
                         }
+
+
                         break;
                     }
                     case Heliport: {
                         final AirMapHeliportProperties heliport = advisory.getHeliportProperties();
-                        description = formatPhoneNumber(holder.itemView.getContext(), heliport.getPhoneNumber());
+                        info = formatPhoneNumber(holder.itemView.getContext(), heliport.getPhoneNumber());
 
                         if (!TextUtils.isEmpty(heliport.getPhoneNumber())) {
                             ((AdvisoryViewHolder) holder).infoTextView.setTextColor(ContextCompat.getColor(((AdvisoryViewHolder) holder).infoTextView.getContext(), R.color.airmap_aqua));
@@ -230,7 +242,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                         } else {
                             dateFormat = new SimpleDateFormat("MMM d h:mm a");
                         }
-                        description = dateFormat.format(notam.getStartTime()) + " - " + dateFormat.format(notam.getEndTime());
+                        info = dateFormat.format(notam.getStartTime()) + " - " + dateFormat.format(notam.getEndTime());
 
                         if (!TextUtils.isEmpty(notam.getUrl())) {
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -253,7 +265,7 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                         AirMapControlledAirspaceProperties controlledAirspaceProperties = advisory.getControlledAirspaceProperties();
 
                         if (controlledAirspaceProperties.isLaanc() && controlledAirspaceProperties.isAuthorization()) {
-                            description = holder.itemView.getContext().getString(R.string.airspace_laanc_authorization_automated);
+                            info = holder.itemView.getContext().getString(R.string.airspace_laanc_authorization_automated);
                             ((AdvisoryViewHolder) holder).infoTextView.setTextColor(ContextCompat.getColor(((AdvisoryViewHolder) holder).infoTextView.getContext(), R.color.airmap_aqua));
                         }
                         break;
@@ -263,19 +275,26 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
                     case University:
                     case City:
                     case Park: {
-                        if (advisory.getOptionalProperties() != null && !TextUtils.isEmpty(advisory.getOptionalProperties().getUrl())) {
-                            description = advisory.getOptionalProperties().getUrl();
-                            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    String url = advisory.getOptionalProperties().getUrl();
-                                    if (!url.contains("http") && !url.contains("https")) {
-                                        url = "http://" + url;
+                        if (advisory.getOptionalProperties() != null) {
+                            if (!TextUtils.isEmpty(advisory.getOptionalProperties().getUrl())) {
+                                info = advisory.getOptionalProperties().getUrl();
+                                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        String url = advisory.getOptionalProperties().getUrl();
+                                        if (!url.contains("http") && !url.contains("https")) {
+                                            url = "http://" + url;
+                                        }
+                                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                        holder.itemView.getContext().startActivity(intent);
                                     }
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                    holder.itemView.getContext().startActivity(intent);
-                                }
-                            });
+                                });
+                            }
+
+                            if (!TextUtils.isEmpty(advisory.getOptionalProperties().getDescription())) {
+                                ((AdvisoryViewHolder) holder).descriptionTextView.setText(advisory.getOptionalProperties().getDescription());
+                                ((AdvisoryViewHolder) holder).descriptionTextView.setVisibility(View.VISIBLE);
+                            }
                         }
                     }
                 }
@@ -283,13 +302,32 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
 
             // if this advisory accepts digital notice, show user
             if (advisory.getRequirements() != null && advisory.getRequirements().getNotice() != null && advisory.getRequirements().getNotice().isDigital()) {
-                description = holder.itemView.getContext().getString(R.string.accepts_digital_notice);
+                info = holder.itemView.getContext().getString(R.string.accepts_digital_notice);
                 holder.itemView.setOnClickListener(null);
                 ((AdvisoryViewHolder) holder).infoTextView.setTextColor(ContextCompat.getColor(((AdvisoryViewHolder) holder).infoTextView.getContext(), R.color.airmap_aqua));
             }
 
-            ((AdvisoryViewHolder) holder).infoTextView.setText(description);
-            ((AdvisoryViewHolder) holder).infoTextView.setVisibility(TextUtils.isEmpty(description) ? View.GONE : View.VISIBLE);
+            if (advisory.getOptionalProperties() != null) {
+                if (!TextUtils.isEmpty(advisory.getOptionalProperties().getUrl())) {
+                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String url = advisory.getOptionalProperties().getUrl();
+                            if (!url.contains("http") && !url.contains("https")) {
+                                url = "http://" + url;
+                            }
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                            holder.itemView.getContext().startActivity(intent);
+                        }
+                    });
+
+                    ((AdvisoryViewHolder) holder).linkButton.setColorFilter(ContextCompat.getColor(holder.itemView.getContext(), R.color.font_white), PorterDuff.Mode.SRC_ATOP);
+                    ((AdvisoryViewHolder) holder).linkButton.setVisibility(View.VISIBLE);
+                }
+            }
+
+            ((AdvisoryViewHolder) holder).infoTextView.setText(info);
+            ((AdvisoryViewHolder) holder).infoTextView.setVisibility(TextUtils.isEmpty(info) ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -384,6 +422,8 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
         View backgroundView;
         TextView titleTextView;
         TextView infoTextView;
+        TextView descriptionTextView;
+        ImageView linkButton;
 
         AdvisoryViewHolder(View itemView) {
             super(itemView);
@@ -391,6 +431,8 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
             backgroundView = itemView.findViewById(R.id.background_view);
             titleTextView = itemView.findViewById(R.id.title_text_view);
             infoTextView = itemView.findViewById(R.id.info_text_view);
+            descriptionTextView = itemView.findViewById(R.id.description_text_view);
+            linkButton = itemView.findViewById(R.id.link_button);
         }
     }
 }
