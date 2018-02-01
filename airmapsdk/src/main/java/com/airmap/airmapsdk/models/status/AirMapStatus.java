@@ -1,9 +1,7 @@
 package com.airmap.airmapsdk.models.status;
 
-import android.support.annotation.ColorRes;
 import android.text.TextUtils;
 
-import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.models.Coordinate;
 import com.airmap.airmapsdk.networking.services.MappingService;
@@ -21,65 +19,8 @@ import java.util.Map;
 
 @Deprecated
 public class AirMapStatus implements Serializable, AirMapBaseModel {
-    public enum StatusColor {
-        Red("red"), Yellow("yellow"), Green("green"), Orange("orange");
 
-        private final String text;
-
-        StatusColor(String text) {
-            this.text = text;
-        }
-
-        @Override
-        public String toString() {
-            return text;
-        }
-
-        public static StatusColor fromString(String text) {
-            switch (text) {
-                case "red":
-                    return Red;
-                case "yellow":
-                    return Yellow;
-                case "green":
-                    return Green;
-                case "orange":
-                    return Orange;
-                default:
-                    return null;
-            }
-        }
-
-        public int intValue() {
-            switch (this) {
-                case Red:
-                    return 4;
-                case Orange:
-                    return 3;
-                case Yellow:
-                    return 2;
-                default:
-                case Green:
-                    return 1;
-            }
-        }
-
-        public @ColorRes int getColorRes() {
-            switch (this) {
-                case Red:
-                    return R.color.status_red;
-                case Orange:
-                    return R.color.status_orange;
-                case Yellow:
-                    return R.color.status_yellow;
-                default:
-                case Green:
-                    return R.color.status_green;
-            }
-        }
-    }
-
-    private StatusColor advisoryColor;
+    private AirMapColor advisoryColor;
     private int maxSafeRadius;
     private List<AirMapStatusAdvisory> advisories;
 
@@ -109,7 +50,7 @@ public class AirMapStatus implements Serializable, AirMapBaseModel {
             }
             setAdvisories(advisories);
             setMaxSafeRadius(json.optInt("max_safe_distance"));
-            setAdvisoryColor(StatusColor.fromString(json.optString("advisory_color")));
+            setAdvisoryColor(AirMapColor.fromString(json.optString("advisory_color")));
         }
         return this;
     }
@@ -156,11 +97,11 @@ public class AirMapStatus implements Serializable, AirMapBaseModel {
         return this;
     }
 
-    public StatusColor getAdvisoryColor() {
+    public AirMapColor getAdvisoryColor() {
         return advisoryColor;
     }
 
-    public AirMapStatus setAdvisoryColor(StatusColor advisoryColor) {
+    public AirMapStatus setAdvisoryColor(AirMapColor advisoryColor) {
         this.advisoryColor = advisoryColor;
         return this;
     }

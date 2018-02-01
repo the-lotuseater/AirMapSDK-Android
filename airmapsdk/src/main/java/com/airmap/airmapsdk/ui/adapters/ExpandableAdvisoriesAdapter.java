@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.status.AirMapAdvisory;
-import com.airmap.airmapsdk.models.status.AirMapStatus;
+import com.airmap.airmapsdk.models.status.AirMapColor;
 import com.airmap.airmapsdk.models.status.properties.AirMapAirportProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapControlledAirspaceProperties;
 import com.airmap.airmapsdk.models.status.properties.AirMapHeliportProperties;
@@ -47,9 +47,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import timber.log.Timber;
+
 import static com.airmap.airmapsdk.util.Utils.checkAndStartIntent;
 
-public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>, AirMapAdvisory> {
+public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<MappingService.AirMapAirspaceType, AirMapColor>, AirMapAdvisory> {
 
     public ExpandableAdvisoriesAdapter(LinkedHashMap<MappingService.AirMapAirspaceType, List<AirMapAdvisory>> advisories) {
         super(separateByColor(advisories));
@@ -60,37 +62,38 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
     }
 
     @Override
-    public void setData(@Nullable LinkedHashMap<Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>, List<AirMapAdvisory>> dataMap) {
+    public void setData(@Nullable LinkedHashMap<Pair<MappingService.AirMapAirspaceType, AirMapColor>, List<AirMapAdvisory>> dataMap) {
+        Timber.wtf("Should not be calling setData in ExpandableAdvisoriesAdapter");
         throw new RuntimeException("please call setDataUnseparated instead");
     }
 
-    private static LinkedHashMap<Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>, List<AirMapAdvisory>> separateByColor(Map<MappingService.AirMapAirspaceType, List<AirMapAdvisory>> og) {
-        LinkedHashMap<Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>, List<AirMapAdvisory>> dataTemp = new LinkedHashMap<>();
+    private static LinkedHashMap<Pair<MappingService.AirMapAirspaceType, AirMapColor>, List<AirMapAdvisory>> separateByColor(Map<MappingService.AirMapAirspaceType, List<AirMapAdvisory>> og) {
+        LinkedHashMap<Pair<MappingService.AirMapAirspaceType, AirMapColor>, List<AirMapAdvisory>> dataTemp = new LinkedHashMap<>();
         for (MappingService.AirMapAirspaceType type : og.keySet()) {
             for (AirMapAdvisory advisory : og.get(type)) {
-                Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor> key = new Pair<>(type, advisory.getColor());
+                Pair<MappingService.AirMapAirspaceType, AirMapColor> key = new Pair<>(type, advisory.getColor());
                 List<AirMapAdvisory> list = dataTemp.containsKey(key) ? dataTemp.get(key) : new ArrayList<AirMapAdvisory>();
                 list.add(advisory);
                 dataTemp.put(key, list);
             }
         }
-        List<Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>> keys = new ArrayList<>(dataTemp.keySet());
+        List<Pair<MappingService.AirMapAirspaceType, AirMapColor>> keys = new ArrayList<>(dataTemp.keySet());
         // Sort based on color
-        Collections.sort(keys, new Comparator<Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>>() {
+        Collections.sort(keys, new Comparator<Pair<MappingService.AirMapAirspaceType, AirMapColor>>() {
             @Override
-            public int compare(Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor> p1, Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor> p2) {
+            public int compare(Pair<MappingService.AirMapAirspaceType, AirMapColor> p1, Pair<MappingService.AirMapAirspaceType, AirMapColor> p2) {
                 if (p1.second == p2.second) return p1.first.toString().compareTo(p2.first.toString());
-                if (p1.second == AirMapStatus.StatusColor.Red) return -1;
-                if (p2.second == AirMapStatus.StatusColor.Red) return 1;
-                if (p1.second == AirMapStatus.StatusColor.Orange) return -1;
-                if (p2.second == AirMapStatus.StatusColor.Orange) return 1;
-                if (p1.second == AirMapStatus.StatusColor.Yellow) return -1;
-                if (p2.second == AirMapStatus.StatusColor.Yellow) return 1;
+                if (p1.second == AirMapColor.Red) return -1;
+                if (p2.second == AirMapColor.Red) return 1;
+                if (p1.second == AirMapColor.Orange) return -1;
+                if (p2.second == AirMapColor.Orange) return 1;
+                if (p1.second == AirMapColor.Yellow) return -1;
+                if (p2.second == AirMapColor.Yellow) return 1;
                 return 0;
             }
         });
-        LinkedHashMap<Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>, List<AirMapAdvisory>> data = new LinkedHashMap<>();
-        for (Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor> key : keys) {
+        LinkedHashMap<Pair<MappingService.AirMapAirspaceType, AirMapColor>, List<AirMapAdvisory>> data = new LinkedHashMap<>();
+        for (Pair<MappingService.AirMapAirspaceType, AirMapColor> key : keys) {
             data.put(key, dataTemp.get(key));
         }
 
@@ -115,11 +118,11 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
         super.onBindViewHolder(holder, position);
 
         if (holder instanceof AirspaceTypeViewHolder) {
-            Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor> type = (Pair<MappingService.AirMapAirspaceType, AirMapStatus.StatusColor>) getItem(position);
+            Pair<MappingService.AirMapAirspaceType, AirMapColor> type = (Pair<MappingService.AirMapAirspaceType, AirMapColor>) getItem(position);
             Context context = holder.itemView.getContext();
             String typeText = context.getString(type.first.getTitle());
             String typeAndQuantityText = context.getString(R.string.advisory_type_quantity, typeText, Integer.toString(dataMap.get(type).size()));
-            AirMapStatus.StatusColor color = type.second;
+            AirMapColor color = type.second;
 
             ((AirspaceTypeViewHolder) holder).type = type.first;
             ((AirspaceTypeViewHolder) holder).backgroundView.setBackgroundColor(ContextCompat.getColor(context, color.getColorRes()));
@@ -378,16 +381,16 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
         }
     }
 
-    private AirMapStatus.StatusColor calculateStatusColor(MappingService.AirMapAirspaceType type) {
-        AirMapStatus.StatusColor color = AirMapStatus.StatusColor.Green;
+    private AirMapColor calculateStatusColor(MappingService.AirMapAirspaceType type) {
+        AirMapColor color = AirMapColor.Green;
         for (AirMapAdvisory advisory : dataMap.get(type)) {
-            if (advisory.getColor() == AirMapStatus.StatusColor.Red) {
-                color = AirMapStatus.StatusColor.Red;
+            if (advisory.getColor() == AirMapColor.Red) {
+                color = AirMapColor.Red;
                 break;
-            } else if (advisory.getColor() == AirMapStatus.StatusColor.Orange) {
-                color = AirMapStatus.StatusColor.Orange;
-            } else if (advisory.getColor() == AirMapStatus.StatusColor.Yellow && color == AirMapStatus.StatusColor.Green) {
-                color = AirMapStatus.StatusColor.Yellow;
+            } else if (advisory.getColor() == AirMapColor.Orange) {
+                color = AirMapColor.Orange;
+            } else if (advisory.getColor() == AirMapColor.Yellow && color == AirMapColor.Green) {
+                color = AirMapColor.Yellow;
             }
         }
 
@@ -395,8 +398,8 @@ public class ExpandableAdvisoriesAdapter extends ExpandableRecyclerAdapter<Pair<
     }
 
     @ColorRes
-    private int getTextColor(AirMapStatus.StatusColor statusColor) {
-        if (statusColor == AirMapStatus.StatusColor.Yellow) {
+    private int getTextColor(AirMapColor statusColor) {
+        if (statusColor == AirMapColor.Yellow) {
             return R.color.font_black;
         }
 

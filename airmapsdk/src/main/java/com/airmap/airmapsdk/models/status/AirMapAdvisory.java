@@ -32,7 +32,7 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
     private String state;
     private String country;
     private Date lastUpdated;
-    private AirMapStatus.StatusColor color;
+    private AirMapColor color;
     private int distance;
     private Coordinate coordinate;
     private String geometryString;
@@ -81,7 +81,7 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
             setDistance(json.optInt("distance"));
             setCity(json.optString("city"));
             setState(json.optString("state"));
-            setColor(AirMapStatus.StatusColor.fromString(json.optString("color")));
+            setColor(AirMapColor.fromString(json.optString("color")));
             setGeometryString(json.optString("geometry"));
             double lat = json.optDouble("latitude");
             double lng = json.optDouble("longitude");
@@ -240,11 +240,11 @@ public class AirMapAdvisory implements Serializable, AirMapBaseModel {
         return this;
     }
 
-    public AirMapStatus.StatusColor getColor() {
+    public AirMapColor getColor() {
         return color;
     }
 
-    public AirMapAdvisory setColor(AirMapStatus.StatusColor color) {
+    public AirMapAdvisory setColor(AirMapColor color) {
         this.color = color;
         return this;
     }
