@@ -97,6 +97,11 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         if (getMapView() != null) {
             getMapView().removeOnMapLoadListener(this);
         }
+
+        if (locationEngine != null) {
+            locationEngine.removeLocationUpdates();
+            locationEngine.removeLocationEngineListener(this);
+        }
     }
 
     @Override
@@ -194,7 +199,6 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         }
     }
 
-    @SuppressLint("MissingPermission")
     @Override
     public void onMapLoaded() {
         if (hasLoadedMyLocation) {
@@ -373,6 +377,23 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
                 }
             }
         });
+    }
+
+    public LatLng getMyLocation() {
+        if (hasLoadedMyLocation && locationEngine.getLastLocation() != null) {
+            return new LatLng(locationEngine.getLastLocation().getLatitude(), locationEngine.getLastLocation().getLongitude());
+        } else {
+            // use saved location is there is one
+            float savedLatitude = PreferenceManager.getDefaultSharedPreferences(this)
+                    .getFloat(AirMapConstants.LAST_LOCATION_LATITUDE, 0);
+            float savedLongitude = PreferenceManager.getDefaultSharedPreferences(this)
+                    .getFloat(AirMapConstants.LAST_LOCATION_LONGITUDE, 0);
+            if (savedLatitude != 0 && savedLongitude != 0) {
+                return new LatLng(savedLatitude, savedLongitude);
+            }
+        }
+
+        return null;
     }
 
     protected abstract AirMapMapView getMapView();
