@@ -67,7 +67,13 @@ public abstract class AirMapGeometry implements Serializable {
 
                 jsonObject.put("coordinates", coordinates);
             } else if (geometry instanceof AirMapPoint) {
+                jsonObject.put("type", "Point");
 
+                JSONArray coordinates = new JSONArray();
+                coordinates.put(((AirMapPoint) geometry).getCoordinate().getLongitude());
+                coordinates.put(((AirMapPoint) geometry).getCoordinate().getLatitude());
+
+                jsonObject.put("coordinates", coordinates);
             }
         } catch (JSONException e) {
             e.printStackTrace();
