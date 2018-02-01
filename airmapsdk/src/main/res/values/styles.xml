@@ -32,18 +32,20 @@
     </style>
 
     <style name="AppTheme.WeatherLabel" >
-        <item name="android:layout_width">84dp</item>
+        <item name="android:layout_width">@dimen/weather_width</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:gravity">center</item>
-        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
     </style>
 
     <style name="AppTheme.WeatherValue" >
-        <item name="android:layout_width">84dp</item>
+        <item name="android:layout_width">@dimen/weather_width</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/font_title</item>
         <item name="android:textSize">12sp</item>
+        <item name="android:padding">@dimen/weather_padding</item>
     </style>
 
     <style name="CustomLocationLayer" parent="LocationLayer">
