@@ -382,15 +382,6 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
     public LatLng getMyLocation() {
         if (hasLoadedMyLocation && locationEngine.getLastLocation() != null) {
             return new LatLng(locationEngine.getLastLocation().getLatitude(), locationEngine.getLastLocation().getLongitude());
-        } else {
-            // use saved location is there is one
-            float savedLatitude = PreferenceManager.getDefaultSharedPreferences(this)
-                    .getFloat(AirMapConstants.LAST_LOCATION_LATITUDE, 0);
-            float savedLongitude = PreferenceManager.getDefaultSharedPreferences(this)
-                    .getFloat(AirMapConstants.LAST_LOCATION_LONGITUDE, 0);
-            if (savedLatitude != 0 && savedLongitude != 0) {
-                return new LatLng(savedLatitude, savedLongitude);
-            }
         }
 
         return null;
