@@ -613,6 +613,10 @@ public final class AirMap {
         return FlightService.patchFlightPlan(plan, callback);
     }
 
+    public static Call getFlightPlanById(String flightPlanId, AirMapCallback<AirMapFlightPlan> callback) {
+        return FlightService.getFlightPlanById(flightPlanId, callback);
+    }
+
     public static Call getFlightPlanByFlightId(String flightId, AirMapCallback<AirMapFlightPlan> callback) {
         return FlightService.getFlightPlanByFlightId(flightId, callback);
     }
