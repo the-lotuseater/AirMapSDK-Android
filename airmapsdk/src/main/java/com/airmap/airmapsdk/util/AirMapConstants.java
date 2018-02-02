@@ -23,6 +23,7 @@ public class AirMapConstants {
     public static final String KEY_VALUE_EXTRAS = "key_value_extras";
     public static final String START_DATE_EXTRA = "start_date_extra";
     public static final String END_DATE_EXTRA = "end_date_extra";
+    public static final String FLIGHT_BRIEFING_EXTRA = "flight_briefing_extra";
 
     public static final String MEASUREMENT_SYSTEM = "measurement_system";
     public static final String IMPERIAL_SYSTEM = "imperial_system";
