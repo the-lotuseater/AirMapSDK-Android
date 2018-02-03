@@ -80,4 +80,30 @@ public abstract class AirMapGeometry implements Serializable {
         }
         return jsonObject;
     }
+
+    public static AirMapPolygon convertPointToPolygon(AirMapPoint point, float radius) {
+        ArrayList<Coordinate> coordinates = new ArrayList<>(); //array to hold all the points
+
+        int degreesBetweenPoints = 8;
+        int numberOfPoints = (int) Math.floor(360 / degreesBetweenPoints);
+        double distRadians = radius / 6371000.0; // earth radius in meters
+        double centerLatRadians = point.getCoordinate().getLatitude() * Math.PI / 180;
+        double centerLonRadians = point.getCoordinate().getLongitude() * Math.PI / 180;
+        for (int index = 0; index < numberOfPoints; index++) {
+            double degrees = index * degreesBetweenPoints;
+            double degreeRadians = degrees * Math.PI / 180;
+            double pointLatRadians = Math.asin(Math.sin(centerLatRadians) * Math.cos(distRadians) + Math.cos(centerLatRadians) * Math.sin(distRadians) * Math.cos(degreeRadians));
+            double pointLonRadians = centerLonRadians + Math.atan2(Math.sin(degreeRadians) * Math.sin(distRadians) * Math.cos(centerLatRadians),
+                    Math.cos(distRadians) - Math.sin(centerLatRadians) * Math.sin(pointLatRadians));
+            double pointLat = pointLatRadians * 180 / Math.PI;
+            double pointLon = pointLonRadians * 180 / Math.PI;
+
+            coordinates.add(new Coordinate(pointLat, pointLon));
+        }
+
+        // add first coordinate to end to complete polygon
+        coordinates.add(coordinates.get(0));
+
+        return new AirMapPolygon(coordinates);
+    }
 }
