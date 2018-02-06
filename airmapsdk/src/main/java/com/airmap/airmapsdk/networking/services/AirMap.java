@@ -950,6 +950,10 @@ public final class AirMap {
         FlightService.getFlightBriefing(flightPlanId, callback);
     }
 
+    public static void getFlightPlanEvaluation(@NonNull List<String> rulesets, @NonNull AirMapPolygon polygon, AirMapCallback<AirMapEvaluation> callback) {
+        getFlightPlanEvaluation(rulesets, AirMapGeometry.getGeoJSONFromGeometry(polygon), callback);
+    }
+
     public static void getFlightPlanEvaluation(@NonNull List<String> rulesets, @NonNull JSONObject geometry, AirMapCallback<AirMapEvaluation> callback) {
         RulesetService.getEvaluation(rulesets, geometry, callback);
     }
