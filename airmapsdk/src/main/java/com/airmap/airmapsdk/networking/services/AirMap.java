@@ -672,11 +672,11 @@ public final class AirMap {
     /**
      * Get a comm key for a given flight to enable traffic alerts
      *
-     * @param flight   The flight to get the comm key for
+     * @param flightId The flight ID to get the comm key for
      * @param callback The callback that is invoked on success or error
      */
-    public static Call startComm(@NonNull AirMapFlight flight, @Nullable AirMapCallback<AirMapComm> callback) {
-        return FlightService.getCommKey(flight, callback);
+    public static Call startComm(@NonNull String flightId, @Nullable AirMapCallback<AirMapComm> callback) {
+        return FlightService.getCommKey(flightId, callback);
     }
 
     /**

@@ -52,7 +52,7 @@ public class Tests extends AndroidTestCase {
             @Override
             public void onSuccess(List<AirMapFlight> response) {
                 for (AirMapFlight flight : response) {
-                    AirMap.startComm(flight, new AirMapCallback<AirMapComm>() {
+                    AirMap.startComm(flight.getFlightId(), new AirMapCallback<AirMapComm>() {
                         @Override
                         public void onSuccess(AirMapComm response) {
                             assertNotNull(response);

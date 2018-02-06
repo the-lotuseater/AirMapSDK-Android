@@ -52,14 +52,14 @@ public class TelemetryService extends BaseService {
     private static final long SPEED_FREQUENCY = 200;
     private static final long BAROMETER_FREQUENCY = 5000;
 
-    private PublishSubject<Pair<AirMapFlight, Message>> telemetry;
+    private PublishSubject<Pair<String, Message>> telemetry;
 
     public TelemetryService() {
         telemetry = PublishSubject.create();
         setupBindings();
     }
 
-    public void sendPositionMessage(AirMapFlight flight, double latitude, double longitude, @Nullable float altitudeAGL, @Nullable float altitudeMSL, @Nullable float horizontalAccuracy) {
+    public void sendPositionMessage(String flightId, double latitude, double longitude, @Nullable float altitudeAGL, @Nullable float altitudeMSL, @Nullable float horizontalAccuracy) {
         long timestamp = System.currentTimeMillis();
 
         Telemetry.Position positionMessage = Telemetry.Position.newBuilder()
@@ -71,10 +71,10 @@ public class TelemetryService extends BaseService {
                 .setHorizontalAccuracy(horizontalAccuracy)
                 .build();
 
-        sendTelemetry(flight, positionMessage);
+        sendTelemetry(flightId, positionMessage);
     }
 
-    public void sendAttitudeMessage(AirMapFlight flight, float yaw, float pitch, float roll) {
+    public void sendAttitudeMessage(String flightId, float yaw, float pitch, float roll) {
         long timestamp = System.currentTimeMillis();
 
         Telemetry.Attitude attitudeMessage = Telemetry.Attitude.newBuilder()
@@ -84,10 +84,10 @@ public class TelemetryService extends BaseService {
                 .setRoll(roll)
                 .build();
 
-        sendTelemetry(flight, attitudeMessage);
+        sendTelemetry(flightId, attitudeMessage);
     }
 
-    public void sendSpeedMessage(AirMapFlight flight, float velocityX, float velocityY, float velocityZ) {
+    public void sendSpeedMessage(String flightId, float velocityX, float velocityY, float velocityZ) {
         long timestamp = System.currentTimeMillis();
 
         Telemetry.Speed speedMessage = Telemetry.Speed.newBuilder()
@@ -97,10 +97,10 @@ public class TelemetryService extends BaseService {
                 .setVelocityZ(velocityZ)
                 .build();
 
-        sendTelemetry(flight, speedMessage);
+        sendTelemetry(flightId, speedMessage);
     }
 
-    public void setBarometerMessage(AirMapFlight flight, float pressure) {
+    public void setBarometerMessage(String flightId, float pressure) {
         long timestamp = System.currentTimeMillis();
 
         Telemetry.Barometer barometerMessage = Telemetry.Barometer.newBuilder()
@@ -108,26 +108,26 @@ public class TelemetryService extends BaseService {
                 .setPressure(pressure)
                 .build();
 
-        sendTelemetry(flight, barometerMessage);
+        sendTelemetry(flightId, barometerMessage);
     }
 
-    private void sendTelemetry(AirMapFlight flight, Message message) {
-        telemetry.onNext(new Pair<>(flight, message));
+    private void sendTelemetry(String flightId, Message message) {
+        telemetry.onNext(new Pair<>(flightId, message));
     }
 
     private void setupBindings() {
         Observable<Session> session = telemetry
-                .map(new Func1<Pair<AirMapFlight, Message>, AirMapFlight>() {
+                .map(new Func1<Pair<String, Message>, String>() {
                     @Override
-                    public AirMapFlight call(Pair<AirMapFlight, Message> pair) {
+                    public String call(Pair<String, Message> pair) {
                         return pair.first;
                     }
                 })
                 .distinctUntilChanged()
-                .flatMap(new Func1<AirMapFlight, Observable<Session>>() {
+                .flatMap(new Func1<String, Observable<Session>>() {
                     @Override
-                    public Observable<Session> call(final AirMapFlight flight) {
-                        return FlightService.getCommKey(flight)
+                    public Observable<Session> call(final String flightId) {
+                        return FlightService.getCommKey(flightId)
                                 .doOnError(new Action1<Throwable>() {
                                     @Override
                                     public void call(Throwable throwable) {
@@ -138,7 +138,7 @@ public class TelemetryService extends BaseService {
                                 .map(new Func1<AirMapComm, Session>() {
                                     @Override
                                     public Session call(AirMapComm airMapComm) {
-                                        return new Session(flight, airMapComm, null);
+                                        return new Session(flightId, airMapComm, null);
                                     }
                                 })
                                 .subscribeOn(Schedulers.io());
@@ -146,23 +146,23 @@ public class TelemetryService extends BaseService {
                 });
 
         Observable<Pair<Session, Message>> flightMessages = Observable
-                .combineLatest(session, telemetry, new Func2<Session, Pair<AirMapFlight, Message>, Pair<Session, Pair<AirMapFlight, Message>>>() {
+                .combineLatest(session, telemetry, new Func2<Session, Pair<String, Message>, Pair<Session, Pair<String, Message>>>() {
                     @Override
-                    public Pair<Session, Pair<AirMapFlight, Message>> call(Session s, Pair<AirMapFlight, Message> p) {
+                    public Pair<Session, Pair<String, Message>> call(Session s, Pair<String, Message> p) {
                         return new Pair<>(s, p);
                     }
                 })
-                .filter(new Func1<Pair<Session, Pair<AirMapFlight, Message>>, Boolean>() {
+                .filter(new Func1<Pair<Session, Pair<String, Message>>, Boolean>() {
                     @Override
-                    public Boolean call(Pair<Session, Pair<AirMapFlight, Message>> p) {
-                        AirMapFlight sessionFlight = p.first.flight;
-                        AirMapFlight telemetryFlight = p.second.first;
+                    public Boolean call(Pair<Session, Pair<String, Message>> p) {
+                        String sessionFlight = p.first.flightId;
+                        String telemetryFlight = p.second.first;
                         return sessionFlight.equals(telemetryFlight);
                     }
                 })
-                .map(new Func1<Pair<Session, Pair<AirMapFlight, Message>>, Pair<Session, Message>>() {
+                .map(new Func1<Pair<Session, Pair<String, Message>>, Pair<Session, Message>>() {
                     @Override
-                    public Pair<Session, Message> call(Pair<Session, Pair<AirMapFlight, Message>> pair) {
+                    public Pair<Session, Message> call(Pair<Session, Pair<String, Message>> pair) {
                         return new Pair<>(pair.first, pair.second.second);
                     }
                 });
@@ -262,12 +262,12 @@ public class TelemetryService extends BaseService {
     private class Session {
         private AirMapComm comm;
         private DatagramSocket socket;
-        private AirMapFlight flight;
+        private String flightId;
 
         private int packetNumber;
 
-        Session(AirMapFlight flight, AirMapComm comm, DatagramSocket socket) {
-            this.flight = flight;
+        Session(String flightId, AirMapComm comm, DatagramSocket socket) {
+            this.flightId = flightId;
             this.comm = comm;
 
             this.packetNumber = 1;
@@ -291,7 +291,7 @@ public class TelemetryService extends BaseService {
         //Sends the encrypted, encoded message
         private void send(List<Message> messageList) {
             try {
-                byte[] message = buildPacketData(comm.getKey(), flight, Encryption.AES256CBC, messageList);
+                byte[] message = buildPacketData(comm.getKey(), flightId, Encryption.AES256CBC, messageList);
                 DatagramPacket packet = new DatagramPacket(message, message.length);
                 socket.send(packet);
                 packetNumber++;
@@ -300,12 +300,10 @@ public class TelemetryService extends BaseService {
             }
         }
 
-        private byte[] buildPacketData(byte[] key, AirMapFlight flight, Encryption encryption, List<Message> messageList) throws IOException, NoSuchPaddingException,
+        private byte[] buildPacketData(byte[] key, String flightId, Encryption encryption, List<Message> messageList) throws IOException, NoSuchPaddingException,
                 InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
 
             int serialNumber = packetNumber;
-
-            String flightId = flight.getFlightId();
 
             byte flightIdLength = (byte) flightId.length();
 

@@ -208,16 +208,16 @@ class FlightService extends BaseService {
     /**
      * Get a comm key for a given flight to enable traffic alerts
      *
-     * @param flight   The flight to get the comm key for
+     * @param flightId The flight ID to get the comm key for
      * @param listener The callback that is invoked on success or error
      */
-    static Call getCommKey(AirMapFlight flight, final AirMapCallback<AirMapComm> listener) {
-        String url = String.format(flightStartCommUrl, flight.getFlightId());
+    static Call getCommKey(String flightId, final AirMapCallback<AirMapComm> listener) {
+        String url = String.format(flightStartCommUrl, flightId);
         return AirMap.getClient().post(url, new GenericOkHttpCallback(listener, AirMapComm.class));
     }
 
-    static Observable<AirMapComm> getCommKey(AirMapFlight flight) {
-        String url = String.format(flightStartCommUrl, flight.getFlightId());
+    static Observable<AirMapComm> getCommKey(String flightId) {
+        String url = String.format(flightStartCommUrl, flightId);
         return AirMap.getClient().post(url, AirMapComm.class);
     }
 
