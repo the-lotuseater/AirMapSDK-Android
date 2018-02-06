@@ -16,6 +16,7 @@ import com.airmap.airmapsdk.models.aircraft.AirMapAircraftManufacturer;
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
 import com.airmap.airmapsdk.models.airspace.AirMapAirspace;
 import com.airmap.airmapsdk.models.comm.AirMapComm;
+import com.airmap.airmapsdk.models.flight.AirMapEvaluation;
 import com.airmap.airmapsdk.models.flight.AirMapFlight;
 import com.airmap.airmapsdk.models.flight.AirMapFlightBriefing;
 import com.airmap.airmapsdk.models.flight.AirMapFlightPlan;
@@ -949,8 +950,8 @@ public final class AirMap {
         FlightService.getFlightBriefing(flightPlanId, callback);
     }
 
-    public static void getFlightPlanEvaluation(@NonNull List<String> rulesets, @NonNull JSONObject geometry, @Nullable Map<String, Object> flightFeatures, AirMapCallback<AirMapFlightBriefing> callback) {
-        RulesetService.getEvaluation(rulesets, geometry, flightFeatures, callback);
+    public static void getFlightPlanEvaluation(@NonNull List<String> rulesets, @NonNull JSONObject geometry, AirMapCallback<AirMapEvaluation> callback) {
+        RulesetService.getEvaluation(rulesets, geometry, callback);
     }
 
     public static Call getAirspaceStatus(@NonNull AirMapPolygon polygon, @NonNull List<String> rulesetIds, AirMapCallback<AirMapAirspaceStatus> callback) {

@@ -1,5 +1,6 @@
 package com.airmap.airmapsdk.util;
 
+import com.airmap.airmapsdk.models.flight.AirMapEvaluation;
 import com.airmap.airmapsdk.models.flight.AirMapFlightBriefing;
 import com.airmap.airmapsdk.models.flight.AirMapFlightFeature;
 import com.airmap.airmapsdk.models.rules.AirMapRule;
@@ -76,10 +77,10 @@ public class BriefingEvaluator {
         return sortedRulesMap;
     }
 
-    public static Set<AirMapFlightFeature> computeApplicableFlightFeatures(AirMapFlightBriefing briefing) {
+    public static Set<AirMapFlightFeature> getApplicableFlightFeatures(AirMapEvaluation evaluation) {
         Set<AirMapFlightFeature> flightFeatures = new HashSet<>();
 
-        for (AirMapRuleset ruleset : briefing.getRulesets()) {
+        for (AirMapRuleset ruleset : evaluation.getRulesets()) {
             for (AirMapRule rule : ruleset.getRules()) {
                 // Rules that are conflicting, missing information or are informational should be shown
                 if (rule.getStatus() != AirMapRule.Status.NotConflicting) {
