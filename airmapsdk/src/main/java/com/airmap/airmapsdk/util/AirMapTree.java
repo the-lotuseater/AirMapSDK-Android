@@ -1,5 +1,7 @@
 package com.airmap.airmapsdk.util;
 
+import android.support.annotation.NonNull;
+
 import timber.log.Timber;
 
 /**
@@ -11,4 +13,10 @@ public class AirMapTree extends Timber.DebugTree {
     protected boolean isLoggable(String tag, int priority) {
         return !tag.equals("HTTPRequest");
     }
+
+    @Override
+    protected void log(int priority, String tag, @NonNull String message, Throwable t) {
+        super.log(priority, "AMLog/" + tag, message, t);
+    }
 }
+/
