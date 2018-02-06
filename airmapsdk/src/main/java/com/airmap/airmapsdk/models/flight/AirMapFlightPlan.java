@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import timber.log.Timber;
 
@@ -437,6 +438,14 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
 
     public void setFlightFeatureValues(Map<String, FlightFeatureValue> flightFeatureValues) {
         this.flightFeatureValues = flightFeatureValues;
+    }
+
+    public void setFlightFeatureValues(Set<FlightFeatureValue> flightFeatureValuesSet) {
+        flightFeatureValues = new HashMap<>();
+
+        for (FlightFeatureValue flightFeatureValue : flightFeatureValuesSet) {
+            flightFeatureValues.put(flightFeatureValue.getKey(), flightFeatureValue);
+        }
     }
 
     public void setFlightFeatureValue(FlightFeatureValue flightFeatureValue) {
