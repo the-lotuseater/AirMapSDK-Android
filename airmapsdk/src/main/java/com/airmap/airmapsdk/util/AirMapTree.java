@@ -19,4 +19,3 @@ public class AirMapTree extends Timber.DebugTree {
         super.log(priority, "AMLog/" + tag, message, t);
     }
 }
-/
