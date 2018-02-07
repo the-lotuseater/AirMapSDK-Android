@@ -46,10 +46,26 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
     private Date createdAt;
     private boolean isPublic;
     private boolean notify;
-    private List<String> permitIds;
 
     public AirMapFlightPlan() {
         isPublic = true;
+    }
+
+    public AirMapFlightPlan(AirMapFlightPlan planToClone) {
+        setTakeoffCoordinate(planToClone.takeoffCoordinate);
+        setMaxAltitude(planToClone.maxAltitude);
+        setNotify(planToClone.notify);
+        setPilotId(planToClone.pilotId);
+        setAircraftId(planToClone.aircraftId);
+        setPublic(planToClone.isPublic);
+        setBuffer(planToClone.buffer);
+        setGeometry(planToClone.geometry);
+        setRulesetIds(planToClone.rulesetIds);
+        setFlightFeatureValues(planToClone.flightFeatureValues);
+        setCreatedAt(planToClone.createdAt);
+        setStartsAt(planToClone.startsAt);
+        setEndsAt(planToClone.endsAt);
+        setDurationInMillis(planToClone.durationInMillis);
     }
 
     public AirMapFlightPlan(JSONObject flightJson) {
@@ -78,12 +94,6 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
             JSONArray rulesetsJson = json.optJSONArray("rulesets");
             for (int i = 0; rulesetsJson != null && i < rulesetsJson.length(); i++) {
                 rulesetIds.add(rulesetsJson.optString(i));
-            }
-
-            permitIds = new ArrayList<>();
-            JSONArray permitIdsJson = json.optJSONArray("permits");
-            for (int i = 0; permitIdsJson != null && i < permitIdsJson.length(); i++) {
-                addPermitId(permitIdsJson.optString(i));
             }
 
             flightFeatureValues = new HashMap<>();
@@ -188,14 +198,6 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
             }
         }
         JSONObject jsonObject = new JSONObject(params);
-        if (getPermitIds() != null && !getPermitIds().isEmpty()) {
-            JSONArray permitsArray = new JSONArray(getPermitIds());
-            try {
-                jsonObject.put("permits", permitsArray);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
 
         if (rulesetIds != null && !rulesetIds.isEmpty()) {
             JSONArray rulesetsArray = new JSONArray(rulesetIds);
@@ -390,23 +392,6 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
 
     public AirMapFlightPlan setNotify(boolean notify) {
         this.notify = notify;
-        return this;
-    }
-
-    public List<String> getPermitIds() {
-        return permitIds;
-    }
-
-    public AirMapFlightPlan setPermitIds(ArrayList<String> permitIds) {
-        this.permitIds = permitIds;
-        return this;
-    }
-
-    /**
-     * @param id A PilotPermit Id (should start with "permit_application")
-     */
-    public AirMapFlightPlan addPermitId(String id) {
-        permitIds.add(id);
         return this;
     }
 
