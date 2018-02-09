@@ -107,10 +107,26 @@ public class BriefingEvaluator {
         return false;
     }
 
-    public static AirMapRule.Status getOverallStatus(List<AirMapRule> rules) {
+    public static AirMapRule.Status getStatus(AirMapFlightBriefing briefing) {
         // set worst status to overall status
         AirMapRule.Status overallStatus = AirMapRule.Status.NotConflicting;
-        for (AirMapRule rule : rules) {
+        for (AirMapRuleset ruleset : briefing.getRulesets()) {
+            AirMapRule.Status rulesetStatus = getStatus(ruleset);
+            if (rulesetStatus == AirMapRule.Status.Conflicting) {
+                overallStatus = AirMapRule.Status.Conflicting;
+                break;
+            } else if (rulesetStatus == AirMapRule.Status.MissingInfo) {
+                overallStatus = AirMapRule.Status.MissingInfo;
+            }
+        }
+
+        return overallStatus;
+    }
+
+    public static AirMapRule.Status getStatus(AirMapRuleset ruleset) {
+        // set worst status to overall status
+        AirMapRule.Status overallStatus = AirMapRule.Status.NotConflicting;
+        for (AirMapRule rule : ruleset.getRules()) {
             if (rule.getStatus() == AirMapRule.Status.Conflicting) {
                 overallStatus = rule.getStatus();
                 break;
