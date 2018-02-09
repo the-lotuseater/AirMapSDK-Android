@@ -566,7 +566,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
         public final List<AirMapRuleset> selectedRulesets;
 
-        private ManualConfiguration(List<AirMapRuleset> selectedRulesets) {
+        public ManualConfiguration(List<AirMapRuleset> selectedRulesets) {
             super(Type.MANUAL);
 
             this.selectedRulesets = selectedRulesets;
