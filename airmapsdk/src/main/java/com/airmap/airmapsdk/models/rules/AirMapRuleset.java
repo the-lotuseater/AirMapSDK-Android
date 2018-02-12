@@ -101,8 +101,7 @@ public class AirMapRuleset implements Serializable, AirMapBaseModel, Comparable 
             setSummary(Utils.optString(json, "description"));
             setType(Type.fromString(json.optString("selection_type")));
 
-            //FIXME: this should probably only use the default flag from the server
-            setDefault(json.optBoolean("default") || (getType() == Type.Optional && getId().contains("airmap")));
+            setDefault(json.optBoolean("default"));
 
             layers = new ArrayList<>();
             JSONArray layersJSON = json.has("layers") ? json.optJSONArray("layers") : json.optJSONArray("airspace_types");
