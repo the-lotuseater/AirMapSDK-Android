@@ -138,44 +138,48 @@ public class BriefingEvaluator {
         return overallStatus;
     }
 
-    public static LinkedHashMap<AirMapRule.Status,List<AirMapRule>> getBriefingWithFlightFeatures(AirMapRuleset ruleset, AirMapFlightPlan flightPlan, AirMapEvaluation evaluation) {
-        //TODO:
-        LinkedHashMap<AirMapRule.Status,List<AirMapRule>> rulesMap = new LinkedHashMap<>();
+    public static LinkedHashMap<AirMapRule.Status,List<AirMapRule>> getRulesWithFlightFeatures(AirMapRuleset ruleset, AirMapEvaluation evaluation) {
+        LinkedHashMap<AirMapRule.Status,List<AirMapRule>> ruleStatusMap = new LinkedHashMap<>();
+        ruleStatusMap.put(AirMapRule.Status.Conflicting, new ArrayList<AirMapRule>());
+        ruleStatusMap.put(AirMapRule.Status.MissingInfo, new ArrayList<AirMapRule>());
+        ruleStatusMap.put(AirMapRule.Status.InformationRules, new ArrayList<AirMapRule>());
+        ruleStatusMap.put(AirMapRule.Status.NotConflicting, new ArrayList<AirMapRule>());
 
-//        for (AirMapRule rule : ruleset.getRules()) {
-//            AirMapRule evaluationRule = getRuleFromEvaluation(rule);
-//            List<AirMapRule> rules = new ArrayList<>();
-//            if (ruleStatusMap.containsKey(rule.getStatus())) {
-//                rules = ruleStatusMap.get(rule.getStatus());
-//            }
-//
-//            rules.add(evaluationRule);
-//            ruleStatusMap.put(rule.getStatus(), rules);
-//        }
+        for (AirMapRule rule : ruleset.getRules()) {
+            List<AirMapRule> rules = new ArrayList<>();
+            if (ruleStatusMap.containsKey(rule.getStatus())) {
+                rules = ruleStatusMap.get(rule.getStatus());
+            }
 
-        return rulesMap;
+            for (AirMapFlightFeature flightFeature : CopyCollections.copy(rule.getFlightFeatures())) {
+                AirMapFlightFeature evaluationFlightFeature = getFlightFeatureFromEvaluation(evaluation, flightFeature);
+                if (evaluationFlightFeature != null && isApplicableFlightFeature(evaluationFlightFeature)) {
+                    rule.getFlightFeatures().remove(flightFeature);
+                    rule.getFlightFeatures().add(evaluationFlightFeature);
+                } else {
+                    rule.getFlightFeatures().remove(flightFeature);
+                }
+            }
+
+            rules.add(rule);
+            ruleStatusMap.put(rule.getStatus(), rules);
+        }
+
+        return ruleStatusMap;
     }
 
-//    private AirMapRule getRuleFromEvaluation(AirMapRule rule) {
-//        for (AirMapRuleset ruleset : evaluation.getRulesets()) {
-//            for (AirMapRule evaluationRule : ruleset.getRules()) {
-//                if (evaluationRule.equals(rule)) {
-//                    Timber.e("swapped evaluation rule: " + evaluationRule.getShortText());
-//                    if (evaluationRule.getFlightFeatures() != null) {
-//                        for (AirMapFlightFeature ff : CopyCollections.copy(evaluationRule.getFlightFeatures())) {
-//                            if (!BriefingEvaluator.isApplicableFlightFeature(ff)) {
-//                                Timber.e("remove ff: " + ff.getDescription());
-//                                evaluationRule.getFlightFeatures().remove(ff);
-//                            }
-//                        }
-//                    }
-//
-//
-//                    return evaluationRule;
-//                }
-//            }
-//        }
-//
-//        return null;
-//    }
+    private static AirMapFlightFeature getFlightFeatureFromEvaluation(AirMapEvaluation evaluation, AirMapFlightFeature flightFeature) {
+        for (AirMapRuleset ruleset : evaluation.getRulesets()) {
+            for (AirMapRule rule : ruleset.getRules()) {
+                for (AirMapFlightFeature evaluationFlightFeature : rule.getFlightFeatures()) {
+                    if (evaluationFlightFeature.getFlightFeature().equals(flightFeature.getFlightFeature())) {
+                        return evaluationFlightFeature;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
 }
