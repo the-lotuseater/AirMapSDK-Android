@@ -97,8 +97,8 @@ public class BriefingEvaluator {
         return flightFeatures;
     }
 
-    public static boolean isApplicableFlightFeature(AirMapFlightFeature flightFeature) {
-        if (flightFeature.getStatus() != AirMapFlightFeature.Status.NotConflicting) {
+    public static boolean isApplicableFlightFeature(AirMapRule rule, AirMapFlightFeature flightFeature) {
+        if (rule.getStatus() != AirMapRule.Status.NotConflicting) {
             if (!flightFeature.isCalculated()) {
                 return true;
             }
@@ -153,7 +153,7 @@ public class BriefingEvaluator {
 
             for (AirMapFlightFeature flightFeature : CopyCollections.copy(rule.getFlightFeatures())) {
                 AirMapFlightFeature evaluationFlightFeature = getFlightFeatureFromEvaluation(evaluation, flightFeature);
-                if (evaluationFlightFeature != null && isApplicableFlightFeature(evaluationFlightFeature)) {
+                if (evaluationFlightFeature != null && isApplicableFlightFeature(rule, evaluationFlightFeature)) {
                     rule.getFlightFeatures().remove(flightFeature);
                     rule.getFlightFeatures().add(evaluationFlightFeature);
                 } else {
