@@ -273,7 +273,7 @@ public class AirMapFlightPlan implements Serializable, AirMapBaseModel {
      */
     public boolean isActive() {
         Date now = new Date();
-        return startsAt != null && endsAt != null && now.after(startsAt) && now.before(endsAt);
+        return !TextUtils.isEmpty(flightId) && startsAt != null && endsAt != null && now.after(startsAt) && now.before(endsAt);
     }
 
     public String getPlanId() {
