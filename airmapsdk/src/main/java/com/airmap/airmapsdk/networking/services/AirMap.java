@@ -778,6 +778,17 @@ public final class AirMap {
     }
 
     /**
+     * Create an aircraft for the authenticated pilot
+     *
+     * @param nickname The nickname for the aircraft
+     * @param model The aircraft model
+     * @param callback The callback that is invoked on success or error
+     */
+    public static Call createAircraft(@NonNull String nickname, AirMapAircraftModel model, @Nullable AirMapCallback<AirMapAircraft> callback) {
+        return PilotService.createAircraft(nickname, model, callback);
+    }
+
+    /**
      * Update the nickname of the authenticated pilot's aircraft
      *
      * @param aircraft The aircraft with the updated nickname

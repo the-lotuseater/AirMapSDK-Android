@@ -1,6 +1,7 @@
 package com.airmap.airmapsdk.networking.services;
 
 import com.airmap.airmapsdk.models.aircraft.AirMapAircraft;
+import com.airmap.airmapsdk.models.aircraft.AirMapAircraftModel;
 import com.airmap.airmapsdk.models.pilot.AirMapPilot;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.callbacks.GenericListOkHttpCallback;
@@ -123,6 +124,16 @@ class PilotService extends BaseService {
     static Call createAircraft(AirMapAircraft aircraft, AirMapCallback<AirMapAircraft> listener) {
         String url = String.format(pilotAircraftUrl, AirMap.getUserId());
         return AirMap.getClient().post(url, aircraft.getAsParamsPost(), new GenericOkHttpCallback(listener, AirMapAircraft.class));
+    }
+
+    /**
+     * Create an aircraft for the authenticated user
+     */
+    static Call createAircraft(String nickname, AirMapAircraftModel aircraftModel, AirMapCallback<AirMapAircraft> listener) {
+        AirMapAircraft aircraft = new AirMapAircraft();
+        aircraft.setNickname(nickname);
+        aircraft.setModel(aircraftModel);
+        return createAircraft(aircraft, listener);
     }
 
     /**
