@@ -49,8 +49,6 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
     private Map<String, FlightFeatureConfiguration> flightFeaturesConfigMap;
     private FlightPlanChangeListener flightPlanChangeListener;
 
-    private boolean useMetric;
-
     public FlightPlanDetailsAdapter(Context context, AirMapFlightPlan flightPlan, Map<AirMapFlightFeature, List<AirMapRule>> flightFeaturesMap,
                                     Map<String, FlightFeatureConfiguration> flightFeaturesConfigMap, FlightPlanChangeListener flightPlanChangeListener) {
         this.context = context;
@@ -58,7 +56,6 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
         this.flightFeaturesMap = flightFeaturesMap;
         this.flightFeaturesConfigMap = flightFeaturesConfigMap;
         this.flightPlanChangeListener = flightPlanChangeListener;
-        this.useMetric = Utils.useMetric(context);
         this.flightFeatures = new ArrayList<>(flightFeaturesMap.keySet());
 
         removeDuplicateFlightFeatures();
@@ -346,7 +343,7 @@ public class FlightPlanDetailsAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     private String getMeasurementWithUnits(double value, FlightFeatureConfiguration flightFeatureConfig) {
-        String units = flightFeatureConfig.getValueConfig(useMetric).getUnit();
+        String units = flightFeatureConfig.getValueConfig(false).getUnit();
         //TODO: i18n support?
         if (value == (long) value) {
             return String.format("%d %s", (int) value, units);

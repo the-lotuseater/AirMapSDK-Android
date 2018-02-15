@@ -8,7 +8,6 @@ public class AirMapConstants {
     public static final String AUTHENTICATED_USER_ID = "userId";
     public static final String REFRESH_TOKEN = "refreshToken";
     public static final String AUTH_TOKEN = "authToken";
-    public static final String AUTH_TOKEN_EXPIRES_AT = "authTokenExpiresAt";
 
     //Shared Preferences Keys
     public static final String MAP_STYLE = "mapStyle";
@@ -25,9 +24,6 @@ public class AirMapConstants {
     public static final String END_DATE_EXTRA = "end_date_extra";
     public static final String FLIGHT_BRIEFING_EXTRA = "flight_briefing_extra";
 
-    public static final String MEASUREMENT_SYSTEM = "measurement_system";
-    public static final String IMPERIAL_SYSTEM = "imperial_system";
-    public static final String METRIC_SYSTEM = "metric_system";
 
     //Intent request codes
     public static final int CUSTOM_PROPERTIES_REQUEST_CODE = 112;

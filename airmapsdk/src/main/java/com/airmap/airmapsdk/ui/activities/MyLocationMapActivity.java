@@ -190,6 +190,8 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             locationEngine.removeLocationUpdates();
             hasLoadedMyLocation = true;
 
+
+
             // save location to prefs
             PreferenceManager.getDefaultSharedPreferences(this)
                     .edit()

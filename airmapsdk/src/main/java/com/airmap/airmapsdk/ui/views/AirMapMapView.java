@@ -31,6 +31,7 @@ import com.mapbox.services.commons.geojson.Feature;
 import com.mapbox.services.commons.models.Position;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -549,15 +550,15 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     public static class DynamicConfiguration extends Configuration {
 
-        public final List<String> preferredRulesetIds;
-        public final List<String> unpreferredRulesetIds;
+        public final Set<String> preferredRulesetIds;
+        public final Set<String> unpreferredRulesetIds;
         public final boolean enableRecommendedRulesets;
 
-        public DynamicConfiguration(@Nullable List<String> preferredRulesetIds, @Nullable List<String> unpreferredRulesetIds, boolean enableRecommendedRulesets) {
+        public DynamicConfiguration(@Nullable Set<String> preferredRulesetIds, @Nullable Set<String> unpreferredRulesetIds, boolean enableRecommendedRulesets) {
             super(Type.DYNAMIC);
 
-            this.preferredRulesetIds = preferredRulesetIds != null ? preferredRulesetIds : new ArrayList<String>();
-            this.unpreferredRulesetIds = unpreferredRulesetIds != null ? unpreferredRulesetIds : new ArrayList<String>();
+            this.preferredRulesetIds = preferredRulesetIds != null ? preferredRulesetIds : new HashSet<String>();
+            this.unpreferredRulesetIds = unpreferredRulesetIds != null ? unpreferredRulesetIds : new HashSet<String>();
             this.enableRecommendedRulesets = enableRecommendedRulesets;
         }
     }

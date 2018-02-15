@@ -57,10 +57,6 @@ public class Utils {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 
-    public static boolean useMetric(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(AirMapConstants.MEASUREMENT_SYSTEM, AirMapConstants.IMPERIAL_SYSTEM).equals(AirMapConstants.METRIC_SYSTEM);
-    }
-
     public static String titleCase(String s) {
         if (TextUtils.isEmpty(s)) {
             return s;

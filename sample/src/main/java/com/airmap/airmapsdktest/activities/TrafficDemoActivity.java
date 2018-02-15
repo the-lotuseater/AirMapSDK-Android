@@ -222,16 +222,14 @@ public class TrafficDemoActivity extends BaseActivity implements AirMapMapView.O
     }
 
     public void showTrafficAlert(@NonNull AirMapTraffic traffic) {
-        boolean useMetric = Utils.useMetric(this);
-
         LatLng activeFlightLocation = Utils.getLatLngFromCoordinate(currentFlight.getCoordinate());
         double distanceInMeters = activeFlightLocation.distanceTo(Utils.getLatLngFromCoordinate(traffic.getCoordinate()));
-        double distance = useMetric ? distanceInMeters / 1000 : Utils.metersToMiles(distanceInMeters);
-        double speed = useMetric ? Utils.ktsToKmh(traffic.getGroundSpeedKt()) : Utils.ktsToMph(traffic.getGroundSpeedKt());
+        double distance = Utils.metersToMiles(distanceInMeters);
+        double speed = Utils.ktsToMph(traffic.getGroundSpeedKt());
         double timeInHours = distance / speed;
         final StringBuilder trafficText = new StringBuilder()
                 .append(traffic.getProperties().getAircraftId()).append("\n")
-                .append(getString(useMetric ? R.string.distance_in_kilometers : R.string.distance_in_miles, distance)).append(" ")
+                .append(getString(R.string.distance_in_miles, distance)).append(" ")
                 .append(Utils.directionFromBearing(this, traffic.getTrueHeading())).append("\n")
                 .append(Utils.minutesToMinSec(this, timeInHours * 60));
 
