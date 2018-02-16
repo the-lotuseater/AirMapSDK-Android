@@ -463,6 +463,10 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         return mapDataController.getSelectedRulesets();
     }
 
+    public void disableAdvisories() {
+        mapDataController.disableAdvisories();
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

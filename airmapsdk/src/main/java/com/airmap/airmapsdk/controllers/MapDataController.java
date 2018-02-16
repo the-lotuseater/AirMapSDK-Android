@@ -56,6 +56,8 @@ public class MapDataController {
     private AirMapMapView map;
 
     private boolean hasJurisdictions;
+    private boolean fetchAdvisories;
+
     private List<AirMapRuleset> selectedRulesets;
     private List<AirMapRuleset> availableRulesets;
     private AirMapAirspaceStatus airspaceStatus;
@@ -68,6 +70,7 @@ public class MapDataController {
 
         jurisdictionsPublishSubject = ThrottleablePublishSubject.create();
         configurationPublishSubject = PublishSubject.create();
+        fetchAdvisories = true;
 
         setupSubscriptions(configuration);
     }
@@ -194,6 +197,12 @@ public class MapDataController {
                     @Override
                     public List<AirMapRuleset> call(Pair<List<AirMapRuleset>, List<AirMapRuleset>> pair) {
                         return pair.second;
+                    }
+                })
+                .filter(new Func1<List<AirMapRuleset>, Boolean>() {
+                    @Override
+                    public Boolean call(List<AirMapRuleset> rulesets) {
+                        return fetchAdvisories;
                     }
                 })
                 .flatMap(convertRulesetsToAdvisories())
@@ -372,6 +381,10 @@ public class MapDataController {
 
     public List<AirMapRuleset> getSelectedRulesets() {
         return CopyCollections.copy(selectedRulesets);
+    }
+
+    public void disableAdvisories() {
+        fetchAdvisories = false;
     }
 
     public void onMapReset() {
