@@ -461,11 +461,11 @@ public class Utils {
                     }
                 }
             }
+            return builder.substring(0, Math.min(1000, builder.length() - 2));
         } catch (IOException e) {
             Timber.e(e, "getMapboxLogs failed");
+            return "";
         }
-
-        return builder.substring(0, Math.min(1000, builder.length() - 2));
     }
 
     public static boolean checkAndStartIntent(Context context, Intent intent) {
