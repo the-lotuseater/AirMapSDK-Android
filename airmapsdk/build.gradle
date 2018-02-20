@@ -67,6 +67,7 @@ dependencies {
     compile 'com.googlecode.libphonenumber:libphonenumber:8.8.2'
     compile 'online.devliving:securedpreferencestore:0.3.1' // Newer version available, but updating requires making some api changes within our code
     compile 'com.auth0.android:lock:2.8.0'
+    compile 'com.auth0.android:auth0:1.12.1'
 
     // other
     compile 'com.squareup.okhttp3:okhttp:3.9.1' // Upgrade to 3.10.0 as soon as it is released to fix TLS None crash
