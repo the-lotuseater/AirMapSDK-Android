@@ -31,7 +31,6 @@ import com.mapbox.services.commons.geojson.Feature;
 import com.mapbox.services.commons.models.Position;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -368,28 +367,24 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         }
     }
 
-    private void zoomToFeatureIfNecessary(Feature featureClicked) {
-        try {
-            LatLngBounds cameraBounds = map.getProjection().getVisibleRegion().latLngBounds;
-            LatLngBounds.Builder advisoryLatLngsBuilder = new LatLngBounds.Builder();
-            boolean zoom = false;
+    private void zoomToFeatureIfNecessary(@NonNull Feature featureClicked) {
+        LatLngBounds cameraBounds = map.getProjection().getVisibleRegion().latLngBounds;
+        LatLngBounds.Builder advisoryLatLngsBuilder = new LatLngBounds.Builder();
+        boolean zoom = false;
 
-            List<Position> positions = Utils.getPositionsFromFeature((ArrayList) featureClicked.getGeometry().getCoordinates());
-            for (Position position : positions) {
-                LatLng latLng = new LatLng(position.getLatitude(), position.getLongitude());
-                advisoryLatLngsBuilder.include(latLng);
-                if (!cameraBounds.contains(latLng)) {
-                    Timber.w("Camera position doesn't contain point");
-                    zoom = true;
-                }
+        List<Position> positions = Utils.getPositionsFromFeature((ArrayList) featureClicked.getGeometry().getCoordinates());
+        for (Position position : positions) {
+            LatLng latLng = new LatLng(position.getLatitude(), position.getLongitude());
+            advisoryLatLngsBuilder.include(latLng);
+            if (!cameraBounds.contains(latLng)) {
+                Timber.w("Camera position doesn't contain point");
+                zoom = true;
             }
+        }
 
-            if (zoom) {
-                int padding = Utils.dpToPixels(getContext(), 72).intValue();
-                map.animateCamera(CameraUpdateFactory.newLatLngBounds(advisoryLatLngsBuilder.build(), padding));
-            }
-        } catch (ClassCastException e) {
-            Timber.e(e, "Unable to get feature geometry");
+        if (zoom) {
+            int padding = Utils.dpToPixels(getContext(), 72).intValue();
+            map.animateCamera(CameraUpdateFactory.newLatLngBounds(advisoryLatLngsBuilder.build(), padding));
         }
     }
 
@@ -405,8 +400,10 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                 featureToHighlight = feature;
             }
         }
-        mapStyleController.highlight(featureToHighlight, advisory);
-        zoomToFeatureIfNecessary(featureToHighlight);
+        if (featureToHighlight != null) {
+            mapStyleController.highlight(featureToHighlight, advisory);
+            zoomToFeatureIfNecessary(featureToHighlight);
+        }
     }
 
     public void unhighlight() {
