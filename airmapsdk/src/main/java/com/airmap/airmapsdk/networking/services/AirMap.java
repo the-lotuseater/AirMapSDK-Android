@@ -648,13 +648,9 @@ public final class AirMap {
     /**
      * End a flight belonging to the logged in pilot
      *
-     * @param flight   The flight to close
+     * @param flightId The ID of the flight to close
      * @param callback The callback that is invoked on success or error
      */
-    public static Call endFlight(@NonNull AirMapFlight flight, @Nullable AirMapCallback<AirMapFlight> callback) {
-        return FlightService.endFlight(flight, callback);
-    }
-
     public static Call endFlight(@NonNull String flightId, @Nullable AirMapCallback<AirMapFlight> callback) {
         return FlightService.endFlight(flightId, callback);
     }

@@ -153,7 +153,7 @@ public class Tests extends AndroidTestCase {
             @Override
             public void onSuccess(List<AirMapFlight> response) {
                 for (final AirMapFlight flight : response) {
-                    AirMap.endFlight(flight, new AirMapCallback<AirMapFlight>() {
+                    AirMap.endFlight(flight.getFlightId(), new AirMapCallback<AirMapFlight>() {
                         @Override
                         public void onSuccess(AirMapFlight response) {
                             assertNotNull(response);
