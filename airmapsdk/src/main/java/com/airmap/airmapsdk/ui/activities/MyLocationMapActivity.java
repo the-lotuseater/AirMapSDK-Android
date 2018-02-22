@@ -371,6 +371,10 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         turnOnLocation();
     }
 
+    protected Location getMyLocation() {
+        return locationLayerPlugin.getLastKnownLocation();
+    }
+
     protected abstract AirMapMapView getMapView();
 
     public void setMapView(AirMapMapView mapView) {
