@@ -7,7 +7,7 @@ def libVersion = '2.0.0-beta.6'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.2'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 27
