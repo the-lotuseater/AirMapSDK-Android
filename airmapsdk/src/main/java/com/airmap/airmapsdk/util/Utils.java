@@ -159,7 +159,7 @@ public class Utils {
             DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
             DateTime dateTime = dateTimeFormatter.parseDateTime(iso8601);
             return dateTime.toDate();
-        } catch (UnsupportedOperationException | IllegalArgumentException e) {
+        } catch (Exception e) {
             Timber.e(e, "Error parsing date: %s", iso8601);
         }
         return null;
@@ -461,11 +461,11 @@ public class Utils {
                     }
                 }
             }
+            return builder.substring(0, Math.min(1000, builder.length() - 2));
         } catch (IOException e) {
             Timber.e(e, "getMapboxLogs failed");
+            return "";
         }
-
-        return builder.substring(0, Math.min(1000, builder.length() - 2));
     }
 
     public static boolean checkAndStartIntent(Context context, Intent intent) {

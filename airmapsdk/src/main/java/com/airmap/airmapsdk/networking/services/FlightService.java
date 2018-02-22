@@ -187,14 +187,9 @@ class FlightService extends BaseService {
     /**
      * End a flight
      *
-     * @param flight   The flight to end
+     * @param flightId   The ID of the flight to end
      * @param listener The callback that is invoked on success or error
      */
-    static Call endFlight(AirMapFlight flight, AirMapCallback<AirMapFlight> listener) {
-        String url = String.format(flightEndUrl, flight.getFlightId());
-        return AirMap.getClient().post(url, new GenericOkHttpCallback(listener, AirMapFlight.class));
-    }
-
     static Call endFlight(String flightId, AirMapCallback<AirMapFlight> listener) {
         String url = String.format(flightEndUrl, flightId);
         return AirMap.getClient().post(url, new GenericOkHttpCallback(listener, AirMapFlight.class));

@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import timber.log.Timber;
 
 public class GenericOkHttpCallback extends GenericBaseOkHttpCallback {
@@ -20,18 +21,24 @@ public class GenericOkHttpCallback extends GenericBaseOkHttpCallback {
 
     @Override
     public void onResponse(Call call, Response response) {
+        ResponseBody body = response.body();
         if (listener == null) {
+            if (body != null) {
+                body.close();
+            }
             return; //Don't need to do anything if no listener was provided
         }
 
         String jsonString;
         try {
-            jsonString = response.body().string();
-        } catch (IOException e) {
+            jsonString = body.string();
+        } catch (Exception e) {
             failed(e);
             return;
         } finally {
-            response.body().close();
+            if (body != null) {
+                body.close();
+            }
         }
 
         JSONObject result = null;

@@ -2,6 +2,7 @@ package com.airmap.airmapsdk.controllers;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.airmap.airmapsdk.AirMapException;
@@ -14,7 +15,6 @@ import com.airmap.airmapsdk.models.map.MapStyle;
 import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.AirMap;
-import com.airmap.airmapsdk.networking.services.BaseService;
 import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
 import com.airmap.airmapsdk.util.AirMapConstants;
@@ -25,7 +25,6 @@ import com.mapbox.mapboxsdk.style.layers.Filter;
 import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
-import com.mapbox.mapboxsdk.style.layers.PropertyValue;
 import com.mapbox.mapboxsdk.style.sources.TileSet;
 import com.mapbox.mapboxsdk.style.sources.VectorSource;
 import com.mapbox.services.commons.geojson.Feature;
@@ -243,27 +242,27 @@ public class MapStyleController implements MapView.OnMapChangedListener {
         map.getMap().removeSource(sourceId);
     }
 
-    public void highlight(Feature feature, AirMapAdvisory advisory) {
-            // remove old highlight
-            if (highlightLayer != null) {
-                Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
-                highlightLayer.setFilter(filter);
-            }
-
-            // add new highlight
-            String sourceId = feature.getStringProperty("ruleset_id");
-            highlightLayer = map.getMap().getLayerAs("airmap|highlight|line|" + sourceId);
-            highlightLayer.setSourceLayer(sourceId + "_" + advisory.getType().toString());
-
-            // feature's airspace_id can be an int or string (tile server bug), so match on either
-            Filter.Statement filter;
-            try {
-                int airspaceId = Integer.parseInt(advisory.getId());
-                filter = Filter.any(Filter.eq("airspace_id", advisory.getId()), Filter.eq("airspace_id", airspaceId));
-            } catch (NumberFormatException e) {
-                filter = Filter.any(Filter.eq("airspace_id", advisory.getId()));
-            }
+    public void highlight(@NonNull Feature feature, AirMapAdvisory advisory) {
+        // remove old highlight
+        if (highlightLayer != null) {
+            Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
             highlightLayer.setFilter(filter);
+        }
+
+        // add new highlight
+        String sourceId = feature.getStringProperty("ruleset_id");
+        highlightLayer = map.getMap().getLayerAs("airmap|highlight|line|" + sourceId);
+        highlightLayer.setSourceLayer(sourceId + "_" + advisory.getType().toString());
+
+        // feature's airspace_id can be an int or string (tile server bug), so match on either
+        Filter.Statement filter;
+        try {
+            int airspaceId = Integer.parseInt(advisory.getId());
+            filter = Filter.any(Filter.eq("airspace_id", advisory.getId()), Filter.eq("airspace_id", airspaceId));
+        } catch (NumberFormatException e) {
+            filter = Filter.any(Filter.eq("airspace_id", advisory.getId()));
+        }
+        highlightLayer.setFilter(filter);
     }
 
     public void highlight(Feature feature) {
