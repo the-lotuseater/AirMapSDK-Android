@@ -372,7 +372,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
     }
 
     protected Location getMyLocation() {
-        return locationLayerPlugin.getLastKnownLocation();
+        return locationLayerPlugin != null ? locationLayerPlugin.getLastKnownLocation() : null;
     }
 
     protected abstract AirMapMapView getMapView();
