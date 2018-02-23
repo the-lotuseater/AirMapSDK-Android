@@ -97,7 +97,7 @@ public class AirMapConfig {
             return AirMap.getConfig().getJSONObject("app").getString("about_url");
         } catch (JSONException e) {
             Timber.w(e, "No About URL found in airmap.config.json using fallback");
-            return "https://" + getDomain() + "/about-us";
+            return "https://" + getDomain();
         }
     }
 
