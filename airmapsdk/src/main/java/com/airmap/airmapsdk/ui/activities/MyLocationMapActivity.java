@@ -117,8 +117,12 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             case REQUEST_TURN_ON_LOCATION: {
                 if (resultCode == Activity.RESULT_OK) {
                     Timber.i("Location setting turned on by user");
-                    locationEngine.getLastLocation();
-                    locationEngine.requestLocationUpdates();
+                    if (locationEngine != null) {
+                        locationEngine.getLastLocation();
+                        locationEngine.requestLocationUpdates();
+                    } else if (getMapView().getMap() != null) {
+                        setupLocationEngine();
+                    }
                 } else {
                     Timber.i("Location setting not turned on by user");
                     hasLoadedMyLocation = true;
@@ -200,23 +204,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             getMapView().getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(savedLatitude, savedLongitude), 13));
         }
 
-        locationEngine = AirMapLocationEngine.getLocationEngine(this);
-        locationEngine.setLocationRequest(locationRequest);
-        locationEngine.addLocationEngineListener(this);
-        locationEngine.activate();
-
-        try {
-            locationLayerPlugin = new LocationLayerPlugin(getMapView(), getMapView().getMap(), locationEngine, R.style.CustomLocationLayer);
-
-            if (requestLocationPermissionIfNeeded()) {
-                locationLayerPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
-            }
-        } catch (CannotAddLayerException | CannotAddSourceException e) {
-            Timber.e(e, "Unable to add location layer");
-            Analytics.report(e);
-        }
-
-        turnOnLocation();
+        setupLocationEngine();
     }
 
     @Override
@@ -290,6 +278,31 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         }
     }
 
+    @SuppressLint("MissingPermission")
+    private void setupLocationEngine() {
+        if (!requestLocationPermissionIfNeeded()) {
+            return;
+        }
+
+        locationEngine = AirMapLocationEngine.getLocationEngine(this);
+        locationEngine.setLocationRequest(locationRequest);
+        locationEngine.addLocationEngineListener(this);
+        locationEngine.activate();
+
+        try {
+            locationLayerPlugin = new LocationLayerPlugin(getMapView(), getMapView().getMap(), locationEngine, R.style.CustomLocationLayer);
+
+            if (requestLocationPermissionIfNeeded()) {
+                locationLayerPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
+            }
+        } catch (CannotAddLayerException | CannotAddSourceException e) {
+            Timber.e(e, "Unable to add location layer");
+            Analytics.report(e);
+        }
+
+        turnOnLocation();
+    }
+
     private boolean requestLocationPermissionIfNeeded() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
@@ -328,11 +341,17 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             @SuppressLint("MissingPermission")
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                if (!requestLocationPermissionIfNeeded()) {
+                    return;
+                }
+
                 // All location settings are satisfied. The client can initialize
                 // location requests here.
                 if (locationEngine != null) {
                     locationEngine.getLastLocation();
                     locationEngine.requestLocationUpdates();
+                } else if (getMapView().getMap() != null) {
+                    setupLocationEngine();
                 }
             }
         });

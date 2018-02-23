@@ -400,6 +400,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                 featureToHighlight = feature;
             }
         }
+
         if (featureToHighlight != null) {
             mapStyleController.highlight(featureToHighlight, advisory);
             zoomToFeatureIfNecessary(featureToHighlight);
