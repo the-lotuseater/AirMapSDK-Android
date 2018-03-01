@@ -84,8 +84,8 @@ public class BaseService {
     protected static final String situationalAwarenessChannel = "uav/traffic/sa/%s"; //Replace %s with id using String.format
 
     //Telemetry
-    protected static final String telemetryBaseUrl = "api-udp-telemetry." + (STAGING ? "stage." : "") + getDomain();
-    protected static final int telemetryPort = 16060;
+    protected static final String telemetryBaseUrl = STAGING ? ("api.k8s.stage.airmap.com") : ("api-udp-telemetry." + (STAGING ? "stage." : "") + getDomain());
+    protected static final int telemetryPort = STAGING ? 32003 : 16060;
 
     //Auth
     protected static final String loginUrl = "https://" + getAuth0Host() + "/delegation";
