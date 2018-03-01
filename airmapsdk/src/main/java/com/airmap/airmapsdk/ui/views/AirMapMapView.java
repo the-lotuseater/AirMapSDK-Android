@@ -140,7 +140,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                 map.addOnMapClickListener(AirMapMapView.this);
                 map.getUiSettings().setLogoGravity(Gravity.BOTTOM | Gravity.END); // Move to bottom right
                 map.getUiSettings().setAttributionGravity(Gravity.BOTTOM | Gravity.END); // Move to bottom right
-
+                map.setPrefetchesTiles(true);
                 mapStyleController.onMapReady();
                 if (callback != null) {
                     callback.onMapReady(mapboxMap);
