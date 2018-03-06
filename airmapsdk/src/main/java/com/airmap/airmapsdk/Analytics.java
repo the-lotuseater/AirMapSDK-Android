@@ -26,9 +26,9 @@ public class Analytics {
         }
     }
 
-    public static void report(Exception e) {
+    public static void report(Throwable t) {
         if (tracker != null) {
-            tracker.report(e);
+            tracker.report(t);
         }
     }
 

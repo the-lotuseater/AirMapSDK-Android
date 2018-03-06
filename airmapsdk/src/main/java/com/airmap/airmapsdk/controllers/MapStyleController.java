@@ -182,9 +182,17 @@ public class MapStyleController implements MapView.OnMapChangedListener {
             highlightLayer.setProperties(PropertyFactory.lineWidth(4f));
             highlightLayer.setProperties(PropertyFactory.lineOpacity(0.9f));
             Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
-            highlightLayer.setFilter(filter);
 
-            map.getMap().addLayer(highlightLayer);
+            try {
+                highlightLayer.setFilter(filter);
+                map.getMap().addLayer(highlightLayer);
+            } catch (Throwable t) {
+                // https://github.com/mapbox/mapbox-gl-native/issues/10947
+                // https://github.com/mapbox/mapbox-gl-native/issues/11264
+                // A layer is associated with a style, not the mapView/mapbox
+                Analytics.report(t);
+                t.printStackTrace();
+            }
         }
     }
 

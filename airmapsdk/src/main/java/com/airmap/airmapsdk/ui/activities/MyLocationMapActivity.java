@@ -290,9 +290,12 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         locationEngine.activate();
 
         try {
-            locationLayerPlugin = new LocationLayerPlugin(getMapView(), getMapView().getMap(), locationEngine, R.style.CustomLocationLayer);
+            // Only add the source if it doesn't already exist
+            if (getMapView().getMap().getSource("mapbox-location-source") == null) {
+                locationLayerPlugin = new LocationLayerPlugin(getMapView(), getMapView().getMap(), locationEngine, R.style.CustomLocationLayer);
+            }
 
-            if (requestLocationPermissionIfNeeded()) {
+            if (requestLocationPermissionIfNeeded() && locationLayerPlugin != null) {
                 locationLayerPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
             }
         } catch (CannotAddLayerException | CannotAddSourceException e) {
@@ -328,7 +331,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
 
     /**
      * This turns on Wifi/cell location tracking using Google Play services
-     * It shows a dismissable dialog for users that don't have location already enabled
+     * It shows a dismissible dialog for users that don't have location already enabled
      */
     public void turnOnLocation() {
         LocationSettingsRequest settingsRequest = new LocationSettingsRequest.Builder()
