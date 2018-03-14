@@ -16,7 +16,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
-import com.airmap.airmapsdk.AirMapLog;
 import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
@@ -41,9 +40,9 @@ import com.mapbox.services.android.telemetry.location.LocationEngine;
 import com.mapbox.services.android.telemetry.location.LocationEngineListener;
 import com.mapbox.services.android.telemetry.location.LocationEnginePriority;
 
-public abstract class MyLocationMapActivity extends AppCompatActivity implements LocationEngineListener, AirMapMapView.OnMapLoadListener {
+import timber.log.Timber;
 
-    private static final String TAG = "MyLocationMapActivity";
+public abstract class MyLocationMapActivity extends AppCompatActivity implements LocationEngineListener, AirMapMapView.OnMapLoadListener {
 
     private static final int REQUEST_LOCATION_PERMISSION = 7737;
     private static final int REQUEST_TURN_ON_LOCATION = 8849;
@@ -117,11 +116,15 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         switch (requestCode) {
             case REQUEST_TURN_ON_LOCATION: {
                 if (resultCode == Activity.RESULT_OK) {
-                    AirMapLog.d(TAG, "Location setting turned on by user");
-                    locationEngine.getLastLocation();
-                    locationEngine.requestLocationUpdates();
+                    Timber.i("Location setting turned on by user");
+                    if (locationEngine != null) {
+                        locationEngine.getLastLocation();
+                        locationEngine.requestLocationUpdates();
+                    } else if (getMapView().getMap() != null) {
+                        setupLocationEngine();
+                    }
                 } else {
-                    AirMapLog.d(TAG, "Location setting not turned on by user");
+                    Timber.i("Location setting not turned on by user");
                     hasLoadedMyLocation = true;
                 }
 
@@ -133,13 +136,13 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
 
     @Override
     public void onConnected() {
-        AirMapLog.d(TAG, "LocationEngine onConnected");
+        Timber.i("LocationEngine onConnected");
     }
 
 
     @Override
     public void onLocationChanged(Location location) {
-        AirMapLog.d(TAG, "LocationEngine onLocationChanged: " + location);
+        Timber.i("LocationEngine onLocationChanged: %s", location);
         zoomTo(location, false);
     }
 
@@ -168,7 +171,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
     private void zoomTo(Location location, boolean force) {
         // only zoom to user's location once
         if (!hasLoadedMyLocation || force) {
-            AirMapLog.e(TAG, "zoomTo: " + location);
+            Timber.i("zoomTo: %s", location);
 
             int duration = getMapView().getMap().getCameraPosition().zoom < 10 ? 2500 : 1000;
             getMapView().getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13), duration);
@@ -190,7 +193,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         if (hasLoadedMyLocation) {
             return;
         }
-        AirMapLog.e(TAG, "onMapLoaded");
+        Timber.i("onMapLoaded");
 
         // use saved location is there is one
         float savedLatitude = PreferenceManager.getDefaultSharedPreferences(this)
@@ -201,23 +204,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             getMapView().getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(savedLatitude, savedLongitude), 13));
         }
 
-        locationEngine = AirMapLocationEngine.getLocationEngine(this);
-        locationEngine.setLocationRequest(locationRequest);
-        locationEngine.addLocationEngineListener(this);
-        locationEngine.activate();
-
-        try {
-            locationLayerPlugin = new LocationLayerPlugin(getMapView(), getMapView().getMap(), locationEngine, R.style.CustomLocationLayer);
-
-            if (requestLocationPermissionIfNeeded()) {
-                locationLayerPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
-            }
-        } catch (CannotAddLayerException | CannotAddSourceException e) {
-            AirMapLog.e(TAG, "Unable to add location layer", e);
-            Analytics.report(e);
-        }
-
-        turnOnLocation();
+        setupLocationEngine();
     }
 
     @Override
@@ -226,7 +213,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             case INACCURATE_DATE_TIME_FAILURE:
                 // record issue in firebase & logs
                 Analytics.report(new Exception("Mapbox map failed to load due to invalid date/time"));
-                AirMapLog.e(TAG, "Mapbox map failed to load due to invalid date/time");
+                Timber.e("Mapbox map failed to load due to invalid date/time");
 
                 // ask user to enable "Automatic Date/Time"
                 new AlertDialog.Builder(this)
@@ -247,7 +234,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
                 // record issue in firebase & logs
                 String log = Utils.getMapboxLogs();
                 Analytics.report(new Exception("Mapbox map failed to load due to no network connection: " + log));
-                AirMapLog.e(TAG, "Mapbox map failed to load due to no network connection");
+                Timber.e("Mapbox map failed to load due to no network connection");
 
                 // check if dialog is already showing
                 if (isMapFailureDialogShowing) {
@@ -284,11 +271,39 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
                 // record issue in firebase & logs
                 String logs = Utils.getMapboxLogs();
                 Analytics.report(new Exception("Mapbox map failed to load due to unknown reason: " + logs));
-                AirMapLog.e(TAG, "Mapbox map failed to load due to unknown reason: " + logs);
+                Timber.e("Mapbox map failed to load due to unknown reason: %s", logs);
 
                 //TODO: show generic error to user?
                 break;
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void setupLocationEngine() {
+        if (!requestLocationPermissionIfNeeded()) {
+            return;
+        }
+
+        locationEngine = AirMapLocationEngine.getLocationEngine(this);
+        locationEngine.setLocationRequest(locationRequest);
+        locationEngine.addLocationEngineListener(this);
+        locationEngine.activate();
+
+        try {
+            // Only add the source if it doesn't already exist
+            if (getMapView().getMap().getSource("mapbox-location-source") == null) {
+                locationLayerPlugin = new LocationLayerPlugin(getMapView(), getMapView().getMap(), locationEngine, R.style.CustomLocationLayer);
+            }
+
+            if (requestLocationPermissionIfNeeded() && locationLayerPlugin != null) {
+                locationLayerPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
+            }
+        } catch (CannotAddLayerException | CannotAddSourceException e) {
+            Timber.e(e, "Unable to add location layer");
+            Analytics.report(e);
+        }
+
+        turnOnLocation();
     }
 
     private boolean requestLocationPermissionIfNeeded() {
@@ -316,7 +331,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
 
     /**
      * This turns on Wifi/cell location tracking using Google Play services
-     * It shows a dismissable dialog for users that don't have location already enabled
+     * It shows a dismissible dialog for users that don't have location already enabled
      */
     public void turnOnLocation() {
         LocationSettingsRequest settingsRequest = new LocationSettingsRequest.Builder()
@@ -329,11 +344,17 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
             @SuppressLint("MissingPermission")
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                if (!requestLocationPermissionIfNeeded()) {
+                    return;
+                }
+
                 // All location settings are satisfied. The client can initialize
                 // location requests here.
                 if (locationEngine != null) {
                     locationEngine.getLastLocation();
                     locationEngine.requestLocationUpdates();
+                } else if (getMapView().getMap() != null) {
+                    setupLocationEngine();
                 }
             }
         });
@@ -370,6 +391,10 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         }
 
         turnOnLocation();
+    }
+
+    protected Location getMyLocation() {
+        return locationLayerPlugin != null ? locationLayerPlugin.getLastKnownLocation() : null;
     }
 
     protected abstract AirMapMapView getMapView();
