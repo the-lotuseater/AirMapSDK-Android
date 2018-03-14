@@ -28,6 +28,7 @@ import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.layers.PropertyValue;
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.TileSet;
 import com.mapbox.mapboxsdk.style.sources.VectorSource;
 import com.mapbox.services.commons.geojson.Feature;
@@ -36,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Locale;
 
 import static com.airmap.airmapsdk.networking.services.MappingService.AirMapMapTheme.Dark;
 import static com.airmap.airmapsdk.networking.services.MappingService.AirMapMapTheme.Light;
@@ -87,6 +89,15 @@ public class MapStyleController implements MapView.OnMapChangedListener {
                     mapStyle = new MapStyle(map.getMap().getStyleJson());
                 } catch (JSONException e) {
                     AirMapLog.e(TAG, "Failed to parse style json", e);
+                }
+
+                // change labels to local if device is not in english
+                if (!Locale.ENGLISH.getLanguage().equals(Locale.getDefault().getLanguage())) {
+                    for (Layer layer : map.getMap().getLayers()) {
+                        if (layer instanceof SymbolLayer && (layer.getId().contains("label") || layer.getId().contains("place") || layer.getId().contains("poi"))) {
+                            layer.setProperties(PropertyFactory.textField("{name}"));
+                        }
+                    }
                 }
 
                 callback.onMapStyleLoaded();
