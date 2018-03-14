@@ -139,6 +139,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             public void onMapReady(MapboxMap mapboxMap) {
                 map = mapboxMap;
                 map.addOnMapClickListener(AirMapMapView.this);
+                map.setPrefetchesTiles(true);
                 map.getUiSettings().setLogoGravity(Gravity.BOTTOM | Gravity.END); // Move to bottom right
                 map.getUiSettings().setAttributionGravity(Gravity.BOTTOM | Gravity.END); // Move to bottom right
 
@@ -215,14 +216,14 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     @Override
     public void onMapClick(@NonNull LatLng point) {
-        if (advisoryClickListeners == null || advisoryClickListeners.isEmpty() || map.getCameraPosition().zoom < 10) {
+        if (advisoryClickListeners == null || advisoryClickListeners.isEmpty() || map.getCameraPosition().zoom < 11) {
             return;
         }
 
         PointF clickPoint = map.getProjection().toScreenLocation(point);
         int slop = Utils.dpToPixels(getContext(), 10).intValue();
         RectF clickRect = new RectF(clickPoint.x - slop, clickPoint.y - slop, clickPoint.x + slop, clickPoint.y + slop);
-        Filter.Statement filter = Filter.has("airspace_id");
+        Filter.Statement filter = Filter.has("id");
 
         final List<Feature> selectedFeatures = map.queryRenderedFeatures(clickRect, filter);
         if (selectedFeatures.isEmpty()) {
@@ -241,7 +242,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             }
 
             for (AirMapAdvisory advisory : allAdvisories) {
-                if (advisory.getId().equals(feature.getStringProperty("airspace_id"))) {
+                if (advisory.getId().equals(feature.getStringProperty("id"))) {
                     // set as the clicked advisory based on size/importance
                     if (advisoryClicked == null || hasHigherPriority(advisory, advisoryClicked)) {
                         featureClicked = feature;
@@ -299,7 +300,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                         }
 
                         for (AirMapAdvisory advisory : status.getAdvisories()) {
-                            if (advisory.getId().equals(feature.getStringProperty("airspace_id"))) {
+                            if (advisory.getId().equals(feature.getStringProperty("id"))) {
                                 // set as the clicked advisory based on size/importance
                                 if (advisoryClicked == null || hasHigherPriority(advisory, advisoryClicked)) {
                                     featureClicked = feature;
@@ -383,7 +384,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
             if (zoom) {
                 int padding = Utils.dpToPixels(getContext(), 72).intValue();
-                map.animateCamera(CameraUpdateFactory.newLatLngBounds(advisoryLatLngsBuilder.build(), padding));
+                map.moveCamera(CameraUpdateFactory.newLatLngBounds(advisoryLatLngsBuilder.build(), padding));
             }
         } catch (ClassCastException e) {
             AirMapLog.e(TAG, "Unable to get feature geometry", e);
@@ -392,18 +393,16 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     public void highlight(AirMapAdvisory advisory) {
         RectF mapRectF = new RectF(getLeft(), getTop(), getRight(), getBottom());
-        Filter.Statement filter = Filter.has("airspace_id");
+        Filter.Statement filter = Filter.has("id");
         List<Feature> selectedFeatures = map.queryRenderedFeatures(mapRectF, filter);
 
-        Feature featureToHighlight = null;
-
         for (Feature feature : selectedFeatures) {
-            if (advisory.getId().equals(feature.getStringProperty("airspace_id"))) {
-                featureToHighlight = feature;
+            if (advisory.getId().equals(feature.getStringProperty("id"))) {
+                mapStyleController.highlight(feature, advisory);
+                zoomToFeatureIfNecessary(feature);
+                break;
             }
         }
-        mapStyleController.highlight(featureToHighlight, advisory);
-        zoomToFeatureIfNecessary(featureToHighlight);
     }
 
     public void unhighlight() {

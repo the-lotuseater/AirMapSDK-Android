@@ -2,6 +2,7 @@ package com.airmap.airmapsdk.controllers;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.airmap.airmapsdk.AirMapException;
@@ -60,12 +61,12 @@ public class MapStyleController implements MapView.OnMapChangedListener {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(map.getContext());
         String savedTheme = prefs.getString(AirMapConstants.MAP_STYLE, MappingService.AirMapMapTheme.Standard.toString());
         currentTheme = MappingService.AirMapMapTheme.fromString(savedTheme);
-
-        map.addOnMapChangedListener(this);
     }
 
     public void onMapReady() {
         loadStyleJSON();
+
+        map.addOnMapChangedListener(this);
     }
 
     @Override
@@ -179,14 +180,24 @@ public class MapStyleController implements MapView.OnMapChangedListener {
         }
 
         // add highlight layer
-        LineLayer highlightLayer = new LineLayer("airmap|highlight|line|" + sourceId, sourceId);
-        highlightLayer.setProperties(PropertyFactory.lineColor("#f9e547"));
-        highlightLayer.setProperties(PropertyFactory.lineWidth(4f));
-        highlightLayer.setProperties(PropertyFactory.lineOpacity(0.9f));
-        Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
-        highlightLayer.setFilter(filter);
+        if (map.getMap().getLayer("airmap|highlight|line|" + sourceId) == null) {
+            LineLayer highlightLayer = new LineLayer("airmap|highlight|line|" + sourceId, sourceId);
+            highlightLayer.setProperties(PropertyFactory.lineColor("#f9e547"));
+            highlightLayer.setProperties(PropertyFactory.lineWidth(4f));
+            highlightLayer.setProperties(PropertyFactory.lineOpacity(0.9f));
+            Filter.Statement filter = Filter.all(Filter.eq("id", "x"));
 
-        map.getMap().addLayer(highlightLayer);
+            try {
+                highlightLayer.setFilter(filter);
+                map.getMap().addLayer(highlightLayer);
+            } catch (Throwable t) {
+                // https://github.com/mapbox/mapbox-gl-native/issues/10947
+                // https://github.com/mapbox/mapbox-gl-native/issues/11264
+                // A layer is associated with a style, not the mapView/mapbox
+                Analytics.report(new Exception(t));
+                t.printStackTrace();
+            }
+        }
     }
 
     private void addTfrFilter(Layer layer) {
@@ -243,36 +254,36 @@ public class MapStyleController implements MapView.OnMapChangedListener {
         map.getMap().removeSource(sourceId);
     }
 
-    public void highlight(Feature feature, AirMapAdvisory advisory) {
-            // remove old highlight
-            if (highlightLayer != null) {
-                Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
-                highlightLayer.setFilter(filter);
-            }
-
-            // add new highlight
-            String sourceId = feature.getStringProperty("ruleset_id");
-            highlightLayer = map.getMap().getLayerAs("airmap|highlight|line|" + sourceId);
-            highlightLayer.setSourceLayer(sourceId + "_" + advisory.getType().toString());
-
-            // feature's airspace_id can be an int or string (tile server bug), so match on either
-            Filter.Statement filter;
-            try {
-                int airspaceId = Integer.parseInt(advisory.getId());
-                filter = Filter.any(Filter.eq("airspace_id", advisory.getId()), Filter.eq("airspace_id", airspaceId));
-            } catch (NumberFormatException e) {
-                filter = Filter.any(Filter.eq("airspace_id", advisory.getId()));
-            }
+    public void highlight(@NonNull Feature feature, AirMapAdvisory advisory) {
+        // remove old highlight
+        if (highlightLayer != null) {
+            Filter.Statement filter = Filter.all(Filter.eq("id", "x"));
             highlightLayer.setFilter(filter);
+        }
+
+        // add new highlight
+        String sourceId = feature.getStringProperty("ruleset_id");
+        highlightLayer = map.getMap().getLayerAs("airmap|highlight|line|" + sourceId);
+        highlightLayer.setSourceLayer(sourceId + "_" + advisory.getType().toString());
+
+        // feature's airspace_id can be an int or string (tile server bug), so match on either
+        Filter.Statement filter;
+        try {
+            int airspaceId = Integer.parseInt(advisory.getId());
+            filter = Filter.any(Filter.eq("id", advisory.getId()), Filter.eq("id", airspaceId));
+        } catch (NumberFormatException e) {
+            filter = Filter.any(Filter.eq("id", advisory.getId()));
+        }
+        highlightLayer.setFilter(filter);
     }
 
     public void highlight(Feature feature) {
-        String id = feature.getStringProperty("airspace_id");
+        String id = feature.getStringProperty("id");
         String type = feature.getStringProperty("category");
 
         // remove old highlight
         if (highlightLayer != null) {
-            Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
+            Filter.Statement filter = Filter.all(Filter.eq("id", "x"));
             highlightLayer.setFilter(filter);
         }
 
@@ -285,16 +296,16 @@ public class MapStyleController implements MapView.OnMapChangedListener {
         Filter.Statement filter;
         try {
             int airspaceId = Integer.parseInt(id);
-            filter = Filter.any(Filter.eq("airspace_id", id), Filter.eq("airspace_id", airspaceId));
+            filter = Filter.any(Filter.eq("id", id), Filter.eq("id", airspaceId));
         } catch (NumberFormatException e) {
-            filter = Filter.any(Filter.eq("airspace_id", id));
+            filter = Filter.any(Filter.eq("id", id));
         }
         highlightLayer.setFilter(filter);
     }
 
     public void unhighlight() {
         if (highlightLayer != null) {
-            Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
+            Filter.Statement filter = Filter.all(Filter.eq("id", "x"));
             highlightLayer.setFilter(filter);
         }
     }
