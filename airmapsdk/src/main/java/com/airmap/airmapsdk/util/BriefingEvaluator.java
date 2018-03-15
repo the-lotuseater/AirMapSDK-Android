@@ -140,6 +140,7 @@ public class BriefingEvaluator {
 
     public static LinkedHashMap<AirMapRule.Status,List<AirMapRule>> getRulesWithFlightFeatures(AirMapRuleset ruleset, AirMapEvaluation evaluation) {
         LinkedHashMap<AirMapRule.Status,List<AirMapRule>> ruleStatusMap = new LinkedHashMap<>();
+        // pre-populate status for correct order
         ruleStatusMap.put(AirMapRule.Status.Conflicting, new ArrayList<AirMapRule>());
         ruleStatusMap.put(AirMapRule.Status.MissingInfo, new ArrayList<AirMapRule>());
         ruleStatusMap.put(AirMapRule.Status.InformationRules, new ArrayList<AirMapRule>());
@@ -163,6 +164,13 @@ public class BriefingEvaluator {
 
             rules.add(rule);
             ruleStatusMap.put(rule.getStatus(), rules);
+        }
+
+        // strip out empty sections
+        for (AirMapRule.Status status : new HashSet<>(ruleStatusMap.keySet())) {
+            if (ruleStatusMap.get(status).isEmpty()) {
+                ruleStatusMap.remove(status);
+            }
         }
 
         return ruleStatusMap;
