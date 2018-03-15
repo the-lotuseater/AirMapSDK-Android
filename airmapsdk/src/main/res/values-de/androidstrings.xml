@@ -24,7 +24,7 @@
   <string name="dew_point">Taupunkt</string>
   <string name="do_you_want_to_call"> %1$s anrufen?</string>
   <plurals name="duration_in_hours">
-    <item quantity="one">%1$s Stunde\n</item>
+    <item quantity="one">%1$s Stunde</item>
     <item quantity="other">%1$s Stunden</item>
   </plurals>
   <string name="duration_in_minutes">%1$s Minuten</string>

@@ -22,7 +22,8 @@
   <string name="dew_point">Rosný bod</string>
   <string name="do_you_want_to_call">Chcete volat %1$s?</string>
   <plurals name="duration_in_hours">
-    <item quantity="zero">%1$s hodina\n%1$s hodiny</item>
+    <item quantity="one">%1$s hodina</item>
+    <item quantity="other">%1$s hodiny</item>
   </plurals>
   <string name="duration_in_minutes">%1$s minut</string>
   <string name="email_verification_required">Vyžadováno ověření emailem</string>
