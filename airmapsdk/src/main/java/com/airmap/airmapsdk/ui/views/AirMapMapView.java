@@ -1,6 +1,7 @@
 package com.airmap.airmapsdk.ui.views;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.provider.Settings;
@@ -12,6 +13,7 @@ import android.view.Gravity;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.Analytics;
+import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.controllers.MapDataController;
 import com.airmap.airmapsdk.controllers.MapStyleController;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
@@ -49,6 +51,12 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     private List<OnMapDataChangeListener> mapDataChangeListeners;
     private List<OnAdvisoryClickListener> advisoryClickListeners;
 
+    public AirMapMapView(@NonNull Context context, Configuration configuration, @Nullable MappingService.AirMapMapTheme mapTheme) {
+        super(context);
+
+        init(configuration, mapTheme);
+    }
+
     public AirMapMapView(@NonNull Context context) {
         this(context, null, 0);
     }
@@ -60,11 +68,39 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     public AirMapMapView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
+        TypedArray a = context.getTheme().obtainStyledAttributes(
+                attrs,
+                R.styleable.AirMapMapView,
+                0, 0);
+
+        int mapThemeValue;
+        try {
+            mapThemeValue = a.getInteger(R.styleable.AirMapMapView_mapTheme, -1);
+        } finally {
+            a.recycle();
+        }
+
+        MappingService.AirMapMapTheme mapTheme = null;
+        switch (mapThemeValue) {
+            case 0:
+                mapTheme = MappingService.AirMapMapTheme.Standard;
+                break;
+            case 1:
+                mapTheme = MappingService.AirMapMapTheme.Dark;
+                break;
+            case 2:
+                mapTheme = MappingService.AirMapMapTheme.Light;
+                break;
+            case 3:
+                mapTheme = MappingService.AirMapMapTheme.Satellite;
+                break;
+        }
+
         Configuration defaultConfig = new AutomaticConfiguration();
-        init(defaultConfig);
+        init(defaultConfig, mapTheme);
     }
 
-    public void init(Configuration configuration) {
+    public void init(Configuration configuration, @Nullable MappingService.AirMapMapTheme mapTheme) {
         mapLoadListeners = new ArrayList<>();
         mapDataChangeListeners = new ArrayList<>();
         advisoryClickListeners = new ArrayList<>();
@@ -72,7 +108,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         // default data controller
         mapDataController = new MapDataController(this, configuration);
 
-        mapStyleController = new MapStyleController(this, new MapStyleController.Callback() {
+        mapStyleController = new MapStyleController(this, mapTheme, new MapStyleController.Callback() {
             @Override
             public void onMapStyleReset() {
                 mapDataController.onMapReset();

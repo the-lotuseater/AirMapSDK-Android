@@ -3,6 +3,7 @@ package com.airmap.airmapsdk.controllers;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.airmap.airmapsdk.AirMapException;
@@ -50,14 +51,18 @@ public class MapStyleController implements MapView.OnMapChangedListener {
     private Callback callback;
     private LineLayer highlightLayer;
 
-    public MapStyleController(AirMapMapView map, Callback callback) {
+    public MapStyleController(AirMapMapView map, @Nullable MappingService.AirMapMapTheme mapTheme, Callback callback) {
         this.map = map;
         this.callback = callback;
 
-        // use last used theme or Standard if none has be saved
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(map.getContext());
-        String savedTheme = prefs.getString(AirMapConstants.MAP_STYLE, MappingService.AirMapMapTheme.Standard.toString());
-        currentTheme = MappingService.AirMapMapTheme.fromString(savedTheme);
+        if (mapTheme != null) {
+            currentTheme = mapTheme;
+        } else {
+            // use last used theme or Standard if none has be saved
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(map.getContext());
+            String savedTheme = prefs.getString(AirMapConstants.MAP_STYLE, MappingService.AirMapMapTheme.Standard.toString());
+            currentTheme = MappingService.AirMapMapTheme.fromString(savedTheme);
+        }
     }
 
     public void onMapReady() {
