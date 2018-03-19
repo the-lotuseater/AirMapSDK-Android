@@ -85,8 +85,9 @@ public class BaseService {
 
     //Telemetry
 //    protected static final String telemetryBaseUrl = STAGING ? ("api.k8s.stage.airmap.com") : ("api-udp-telemetry." + (STAGING ? "stage." : "") + getDomain());
-    protected static final String telemetryBaseUrl = "api.k8s." + (STAGING ? "stage." : "") + getDomain();
-    protected static final int telemetryPort = STAGING ? 32003 : 16060;
+    protected static final String telemetryBaseUrl = "api.k8s.stage." + getDomain();
+//    protected static final String telemetryBaseUrl = "api.k8s." + (STAGING ? "stage." : "") + getDomain();
+    protected static final int telemetryPort = STAGING ? 32003 : 32003;
 
     //Auth
     protected static final String loginUrl = "https://" + getAuth0Host() + "/delegation";
