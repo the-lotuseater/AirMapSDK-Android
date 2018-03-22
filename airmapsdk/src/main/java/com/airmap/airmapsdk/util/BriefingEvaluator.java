@@ -3,7 +3,6 @@ package com.airmap.airmapsdk.util;
 import com.airmap.airmapsdk.models.flight.AirMapEvaluation;
 import com.airmap.airmapsdk.models.flight.AirMapFlightBriefing;
 import com.airmap.airmapsdk.models.flight.AirMapFlightFeature;
-import com.airmap.airmapsdk.models.flight.AirMapFlightPlan;
 import com.airmap.airmapsdk.models.rules.AirMapRule;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 
@@ -97,16 +96,6 @@ public class BriefingEvaluator {
         return flightFeatures;
     }
 
-    public static boolean isApplicableFlightFeature(AirMapRule rule, AirMapFlightFeature flightFeature) {
-        if (rule.getStatus() != AirMapRule.Status.NotConflicting) {
-            if (!flightFeature.isCalculated()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public static AirMapRule.Status getStatus(AirMapFlightBriefing briefing) {
         // set worst status to overall status
         AirMapRule.Status overallStatus = AirMapRule.Status.NotConflicting;
@@ -154,7 +143,7 @@ public class BriefingEvaluator {
 
             for (AirMapFlightFeature flightFeature : CopyCollections.copy(rule.getFlightFeatures())) {
                 AirMapFlightFeature evaluationFlightFeature = getFlightFeatureFromEvaluation(evaluation, flightFeature);
-                if (evaluationFlightFeature != null && isApplicableFlightFeature(rule, evaluationFlightFeature)) {
+                if (evaluationFlightFeature != null && !evaluationFlightFeature.isCalculated()) {
                     rule.getFlightFeatures().remove(flightFeature);
                     rule.getFlightFeatures().add(evaluationFlightFeature);
                 } else {
