@@ -26,6 +26,8 @@ import com.mapbox.mapboxsdk.style.layers.Filter;
 import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
+import com.mapbox.mapboxsdk.style.layers.PropertyValue;
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.TileSet;
 import com.mapbox.mapboxsdk.style.sources.VectorSource;
 import com.mapbox.services.commons.geojson.Feature;
@@ -34,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Locale;
 
 import timber.log.Timber;
 
@@ -89,6 +92,15 @@ public class MapStyleController implements MapView.OnMapChangedListener {
                     mapStyle = new MapStyle(map.getMap().getStyleJson());
                 } catch (JSONException e) {
                     Timber.e(e, "Failed to parse style json");
+                }
+
+                // change labels to local if device is not in english
+                if (!Locale.ENGLISH.getLanguage().equals(Locale.getDefault().getLanguage())) {
+                    for (Layer layer : map.getMap().getLayers()) {
+                        if (layer instanceof SymbolLayer && (layer.getId().contains("label") || layer.getId().contains("place") || layer.getId().contains("poi"))) {
+                            layer.setProperties(PropertyFactory.textField("{name}"));
+                        }
+                    }
                 }
 
                 callback.onMapStyleLoaded();
@@ -186,7 +198,7 @@ public class MapStyleController implements MapView.OnMapChangedListener {
             highlightLayer.setProperties(PropertyFactory.lineColor("#f9e547"));
             highlightLayer.setProperties(PropertyFactory.lineWidth(4f));
             highlightLayer.setProperties(PropertyFactory.lineOpacity(0.9f));
-            Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
+            Filter.Statement filter = Filter.all(Filter.eq("id", "x"));
 
             try {
                 highlightLayer.setFilter(filter);
@@ -195,7 +207,7 @@ public class MapStyleController implements MapView.OnMapChangedListener {
                 // https://github.com/mapbox/mapbox-gl-native/issues/10947
                 // https://github.com/mapbox/mapbox-gl-native/issues/11264
                 // A layer is associated with a style, not the mapView/mapbox
-                Analytics.report(t);
+                Analytics.report(new Exception(t));
                 t.printStackTrace();
             }
         }
@@ -258,7 +270,7 @@ public class MapStyleController implements MapView.OnMapChangedListener {
     public void highlight(@NonNull Feature feature, AirMapAdvisory advisory) {
         // remove old highlight
         if (highlightLayer != null) {
-            Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
+            Filter.Statement filter = Filter.all(Filter.eq("id", "x"));
             highlightLayer.setFilter(filter);
         }
 
@@ -271,20 +283,20 @@ public class MapStyleController implements MapView.OnMapChangedListener {
         Filter.Statement filter;
         try {
             int airspaceId = Integer.parseInt(advisory.getId());
-            filter = Filter.any(Filter.eq("airspace_id", advisory.getId()), Filter.eq("airspace_id", airspaceId));
+            filter = Filter.any(Filter.eq("id", advisory.getId()), Filter.eq("id", airspaceId));
         } catch (NumberFormatException e) {
-            filter = Filter.any(Filter.eq("airspace_id", advisory.getId()));
+            filter = Filter.any(Filter.eq("id", advisory.getId()));
         }
         highlightLayer.setFilter(filter);
     }
 
     public void highlight(Feature feature) {
-        String id = feature.getStringProperty("airspace_id");
+        String id = feature.getStringProperty("id");
         String type = feature.getStringProperty("category");
 
         // remove old highlight
         if (highlightLayer != null) {
-            Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
+            Filter.Statement filter = Filter.all(Filter.eq("id", "x"));
             highlightLayer.setFilter(filter);
         }
 
@@ -297,16 +309,16 @@ public class MapStyleController implements MapView.OnMapChangedListener {
         Filter.Statement filter;
         try {
             int airspaceId = Integer.parseInt(id);
-            filter = Filter.any(Filter.eq("airspace_id", id), Filter.eq("airspace_id", airspaceId));
+            filter = Filter.any(Filter.eq("id", id), Filter.eq("id", airspaceId));
         } catch (NumberFormatException e) {
-            filter = Filter.any(Filter.eq("airspace_id", id));
+            filter = Filter.any(Filter.eq("id", id));
         }
         highlightLayer.setFilter(filter);
     }
 
     public void unhighlight() {
         if (highlightLayer != null) {
-            Filter.Statement filter = Filter.all(Filter.eq("airspace_id", "x"));
+            Filter.Statement filter = Filter.all(Filter.eq("id", "x"));
             highlightLayer.setFilter(filter);
         }
     }
@@ -331,7 +343,6 @@ public class MapStyleController implements MapView.OnMapChangedListener {
 
     public interface Callback {
         void onMapStyleLoaded();
-
         void onMapStyleReset();
     }
 }

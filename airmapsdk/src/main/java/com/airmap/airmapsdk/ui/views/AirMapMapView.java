@@ -198,14 +198,14 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                         mapLoadListener.onMapFailed(MapFailure.NETWORK_CONNECTION_FAILURE);
                     }
 
-                    // Devices with an inaccurate date/time will not be able to load the mapbox map
-                    // If the "automatic date/time" is disabled on the device and the map fails to load, recommend the user enable it
+                // Devices with an inaccurate date/time will not be able to load the mapbox map
+                // If the "automatic date/time" is disabled on the device and the map fails to load, recommend the user enable it
                 } else if (Settings.Global.getInt(getContext().getContentResolver(), Settings.Global.AUTO_TIME, 0) == 0) {
                     for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
                         mapLoadListener.onMapFailed(MapFailure.INACCURATE_DATE_TIME_FAILURE);
                     }
 
-                    // check connection by requesting the styles json directly (async)
+                // check connection by requesting the styles json directly (async)
                 } else {
                     mapStyleController.checkConnection(new AirMapCallback<Void>() {
                         @Override
@@ -250,14 +250,14 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     @Override
     public void onMapClick(@NonNull LatLng point) {
-        if (advisoryClickListeners == null || advisoryClickListeners.isEmpty() || map.getCameraPosition().zoom < 10) {
+        if (advisoryClickListeners == null || advisoryClickListeners.isEmpty() || map.getCameraPosition().zoom < 11) {
             return;
         }
 
         PointF clickPoint = map.getProjection().toScreenLocation(point);
         int slop = Utils.dpToPixels(getContext(), 10).intValue();
         RectF clickRect = new RectF(clickPoint.x - slop, clickPoint.y - slop, clickPoint.x + slop, clickPoint.y + slop);
-        Filter.Statement filter = Filter.has("airspace_id");
+        Filter.Statement filter = Filter.has("id");
 
         final List<Feature> selectedFeatures = map.queryRenderedFeatures(clickRect, filter);
         if (selectedFeatures.isEmpty()) {
@@ -276,7 +276,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             }
 
             for (AirMapAdvisory advisory : allAdvisories) {
-                if (advisory.getId().equals(feature.getStringProperty("airspace_id"))) {
+                if (advisory.getId().equals(feature.getStringProperty("id"))) {
                     // set as the clicked advisory based on size/importance
                     if (advisoryClicked == null || hasHigherPriority(advisory, advisoryClicked)) {
                         featureClicked = feature;
@@ -298,7 +298,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                 advisoryClickListener.onAdvisoryClicked(advisoryClicked, new ArrayList<>(filteredAdvisories));
             }
 
-            // if feature doesn't have matching advisory, wait
+        // if feature doesn't have matching advisory, wait
         } else {
             // highlight the feature
             for (Feature feature : selectedFeatures) {
@@ -319,10 +319,8 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             // callback for when advisories are loaded
             addOnMapDataChangedListener(new OnMapDataChangeListener() {
                 int count = 0;
-
                 @Override
-                public void onRulesetsChanged(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets) {
-                }
+                public void onRulesetsChanged(List<AirMapRuleset> availableRulesets, List<AirMapRuleset> selectedRulesets) {}
 
                 @Override
                 public void onAdvisoryStatusChanged(AirMapAirspaceStatus status) {
@@ -336,7 +334,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                         }
 
                         for (AirMapAdvisory advisory : status.getAdvisories()) {
-                            if (advisory.getId().equals(feature.getStringProperty("airspace_id"))) {
+                            if (advisory.getId().equals(feature.getStringProperty("id"))) {
                                 // set as the clicked advisory based on size/importance
                                 if (advisoryClicked == null || hasHigherPriority(advisory, advisoryClicked)) {
                                     featureClicked = feature;
@@ -368,8 +366,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                 }
 
                 @Override
-                public void onAdvisoryStatusLoading() {
-                }
+                public void onAdvisoryStatusLoading() {}
             });
         }
     }
@@ -403,43 +400,43 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         }
     }
 
-    private void zoomToFeatureIfNecessary(@NonNull Feature featureClicked) {
-        LatLngBounds cameraBounds = map.getProjection().getVisibleRegion().latLngBounds;
-        LatLngBounds.Builder advisoryLatLngsBuilder = new LatLngBounds.Builder();
-        boolean zoom = false;
+    private void zoomToFeatureIfNecessary(Feature featureClicked) {
+        try {
+            LatLngBounds cameraBounds = map.getProjection().getVisibleRegion().latLngBounds;
+            LatLngBounds.Builder advisoryLatLngsBuilder = new LatLngBounds.Builder();
+            boolean zoom = false;
 
-        List<Position> positions = Utils.getPositionsFromFeature((ArrayList) featureClicked.getGeometry().getCoordinates());
-        for (Position position : positions) {
-            LatLng latLng = new LatLng(position.getLatitude(), position.getLongitude());
-            advisoryLatLngsBuilder.include(latLng);
-            if (!cameraBounds.contains(latLng)) {
-                Timber.w("Camera position doesn't contain point");
-                zoom = true;
+            List<Position> positions = Utils.getPositionsFromFeature((ArrayList) featureClicked.getGeometry().getCoordinates());
+            for (Position position : positions) {
+                LatLng latLng = new LatLng(position.getLatitude(), position.getLongitude());
+                advisoryLatLngsBuilder.include(latLng);
+                if (!cameraBounds.contains(latLng)) {
+                    Timber.d("Camera position doesn't contain point");
+                    zoom = true;
+                }
             }
-        }
 
-        if (zoom) {
-            int padding = Utils.dpToPixels(getContext(), 72).intValue();
-            map.animateCamera(CameraUpdateFactory.newLatLngBounds(advisoryLatLngsBuilder.build(), padding));
+            if (zoom) {
+                int padding = Utils.dpToPixels(getContext(), 72).intValue();
+                map.moveCamera(CameraUpdateFactory.newLatLngBounds(advisoryLatLngsBuilder.build(), padding));
+            }
+        } catch (ClassCastException e) {
+            Timber.e(e,"Unable to get feature geometry");
+            Analytics.report(e);
         }
     }
 
     public void highlight(AirMapAdvisory advisory) {
         RectF mapRectF = new RectF(getLeft(), getTop(), getRight(), getBottom());
-        Filter.Statement filter = Filter.has("airspace_id");
+        Filter.Statement filter = Filter.has("id");
         List<Feature> selectedFeatures = map.queryRenderedFeatures(mapRectF, filter);
 
-        Feature featureToHighlight = null;
-
         for (Feature feature : selectedFeatures) {
-            if (advisory.getId().equals(feature.getStringProperty("airspace_id"))) {
-                featureToHighlight = feature;
+            if (advisory.getId().equals(feature.getStringProperty("id"))) {
+                mapStyleController.highlight(feature, advisory);
+                zoomToFeatureIfNecessary(feature);
+                break;
             }
-        }
-
-        if (featureToHighlight != null) {
-            mapStyleController.highlight(featureToHighlight, advisory);
-            zoomToFeatureIfNecessary(featureToHighlight);
         }
     }
 
