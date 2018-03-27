@@ -17,7 +17,6 @@
 #}
 -keepattributes InnerClasses
 -dontoptimize
--keep class com.bumptech.glide.integration.okhttp3.OkHttpGlideModule
 
 
 # Proguard for Mapbox, might be unnecessary stuff in here. Copied from their sample app
@@ -62,13 +61,3 @@
 -keep class com.segment.analytics.** { *; }
 -keep class com.mapbox.mapboxandroiddemo.model.usermodel.** { *; }
 # Proguard for Mapbox, might be unnecessary stuff in here. Copied from their sample app
-
--keep public class * implements com.bumptech.glide.module.GlideModule
--keep public class * extends com.bumptech.glide.module.AppGlideModule
--keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
-  **[] $VALUES;
-  public *;
-}
-
-# for DexGuard only
--keepresourcexmlelements manifest/application/meta-data@value=GlideModule

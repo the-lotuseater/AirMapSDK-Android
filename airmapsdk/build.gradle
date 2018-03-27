@@ -72,9 +72,6 @@ dependencies {
     // other
     compile 'com.squareup.okhttp3:okhttp:3.10.0'
     compile 'com.jakewharton.timber:timber:4.6.0'
-    compile 'com.github.bumptech.glide:glide:4.6.1' //Using Glide instead of Picasso because it is more efficient for the app's tutorial images
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
-    compile 'com.nakama.arraypageradapter:arraypageradapter:0.1.1'
     compile 'org.bitbucket.b_c:jose4j:0.6.1'
     compile 'com.google.protobuf:protobuf-java:3.5.0'
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
