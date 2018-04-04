@@ -29,10 +29,6 @@ android {
     lintOptions {
         abortOnError false
     }
-
-    aaptOptions {
-        additionalParameters '--utf16' // Allows emoji in XML
-    }
 }
 
 dependencies {
