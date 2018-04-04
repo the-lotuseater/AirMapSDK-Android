@@ -406,8 +406,18 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             LatLngBounds.Builder advisoryLatLngsBuilder = new LatLngBounds.Builder();
             boolean zoom = false;
 
-            List<Position> positions = Utils.getPositionsFromFeature((ArrayList) featureClicked.getGeometry().getCoordinates());
-            for (Position position : positions) {
+            if (featureClicked.getGeometry().getCoordinates() instanceof ArrayList) {
+                List<Position> positions = Utils.getPositionsFromFeature((ArrayList) featureClicked.getGeometry().getCoordinates());
+                for (Position position : positions) {
+                    LatLng latLng = new LatLng(position.getLatitude(), position.getLongitude());
+                    advisoryLatLngsBuilder.include(latLng);
+                    if (!cameraBounds.contains(latLng)) {
+                        Timber.d("Camera position doesn't contain point");
+                        zoom = true;
+                    }
+                }
+            } else if (featureClicked.getGeometry().getCoordinates() instanceof Position) {
+                Position position = (Position) featureClicked.getGeometry().getCoordinates();
                 LatLng latLng = new LatLng(position.getLatitude(), position.getLongitude());
                 advisoryLatLngsBuilder.include(latLng);
                 if (!cameraBounds.contains(latLng)) {
