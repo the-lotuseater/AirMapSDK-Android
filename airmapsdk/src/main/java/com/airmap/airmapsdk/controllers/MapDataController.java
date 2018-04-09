@@ -82,14 +82,13 @@ public class MapDataController {
     private void setupSubscriptions(AirMapMapView.Configuration configuration) {
         // observes changes to jurisdictions (map bounds) to query rulesets for the region
         Observable<Map<String, AirMapRuleset>> jurisdictionsObservable = jurisdictionsPublishSubject.asObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .filter(new Func1<AirMapPolygon, Boolean>() {
                     @Override
                     public Boolean call(AirMapPolygon polygon) {
                         return map != null && map.getMap() != null;
                     }
                 })
+                .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Action1<AirMapPolygon>() {
                     @Override
                     public void call(AirMapPolygon polygon) {
@@ -98,6 +97,7 @@ public class MapDataController {
                         }
                     }
                 })
+                .observeOn(Schedulers.io())
                 .flatMap(getJurisdictions())
                 .filter(new Func1<List<AirMapJurisdiction>, Boolean>() {
                     @Override
@@ -136,7 +136,6 @@ public class MapDataController {
         // observes changes to preferred rulesets to trigger advisories fetch
         Observable<AirMapMapView.Configuration> configurationObservable = configurationPublishSubject
                 .startWith(configuration)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Action1<AirMapMapView.Configuration>() {
                     @Override
@@ -172,7 +171,7 @@ public class MapDataController {
                         return new Pair<>(availableRulesets, selectedRulesets);
                     }
                 })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .filter(new Func1<Pair<List<AirMapRuleset>, List<AirMapRuleset>>, Boolean>() {
                     @Override
