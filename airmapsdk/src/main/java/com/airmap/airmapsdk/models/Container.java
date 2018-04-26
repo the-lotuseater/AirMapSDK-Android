@@ -57,7 +57,11 @@ public abstract class Container {
         int padding = smallestWidth / 5;
         int topPadding = padding * 2;
 
-        map.animateCamera(CameraUpdateFactory.newLatLngBounds(getLatLngBoundsForZoom(), padding, topPadding, padding, topPadding), 200);
+        zoomTo(padding, topPadding, padding, topPadding);
+    }
+
+    public final void zoomTo(int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {
+        map.animateCamera(CameraUpdateFactory.newLatLngBounds(getLatLngBoundsForZoom(), paddingLeft, paddingTop, paddingRight, paddingBottom), 200);
     }
 
     public abstract void clear();
