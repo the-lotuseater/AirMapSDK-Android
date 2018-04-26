@@ -10,12 +10,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.controllers.MapDataController;
 import com.airmap.airmapsdk.controllers.MapStyleController;
+import com.airmap.airmapsdk.models.CircleContainer;
+import com.airmap.airmapsdk.models.Container;
 import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
@@ -29,7 +33,9 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.style.layers.Filter;
+import com.mapbox.services.api.utils.turf.TurfMeasurement;
 import com.mapbox.services.commons.geojson.Feature;
+import com.mapbox.services.commons.geojson.Point;
 import com.mapbox.services.commons.models.Position;
 
 import java.util.ArrayList;
@@ -616,6 +622,63 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             super(Type.MANUAL);
 
             this.selectedRulesets = selectedRulesets;
+        }
+    }
+
+    public static abstract class DragListener implements View.OnTouchListener {
+
+        private boolean isDragging;
+
+        private LatLng originLatLng;
+
+        public abstract void onDrag(PointF toPointF, LatLng toLatLng, LatLng fromLatLng);
+
+        public abstract void onFinishedDragging(PointF point, LatLng toLatLng, LatLng fromLatLng);
+
+        @Override
+        public final boolean onTouch(View v, MotionEvent event) {
+            if (event != null) {
+                if (event.getPointerCount() > 1) {
+                    //Don't drag if there are multiple fingers on screen
+                    return false;
+                }
+                float screenDensity = v.getContext().getResources().getDisplayMetrics().density;
+                PointF tapPoint = new PointF(event.getX(), event.getY());
+                float toleranceSides = 8 * screenDensity;
+                float toleranceTopBottom = 8 * screenDensity;
+                float averageIconWidth = 32 * screenDensity;
+                float averageIconHeight = 32 * screenDensity;
+                RectF tapRect = new RectF(tapPoint.x - averageIconWidth / 2 - toleranceSides,
+                        tapPoint.y - averageIconHeight / 2 - toleranceTopBottom,
+                        tapPoint.x + averageIconWidth / 2 + toleranceSides,
+                        tapPoint.y + averageIconHeight / 2 + toleranceTopBottom);
+
+                AirMapMapView mapView = (AirMapMapView) v;
+                MapboxMap map = mapView.getMap();
+
+                List<Feature> features = map.queryRenderedFeatures(tapRect, Container.POINT_LAYER, Container.MIDPOINT_LAYER);
+                if (!features.isEmpty() || isDragging) {
+                    boolean doneDragging = event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL;
+                    map.getUiSettings().setScrollGesturesEnabled(doneDragging);
+                    map.getUiSettings().setZoomGesturesEnabled(doneDragging);
+
+                    if (doneDragging) {
+                        LatLng latLng = map.getProjection().fromScreenLocation(tapPoint);
+                        onFinishedDragging(tapPoint, latLng, originLatLng);
+                        originLatLng = null;
+                        isDragging = false;
+                    } else {
+                        isDragging = true;
+                        LatLng latLng = map.getProjection().fromScreenLocation(tapPoint);
+                        if (event.getAction() == MotionEvent.ACTION_DOWN && originLatLng == null) {
+                            originLatLng = latLng;
+                        }
+                        onDrag(tapPoint, latLng, originLatLng);
+                    }
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
