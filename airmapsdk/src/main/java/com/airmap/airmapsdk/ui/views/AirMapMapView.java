@@ -4,10 +4,14 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -408,7 +412,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     private void zoomToFeatureIfNecessary(Feature featureClicked) {
         try {
-            LatLngBounds cameraBounds = map.getProjection().getVisibleRegion().latLngBounds;
+            LatLngBounds cameraBounds = getMap().getProjection().getVisibleRegion().latLngBounds;
             LatLngBounds.Builder advisoryLatLngsBuilder = new LatLngBounds.Builder();
             boolean zoom = false;
 
@@ -434,7 +438,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
             if (zoom) {
                 int padding = Utils.dpToPixels(getContext(), 72).intValue();
-                map.moveCamera(CameraUpdateFactory.newLatLngBounds(advisoryLatLngsBuilder.build(), padding));
+                getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(advisoryLatLngsBuilder.build(), padding));
             }
         } catch (ClassCastException e) {
             Timber.e(e,"Unable to get feature geometry");
@@ -445,7 +449,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     public void highlight(AirMapAdvisory advisory) {
         RectF mapRectF = new RectF(getLeft(), getTop(), getRight(), getBottom());
         Filter.Statement filter = Filter.has("id");
-        List<Feature> selectedFeatures = map.queryRenderedFeatures(mapRectF, filter);
+        List<Feature> selectedFeatures = getMap().queryRenderedFeatures(mapRectF, filter);
 
         for (Feature feature : selectedFeatures) {
             if (advisory.getId().equals(feature.getStringProperty("id"))) {
@@ -502,7 +506,12 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         }
     }
 
+    @UiThread
     public MapboxMap getMap() {
+        if (Looper.getMainLooper() != Looper.myLooper()) {
+            Timber.e("*** AirMapMapView accessed from a thread other than the UI-thread:" + Thread.currentThread());
+            Analytics.report(new Exception("AirMapMapView accessed from a thread other than the UI-thread: " + Thread.currentThread()));
+        }
         return map;
     }
 
@@ -628,7 +637,6 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     public static abstract class DragListener implements View.OnTouchListener {
 
         private boolean isDragging;
-
         private LatLng originLatLng;
 
         public abstract void onDrag(PointF toPointF, LatLng toLatLng, LatLng fromLatLng);
