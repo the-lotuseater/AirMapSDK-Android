@@ -671,17 +671,33 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                     map.getUiSettings().setZoomGesturesEnabled(doneDragging);
 
                     if (doneDragging) {
-                        LatLng latLng = map.getProjection().fromScreenLocation(tapPoint);
-                        onFinishedDragging(tapPoint, latLng, originLatLng);
-                        originLatLng = null;
-                        isDragging = false;
+                        // only finish drag if started with down on marker
+                        if (isDragging) {
+                            LatLng latLng = map.getProjection().fromScreenLocation(tapPoint);
+                            onFinishedDragging(tapPoint, latLng, originLatLng);
+                            originLatLng = null;
+                            isDragging = false;
+                        } else {
+                            map.getUiSettings().setScrollGesturesEnabled(true);
+                            map.getUiSettings().setZoomGesturesEnabled(true);
+                            return false;
+                        }
                     } else {
-                        isDragging = true;
+                        // starts with down press on marker
                         LatLng latLng = map.getProjection().fromScreenLocation(tapPoint);
                         if (event.getAction() == MotionEvent.ACTION_DOWN && originLatLng == null) {
                             originLatLng = latLng;
+                            isDragging = true;
                         }
-                        onDrag(tapPoint, latLng, originLatLng);
+
+                        // only drag if started with down on marker
+                        if (isDragging) {
+                            onDrag(tapPoint, latLng, originLatLng);
+                        } else {
+                            map.getUiSettings().setScrollGesturesEnabled(true);
+                            map.getUiSettings().setZoomGesturesEnabled(true);
+                            return false;
+                        }
                     }
                     return true;
                 }
