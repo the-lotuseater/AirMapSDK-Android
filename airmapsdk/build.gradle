@@ -48,7 +48,7 @@ dependencies {
     compile "com.android.support:support-v13:$supportLibraryVersion"
 
     // play services
-    def playServicesVersion = '15.0.0'
+    def playServicesVersion = '15.0.1'
     compile "com.google.android.gms:play-services-location:$playServicesVersion"
 
     // mapbox
