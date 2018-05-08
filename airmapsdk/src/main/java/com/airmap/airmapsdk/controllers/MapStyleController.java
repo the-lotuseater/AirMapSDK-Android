@@ -312,10 +312,20 @@ public class MapStyleController implements MapView.OnMapChangedListener {
 
     public void unhighlight() {
         if (highlightLayer != null) {
-            LineLayer oldHighlightLayer = map.getMap().getLayerAs(highlightLayer.getId());
-            if (oldHighlightLayer != null) {
-                Filter.Statement filter = Filter.all(Filter.eq("id", "x"));
-                oldHighlightLayer.setFilter(filter);
+            try {
+                LineLayer oldHighlightLayer = map.getMap().getLayerAs(highlightLayer.getId());
+                if (oldHighlightLayer != null) {
+                    Filter.Statement filter = Filter.all(Filter.eq("id", "x"));
+                    oldHighlightLayer.setFilter(filter);
+                }
+            } catch (RuntimeException e) {
+                for (Layer l : map.getMap().getLayers()) {
+                    if (l instanceof LineLayer) {
+                        Filter.Statement filter = Filter.all(Filter.eq("id", "x"));
+                        ((LineLayer) l).setFilter(filter);
+                    }
+                }
+                Analytics.report(e);
             }
         }
     }
