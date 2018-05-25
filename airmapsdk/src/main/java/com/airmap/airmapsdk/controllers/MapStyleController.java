@@ -154,8 +154,8 @@ public class MapStyleController implements MapView.OnMapChangedListener {
         } else {
             String urlTemplates = AirMap.getRulesetTileUrlTemplate(sourceId, layers);
             TileSet tileSet = new TileSet("2.2.0", urlTemplates);
-            tileSet.setMaxZoom(15f);
-            tileSet.setMinZoom(7f);
+            tileSet.setMaxZoom(12f);
+            tileSet.setMinZoom(8f);
             VectorSource tileSource = new VectorSource(sourceId, tileSet);
             map.getMap().addSource(tileSource);
         }
