@@ -158,4 +158,22 @@ public class AirMapConfig {
             };
         }
     }
+
+    public static String getDomainForThirdPartyAPI(String key) {
+        try {
+            return AirMap.getConfig().getJSONObject(key).getString("domain");
+        } catch (JSONException e) {
+            Timber.e("Unable to get domain for third party: " + key);
+            return null;
+        }
+    }
+
+    public static String getAppIdForThirdPartyAPI(String key) {
+        try {
+            return AirMap.getConfig().getJSONObject(key).getString("app_id");
+        } catch (JSONException e) {
+            Timber.e("Unable to get app id for third party: " + key);
+            return null;
+        }
+    }
 }
