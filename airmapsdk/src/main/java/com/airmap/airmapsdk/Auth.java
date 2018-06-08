@@ -52,7 +52,7 @@ public class Auth {
                 .hideMainScreenTitle(true)
                 .setTermsURL(AirMapConfig.getTermsUrl())
                 .setPrivacyURL(AirMapConfig.getPrivacyUrl())
-                .withScope("openid offline_access")
+                .withScope("openid offline_access email")
                 .withScheme(activity.getString(R.string.com_auth0_scheme))
                 .closable(true)
                 .build(activity);
