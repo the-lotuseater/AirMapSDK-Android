@@ -51,6 +51,7 @@ public class AuthService extends BaseService {
         urlBuilder.addQueryParameter("api_type", "app");
         urlBuilder.addQueryParameter("client_id", AirMapConfig.getAuth0ClientId());
         urlBuilder.addQueryParameter("refresh_token", refreshToken);
+        urlBuilder.addQueryParameter("scope","openid offline_access email");
         String url = urlBuilder.build().toString();
         try {
             String json = AirMap.getClient().get(url);
@@ -68,6 +69,7 @@ public class AuthService extends BaseService {
         urlBuilder.addQueryParameter("api_type", "app");
         urlBuilder.addQueryParameter("client_id", AirMapConfig.getAuth0ClientId());
         urlBuilder.addQueryParameter("refresh_token", refreshToken);
+        urlBuilder.addQueryParameter("scope","openid offline_access email");
         String url = urlBuilder.build().toString();
         getClient().get(url, new Callback() {
             @Override
@@ -108,6 +110,37 @@ public class AuthService extends BaseService {
         urlBuilder.addQueryParameter("device", "android_app");
         String url = urlBuilder.build().toString();
         AirMap.getClient().get(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (listener != null) {
+                    listener.error(new AirMapException(e.getMessage()));
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    String json = response.body().string();
+                    response.body().close();
+                    JSONObject jsonObject = new JSONObject(json);
+                    String customToken = jsonObject.getString("id_token");
+                    if (listener != null) {
+                        listener.success(customToken);
+                    }
+                } catch (JSONException e) {
+                    Timber.e(e, "error parsing json");
+                    if (listener != null) {
+                        listener.error(new AirMapException(response.code(), e.getMessage()));
+                    }
+                }
+            }
+        });
+    }
+
+    public static void getInsuranceToken(final AirMapCallback<String> listener) {
+        Map<String,Object> params = new HashMap<>();
+        params.put("jwt", AirMap.getAuthToken());
+        AirMap.getClient().postWithJsonBody(insuranceDelegationUrl, params, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 if (listener != null) {
