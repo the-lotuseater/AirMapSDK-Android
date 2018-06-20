@@ -94,6 +94,7 @@ public class BaseService {
     protected static final String anonymousLoginUrl = authBaseUrl + "anonymous/token";
     protected static final String delegationUrl = loginUrl;
     protected static final String auth0Domain = getAuth0Host();
+    protected static final String insuranceDelegationUrl = "https://auth.airmap.io/delegation";
 
     //Rules
     protected static final String rulesetsVersion = STAGING ? getStagingUrl() : "v1/";
