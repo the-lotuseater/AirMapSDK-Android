@@ -154,7 +154,7 @@ public class AuthService extends BaseService {
                     String json = response.body().string();
                     response.body().close();
                     JSONObject jsonObject = new JSONObject(json);
-                    String customToken = jsonObject.getString("id_token");
+                    String customToken = jsonObject.getString("jwt");
                     if (listener != null) {
                         listener.success(customToken);
                     }
