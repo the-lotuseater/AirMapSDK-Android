@@ -13,7 +13,10 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.services.commons.models.Position;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import timber.log.Timber;
 
 public abstract class Container {
 
@@ -68,7 +71,16 @@ public abstract class Container {
                 return;
             }
         }
-        map.animateCamera(CameraUpdateFactory.newLatLngBounds(getLatLngBoundsForZoom(), paddingLeft, paddingTop, paddingRight, paddingBottom), 200);
+
+        try {
+            map.animateCamera(CameraUpdateFactory.newLatLngBounds(getLatLngBoundsForZoom(), paddingLeft, paddingTop, paddingRight, paddingBottom), 200);
+        } catch (Exception e) {
+            Analytics.report(new Exception("Latitude/Longitude must not be NaN: " + Arrays.toString(getLatLngBoundsForZoom().toLatLngs())));
+            Timber.e("Latitude/Longitude must not be NaN: " + Arrays.toString(getLatLngBoundsForZoom().toLatLngs()));
+            if (getLatLngBoundsForZoom().toLatLngs().length > 0 && !Double.isNaN(getLatLngBoundsForZoom().getCenter().getLatitude())) {
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(getLatLngBoundsForZoom().getCenter(), 13.5));
+            }
+        }
     }
 
     public abstract void clear();
