@@ -104,6 +104,10 @@ public class Analytics {
         public static final String fly = "fly";
         public static final String deeplink_create_flight = "deeplink_create_flight";
         public static final String dji_fly = "dji_fly";
+        public static final String flightPlanInsurance = "flight_plan_insurance";
+        public static final String flightDetails = "flightDetails";
+        public static final String insurance = "insurance";
+        public static final String mainMenu = "main_menu";
     }
 
     public static class Action {
@@ -131,6 +135,8 @@ public class Analytics {
         public static final String result = "result";
         public static final String success = "success";
         public static final String cancelled = "cancelled";
+        public static final String request = "request";
+        public static final String cancel = "cancel";
     }
 
     public static class Label {
@@ -229,6 +235,24 @@ public class Analytics {
         public static final String LAND = "Land";
         public static final String END_FLIGHT_DIALOG = "End Flight Dialog";
         public static final String ANNUNCIATOR_MUTE = "Annunciator Mute";
+
+        public static final String INSURANCE_AVAILABLE = "Insurance Available";
+        public static final String INTERESTED_INSURANCE = "Interested In Insurance";
+        public static final String DI_JWT_DELEGATION = "Drone Insurance JWT Delegation";
+        public static final String WEBVIEW_LOGIN = "Webview Login";
+        public static final String GET_MATCHING_DRONES = "Get Matching Drones";
+        public static final String GET_ALL_DRONES = "Get All Drones";
+        public static final String SHOW_ALL_DRONES = "Show All Drones";
+        public static final String SHOW_MATCHING_DRONES = "Show Matching Drones";
+        public static final String ADD_COVERAGE = "Add Coverage";
+        public static final String INSURED_DRONE = "Insured Drone";
+        public static final String SUBMIT_FLIGHT_WITH_INSURANCE = "Submit Flight with Insurance";
+        public static final String HAS_INSURANCE_DRONE = "Has Insurance Drone";
+        public static final String INSURANCE_LOGIN = "Insurance Login";
+        public static final String INSURANCE = "Insurance";
+        public static final String VIEW_COVERAGES = "View Coverages";
+        public static final String VIEW_DOCUMENTS = "View Documents";
+        public static final String SUBMIT_CLAIM = "Submit Claim";
     }
 
     public static final class Value {
