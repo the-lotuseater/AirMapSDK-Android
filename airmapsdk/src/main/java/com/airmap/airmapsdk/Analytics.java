@@ -137,6 +137,7 @@ public class Analytics {
         public static final String cancelled = "cancelled";
         public static final String request = "request";
         public static final String cancel = "cancel";
+        public static final String show = "show";
     }
 
     public static class Label {
@@ -253,6 +254,8 @@ public class Analytics {
         public static final String VIEW_COVERAGES = "View Coverages";
         public static final String VIEW_DOCUMENTS = "View Documents";
         public static final String SUBMIT_CLAIM = "Submit Claim";
+        public static final String DIALOG_NO_COVERAGE = "Dialog No Flight Coverage";
+        public static final String DIALOG_ADD_COVERAGE = "Dialog Add Coverage";
     }
 
     public static final class Value {
