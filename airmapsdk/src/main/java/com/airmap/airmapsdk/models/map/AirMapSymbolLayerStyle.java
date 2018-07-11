@@ -27,6 +27,7 @@ public class AirMapSymbolLayerStyle extends AirMapLayerStyle {
     public final String[] textFont;
     public final Function textSizeFunction;
     public final Float[] textOffsets;
+    public final String textColor;
     public final int textPadding;
     public final boolean iconAllowOverlap;
     public final boolean iconKeepUpright;
@@ -80,6 +81,15 @@ public class AirMapSymbolLayerStyle extends AirMapLayerStyle {
         }
 
         textPadding = layoutJson.optInt("text-padding");
+
+        JSONObject paintJson = json.optJSONObject("paint");
+        if (paintJson != null) {
+            textColor = optString(paintJson, "text-color");
+        } else {
+            textColor = "#000000";
+        }
+
+
         iconAllowOverlap = layoutJson.optBoolean("icon-allow-overlap");
         iconKeepUpright = layoutJson.optBoolean("icon-keep-upright");
     }
@@ -183,6 +193,10 @@ public class AirMapSymbolLayerStyle extends AirMapLayerStyle {
 
         if (filter != null) {
             layer.setFilter(filter);
+        }
+
+        if (textColor != null) {
+            layer.setProperties(PropertyFactory.textColor(textColor));
         }
 
         return layer;
