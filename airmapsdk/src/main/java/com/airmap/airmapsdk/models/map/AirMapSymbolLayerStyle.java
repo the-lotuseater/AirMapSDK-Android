@@ -31,6 +31,8 @@ public class AirMapSymbolLayerStyle extends AirMapLayerStyle {
     public final int textPadding;
     public final boolean iconAllowOverlap;
     public final boolean iconKeepUpright;
+    public final Function textOpacityFunction;
+    public final Function iconOpacityFunction;
 
     protected AirMapSymbolLayerStyle(@NonNull JSONObject json) {
         super(json);
@@ -85,10 +87,25 @@ public class AirMapSymbolLayerStyle extends AirMapLayerStyle {
         JSONObject paintJson = json.optJSONObject("paint");
         if (paintJson != null) {
             textColor = optString(paintJson, "text-color");
+            JSONObject textOpacityJson = paintJson.optJSONObject("text-opacity");
+            if (textOpacityJson != null) {
+                textOpacityFunction = getOpacityFunction(textOpacityJson);
+            } else {
+                textOpacityFunction = null;
+            }
+
+            JSONObject iconOpacityJson = paintJson.optJSONObject("icon-opacity");
+            if (iconOpacityJson != null) {
+                iconOpacityFunction = getOpacityFunction(iconOpacityJson);
+            } else {
+                iconOpacityFunction = null;
+            }
+
         } else {
             textColor = "#000000";
+            textOpacityFunction = null;
+            iconOpacityFunction = null;
         }
-
 
         iconAllowOverlap = layoutJson.optBoolean("icon-allow-overlap");
         iconKeepUpright = layoutJson.optBoolean("icon-keep-upright");
@@ -147,7 +164,29 @@ public class AirMapSymbolLayerStyle extends AirMapLayerStyle {
             stops = new Stop[0];
         }
 
-        return Function.zoom(Stops.interval(stops));
+        return Function.zoom(Stops.exponential(stops));
+    }
+
+    public static Function getOpacityFunction(JSONObject opacityJson) {
+        float defaultSize = (float) opacityJson.optDouble("default", 1.0f);
+        float baseSize = (float) opacityJson.optDouble("base", 1f);
+        JSONArray stopsArray = opacityJson.optJSONArray("stops");
+        Stop[] stops;
+        if (stopsArray != null) {
+            stops = new Stop[stopsArray.length()];
+            for (int i = 0; i < stopsArray.length(); i++) {
+                JSONArray stopArray = stopsArray.optJSONArray(i);
+                if (stopArray != null) {
+                    Object value1 = stopArray.opt(0);
+                    float value2 = (float) stopArray.optDouble(1);
+                    stops[i] = Stop.stop(value1, PropertyFactory.textOpacity(value2));
+                }
+            }
+        } else {
+            stops = new Stop[0];
+        }
+
+        return Function.zoom(Stops.exponential(stops));
     }
 
     @Override
@@ -197,6 +236,14 @@ public class AirMapSymbolLayerStyle extends AirMapLayerStyle {
 
         if (textColor != null) {
             layer.setProperties(PropertyFactory.textColor(textColor));
+        }
+
+        if (textOpacityFunction != null) {
+            layer.setProperties(PropertyFactory.textOpacity(textOpacityFunction));
+        }
+
+        if (iconOpacityFunction != null) {
+            layer.setProperties(PropertyFactory.iconOpacity(iconOpacityFunction));
         }
 
         return layer;
