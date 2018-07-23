@@ -161,9 +161,18 @@ public class AirMapConfig {
 
     public static String getDomainForThirdPartyAPI(String key) {
         try {
-            return AirMap.getConfig().getJSONObject(key).getString("domain");
+            return AirMap.getConfig().getJSONObject(key).getString("api");
         } catch (JSONException e) {
             Timber.e("Unable to get domain for third party: " + key);
+            return null;
+        }
+    }
+
+    public static String getFrontendForThirdPartyAPI(String key) {
+        try {
+            return AirMap.getConfig().getJSONObject(key).getString("frontend");
+        } catch (JSONException e) {
+            Timber.e("Unable to get frontend for third party: " + key);
             return null;
         }
     }
