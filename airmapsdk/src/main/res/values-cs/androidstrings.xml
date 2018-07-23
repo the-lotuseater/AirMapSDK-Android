@@ -69,6 +69,7 @@
   <string name="notams">NOTAMY</string>
   <string name="no_advisories">Žádná upozornění</string>
   <string name="no_dialer_found">Nenalezen žádný volič na zařízení</string>
+  <string name="null_feature_value">—</string>
   <string name="only_schedule_present_future">Můžete plánovat pouze lety pro současnost nebo budoucnost</string>
   <string name="optional">Volitelný</string>
   <string name="permit_status">Stav: %1$s</string>

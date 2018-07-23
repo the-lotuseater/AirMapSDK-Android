@@ -168,133 +168,261 @@
   <string name="cardinal_direction_wnw">WNW</string>
   <!-- Abbreviation for West South West -->
   <string name="cardinal_direction_wsw">WSW</string>
+  <!-- Bundle name -->
   <string name="cfbundlename">${PRODUKTOVÝ_NÁZEV}</string>
+  <!-- Forgot password -->
   <string name="com_auth0_lock_action_forgot_password">Nepamatujete si své heslo?</string>
+  <!-- tos & privacy -->
   <string name="com_auth0_lock_sign_up_terms">Registrací souhlasím se smluvními podmínkami aplikace a zásadami ochrany osobních údajů</string>
+  <!-- forgot password email sent -->
   <string name="com_auth0_lock_db_change_password_message_success">Právě jsme vám zaslali email k obnovení hesla</string>
+  <!-- User logged in -->
   <string name="com_auth0_lock_database_login_success_message">Úspěšně jste se přihlásili.</string>
+  <!-- Login Switch -->
   <string name="com_auth0_lock_mode_log_in">Přihlášení</string>
+  <!-- Signup Switch -->
   <string name="com_auth0_lock_mode_sign_up">Registrace</string>
+  <!-- Social separator -->
   <string name="com_auth0_lock_forms_separator">nebo</string>
+  <!-- User signed up -->
   <string name="com.auth0.lock.database.signup.success.message">Děkujeme za registraci.</string>
+  <!-- Cancel -->
   <string name="com.auth0.lock.database.tos.sheet.cancel">Zrušit</string>
+  <!-- Privacy -->
   <string name="com.auth0.lock.database.tos.sheet.privacy">Zásady ochrany osobních údajů</string>
+  <!-- ToS -->
   <string name="com.auth0.lock.database.tos.sheet.title">Podmínky poskytování služeb</string>
+  <!-- enter corporate credentials -->
   <string name="com.auth0.lock.enterprise.sso.message">Zadejte prosím vaše firemní ověření</string>
+  <!-- enter corporate credentials of domain %@{email domain} -->
   <string name="com.auth0.lock.enterprise.sso.message_at">Zadejte prosím vaše firemní ověření %1$s</string>
+  <!-- SSO Header -->
   <string name="com.auth0.lock.enterprise.sso.title">JEDNODUCHÉ PODEPISOVÁNÍ ZAPNUTO</string>
+  <!-- user is blocked -->
   <string name="com.auth0.lock.error.authentication.blocked_user">UŽIVATEL JE ZABLOKOVÁN</string>
+  <!-- Generic login error -->
   <string name="com.auth0.lock.error.authentication.fallback">OMLOUVÁME SE, NĚCO SE POKAZILO PŘI POKUSU O PŘIHLÁŠENÍ.</string>
+  <!-- invalid_user_password -->
   <string name="com_auth0_lock_db_login_error_invalid_credentials_message">ŠPATNÉ HESLO NEBO EMAIL.</string>
+  <!-- a0.mfa_invalid_code -->
   <string name="com.auth0.lock.error.authentication.mfa_invalid_code">ŠPATNÝ KÓD.</string>
+  <!-- No valid connection -->
   <string name="com.auth0.lock.error.authentication.no_connection">OMLOUVÁME SE, NELZE NAJÍT PLATNÉ PŘIPOJENÍ PRO UŽIVATELE.</string>
+  <!-- password_change_required -->
   <string name="com.auth0.lock.error.authentication.password_change_required">HESLO JE NUTNÉ AKTUALIZOVAT, Z DŮVODU PRVNÍHO PŘIHLÁŠENÍ NEBO PROTOŽE PLATNOST HESLA VYPRŠELA.</string>
+  <!-- password_leaked -->
   <string name="com.auth0.lock.error.authentication.password_leaked">TOTO PŘIHLÁŠENÍ BYLO BLOKOVÁNO PRO ZJIŠTĚNÍ UNIKNUTÍ VAŠEHO HESLA NA JINÉ STRÁNCE. POSLALI JSME VÁM EMAIL S POKYNY JAK PŘIHLÁŠENÍ ODBLOKOVAT.</string>
+  <!-- too_many_attempts -->
   <string name="com.auth0.lock.error.authentication.too_many_attempts">VÁŠ ÚČET BYL ZABLOKOVÁN PO VÍCE NESPRÁVNÝCH POKUSECH O PŘIHLÁŠENÍ.</string>
+  <!-- Generic error -->
   <string name="com_auth0_lock_unrecoverable_error_title">NĚCO SE POKAZILO.\nKONTAKTUJTE PROSÍM TECHNICKOU PODPORU.</string>
+  <!-- Generic password error -->
   <string name="com_auth0_lock_db_message_change_password_error">OMLOUVÁME SE, NĚCO SE POKAZILO PŘI POKUSU O ZMĚNU HESLA.</string>
-  <string name="com_auth0_lock_password_strength_chars_length">Minimálně %d znaků délka </string>
-  <string name="com.auth0.lock.error.password.contain_at_least">Obsahují alespoň %1$s z následujících %2$s typů znaků:</string>
+  <!-- At least N characters -->
+  <string name="com_auth0_lock_password_strength_chars_length">"Minimálně %d znaků délka "</string>
+  <!-- At least n groups -->
+  <string name="com.auth0.lock.error.password.contain_at_least">Obsahují alespoň %d z následujících %d typů znaků:</string>
+  <!-- Lowercase letters -->
   <string name="com_auth0_lock_password_strength_lowercase_letters">Malá písmena (a-z)</string>
+  <!-- Must no be empty -->
   <string name="com.auth0.lock.error.password.non_empty">Heslo nesmí být prázdné</string>
-  <string name="com_auth0_lock_password_strength_identical_chars">Nesmí se opakovat více než %1$d identických znaků za sebou (např., \"%2$s\" není povoleno)</string>
+  <!-- No more than %@{count} identical characters in a row (e.g., \"%@{identical sample}\" not allowed) -->
+  <string name="com_auth0_lock_password_strength_identical_chars">Nesmí se opakovat více než %1$d identických znaků za sebou (např., %2$s není povoleno)</string>
+  <!-- Numbers -->
   <string name="com_auth0_lock_password_strength_numbers">Čísla (tj. 0-9)</string>
+  <!-- N groups -->
   <string name="com_auth0_lock_password_strength_title_must_have">Mělo by obsahovat:</string>
+  <!-- Special Characters -->
   <string name="com_auth0_lock_password_strength_special_chars">Speciální znaky (např. !@#$%^&amp;*)</string>
+  <!-- Uppercase letters -->
   <string name="com_auth0_lock_password_strength_uppercase_letters">Velká písmena (A-Z)</string>
+  <!-- Passwordless link invalid. -->
   <string name="com.auth0.lock.error.passwordless.invalid_link">OMLOUVÁME SE, VYSKYTL SE PROBLÉM S ODKAZEM. VYŽÁDEJTE SI NOVÝ ODKAZ PROSÍM.</string>
+  <!-- Passwordless sign ups disabled. -->
   <string name="com.auth0.lock.error.passwordless.signup_disabled">NOVÉ REGISTRACE JSOU ZAKÁZÁNY PRO TENTO ÚČET, PROSÍM KONTAKTUJTE SPRÁVCE.</string>
+  <!-- Recoverable error button -->
   <string name="com.auth0.lock.error.recoverable.button">Opakovat</string>
+  <!-- Recoverable error message -->
   <string name="com.auth0.lock.error.recoverable.message">Zkontrolujte prosím internetové připojení.</string>
+  <!-- Recoverable error title -->
   <string name="com.auth0.lock.error.recoverable.title">Nelze načíst přihlašovací pole</string>
+  <!-- Generic sign up error -->
   <string name="com_auth0_lock_db_sign_up_error_message">OMLOUVÁME SE, NĚCO SE POKAZILO V PRŮBĚHU PŘIHLAŠOVÁNÍ.</string>
+  <!-- invalid_password -->
   <string name="com_auth0_lock_input_error_password">NEPLATNÉ HESLO.</string>
+  <!-- password_dictionary_error -->
   <string name="com.auth0.lock.error.signup.password_dictionary_error">PŘÍLIŠ SLABÉ HESLO.</string>
+  <!-- password_history -->
   <string name="com_auth0_lock_db_signup_password_already_used_error_message">HESLO BYLO JIŽ POUŽITO.</string>
+  <!-- password_no_user_info_error -->
   <string name="com.auth0.lock.error.signup.password_no_user_info_error">HESLO NA ZÁKLADĚ INFORMACÍ UŽIVATELE.</string>
+  <!-- password_strength_error -->
   <string name="com_auth0_lock_db_signup_password_not_strong_error_message">SLABÉ HESLO.</string>
+  <!-- user_exists -->
   <string name="com_auth0_lock_db_signup_user_already_exists_error_message">UŽIVATEL JIŽ EXISTUJE.</string>
+  <!-- Unrecoverable error button -->
   <string name="com.auth0.lock.error.unrecoverable.button">Kontakt podpora</string>
+  <!-- Default error -->
   <string name="com.auth0.lock.error.unrecoverable.default">Něco se pokazilo.\nKontaktujte prosím Technickou podporu.</string>
+  <!-- Invalid client or domain -->
   <string name="com.auth0.lock.error.unrecoverable.invalid_credentials">Vaše Auth0 ověření ClientID a/nebo Doména jsou neplatné.</string>
+  <!-- Your options configuration failed with: %@{error} -->
   <string name="com.auth0.lock.error.unrecoverable.invalid_options">Nastavení konfigurace selhalo s: %1$s</string>
+  <!-- Unrecoverable error message -->
   <string name="com.auth0.lock.error.unrecoverable.message">Došlo k neočekáváné chybě při nastavení přihlašovacího pole.</string>
+  <!-- Unrecoverable error message -->
   <string name="com.auth0.lock.error.unrecoverable.message.no_action">Došlo k neočekáváné chybě při nastavení přihlašovacího pole, kontaktujte prosím Technickou podporu.</string>
+  <!-- No connections -->
   <string name="com.auth0.lock.error.unrecoverable.no_connections">Pro tohoto klienta nenalezeny žádné metody ověřování. zkontrolujte nastavení vašeho klienta.</string>
+  <!-- Unrecoverable error title -->
   <string name="com.auth0.lock.error.unrecoverable.title">Váš požadavek nelze vyřešit</string>
+  <!-- Forgot Password message -->
   <string name="com_auth0_lock_forgot_message">Zadejte svůj email a nové heslo. Zašleme vám email s potvrzením změny hesla.</string>
+  <!-- Forgot Password title -->
   <string name="com_auth0_lock_title_change_password">Obnovit heslo</string>
+  <!-- Header Title -->
   <string name="com.auth0.lock.header.default_title">Auth0</string>
+  <!-- invalid email -->
   <string name="com_auth0_lock_input_error_email">Musí být platný email</string>
+  <!-- Email placeholder -->
   <string name="com_auth0_lock_hint_email">Email</string>
+  <!-- Username or Email placeholder -->
   <string name="com.auth0.lock.input.email_username.placeholder">Uživatelské jméno/Email</string>
+  <!-- empty input -->
   <string name="com.auth0.lock.input.empty.error">Nesmí být prázdné</string>
+  <!-- generic input error -->
   <string name="com.auth0.lock.input.generic.error">Neplatný přístup</string>
+  <!-- invalid otp -->
   <string name="com.auth0.lock.input.otp.error">Musí být platný číselný kód</string>
+  <!-- OTP placeholder -->
   <string name="com.auth0.lock.input.otp.placeholder">Kód</string>
+  <!-- Password placeholder -->
   <string name="com_auth0_lock_hint_password">Heslo</string>
+  <!-- invalid phone -->
   <string name="com.auth0.lock.input.phone.error">Platné telefonní číslo</string>
+  <!-- Phone placeholder -->
   <string name="com.auth0.lock.input.phone.placeholder">Telefonní číslo</string>
+  <!-- policy violation -->
   <string name="com.auth0.lock.input.policy.error">Heslo nesplňuje podmínky</string>
-  <string name="com.auth0.lock.input.username.error">Může obsahovat pouze mezi %1$s až %2$s alfanumerickými znaky a \'_\'.</string>
+  <!-- invalid username -->
+  <string name="com.auth0.lock.input.username.error">Může obsahovat pouze mezi %d až %d alfanumerickými znaky a \'_\'.</string>
+  <!-- Username placeholder -->
   <string name="com.auth0.lock.input.username.placeholder">Uživatelské jméno</string>
+  <!-- Multifactor message -->
   <string name="com.auth0.lock.multifactor.message">Zadejte prosím ověřovací kód vygenerovaný aplikací.</string>
+  <!-- Multifactor title -->
   <string name="com.auth0.lock.multifactor.title">Ověření ve dvou krocích</string>
+  <!-- Country tableview navigation header -->
   <string name="com.auth0.lock.passwordless.sms.country.header">Vyberte zemi</string>
+  <!-- CountryCodes TableView searchbar placeholder -->
   <string name="com.auth0.lock.passwordless.sms.country.search">Hledat</string>
+  <!-- Amazon -->
   <string name="com.auth0.lock.strategy.localized.amazon">AMAZON</string>
+  <!-- Aol -->
   <string name="com.auth0.lock.strategy.localized.aol">AOL</string>
+  <!-- Baidu -->
   <string name="com.auth0.lock.strategy.localized.baidu">百度</string>
+  <!-- Bitbucket -->
   <string name="com.auth0.lock.strategy.localized.bitbucket">BITBUCKET</string>
+  <!-- Dropbox -->
   <string name="com.auth0.lock.strategy.localized.dropbox">DROPBOX</string>
+  <!-- Dwolla -->
   <string name="com.auth0.lock.strategy.localized.dwolla">DWOLLA</string>
+  <!-- Ebay -->
   <string name="com.auth0.lock.strategy.localized.ebay">EBAY</string>
+  <!-- Evernote -->
   <string name="com.auth0.lock.strategy.localized.evernote">EVERNOTE</string>
+  <!-- EvernoteSandbox -->
   <string name="com.auth0.lock.strategy.localized.evernote_sandbox">EVERNOTE (SANDBOX)</string>
+  <!-- Exact -->
   <string name="com.auth0.lock.strategy.localized.exact">EXACT</string>
+  <!-- Facebook -->
   <string name="com.auth0.lock.strategy.localized.facebook">FACEBOOK</string>
+  <!-- Fitbit -->
   <string name="com.auth0.lock.strategy.localized.fitbit">FITBIT</string>
+  <!-- Github -->
   <string name="com.auth0.lock.strategy.localized.github">GITHUB</string>
+  <!-- Google -->
   <string name="com.auth0.lock.strategy.localized.google">GOOGLE</string>
+  <!-- Instagram -->
   <string name="com.auth0.lock.strategy.localized.instagram">INSTAGRAM</string>
+  <!-- Linkedin -->
   <string name="com.auth0.lock.strategy.localized.linkedin">LINKEDIN</string>
+  <!-- Microsoft -->
   <string name="com.auth0.lock.strategy.localized.microsoft">MICROSOFT účet</string>
+  <!-- Miicard -->
   <string name="com.auth0.lock.strategy.localized.miicard">MIICARD</string>
+  <!-- Paypal -->
   <string name="com.auth0.lock.strategy.localized.paypal">PAYPAL</string>
+  <!-- PaypalSandbox -->
   <string name="com.auth0.lock.strategy.localized.paypal_sandbox">PAYPAL (SANDBOX)</string>
+  <!-- PlanningCenter -->
   <string name="com.auth0.lock.strategy.localized.planning_center">PLANNING CENTER</string>
+  <!-- RenRen -->
   <string name="com.auth0.lock.strategy.localized.renren">人人</string>
+  <!-- Salesforce -->
   <string name="com.auth0.lock.strategy.localized.salesforce">SALESFORCE</string>
+  <!-- SalesforceCommunity -->
   <string name="com.auth0.lock.strategy.localized.salesforce_community">SALESFORCE COMMUNITY</string>
+  <!-- SalesforceSandbox -->
   <string name="com.auth0.lock.strategy.localized.salesforce_sandbox">SALESFORCE (SANDBOX)</string>
+  <!-- Shopify -->
   <string name="com.auth0.lock.strategy.localized.shopify">SHOPIFY</string>
+  <!-- Soundcloud -->
   <string name="com.auth0.lock.strategy.localized.soundcloud">SOUNDCLOUD</string>
+  <!-- TheCity -->
   <string name="com.auth0.lock.strategy.localized.the_city">THE CITY</string>
+  <!-- TheCitySandbox -->
   <string name="com.auth0.lock.strategy.localized.the_city_sandbox">THE CITY (SANDBOX)</string>
+  <!-- ThirtySevenSignals -->
   <string name="com.auth0.lock.strategy.localized.thirty_seven_signals">37 SIGNALS</string>
+  <!-- Twitter -->
   <string name="com.auth0.lock.strategy.localized.twitter">TWITTER</string>
+  <!-- Vkontakte -->
   <string name="com.auth0.lock.strategy.localized.vkontakte">VKONTAKTE</string>
+  <!-- Weibo -->
   <string name="com.auth0.lock.strategy.localized.weibo">新浪微博</string>
+  <!-- Wordpress -->
   <string name="com.auth0.lock.strategy.localized.wordpress">WORDPRESS</string>
+  <!-- Yahoo -->
   <string name="com.auth0.lock.strategy.localized.yahoo">YAHOO!</string>
+  <!-- Yammer -->
   <string name="com.auth0.lock.strategy.localized.yammer">YAMMER</string>
+  <!-- Yandex -->
   <string name="com.auth0.lock.strategy.localized.yandex">YANDEX</string>
+  <!-- Log in with %@{strategy} -->
   <string name="com_auth0_lock_social_log_in">PŘIHLÁŠENÍ S %1$s</string>
+  <!-- Sign up with %@{strategy} -->
   <string name="com_auth0_lock_social_sign_up">REGISTRACE S %1$s</string>
+  <!-- Login Button title -->
   <string name="com_auth0_lock_action_log_in">PŘIHLÁŠENÍ</string>
+  <!-- Send 2fa code -->
   <string name="com.auth0.lock.submit.send_code.title">POSLAT</string>
+  <!-- Send Email button title -->
   <string name="com_auth0_lock_action_send_email">POSLAT EMAIL</string>
+  <!-- Signup Button title -->
   <string name="com_auth0_lock_action_sign_up">REGISTRACE</string>
+  <!-- Passwordless code reminder action -->
   <string name="com.auth0.passwordless.code.reminder">Neobdržel jste kód?</string>
+  <!-- Passwordless code sent by email to %@{identifier} -->
   <string name="com.auth0.passwordless.email.code.sent">Byl odeslán email s kódem %1$s</string>
+  <!-- Passwordless email title -->
   <string name="com.auth0.passwordless.email.title">Zadejte email pro vytvoření registrace.</string>
+  <!-- Passwordless email title with social -->
   <string name="com.auth0.passwordless.email.title.social">V opačném případě zadejte svůj email pro přihlášení nebo vytvoření účtu.</string>
+  <!-- Passwordless link reminder action -->
   <string name="com.auth0.passwordless.link.reminder">Neobdržel jste odkaz?</string>
+  <!-- Passwordless link sent to %@{identifier} -->
   <string name="com.auth0.passwordless.link.sent">Poslali jsme vám odkaz k přihlášení %1$s</string>
+  <!-- Passwordless code sent by sms to %@{identifier} -->
   <string name="com.auth0.passwordless.sms.code.sent">SMS s kódem byla odeslána na %1$s</string>
+  <!-- CountryCodes TableViewCell detail %@{phoneCode} -->
   <string name="com.auth0.passwordless.sms.country.cell.detail">%1$s</string>
+  <!-- CountryCodes TableViewCell label %@{localizedName} -->
   <string name="com.auth0.passwordless.sms.country.cell.label">%1$s</string>
+  <!-- Passwordless sms title -->
   <string name="com.auth0.passwordless.sms.title">Zadejte vaše telefonní číslo pro vytvoření registrace.</string>
+  <!-- Passwordless sms title with social -->
   <string name="com.auth0.passwordless.sms.title.social">Zadejte telefonní číslo pro přihlášení nebo vytvoření účtu.</string>
   <!-- Class = "UILabel"; text = "Make & Model"; ObjectID = "XDN-d5-eoX"; Note = "CREATE_AIRCRAFT_MAKE_AND_MODEL|Label for the row label that displays the Make and Model of an aircraft"; AirMapUIObjectId = "XDN-d5-eoX.text"; -->
   <string name="create_aircraft_make_and_model">Výrobce a model</string>
@@ -304,6 +432,10 @@
   <string name="create_aircraft_save_button">Uložit</string>
   <!-- Class = "UINavigationItem"; title = "Create Aircraft"; ObjectID = "Z9F-I6-niw"; Note = "CREATE_AIRCRAFT_TITLE|Title for the view where you can create a new aircraft"; AirMapUIObjectId = "Z9F-I6-niw.title"; -->
   <string name="create_aircraft">Vytvořit stroj</string>
+  <!-- Request cancelled error -->
+  <string name="error_cancelled">Žádost byla zrušena dříve než mohla být dokončena</string>
+  <!-- A conflict exists with the attempted request -->
+  <string name="error_conflict">Existující konflikt</string>
   <!-- A generic server error message with an associated error code -->
   <string name="error_generic_format">Chyba serveru. (%s)</string>
   <!-- Response serialization failure error -->
@@ -445,6 +577,8 @@
   <string name="phone_verification_try_again">Zkusit znovu</string>
   <!-- Message presented to a user when the SMS code they input is incorrect and verification of that code has failed -->
   <string name="phone_verification_verification_failed">Ověření telefonního čísla selhalo</string>
+  <!-- Format for displaying the given + family name of a user. 1) given name 2) family name -->
+  <string name="pilot_full_name_format">%1$s %2$s</string>
   <!-- Table row label for FAA registration number -->
   <string name="pilot_profile_faa_registration">Registrační značka od CAA</string>
   <!-- Label for the pilot profile email -->
