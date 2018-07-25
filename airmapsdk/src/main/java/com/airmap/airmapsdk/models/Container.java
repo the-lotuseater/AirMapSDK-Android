@@ -73,8 +73,9 @@ public abstract class Container {
         }
 
         try {
+            Analytics.logDebug("latlngbound", getLatLngBoundsForZoom().toString());
             map.animateCamera(CameraUpdateFactory.newLatLngBounds(getLatLngBoundsForZoom(), paddingLeft, paddingTop, paddingRight, paddingBottom), 200);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             Analytics.report(new Exception("Latitude/Longitude must not be NaN: " + Arrays.toString(getLatLngBoundsForZoom().toLatLngs())));
             Timber.e("Latitude/Longitude must not be NaN: " + Arrays.toString(getLatLngBoundsForZoom().toLatLngs()));
             if (getLatLngBoundsForZoom().toLatLngs().length > 0 && !Double.isNaN(getLatLngBoundsForZoom().getCenter().getLatitude())) {

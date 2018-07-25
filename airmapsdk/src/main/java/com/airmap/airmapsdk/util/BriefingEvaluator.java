@@ -1,5 +1,6 @@
 package com.airmap.airmapsdk.util;
 
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.models.flight.AirMapEvaluation;
 import com.airmap.airmapsdk.models.flight.AirMapFlightBriefing;
 import com.airmap.airmapsdk.models.flight.AirMapFlightFeature;
@@ -145,6 +146,8 @@ public class BriefingEvaluator {
 
             AirMapRule evaluationRule = getRuleFromEvaluation(evaluation, rule);
             for (AirMapFlightFeature flightFeature : CopyCollections.copy(rule.getFlightFeatures())) {
+                Analytics.logDebug("ruleset", ruleset.getId());
+                Analytics.logDebug("rule", rule.toString());
                 AirMapFlightFeature evaluationFlightFeature = getFlightFeatureFromEvaluation(evaluationRule, flightFeature);
                 if (evaluationFlightFeature == null) {
                     rule.getFlightFeatures().remove(flightFeature);

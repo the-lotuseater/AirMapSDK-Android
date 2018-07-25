@@ -2,7 +2,9 @@ package com.airmap.airmapsdk.models;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 
+import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
@@ -104,6 +106,8 @@ public class CircleContainer extends Container {
 
     @Override
     public LatLngBounds getLatLngBoundsForZoom() {
+        Analytics.logDebug("center", center.toString());
+        Analytics.logDebug("points", TextUtils.join(" - ", points));
         return new LatLngBounds.Builder().includes(points).build();
     }
 
