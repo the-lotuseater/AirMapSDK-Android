@@ -49,7 +49,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
 
     private AirMapMapView.OnMapLoadListener mapLoadListener;
 
-    private LocationLayerPlugin locationLayerPlugin;
+    protected LocationLayerPlugin locationLayerPlugin;
     private AirMapLocationEngine locationEngine;
     private LocationRequest locationRequest;
 
@@ -287,7 +287,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
     }
 
     @SuppressLint("MissingPermission")
-    private void setupLocationEngine() {
+    protected void setupLocationEngine() {
         if (!requestLocationPermissionIfNeeded()) {
             return;
         }
