@@ -65,22 +65,14 @@ public abstract class Container {
     }
 
     public final void zoomTo(int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {
-        for (LatLng latLng : getLatLngBoundsForZoom().toLatLngs()) {
-            if (Double.isNaN(latLng.getLatitude()) || Double.isNaN(latLng.getLongitude())) {
-                Analytics.report(new Exception("Latitude/Longitude must not be NaN"));
-                return;
-            }
-        }
-
         try {
             Analytics.logDebug("latlngbound", getLatLngBoundsForZoom().toString());
             map.animateCamera(CameraUpdateFactory.newLatLngBounds(getLatLngBoundsForZoom(), paddingLeft, paddingTop, paddingRight, paddingBottom), 200);
-        } catch (RuntimeException e) {
-            Analytics.report(new Exception("Latitude/Longitude must not be NaN: " + Arrays.toString(getLatLngBoundsForZoom().toLatLngs())));
-            Timber.e("Latitude/Longitude must not be NaN: " + Arrays.toString(getLatLngBoundsForZoom().toLatLngs()));
-            if (getLatLngBoundsForZoom().toLatLngs().length > 0 && !Double.isNaN(getLatLngBoundsForZoom().getCenter().getLatitude())) {
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(getLatLngBoundsForZoom().getCenter(), 13.5));
-            }
+        } catch (Error err) {
+            Analytics.logDebug("Container padding", paddingLeft + ", " + paddingTop + " , " + paddingRight + ", " + paddingBottom);
+            Analytics.logDebug("Map padding", Arrays.toString(map.getPadding()));
+            Analytics.report(new Exception("Latitude/Longitude must not be NaN: " + getLatLngBoundsForZoom().toString(), err));
+            Timber.e(err);
         }
     }
 
