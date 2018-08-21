@@ -5,8 +5,7 @@
 Create Flights, Send Telemetry Data, Get Realtime Traffic Alerts.
 
 ## Requirements
-* Minimum Andorid SDK Level 18 or higher
-* Contextual Airspace (Rules API, Advisory API, and Flight Plan API) is currently in developer PREVIEW for testing and is subject to change. Contact us for more information.
+* Minimum Android SDK Level 18 or higher
 
 ### Sign up for an [AirMap Developer Account.](https://dashboard.airmap.io/developer/)
 
@@ -22,7 +21,7 @@ Start by adding the Android SDK to your project:
 
 * Add 
 ```groovy
-implementation 'com.airmap.airmapsdk:airmapsdk:2.0.0-beta.6'
+implementation 'com.airmap.airmapsdk:airmapsdk:2.0.0'
 ``` 
 
 to your module level `build.gradle` file
@@ -39,7 +38,7 @@ to your application-level `build.gradle` file under the `allprojects.repositorie
 Simply add this line in your Application or Activity's `onCreate`
 
 ```java
-AirMap.init(MainActivity.this);
+AirMap.init(this);
 ```
 
 ### Documentation
