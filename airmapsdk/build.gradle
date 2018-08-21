@@ -3,7 +3,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'com.airmap.airmapsdk'
-def libVersion = '2.0.0-beta.6'
+def libVersion = '2.0.0'
 
 android {
     compileSdkVersion 27
@@ -84,8 +84,8 @@ def projectName = 'com.airmap.airmapsdk'
 def gitUrl = 'https://github.com/airmap/AirMapSDK-Android.git'
 
 bintray {
-    user = bintray_user
-    key = bintray_api_key
+    user = project.hasProperty('bintray_user') ? project.property('bintray_user') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintray_api_key') ? project.property('bintray_api_key') : System.getenv('BINTRAY_API_KEY')
     configurations = ['archives']
     pkg {
         repo = 'maven'
@@ -113,9 +113,9 @@ install {
             }
             developers {
                 developer {
-                    id 'vanshg'
-                    name 'Vansh Gandhi'
-                    email 'vansh@airmap.com'
+                    id 'collin'
+                    name 'Collin Vance'
+                    email 'collin@airmap.com'
                 }
             }
             scm {
