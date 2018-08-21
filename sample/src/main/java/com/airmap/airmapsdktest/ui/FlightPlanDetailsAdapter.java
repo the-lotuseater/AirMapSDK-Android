@@ -16,7 +16,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.airmap.airmapsdk.Analytics;
-import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.models.flight.AirMapFlightFeature;
 import com.airmap.airmapsdk.models.flight.AirMapFlightPlan;
@@ -25,6 +24,7 @@ import com.airmap.airmapsdk.models.flight.FlightFeatureValue;
 import com.airmap.airmapsdk.models.rules.AirMapRule;
 import com.airmap.airmapsdk.ui.views.ToggleButton;
 import com.airmap.airmapsdk.util.Utils;
+import com.airmap.airmapsdktest.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
