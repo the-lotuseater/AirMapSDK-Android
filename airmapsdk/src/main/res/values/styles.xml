@@ -33,7 +33,7 @@
 
     <style name="CustomLocationLayer" parent="mapbox_LocationLayer">
         <item name="mapbox_accuracyAlpha">0</item>
-        <item name="mapbox_elevation">0dp</item>
+        <item name="mapbox_elevation">2dp</item>
     </style>
 
 </resources>
