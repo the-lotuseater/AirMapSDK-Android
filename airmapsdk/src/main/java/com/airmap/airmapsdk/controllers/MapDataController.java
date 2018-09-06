@@ -281,7 +281,7 @@ public class MapDataController {
                 .onErrorReturn(new Func1<Throwable, List<AirMapJurisdiction>>() {
                     @Override
                     public List<AirMapJurisdiction> call(Throwable throwable) {
-                        Timber.w(throwable, "Ran out of attempts to query jurisdictions");
+                        Timber.w("Ran out of attempts to query jurisdictions");
                         return null;
                     }
                 });
