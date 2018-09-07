@@ -10,6 +10,7 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -30,6 +31,7 @@ import com.airmap.airmapsdk.util.Utils;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
+import com.mapbox.mapboxsdk.http.HttpRequestUtil;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -37,12 +39,21 @@ import com.mapbox.mapboxsdk.style.layers.Filter;
 import com.mapbox.services.commons.geojson.Feature;
 import com.mapbox.services.commons.models.Position;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
+import okhttp3.Dispatcher;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import timber.log.Timber;
+
+import static com.airmap.airmapsdk.util.Utils.getLanguageTag;
 
 public class AirMapMapView extends MapView implements MapView.OnMapChangedListener, MapboxMap.OnMapClickListener, MapDataController.Callback {
 
@@ -106,7 +117,9 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         init(defaultConfig, mapTheme);
     }
 
-    public void init(Configuration configuration, @Nullable MappingService.AirMapMapTheme mapTheme) {
+    private void init(Configuration configuration, @Nullable MappingService.AirMapMapTheme mapTheme) {
+        addLanguageHeaders();
+
         mapLoadListeners = new ArrayList<>();
         mapDataChangeListeners = new ArrayList<>();
         advisoryClickListeners = new ArrayList<>();
@@ -136,6 +149,24 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         addOnMapChangedListener(this);
     }
 
+    private void addLanguageHeaders() {
+        if (!TextUtils.isEmpty(getLanguageTag())) {
+            Dispatcher dispatcher = new Dispatcher();
+            dispatcher.setMaxRequestsPerHost(20);
+            OkHttpClient mapboxHttpClient = new OkHttpClient.Builder().dispatcher(dispatcher).addInterceptor(new Interceptor() {
+                @Override
+                public Response intercept(Chain chain) throws IOException {
+                    Request request = chain.request().newBuilder()
+                            .addHeader("Accept-Language", getLanguageTag())
+                            .build();
+
+                    return chain.proceed(request);
+                }
+            }).build();
+
+            HttpRequestUtil.setOkHttpClient(mapboxHttpClient);
+        }
+    }
 
     public void configure(Configuration configuration) {
         mapDataController.configure(configuration);
