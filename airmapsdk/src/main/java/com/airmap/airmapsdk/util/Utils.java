@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -523,5 +524,13 @@ public class Utils {
     public static boolean useGPSForLocation(Context context) {
         // by default, GPS is not used
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getString(R.string.setting_location_provider), true);
+    }
+
+    public static String getLanguageTag() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return Locale.getDefault().toLanguageTag();
+        }
+
+        return Locale.getDefault().getLanguage();
     }
 }
