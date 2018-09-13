@@ -15,7 +15,7 @@
   <string name="celsius_temp">%d °C</string>
   <string name="com_auth0_lock_description_change_password">メールアドレスを入力してください。パスワードリセットのメールを送信します。</string>
   <string name="com_auth0_lock_password_strength_title_at_least">最低でも以下の4種類の文字のうち3種類を含める必要があります</string>
-  <string name="com_auth0_lock_sign_up_terms_dialog_message" formatted="false"><![CDATA[
+  <string name="com_auth0_lock_sign_up_terms_dialog_message"><![CDATA[
 サインアップには <a href=\'%s\'>サービス規約</a> と <a href=\'%s\'>プライバシーポリシー</a>に同意する必要があります
 ]]></string>
   <string name="com_auth0_lock_sign_up_terms_dialog_title">規約関連</string>
@@ -33,9 +33,7 @@
   <string name="enter_verification_token">お客様の電話番号へお送りした認証コードを入力してください</string>
   <string name="error_creating_flight">フライト作成に失敗しました</string>
   <string name="error_getting_mfrs">ドローンメーカーの取得に失敗しました</string>
-  <string name="error_getting_permit">許可証取得に失敗しました</string>
   <string name="error_getting_profile">プロフィール取得に失敗しました</string>
-  <string name="error_getting_wallet">許可証取得に失敗しました</string>
   <string name="error_loading_map_button">日時を更新</string>
   <string name="error_loading_map_message">地図を正しく読み込むためには日時が正しく設定されていることが必要です。端末の日時が自動に設定されていることを確認してください。</string>
   <string name="error_loading_map_network_button">ネットワークを確認してください</string>
@@ -74,7 +72,6 @@
   <string name="null_feature_value">—</string>
   <string name="only_schedule_present_future">現在または未来のフライトのみ作成することができます</string>
   <string name="optional">任意</string>
-  <string name="permit_status">状況: %1$s</string>
   <string name="phone_number">電話番号</string>
   <string name="phone_verification_mismatch">確認コードが一致しません。新しい確認コードをSMSで再送しますか？</string>
   <string name="pick_one">ひとつ選択</string>
@@ -96,7 +93,6 @@
   <string name="select_manufacturer">ドローンメーカーを選択</string>
   <string name="select_model">モデルを選択</string>
   <string name="sent_email">Eメールを送信しました</string>
-  <string name="setting_location_provider">location_provider</string>
   <string name="stadium">スタジアム</string>
   <string name="state">都道府県</string>
   <string name="subprefecture">支庁</string>
@@ -122,5 +118,4 @@
   <string name="waterway">水路</string>
   <string name="wind">風</string>
   <string name="yes">はい</string>
-  <string name="you_have_selected_permits_of_total_required">このフライトに必要な %1$d／%2$d 個の 許可証を選択しました。</string>
 </resources>

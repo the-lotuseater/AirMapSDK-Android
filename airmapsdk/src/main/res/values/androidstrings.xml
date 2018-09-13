@@ -15,15 +15,6 @@
     <string name="tile_layer_wildfires">Wildfires</string>
     <string name="tile_layer_other_cautionary_areas">Other Cautionary Areas</string>
 
-    <string name="price_label">Price:\t\t</string>
-    <string name="free">Free</string>
-    <string name="validity_hours">%1$d hours</string>
-    <string name="validity_label">Validity:\t</string>
-    <string name="validity_minutes">%1$d minutes</string>
-    <string name="you_have_selected_permits_of_total_required">You have selected %1$d of %2$d permits required for this flight</string>
-    <string name="permit_status">Status: %1$s</string>
-    <string name="na">N/A</string>
-
     <string name="phone_number">Phone Number</string>
     <string name="retry">Retry</string>
     <string name="call">Call</string>
@@ -44,9 +35,7 @@
 
     <string name="error_creating_flight">Error creating flight</string>
     <string name="error_getting_mfrs">Error getting manufacturers</string>
-    <string name="error_getting_permit">Error getting permit</string>
     <string name="error_getting_profile">Error getting profile</string>
-    <string name="error_getting_wallet">Error getting Permit Wallet</string>
     <string name="error_models_for_mfrs">Error retrieving models for selected manufacturer</string>
     <string name="error_resending_email">Error re-sending verification email</string>
     <string name="error_updating_profile">Error updating profile</string>

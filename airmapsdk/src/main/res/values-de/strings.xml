@@ -168,133 +168,261 @@
   <string name="cardinal_direction_wnw">WNW</string>
   <!-- Abbreviation for West South West -->
   <string name="cardinal_direction_wsw">WSW</string>
+  <!-- Bundle name -->
   <string name="cfbundlename">${PRODUCT_NAME}</string>
+  <!-- Forgot password -->
   <string name="com_auth0_lock_action_forgot_password">Passwort vergessen?</string>
+  <!-- tos & privacy -->
   <string name="com_auth0_lock_sign_up_terms">Durch Teilnahme werden die Geschäftsbedingungen akzeptiert.</string>
+  <!-- forgot password email sent -->
   <string name="com_auth0_lock_db_change_password_message_success">Wir haben eine Emails zum Rücksetzen des Passworts gesendet</string>
-  <string name="com_auth0_lock_database_login_success_message">Erfolgreich eingeloggt </string>
-  <string name="com_auth0_lock_mode_log_in">Einloggen </string>
-  <string name="com_auth0_lock_mode_sign_up">Account anlegen </string>
+  <!-- User logged in -->
+  <string name="com_auth0_lock_database_login_success_message">Erfolgreich eingeloggt</string>
+  <!-- Login Switch -->
+  <string name="com_auth0_lock_mode_log_in">Einloggen</string>
+  <!-- Signup Switch -->
+  <string name="com_auth0_lock_mode_sign_up">Account anlegen</string>
+  <!-- Social separator -->
   <string name="com_auth0_lock_forms_separator">oder</string>
+  <!-- User signed up -->
   <string name="com.auth0.lock.database.signup.success.message">Danke.</string>
+  <!-- Cancel -->
   <string name="com.auth0.lock.database.tos.sheet.cancel">Abrechen</string>
+  <!-- Privacy -->
   <string name="com.auth0.lock.database.tos.sheet.privacy">Privatsphäre</string>
+  <!-- ToS -->
   <string name="com.auth0.lock.database.tos.sheet.title">Nutzungsbedingungen</string>
+  <!-- enter corporate credentials -->
   <string name="com.auth0.lock.enterprise.sso.message">Bitte die Zugangsdaten eingeben.</string>
+  <!-- enter corporate credentials of domain %@{email domain} -->
   <string name="com.auth0.lock.enterprise.sso.message_at">Bitte Zugangsdaten hier eingeben:  %1$s</string>
+  <!-- SSO Header -->
   <string name="com.auth0.lock.enterprise.sso.title">Single Sign-On aktiv</string>
+  <!-- user is blocked -->
   <string name="com.auth0.lock.error.authentication.blocked_user">Der User ist blockiert.</string>
+  <!-- Generic login error -->
   <string name="com.auth0.lock.error.authentication.fallback">Es tut uns leid, aber etwas ist schiefgelaufen.</string>
+  <!-- invalid_user_password -->
   <string name="com_auth0_lock_db_login_error_invalid_credentials_message">Falsche Email oder Passwort.</string>
+  <!-- a0.mfa_invalid_code -->
   <string name="com.auth0.lock.error.authentication.mfa_invalid_code">Falscher Code.</string>
+  <!-- No valid connection -->
   <string name="com.auth0.lock.error.authentication.no_connection">Es tut uns leid, wir konnten den User nicht finden.</string>
+  <!-- password_change_required -->
   <string name="com.auth0.lock.error.authentication.password_change_required">Das Passwort muss aktualisiert werden.</string>
+  <!-- password_leaked -->
   <string name="com.auth0.lock.error.authentication.password_leaked">Der Login wurde blockiert. Es wurde eine Email mit weiteren Instruktionen versendet.</string>
+  <!-- too_many_attempts -->
   <string name="com.auth0.lock.error.authentication.too_many_attempts">Der Account wurde nach mehreren erfolglosen Anmeldeversuchen gesperrt.</string>
+  <!-- Generic error -->
   <string name="com_auth0_lock_unrecoverable_error_title">Etwas klappt nicht. Bitte Support kontaktieren.</string>
+  <!-- Generic password error -->
   <string name="com_auth0_lock_db_message_change_password_error">Es tut uns leid, etwas lief schief beim Versuch das Passwort zu ändern.</string>
+  <!-- At least N characters -->
   <string name="com_auth0_lock_password_strength_chars_length">Mindestens %d Zeichen</string>
-  <string name="com.auth0.lock.error.password.contain_at_least">Mindestens %1$s der folgenden %2$s Zeichen.</string>
+  <!-- At least n groups -->
+  <string name="com.auth0.lock.error.password.contain_at_least">Mindestens %d der folgenden %d Zeichen.</string>
+  <!-- Lowercase letters -->
   <string name="com_auth0_lock_password_strength_lowercase_letters">Kleinbuchstaben (a-z)</string>
+  <!-- Must no be empty -->
   <string name="com.auth0.lock.error.password.non_empty">Passwort darf nicht lehr sein.</string>
-  <string name="com_auth0_lock_password_strength_identical_chars">Mehr als %1$d identische Zeichen in einer Zeile (z.B., \"%2$s\" ist nicht erlaubt)</string>
+  <!-- No more than %@{count} identical characters in a row (e.g., \"%@{identical sample}\" not allowed) -->
+  <string name="com_auth0_lock_password_strength_identical_chars">Mehr als %1$d identische Zeichen in einer Zeile (z.B., %2$s ist nicht erlaubt)</string>
+  <!-- Numbers -->
   <string name="com_auth0_lock_password_strength_numbers">Zahlen (0-9)</string>
+  <!-- N groups -->
   <string name="com_auth0_lock_password_strength_title_must_have">Sollte beinhalten:</string>
+  <!-- Special Characters -->
   <string name="com_auth0_lock_password_strength_special_chars">Sonderzeichen (z.B. !@#$%^&amp;*)</string>
+  <!-- Uppercase letters -->
   <string name="com_auth0_lock_password_strength_uppercase_letters">Großbuchstaben (A-Z)</string>
+  <!-- Passwordless link invalid. -->
   <string name="com.auth0.lock.error.passwordless.invalid_link">Es tut uns leid, mit dem Link stimmt etwas nicht.</string>
+  <!-- Passwordless sign ups disabled. -->
   <string name="com.auth0.lock.error.passwordless.signup_disabled">Neue Accounts sind gesperrt. Bitte Administrator kontaktieren.</string>
+  <!-- Recoverable error button -->
   <string name="com.auth0.lock.error.recoverable.button">Nochmal versuchen</string>
+  <!-- Recoverable error message -->
   <string name="com.auth0.lock.error.recoverable.message">Bitte Internetverbindung überprüfen</string>
+  <!-- Recoverable error title -->
   <string name="com.auth0.lock.error.recoverable.title">Login-box konnte nicht geladen werden.</string>
+  <!-- Generic sign up error -->
   <string name="com_auth0_lock_db_sign_up_error_message">Es tut uns leid, etwas lief schief.</string>
+  <!-- invalid_password -->
   <string name="com_auth0_lock_input_error_password">Passwort ist ungültig.</string>
+  <!-- password_dictionary_error -->
   <string name="com.auth0.lock.error.signup.password_dictionary_error">Das Passwort ist zu einfach.</string>
+  <!-- password_history -->
   <string name="com_auth0_lock_db_signup_password_already_used_error_message">Das Passwort wurde schon einmal verwendet.</string>
+  <!-- password_no_user_info_error -->
   <string name="com.auth0.lock.error.signup.password_no_user_info_error">Das Passwort ist zu schwach.</string>
+  <!-- password_strength_error -->
   <string name="com_auth0_lock_db_signup_password_not_strong_error_message">Passwort ist zu schwach.</string>
+  <!-- user_exists -->
   <string name="com_auth0_lock_db_signup_user_already_exists_error_message">Der User exisitiert bereits.</string>
+  <!-- Unrecoverable error button -->
   <string name="com.auth0.lock.error.unrecoverable.button">Bitte Support kontaktieren.</string>
+  <!-- Default error -->
   <string name="com.auth0.lock.error.unrecoverable.default">Etwas stimmt nicht, bitte den Support kontaktieren.</string>
+  <!-- Invalid client or domain -->
   <string name="com.auth0.lock.error.unrecoverable.invalid_credentials">Die Auth0 Daten sind ungültig.</string>
+  <!-- Your options configuration failed with: %@{error} -->
   <string name="com.auth0.lock.error.unrecoverable.invalid_options">Ihre Optionen konnten nicht gespeichert werden: %1$s</string>
+  <!-- Unrecoverable error message -->
   <string name="com.auth0.lock.error.unrecoverable.message">Ein unerwarteter Fehler ist aufgetreten.</string>
+  <!-- Unrecoverable error message -->
   <string name="com.auth0.lock.error.unrecoverable.message.no_action">Ein unerwarteter Fehler ist bei der Konfiguration der Login-box aufgetreten.</string>
+  <!-- No connections -->
   <string name="com.auth0.lock.error.unrecoverable.no_connections">Keine Methode zum Authentifizieren gefunden.</string>
+  <!-- Unrecoverable error title -->
   <string name="com.auth0.lock.error.unrecoverable.title">Anfrage konnte nicht aufgelöst werden.</string>
+  <!-- Forgot Password message -->
   <string name="com_auth0_lock_forgot_message">Bitte Username und neues Passwort erneut eingeben. Wir senden eine Email um das Update des Passworts zu bestätitgen.</string>
+  <!-- Forgot Password title -->
   <string name="com_auth0_lock_title_change_password">Passwort rücksetzen</string>
+  <!-- Header Title -->
   <string name="com.auth0.lock.header.default_title">Auth0</string>
+  <!-- invalid email -->
   <string name="com_auth0_lock_input_error_email">Email-adresse muss echt sein</string>
+  <!-- Email placeholder -->
   <string name="com_auth0_lock_hint_email">Email</string>
+  <!-- Username or Email placeholder -->
   <string name="com.auth0.lock.input.email_username.placeholder">Username/Email</string>
+  <!-- empty input -->
   <string name="com.auth0.lock.input.empty.error">Kann nicht leer sein.</string>
+  <!-- generic input error -->
   <string name="com.auth0.lock.input.generic.error">Ungültige Eingabe</string>
+  <!-- invalid otp -->
   <string name="com.auth0.lock.input.otp.error">Muss ein numerischer Code sein</string>
+  <!-- OTP placeholder -->
   <string name="com.auth0.lock.input.otp.placeholder">Code</string>
+  <!-- Password placeholder -->
   <string name="com_auth0_lock_hint_password">Passwort</string>
+  <!-- invalid phone -->
   <string name="com.auth0.lock.input.phone.error">Muss eine gültige Telefonnummer sein</string>
+  <!-- Phone placeholder -->
   <string name="com.auth0.lock.input.phone.placeholder">Telefonnummer</string>
+  <!-- policy violation -->
   <string name="com.auth0.lock.input.policy.error">Passwort erfüllt Anforderungen nicht.</string>
-  <string name="com.auth0.lock.input.username.error">Kann nur Buchestaben %1$s ,  Zahlen %2$s und \'_ enthalten\'.</string>
+  <!-- invalid username -->
+  <string name="com.auth0.lock.input.username.error">Kann nur Buchestaben %d ,  Zahlen %d und \'_ enthalten\'.</string>
+  <!-- Username placeholder -->
   <string name="com.auth0.lock.input.username.placeholder">Username</string>
+  <!-- Multifactor message -->
   <string name="com.auth0.lock.multifactor.message">Bitte den Verifikations-code eingeben.</string>
+  <!-- Multifactor title -->
   <string name="com.auth0.lock.multifactor.title">Verifikation in 2-Schritten</string>
+  <!-- Country tableview navigation header -->
   <string name="com.auth0.lock.passwordless.sms.country.header">Bitte Land auswählen</string>
+  <!-- CountryCodes TableView searchbar placeholder -->
   <string name="com.auth0.lock.passwordless.sms.country.search">Suche</string>
+  <!-- Amazon -->
   <string name="com.auth0.lock.strategy.localized.amazon">Amazon</string>
+  <!-- Aol -->
   <string name="com.auth0.lock.strategy.localized.aol">AOL</string>
+  <!-- Baidu -->
   <string name="com.auth0.lock.strategy.localized.baidu">百度</string>
+  <!-- Bitbucket -->
   <string name="com.auth0.lock.strategy.localized.bitbucket">BITBUCKET</string>
+  <!-- Dropbox -->
   <string name="com.auth0.lock.strategy.localized.dropbox">DROPBOX</string>
+  <!-- Dwolla -->
   <string name="com.auth0.lock.strategy.localized.dwolla">DWOLLA</string>
+  <!-- Ebay -->
   <string name="com.auth0.lock.strategy.localized.ebay">EBAY</string>
+  <!-- Evernote -->
   <string name="com.auth0.lock.strategy.localized.evernote">EVERNOTE</string>
+  <!-- EvernoteSandbox -->
   <string name="com.auth0.lock.strategy.localized.evernote_sandbox">EVERNOTE (SANDBOX)</string>
+  <!-- Exact -->
   <string name="com.auth0.lock.strategy.localized.exact">EXACT</string>
+  <!-- Facebook -->
   <string name="com.auth0.lock.strategy.localized.facebook">FACEBOOK</string>
+  <!-- Fitbit -->
   <string name="com.auth0.lock.strategy.localized.fitbit">FITBIT</string>
+  <!-- Github -->
   <string name="com.auth0.lock.strategy.localized.github">GITHUB</string>
+  <!-- Google -->
   <string name="com.auth0.lock.strategy.localized.google">GOOGLE</string>
+  <!-- Instagram -->
   <string name="com.auth0.lock.strategy.localized.instagram">INSTAGRAM</string>
+  <!-- Linkedin -->
   <string name="com.auth0.lock.strategy.localized.linkedin">LINKEDIN</string>
+  <!-- Microsoft -->
   <string name="com.auth0.lock.strategy.localized.microsoft">MICROSOFT ACCOUNT</string>
+  <!-- Miicard -->
   <string name="com.auth0.lock.strategy.localized.miicard">MIICARD</string>
+  <!-- Paypal -->
   <string name="com.auth0.lock.strategy.localized.paypal">PAYPAL</string>
+  <!-- PaypalSandbox -->
   <string name="com.auth0.lock.strategy.localized.paypal_sandbox">PAYPAL (SANDBOX)</string>
+  <!-- PlanningCenter -->
   <string name="com.auth0.lock.strategy.localized.planning_center">PLANNING CENTER</string>
+  <!-- RenRen -->
   <string name="com.auth0.lock.strategy.localized.renren">人人</string>
+  <!-- Salesforce -->
   <string name="com.auth0.lock.strategy.localized.salesforce">SALESFORCE</string>
+  <!-- SalesforceCommunity -->
   <string name="com.auth0.lock.strategy.localized.salesforce_community">SALESFORCE COMMUNITY</string>
+  <!-- SalesforceSandbox -->
   <string name="com.auth0.lock.strategy.localized.salesforce_sandbox">SALESFORCE (SANDBOX)</string>
+  <!-- Shopify -->
   <string name="com.auth0.lock.strategy.localized.shopify">SHOPIFY</string>
+  <!-- Soundcloud -->
   <string name="com.auth0.lock.strategy.localized.soundcloud">SOUNDCLOUD</string>
+  <!-- TheCity -->
   <string name="com.auth0.lock.strategy.localized.the_city">Die Stadt</string>
+  <!-- TheCitySandbox -->
   <string name="com.auth0.lock.strategy.localized.the_city_sandbox">Die Stadt (Sanbox)</string>
+  <!-- ThirtySevenSignals -->
   <string name="com.auth0.lock.strategy.localized.thirty_seven_signals">37 Signals</string>
+  <!-- Twitter -->
   <string name="com.auth0.lock.strategy.localized.twitter">TWITTER</string>
+  <!-- Vkontakte -->
   <string name="com.auth0.lock.strategy.localized.vkontakte">VKONTAKTE</string>
+  <!-- Weibo -->
   <string name="com.auth0.lock.strategy.localized.weibo">新浪微博</string>
+  <!-- Wordpress -->
   <string name="com.auth0.lock.strategy.localized.wordpress">WORDPRESS</string>
+  <!-- Yahoo -->
   <string name="com.auth0.lock.strategy.localized.yahoo">YAHOO!</string>
+  <!-- Yammer -->
   <string name="com.auth0.lock.strategy.localized.yammer">YAMMER</string>
+  <!-- Yandex -->
   <string name="com.auth0.lock.strategy.localized.yandex">YANDEX</string>
+  <!-- Log in with %@{strategy} -->
   <string name="com_auth0_lock_social_log_in">Einloggen mit %1$s</string>
+  <!-- Sign up with %@{strategy} -->
   <string name="com_auth0_lock_social_sign_up">Registrieren mit %1$s</string>
+  <!-- Login Button title -->
   <string name="com_auth0_lock_action_log_in">LOG IN</string>
+  <!-- Send 2fa code -->
   <string name="com.auth0.lock.submit.send_code.title">SENDEN</string>
+  <!-- Send Email button title -->
   <string name="com_auth0_lock_action_send_email">Sende Email</string>
+  <!-- Signup Button title -->
   <string name="com_auth0_lock_action_sign_up">Registrieren</string>
+  <!-- Passwordless code reminder action -->
   <string name="com.auth0.passwordless.code.reminder">Code nicht bekommen?</string>
+  <!-- Passwordless code sent by email to %@{identifier} -->
   <string name="com.auth0.passwordless.email.code.sent">Eine Email mit dem Code wurde an %1$s gesendet.</string>
+  <!-- Passwordless email title -->
   <string name="com.auth0.passwordless.email.title">Email-Adresse angeben um einzuloggen oder Account anzulegen.</string>
+  <!-- Passwordless email title with social -->
   <string name="com.auth0.passwordless.email.title.social">Andernfalls, Email-adresse zum einloggen oder registrieren angeben.</string>
+  <!-- Passwordless link reminder action -->
   <string name="com.auth0.passwordless.link.reminder">Link nicht erhalten?</string>
+  <!-- Passwordless link sent to %@{identifier} -->
   <string name="com.auth0.passwordless.link.sent">Wir haben einen Link an %1$s gesendet.</string>
+  <!-- Passwordless code sent by sms to %@{identifier} -->
   <string name="com.auth0.passwordless.sms.code.sent">Eine SMS mit dem Code wurde an %1$s gesendet</string>
+  <!-- CountryCodes TableViewCell detail %@{phoneCode} -->
   <string name="com.auth0.passwordless.sms.country.cell.detail">%1$s</string>
+  <!-- CountryCodes TableViewCell label %@{localizedName} -->
   <string name="com.auth0.passwordless.sms.country.cell.label">%1$s</string>
+  <!-- Passwordless sms title -->
   <string name="com.auth0.passwordless.sms.title">Telefonnummer eingeben um einzuloggen oder um zu registrieren.</string>
+  <!-- Passwordless sms title with social -->
   <string name="com.auth0.passwordless.sms.title.social">Oder, Telefonnummer eingeben um einzuloggen oder um zu registrieren.</string>
   <!-- Class = "UILabel"; text = "Make & Model"; ObjectID = "XDN-d5-eoX"; Note = "CREATE_AIRCRAFT_MAKE_AND_MODEL|Label for the row label that displays the Make and Model of an aircraft"; AirMapUIObjectId = "XDN-d5-eoX.text"; -->
   <string name="create_aircraft_make_and_model">Typ und Modell</string>
@@ -410,6 +538,7 @@
   <!-- No comment provided by engineer. -->
   <string name="gcdasyncudpsocketsendtimeouterror">Sende-Operation fehlgeschlagen.</string>
   <!-- Invalid amount of jwt parts -->
+  <!-- Invalid amount of jwt parts -->
   <!-- Invalid JWT token base64Url value -->
   <!-- Invalid JSON value inside base64Url -->
   <!-- The request with the authority will be reviewed manually sometime after the flight plan is submitted -->
@@ -432,7 +561,7 @@
   <!-- Class = "UINavigationItem"; title = "Verify Phone Number"; ObjectID = "MVj-Qg-sch"; Note = "PHONE_VERIFICATION_CODE_TITLE|Title for the view where a user can verify an SMS token"; AirMapUIObjectId = "MVj-Qg-sch.title"; -->
   <string name="phone_verification_code_title">Telefonnummer verifizieren</string>
   <!-- Class = "UILabel"; text = "By providing your number, you agree to receive texts about your flights at this number. Carrier message & data rates may apply.\n\nAirMap will send you a text message when your digital notice has been successfully submitted.\n"; ObjectID = "2Na-rR-yZi"; Note = "PHONE_VERIFICATION_HEADER|Copy describing the process of verifying your phone number"; AirMapUIObjectId = "2Na-rR-yZi.text"; -->
-  <string name="airmap_phone_number_disclaimer">Durch das angeben der Telefonnummer wird dem Empfang von SMS-Nachrichten zugestimmt. Übliche Preise für Empfang von SMS fallen abhängig vom Mobilfunkvertrag an. AirMap wird eine SMS senden sobald die digital Notifizerung erfolgreich übermittelt wurde.</string>
+  <string name="airmap_phone_number_disclaimer">Durch das angeben der Telefonnummer wird dem Empfang von SMS-Nachrichten zugestimmt. Übliche Preise für Empfang von SMS fallen abhängig vom Mobilfunkvertrag an.\n\nAirMap wird eine SMS senden sobald die digital Notifizerung erfolgreich übermittelt wurde.</string>
   <!-- Class = "UITextField"; placeholder = "Phone Number"; ObjectID = "vme-QM-SG8"; Note = "PHONE_VERIFICATION_PHONE|Placeholder label for the text field where a user types their phone number"; AirMapUIObjectId = "vme-QM-SG8.placeholder"; -->
   <string name="phone_verification_phone">Telefonnummer</string>
   <!-- Message that is presented after a phone verification has failed, encouraging the user to send a new code to the phone number provided -->

@@ -15,13 +15,14 @@
   <string name="celsius_temp">%d °C</string>
   <string name="com_auth0_lock_description_change_password">Prosím zadejte svou emailovou adresu. Zašleme vám email pro obnovení hesla.</string>
   <string name="com_auth0_lock_password_strength_title_at_least">A obsahují alespoň 3 z následujících 4 typů znaků:</string>
-  <string name="com_auth0_lock_sign_up_terms_dialog_message" formatted="false">Registrací souhlasíte s našimi <a href="\'%s\'">terms of service</a>smluvními podmínkami a <a href="\'%s\'">zásadami ochrany osobních údajů</a></string>
+  <string name="com_auth0_lock_sign_up_terms_dialog_message"><![CDATA[Registrací souhlasíte s našimi <a href=\'%s\'>smluvními podmínkami</a> a <a href=\'%s\'>zásadami ochrany osobních údajů</a>]]></string>
   <string name="com_auth0_lock_sign_up_terms_dialog_title">Zásady &amp; termíny</string>
   <string name="country">Země</string>
   <string name="county">Okres</string>
   <string name="dew_point">Rosný bod</string>
   <string name="do_you_want_to_call">Chcete volat %1$s?</string>
   <plurals name="duration_in_hours">
+    <item quantity="few">%1$s hodiny</item>
     <item quantity="one">%1$s hodina</item>
     <item quantity="other">%1$s hodiny</item>
   </plurals>
@@ -31,9 +32,7 @@
   <string name="enter_verification_token">Zadejte ověřovací kód, který byl odeslán na vaše telefonní číslo</string>
   <string name="error_creating_flight">Chyba při vytváření letu</string>
   <string name="error_getting_mfrs">Chyba při výběru výrobců</string>
-  <string name="error_getting_permit">Chyba při získání povolení</string>
   <string name="error_getting_profile">Chyba při vytváření profilu</string>
-  <string name="error_getting_wallet">Chyba při schválení platby</string>
   <string name="error_loading_map_button">Aktualizace Datum/Čas</string>
   <string name="error_loading_map_message">Nahrávání mapy vyžaduje přesné datum a čas na zařízení. Ujistěte se, že datum a čas zařízení jsou nastaveny na automatické.</string>
   <string name="error_loading_map_network_button">Ověření sítě</string>
@@ -72,7 +71,6 @@
   <string name="null_feature_value">—</string>
   <string name="only_schedule_present_future">Můžete plánovat pouze lety pro současnost nebo budoucnost</string>
   <string name="optional">Volitelný</string>
-  <string name="permit_status">Stav: %1$s</string>
   <string name="phone_number">Telefonní číslo</string>
   <string name="phone_verification_mismatch">Ověřovací kód neodpovídá zaslanému kódu. Odeslat novou zprávu s ověřovacím kódem a zkusit znovu?</string>
   <string name="pick_one">Vybrat jeden</string>
@@ -119,5 +117,4 @@
   <string name="waterway">Vodní tok</string>
   <string name="wind">Vítr</string>
   <string name="yes">ANO</string>
-  <string name="you_have_selected_permits_of_total_required">Máte vybráno %1$d z %2$d pro tento let</string>
 </resources>

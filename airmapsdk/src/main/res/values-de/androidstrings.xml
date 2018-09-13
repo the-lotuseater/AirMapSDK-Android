@@ -15,14 +15,14 @@
   <string name="celsius_temp">%d °C</string>
   <string name="com_auth0_lock_description_change_password">Bitte Email-adresse angeben. Wir senden eine Email um das Passwort rückzusetzen.</string>
   <string name="com_auth0_lock_password_strength_title_at_least">Muss mindestens 3 der 4 folgenden Zeichen enthalten:</string>
-  <string name="com_auth0_lock_sign_up_terms_dialog_message" formatted="false"><![CDATA[
+  <string name="com_auth0_lock_sign_up_terms_dialog_message"><![CDATA[
     Durch das Registrieren wird diesen Bediungen zugestimmt:  <a href=\'%s\'>terms of service</a> und <a href=\'%s\'>privacy policy</a>
     ]]></string>
   <string name="com_auth0_lock_sign_up_terms_dialog_title">Terms &amp; Policy</string>
   <string name="country">Land</string>
   <string name="county">Land</string>
   <string name="dew_point">Taupunkt</string>
-  <string name="do_you_want_to_call"> %1$s anrufen?</string>
+  <string name="do_you_want_to_call">%1$s anrufen?</string>
   <plurals name="duration_in_hours">
     <item quantity="one">%1$s Stunde</item>
     <item quantity="other">%1$s Stunden</item>
@@ -33,9 +33,7 @@
   <string name="enter_verification_token">Verifikations-Code eingeben.</string>
   <string name="error_creating_flight">Fehler beim erstellen des Flugs</string>
   <string name="error_getting_mfrs">Fehler beim Laden der Herstellerliste</string>
-  <string name="error_getting_permit">Fehler beim Laden des Permits</string>
   <string name="error_getting_profile">Fehler beim Laden des Profils.</string>
-  <string name="error_getting_wallet">Fehler mit Permit</string>
   <string name="error_loading_map_button">Datum/Uhrzeit updaten</string>
   <string name="error_loading_map_message">Das Laden der Karte benötigt eine genaue Uhrzeit und Datum. Bitte auf \"automatisch\" setzen.</string>
   <string name="error_loading_map_network_button">Netzwerkstatus überprüfen</string>
@@ -74,7 +72,6 @@
   <string name="null_feature_value">—</string>
   <string name="only_schedule_present_future">Flüge können nur für jetzt oder in der Zukunft angelegt werden.</string>
   <string name="optional">Optional</string>
-  <string name="permit_status">Status: %1$s</string>
   <string name="phone_number">Telefonnummer</string>
   <string name="phone_verification_mismatch">Verifkations-Code falsch. Erneut senden?</string>
   <string name="pick_one">Eins auswählen</string>
@@ -121,5 +118,4 @@
   <string name="waterway">Wasserstraße</string>
   <string name="wind">Wind</string>
   <string name="yes">Ja</string>
-  <string name="you_have_selected_permits_of_total_required"> %1$d von %2$d Permits für den Flug ausgewählt.</string>
 </resources>
