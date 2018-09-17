@@ -26,6 +26,7 @@
   <plurals name="duration_in_hours">
     <item quantity="one">%1$s Stunde</item>
     <item quantity="other">%1$s Stunden</item>
+    <item quantity="zero">%1$s Stunden</item>
   </plurals>
   <string name="duration_in_minutes">%1$s Minuten</string>
   <string name="email_verification_required">Verifikation der Email notewendig</string>
