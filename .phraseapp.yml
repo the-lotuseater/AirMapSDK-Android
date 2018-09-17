@@ -10,7 +10,7 @@ phraseapp:
         locale_id: en
   pull:
     targets:
-    - file: airmapsdk/src/main/res/values-<locale_code>/translated-strings.xml
+    - file: airmapsdk/src/main/res/values-<locale_name>/translated-strings.xml
       params:
         tag: "ios"
         file_format: xml
@@ -19,7 +19,7 @@ phraseapp:
           convert_placeholder: true
           escape_linebreaks: true
 
-    - file: airmapsdk/src/main/res/values-<locale_code>/androidstrings.xml #android only
+    - file: airmapsdk/src/main/res/values-<locale_name>/androidstrings.xml #android only
       params:
         tag: "android"
         file_format: xml
