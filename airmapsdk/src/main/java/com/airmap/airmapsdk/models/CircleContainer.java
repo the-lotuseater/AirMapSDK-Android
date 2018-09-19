@@ -58,13 +58,13 @@ public class CircleContainer extends Container {
             Source polygonSource = new GeoJsonSource(POLYGON_SOURCE, Feature.fromGeometry(Polygon.fromCoordinates(coordinates)));
             map.addSource(polygonSource);
             FillLayer polygonLayer = new FillLayer(POLYGON_LAYER, POLYGON_SOURCE)
-                    .withProperties(PropertyFactory.fillColor(ContextCompat.getColor(context, R.color.airmap_aqua)), PropertyFactory.fillOpacity(0.5f));
+                    .withProperties(PropertyFactory.fillColor(ContextCompat.getColor(context, R.color.colorAccent)), PropertyFactory.fillOpacity(0.5f));
             map.addLayerBelow(polygonLayer, POINT_LAYER);
 
             Source polylineSource = new GeoJsonSource(POLYLINE_SOURCE, Feature.fromGeometry(LineString.fromCoordinates(lineString)));
             map.addSource(polylineSource);
             Layer polylineLayer = new LineLayer(POLYLINE_LAYER, POLYLINE_SOURCE)
-                    .withProperties(PropertyFactory.lineColor(ContextCompat.getColor(context, R.color.airmap_navy)), PropertyFactory.lineOpacity(0.9f));
+                    .withProperties(PropertyFactory.lineColor(ContextCompat.getColor(context, R.color.colorPrimary)), PropertyFactory.lineOpacity(0.9f));
             map.addLayerAbove(polylineLayer, POLYGON_LAYER);
 
         // otherwise, update source
@@ -73,7 +73,7 @@ public class CircleContainer extends Container {
             polygonSource.setGeoJson(Feature.fromGeometry(Polygon.fromCoordinates(coordinates)));
 
             FillLayer polygonFill = map.getLayerAs(Container.POLYGON_LAYER);
-            polygonFill.setProperties(PropertyFactory.fillColor(ContextCompat.getColor(context, R.color.airmap_aqua)));
+            polygonFill.setProperties(PropertyFactory.fillColor(ContextCompat.getColor(context, R.color.colorAccent)));
 
             GeoJsonSource polylineSource = map.getSourceAs(POLYLINE_SOURCE);
             polylineSource.setGeoJson(Feature.fromGeometry(LineString.fromCoordinates(lineString)));
@@ -98,7 +98,7 @@ public class CircleContainer extends Container {
         polygonSource.setGeoJson(Feature.fromGeometry(Polygon.fromCoordinates(coordinates)));
 
         FillLayer polygonFill = map.getLayerAs(Container.POLYGON_LAYER);
-        polygonFill.setProperties(PropertyFactory.fillColor(ContextCompat.getColor(context, R.color.airmap_aqua)));
+        polygonFill.setProperties(PropertyFactory.fillColor(ContextCompat.getColor(context, R.color.colorAccent)));
 
         GeoJsonSource polylineSource = map.getSourceAs(POLYLINE_SOURCE);
         polylineSource.setGeoJson(Feature.fromGeometry(LineString.fromCoordinates(lineString)));
