@@ -9,7 +9,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 2
-        versionName "2.0.0"
+        versionName "2.0.1"
         multiDexEnabled true
 
         manifestPlaceholders = [auth0Domain: "sso.airmap.com", auth0Scheme: "airmap"]
