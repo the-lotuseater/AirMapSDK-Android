@@ -159,6 +159,15 @@ public class AirMapConfig {
         }
     }
 
+    public static String getTwitterHandle() {
+        try {
+            return AirMap.getConfig().getJSONObject("app").getString("twitter_handle");
+        } catch (JSONException e) {
+            Timber.e("Unable to get twitter handle");
+            return null;
+        }
+    }
+
     public static String getDomainForThirdPartyAPI(String key) {
         try {
             return AirMap.getConfig().getJSONObject(key).getString("api");
