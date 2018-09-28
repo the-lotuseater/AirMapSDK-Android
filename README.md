@@ -21,10 +21,17 @@ Start by adding the Android SDK to your project:
 
 * Add 
 ```groovy
-implementation 'com.airmap.airmapsdk:airmapsdk:2.0.0'
+implementation 'com.airmap.airmapsdk:airmapsdk:2.0.1'
 ``` 
 
-to your module level `build.gradle` file
+to the dependencies section of your module level `build.gradle` file
+
+* Add
+```groovy
+manifestPlaceholders = [auth0Domain: "@string/com_auth0_domain", auth0Scheme: "@string/com_auth0_scheme"]
+```
+
+to the defaultConfig section of your module level `build.gradle` file
 
 * Add 
 ```groovy

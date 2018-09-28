@@ -1,3 +1,7 @@
+
+## `2.0.1 (9/28/18)`
+* Add localization for cs, de, es, fr, hi, it, ja, nb, pl, sv, th & zh
+
 ## `2.0.0 (8/21/18)`
 * New Rulesets API
 * New Flight Plan API
