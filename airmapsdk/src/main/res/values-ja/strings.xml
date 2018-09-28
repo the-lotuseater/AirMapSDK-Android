@@ -570,8 +570,10 @@
   <string name="phone_verification_phone">電話番号</string>
   <!-- Message that is presented after a phone verification has failed, encouraging the user to send a new code to the phone number provided -->
   <string name="phone_verification_request_new_sms_code">新しい確認コードを送信します</string>
-  <!-- Class = "UIButton"; normalTitle = "Submit"; ObjectID = "lre-WH-pt9"; Note = "PHONE_VERIFICATION_SAVE_BUTTON|Title for button that allows the user to submit the SMS code for verification"; AirMapUIObjectId = "lre-WH-pt9.normalTitle"; -->
+  <!-- Class = "UIButton"; normalTitle = "Save"; ObjectID = "mhb-zV-IBV"; Note = "PHONE_VERIFICATION_SAVE_BUTTON|Title for button that saves and submits the users phone number for verification"; AirMapUIObjectId = "mhb-zV-IBV.normalTitle"; -->
   <string name="phone_verification_save_button">送信</string>
+  <!-- Class = "UIButton"; normalTitle = "Submit"; ObjectID = "lre-WH-pt9"; Note = "PHONE_VERIFICATION_SUBMIT_BUTTON|Title for button that allows the user to submit the SMS code for verification"; AirMapUIObjectId = "lre-WH-pt9.normalTitle"; -->
+  <string name="phone_verification_submit_button">送信</string>
   <!-- Class = "UINavigationItem"; title = "Phone Number Verification"; ObjectID = "4g7-2z-c9g"; Note = "PHONE_VERIFICATION_TITLE|Title for view that allows a user to verify their phone number"; AirMapUIObjectId = "4g7-2z-c9g.title"; -->
   <string name="phone_number_verification">電話番号の確認</string>
   <!-- Message that is presented after a phone verification has failed, encouraging the user to try again -->

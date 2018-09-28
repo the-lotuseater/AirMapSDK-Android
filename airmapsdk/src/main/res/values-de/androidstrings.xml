@@ -15,9 +15,7 @@
   <string name="celsius_temp">%d °C</string>
   <string name="com_auth0_lock_description_change_password">Bitte Email-adresse angeben. Wir senden eine Email um das Passwort rückzusetzen.</string>
   <string name="com_auth0_lock_password_strength_title_at_least">Muss mindestens 3 der 4 folgenden Zeichen enthalten:</string>
-  <string name="com_auth0_lock_sign_up_terms_dialog_message"><![CDATA[
-    Durch das Registrieren wird diesen Bediungen zugestimmt:  <a href=\'%s\'>terms of service</a> und <a href=\'%s\'>privacy policy</a>
-    ]]></string>
+  <string name="com_auth0_lock_sign_up_terms_dialog_message">Durch das Registrieren wird diesen Bediungen zugestimmt:  <a href="\'%s\'">terms of service</a> und <a href="\'%s\'">privacy policy</a></string>
   <string name="com_auth0_lock_sign_up_terms_dialog_title">Terms &amp; Policy</string>
   <string name="country">Land</string>
   <string name="county">Land</string>
