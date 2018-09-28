@@ -168,8 +168,6 @@
   <string name="cardinal_direction_wnw">WNW</string>
   <!-- Abbreviation for West South West -->
   <string name="cardinal_direction_wsw">WSW</string>
-  <!-- Bundle name -->
-  <string name="cfbundlename">${PRODUKTOVÝ_NÁZEV}</string>
   <!-- Forgot password -->
   <string name="com_auth0_lock_action_forgot_password">Nepamatujete si své heslo?</string>
   <!-- tos & privacy -->
@@ -227,7 +225,7 @@
   <!-- Must no be empty -->
   <string name="com.auth0.lock.error.password.non_empty">Heslo nesmí být prázdné</string>
   <!-- No more than %@{count} identical characters in a row (e.g., \"%@{identical sample}\" not allowed) -->
-  <string name="com_auth0_lock_password_strength_identical_chars">Nesmí se opakovat více než %1$d identických znaků za sebou (např., %2$s není povoleno)</string>
+  <string name="com_auth0_lock_password_strength_identical_chars">Nesmí se opakovat více než %1$d identických znaků za sebou (např., \'%2$s\' není povoleno)</string>
   <!-- Numbers -->
   <string name="com_auth0_lock_password_strength_numbers">Čísla (tj. 0-9)</string>
   <!-- N groups -->
@@ -542,7 +540,10 @@
   <!-- No comment provided by engineer. -->
   <string name="gcdasyncudpsocketsendtimeouterror">Odeslání vypršelo</string>
   <!-- Invalid amount of jwt parts -->
+  <!-- Invalid amount of jwt parts -->
   <!-- Invalid JWT token base64Url value -->
+  <!-- Invalid JWT token base64Url value -->
+  <!-- Invalid JSON value inside base64Url -->
   <!-- Invalid JSON value inside base64Url -->
   <!-- The request with the authority will be reviewed manually sometime after the flight plan is submitted -->
   <string name="manual_authorization">Manuální autorizace čekající na vyřízení</string>
@@ -564,13 +565,15 @@
   <!-- Class = "UINavigationItem"; title = "Verify Phone Number"; ObjectID = "MVj-Qg-sch"; Note = "PHONE_VERIFICATION_CODE_TITLE|Title for the view where a user can verify an SMS token"; AirMapUIObjectId = "MVj-Qg-sch.title"; -->
   <string name="phone_verification_code_title">Ověření telefonního čísla</string>
   <!-- Class = "UILabel"; text = "By providing your number, you agree to receive texts about your flights at this number. Carrier message & data rates may apply.\n\nAirMap will send you a text message when your digital notice has been successfully submitted.\n"; ObjectID = "2Na-rR-yZi"; Note = "PHONE_VERIFICATION_HEADER|Copy describing the process of verifying your phone number"; AirMapUIObjectId = "2Na-rR-yZi.text"; -->
-  <string name="airmap_phone_number_disclaimer">Zadáním svého čísla souhlasíte s tím, že obdržíte na tomto čísle zprávy o vašich letech. Zprávy a data mohou být dále využita.\n\nAirMap vám zašle potvrzující zprávu po úspěšném odeslání.</string>
+  <string name="airmap_phone_number_disclaimer">Zadáním svého čísla souhlasíte s tím, že obdržíte na tomto čísle zprávy o vašich letech. Zprávy a data mohou být dále využita. AirMap vám zašle potvrzující zprávu po úspěšném odeslání.</string>
   <!-- Class = "UITextField"; placeholder = "Phone Number"; ObjectID = "vme-QM-SG8"; Note = "PHONE_VERIFICATION_PHONE|Placeholder label for the text field where a user types their phone number"; AirMapUIObjectId = "vme-QM-SG8.placeholder"; -->
   <string name="phone_verification_phone">Telefonní číslo</string>
   <!-- Message that is presented after a phone verification has failed, encouraging the user to send a new code to the phone number provided -->
   <string name="phone_verification_request_new_sms_code">Vyžádejte si nový kód SMS</string>
-  <!-- Class = "UIButton"; normalTitle = "Submit"; ObjectID = "lre-WH-pt9"; Note = "PHONE_VERIFICATION_SAVE_BUTTON|Title for button that allows the user to submit the SMS code for verification"; AirMapUIObjectId = "lre-WH-pt9.normalTitle"; -->
+  <!-- Class = "UIButton"; normalTitle = "Save"; ObjectID = "mhb-zV-IBV"; Note = "PHONE_VERIFICATION_SAVE_BUTTON|Title for button that saves and submits the users phone number for verification"; AirMapUIObjectId = "mhb-zV-IBV.normalTitle"; -->
   <string name="phone_verification_save_button">Souhlasím</string>
+  <!-- Class = "UIButton"; normalTitle = "Submit"; ObjectID = "lre-WH-pt9"; Note = "PHONE_VERIFICATION_SUBMIT_BUTTON|Title for button that allows the user to submit the SMS code for verification"; AirMapUIObjectId = "lre-WH-pt9.normalTitle"; -->
+  <string name="phone_verification_submit_button">Odeslat</string>
   <!-- Class = "UINavigationItem"; title = "Phone Number Verification"; ObjectID = "4g7-2z-c9g"; Note = "PHONE_VERIFICATION_TITLE|Title for view that allows a user to verify their phone number"; AirMapUIObjectId = "4g7-2z-c9g.title"; -->
   <string name="phone_number_verification">Ověření telefonního čísla</string>
   <!-- Message that is presented after a phone verification has failed, encouraging the user to try again -->

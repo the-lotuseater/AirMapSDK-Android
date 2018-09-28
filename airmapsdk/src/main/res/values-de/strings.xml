@@ -168,8 +168,6 @@
   <string name="cardinal_direction_wnw">WNW</string>
   <!-- Abbreviation for West South West -->
   <string name="cardinal_direction_wsw">WSW</string>
-  <!-- Bundle name -->
-  <string name="cfbundlename">${PRODUCT_NAME}</string>
   <!-- Forgot password -->
   <string name="com_auth0_lock_action_forgot_password">Passwort vergessen?</string>
   <!-- tos & privacy -->
@@ -227,7 +225,7 @@
   <!-- Must no be empty -->
   <string name="com.auth0.lock.error.password.non_empty">Passwort darf nicht lehr sein.</string>
   <!-- No more than %@{count} identical characters in a row (e.g., \"%@{identical sample}\" not allowed) -->
-  <string name="com_auth0_lock_password_strength_identical_chars">Mehr als %1$d identische Zeichen in einer Zeile (z.B., %2$s ist nicht erlaubt)</string>
+  <string name="com_auth0_lock_password_strength_identical_chars">Mehr als %1$d identische Zeichen in einer Zeile (z.B., \'%2$s\' ist nicht erlaubt)</string>
   <!-- Numbers -->
   <string name="com_auth0_lock_password_strength_numbers">Zahlen (0-9)</string>
   <!-- N groups -->
@@ -432,6 +430,10 @@
   <string name="create_aircraft_save_button">Speichern</string>
   <!-- Class = "UINavigationItem"; title = "Create Aircraft"; ObjectID = "Z9F-I6-niw"; Note = "CREATE_AIRCRAFT_TITLE|Title for the view where you can create a new aircraft"; AirMapUIObjectId = "Z9F-I6-niw.title"; -->
   <string name="create_aircraft">Fluggerät anlegen</string>
+  <!-- Request cancelled error -->
+  <string name="error_cancelled">Anfrage abgesagt, bevor Sie abgeschlossen werden konnte</string>
+  <!-- A conflict exists with the attempted request -->
+  <string name="error_conflict">Ein Konflikt besteht</string>
   <!-- A generic server error message with an associated error code -->
   <string name="error_generic_format">Der Server hat einen Fehler zurückgegeben (%s)</string>
   <!-- Response serialization failure error -->
@@ -540,6 +542,8 @@
   <!-- Invalid amount of jwt parts -->
   <!-- Invalid amount of jwt parts -->
   <!-- Invalid JWT token base64Url value -->
+  <!-- Invalid JWT token base64Url value -->
+  <!-- Invalid JSON value inside base64Url -->
   <!-- Invalid JSON value inside base64Url -->
   <!-- The request with the authority will be reviewed manually sometime after the flight plan is submitted -->
   <string name="manual_authorization">Manuelle Authorisierung nach Absenden.</string>
@@ -561,19 +565,23 @@
   <!-- Class = "UINavigationItem"; title = "Verify Phone Number"; ObjectID = "MVj-Qg-sch"; Note = "PHONE_VERIFICATION_CODE_TITLE|Title for the view where a user can verify an SMS token"; AirMapUIObjectId = "MVj-Qg-sch.title"; -->
   <string name="phone_verification_code_title">Telefonnummer verifizieren</string>
   <!-- Class = "UILabel"; text = "By providing your number, you agree to receive texts about your flights at this number. Carrier message & data rates may apply.\n\nAirMap will send you a text message when your digital notice has been successfully submitted.\n"; ObjectID = "2Na-rR-yZi"; Note = "PHONE_VERIFICATION_HEADER|Copy describing the process of verifying your phone number"; AirMapUIObjectId = "2Na-rR-yZi.text"; -->
-  <string name="airmap_phone_number_disclaimer">Durch das angeben der Telefonnummer wird dem Empfang von SMS-Nachrichten zugestimmt. Übliche Preise für Empfang von SMS fallen abhängig vom Mobilfunkvertrag an.\n\nAirMap wird eine SMS senden sobald die digital Notifizerung erfolgreich übermittelt wurde.</string>
+  <string name="airmap_phone_number_disclaimer">Durch das angeben der Telefonnummer wird dem Empfang von SMS-Nachrichten zugestimmt. Übliche Preise für Empfang von SMS fallen abhängig vom Mobilfunkvertrag an. AirMap wird eine SMS senden sobald die digital Notifizerung erfolgreich übermittelt wurde.</string>
   <!-- Class = "UITextField"; placeholder = "Phone Number"; ObjectID = "vme-QM-SG8"; Note = "PHONE_VERIFICATION_PHONE|Placeholder label for the text field where a user types their phone number"; AirMapUIObjectId = "vme-QM-SG8.placeholder"; -->
   <string name="phone_verification_phone">Telefonnummer</string>
   <!-- Message that is presented after a phone verification has failed, encouraging the user to send a new code to the phone number provided -->
   <string name="phone_verification_request_new_sms_code">Neuen SMS Code anfordern</string>
-  <!-- Class = "UIButton"; normalTitle = "Submit"; ObjectID = "lre-WH-pt9"; Note = "PHONE_VERIFICATION_SAVE_BUTTON|Title for button that allows the user to submit the SMS code for verification"; AirMapUIObjectId = "lre-WH-pt9.normalTitle"; -->
+  <!-- Class = "UIButton"; normalTitle = "Save"; ObjectID = "mhb-zV-IBV"; Note = "PHONE_VERIFICATION_SAVE_BUTTON|Title for button that saves and submits the users phone number for verification"; AirMapUIObjectId = "mhb-zV-IBV.normalTitle"; -->
   <string name="phone_verification_save_button">Einreichen</string>
+  <!-- Class = "UIButton"; normalTitle = "Submit"; ObjectID = "lre-WH-pt9"; Note = "PHONE_VERIFICATION_SUBMIT_BUTTON|Title for button that allows the user to submit the SMS code for verification"; AirMapUIObjectId = "lre-WH-pt9.normalTitle"; -->
+  <string name="phone_verification_submit_button">Senden</string>
   <!-- Class = "UINavigationItem"; title = "Phone Number Verification"; ObjectID = "4g7-2z-c9g"; Note = "PHONE_VERIFICATION_TITLE|Title for view that allows a user to verify their phone number"; AirMapUIObjectId = "4g7-2z-c9g.title"; -->
   <string name="phone_number_verification">Verifikation der Telefonnummer</string>
   <!-- Message that is presented after a phone verification has failed, encouraging the user to try again -->
   <string name="phone_verification_try_again">Nochmal versuchen</string>
   <!-- Message presented to a user when the SMS code they input is incorrect and verification of that code has failed -->
   <string name="phone_verification_verification_failed">Verifikation der Telefonnummer gescheitert</string>
+  <!-- Format for displaying the given + family name of a user. 1) given name 2) family name -->
+  <string name="pilot_full_name_format">%1$s %2$s</string>
   <!-- Table row label for FAA registration number -->
   <string name="pilot_profile_faa_registration">FAA Registrierungsnummer</string>
   <!-- Label for the pilot profile email -->
