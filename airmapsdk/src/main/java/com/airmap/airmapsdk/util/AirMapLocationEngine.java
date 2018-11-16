@@ -1,9 +1,9 @@
 package com.airmap.airmapsdk.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationAvailability;
@@ -11,12 +11,9 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.mapbox.services.android.telemetry.location.LocationEngine;
-import com.mapbox.services.android.telemetry.location.LocationEngineListener;
-import com.mapbox.services.android.telemetry.location.LocationEnginePriority;
+import com.mapbox.android.core.location.LocationEngine;
+import com.mapbox.android.core.location.LocationEngineListener;
 
 import timber.log.Timber;
 
@@ -68,6 +65,7 @@ public class AirMapLocationEngine extends LocationEngine {
         this.locationRequest = locationRequest;
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void activate() {
         Timber.d("activate");
@@ -85,26 +83,14 @@ public class AirMapLocationEngine extends LocationEngine {
         return true;
     }
 
-    public void flush() {
-        Task flushTask = fusedLocationClient.flushLocations();
-        flushTask.addOnCompleteListener(new OnCompleteListener() {
-            @Override
-            public void onComplete(@NonNull Task task) {
-                Timber.d("flush successful: " + task.isSuccessful());
-            }
-        });
-    }
-
+    @SuppressLint("MissingPermission")
     public void getLastKnownLocation() {
         Task<Location> locationTask = fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        Timber.d("getLastLocationTask success: " + location);
-                        if (location != null) {
-                            for (LocationEngineListener listener : locationListeners) {
-                                listener.onLocationChanged(location);
-                            }
+                .addOnSuccessListener(location -> {
+                    Timber.d("getLastLocationTask success: " + location);
+                    if (location != null) {
+                        for (LocationEngineListener listener : locationListeners) {
+                            listener.onLocationChanged(location);
                         }
                     }
                 });
@@ -116,11 +102,12 @@ public class AirMapLocationEngine extends LocationEngine {
                     listener.onLocationChanged(locationTask.getResult());
                 }
             } else if (locationTask.getException() != null) {
-                Timber.e("already has exception", locationTask.getException());
+                Timber.e(locationTask.getException());
             }
         }
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public Location getLastLocation() {
         Task<Location> task = fusedLocationClient.getLastLocation();
@@ -131,6 +118,7 @@ public class AirMapLocationEngine extends LocationEngine {
         return null;
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void requestLocationUpdates() {
         Timber.d("locationRequestLocationUpdates w/ priority: " + locationRequest.getPriority());

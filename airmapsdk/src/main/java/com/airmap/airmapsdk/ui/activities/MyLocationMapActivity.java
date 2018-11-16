@@ -3,7 +3,6 @@ package com.airmap.airmapsdk.ui.activities;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -27,29 +26,22 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.mapbox.android.core.location.LocationEngineListener;
+import com.mapbox.android.core.location.LocationEnginePriority;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode;
-import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
-import com.mapbox.mapboxsdk.style.layers.CannotAddLayerException;
-import com.mapbox.mapboxsdk.style.sources.CannotAddSourceException;
-import com.mapbox.services.android.telemetry.location.LocationEngine;
-import com.mapbox.services.android.telemetry.location.LocationEngineListener;
-import com.mapbox.services.android.telemetry.location.LocationEnginePriority;
+import com.mapbox.mapboxsdk.location.LocationComponent;
 
 import timber.log.Timber;
 
 public abstract class MyLocationMapActivity extends AppCompatActivity implements LocationEngineListener {
 
-    private static final int REQUEST_LOCATION_PERMISSION = 7737;
-    private static final int REQUEST_TURN_ON_LOCATION = 8849;
+    public static final int REQUEST_LOCATION_PERMISSION = 7737;
+    public static final int REQUEST_TURN_ON_LOCATION = 8849;
 
     private AirMapMapView.OnMapLoadListener mapLoadListener;
 
-    protected LocationLayerPlugin locationLayerPlugin;
     private AirMapLocationEngine locationEngine;
     private LocationRequest locationRequest;
 
@@ -79,23 +71,9 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         setupMapLoadListener();
     }
 
-    @SuppressLint("MissingPermission")
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        if (locationLayerPlugin != null && requestLocationPermissionIfNeeded()) {
-            locationLayerPlugin.onStart();
-        }
-    }
-
     @Override
     public void onStop() {
         super.onStop();
-
-        if (locationLayerPlugin != null) {
-            locationLayerPlugin.onStop();
-        }
 
         if (locationEngine != null) {
             locationEngine.removeLocationUpdates();
@@ -223,13 +201,10 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
                         new AlertDialog.Builder(MyLocationMapActivity.this)
                                 .setTitle(R.string.error_loading_map_title)
                                 .setMessage(R.string.error_loading_map_message)
-                                .setPositiveButton(R.string.error_loading_map_button, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // open settings and kill this activity
-                                        startActivity(new Intent(Settings.ACTION_DATE_SETTINGS));
-                                        finish();
-                                    }
+                                .setPositiveButton(R.string.error_loading_map_button, (dialog, which) -> {
+                                    // open settings and kill this activity
+                                    startActivity(new Intent(Settings.ACTION_DATE_SETTINGS));
+                                    finish();
                                 })
                                 .setNegativeButton(android.R.string.cancel, null)
                                 .show();
@@ -249,22 +224,14 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
                         new AlertDialog.Builder(MyLocationMapActivity.this)
                                 .setTitle(R.string.error_loading_map_title)
                                 .setMessage(R.string.error_loading_map_network_message)
-                                .setPositiveButton(R.string.error_loading_map_network_button, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        isMapFailureDialogShowing = false;
-                                        // open settings and kill this activity
-                                        startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                                        finish();
-                                    }
+                                .setPositiveButton(R.string.error_loading_map_network_button, (dialog, which) -> {
+                                    isMapFailureDialogShowing = false;
+                                    // open settings and kill this activity
+                                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                    finish();
                                 })
                                 .setNegativeButton(android.R.string.cancel, null)
-                                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                                    @Override
-                                    public void onDismiss(DialogInterface dialogInterface) {
-                                        isMapFailureDialogShowing = false;
-                                    }
-                                })
+                                .setOnDismissListener(dialogInterface -> isMapFailureDialogShowing = false)
                                 .show();
 
                         isMapFailureDialogShowing = true;
@@ -288,22 +255,22 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
 
     @SuppressLint("MissingPermission")
     protected void setupLocationEngine() {
+        // ask user for location permission
         if (!requestLocationPermissionIfNeeded()) {
             return;
         }
 
-        Timber.d("setupLocationEngine");
+        // if location component already activated or engine already init, return
         if (locationEngine != null) {
-            Timber.w("already has location engine");
             return;
         }
+        Timber.d("setupLocationEngine");
+
         locationEngine = AirMapLocationEngine.getLocationEngine(this);
         locationEngine.setLocationRequest(locationRequest);
         locationEngine.addLocationEngineListener(this);
-        locationEngine.activate();
 
-        locationLayerPlugin = new LocationLayerPlugin(getMapView(), getMapView().getMap(), locationEngine, R.style.CustomLocationLayer);
-        locationLayerPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
+        locationEngine.activate();
 
         turnOnLocation();
     }
@@ -335,6 +302,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
      * This turns on Wifi/cell location tracking using Google Play services
      * It shows a dismissible dialog for users that don't have location already enabled
      */
+    @SuppressLint("MissingPermission")
     public void turnOnLocation() {
         LocationSettingsRequest settingsRequest = new LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest)
@@ -342,45 +310,38 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
                 .build();
 
         Task<LocationSettingsResponse> task = LocationServices.getSettingsClient(this).checkLocationSettings(settingsRequest);
-        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
-            @SuppressLint("MissingPermission")
-            @Override
-            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                if (!requestLocationPermissionIfNeeded()) {
-                    return;
-                }
+        task.addOnSuccessListener(this, locationSettingsResponse -> {
+            if (!requestLocationPermissionIfNeeded()) {
+                return;
+            }
 
-                // All location settings are satisfied. The client can initialize
-                // location requests here.
-                if (locationEngine != null) {
-                    locationEngine.getLastLocation();
-                    locationEngine.requestLocationUpdates();
-                } else if (getMapView().getMap() != null) {
-                    setupLocationEngine();
-                }
+            // All location settings are satisfied. The client can initialize
+            // location requests here.
+            if (locationEngine != null) {
+                locationEngine.getLastLocation();
+                locationEngine.requestLocationUpdates();
+            } else if (getMapView().getMap() != null) {
+                setupLocationEngine();
             }
         });
 
-        task.addOnFailureListener(this, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                if (e instanceof ResolvableApiException) {
-                    if (isLocationDialogShowing) {
-                        return;
-                    }
+        task.addOnFailureListener(this, e -> {
+            if (e instanceof ResolvableApiException) {
+                if (isLocationDialogShowing) {
+                    return;
+                }
 
-                    // Location settings are not satisfied, but this can be fixed
-                    // by showing the user a dialog.
-                    try {
-                        // Show the dialog by calling startResolutionForResult(),
-                        // and check the result in onActivityResult().
-                        ResolvableApiException resolvable = (ResolvableApiException) e;
-                        resolvable.startResolutionForResult(MyLocationMapActivity.this, REQUEST_TURN_ON_LOCATION);
+                // Location settings are not satisfied, but this can be fixed
+                // by showing the user a dialog.
+                try {
+                    // Show the dialog by calling startResolutionForResult(),
+                    // and check the result in onActivityResult().
+                    ResolvableApiException resolvable = (ResolvableApiException) e;
+                    resolvable.startResolutionForResult(MyLocationMapActivity.this, REQUEST_TURN_ON_LOCATION);
 
-                        isLocationDialogShowing = true;
-                    } catch (IntentSender.SendIntentException sendEx) {
-                        // Ignore the error.
-                    }
+                    isLocationDialogShowing = true;
+                } catch (IntentSender.SendIntentException sendEx) {
+                    // Ignore the error.
                 }
             }
         });
@@ -395,8 +356,9 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         turnOnLocation();
     }
 
+    @SuppressLint("MissingPermission")
     protected Location getMyLocation() {
-        return locationLayerPlugin != null ? locationLayerPlugin.getLastKnownLocation() : null;
+        return getMapView() != null && getMapView().getMap() != null ? getMapView().getMap().getLocationComponent().getLastKnownLocation() : null;
     }
 
     protected abstract AirMapMapView getMapView();

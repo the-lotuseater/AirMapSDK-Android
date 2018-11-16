@@ -31,6 +31,11 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -54,10 +59,8 @@ dependencies {
     compile "com.google.android.gms:play-services-location:$playServicesVersion"
 
     // mapbox
-    compile 'com.mapbox.mapboxsdk:mapbox-android-sdk:5.5.3'
-    compile 'com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.4.0'
-    compile 'com.mapbox.mapboxsdk:mapbox-android-services:2.2.10'
-    compile 'com.mapbox.mapboxsdk:mapbox-android-ui:2.2.10'
+    compile 'com.mapbox.mapboxsdk:mapbox-android-sdk:6.7.1'
+    compile 'com.mapbox.mapboxsdk:mapbox-sdk-services:4.1.0'
 
     // shared libraries
     compile 'joda-time:joda-time:2.9.9'

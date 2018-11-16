@@ -1,6 +1,9 @@
 package com.airmap.airmapsdk.ui.views;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -10,6 +13,7 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -27,30 +31,32 @@ import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
 import com.airmap.airmapsdk.networking.services.MappingService;
+import com.airmap.airmapsdk.ui.activities.MyLocationMapActivity;
 import com.airmap.airmapsdk.util.Utils;
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.Geometry;
+import com.mapbox.geojson.MultiPolygon;
+import com.mapbox.geojson.Point;
+import com.mapbox.geojson.Polygon;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
-import com.mapbox.mapboxsdk.http.HttpRequestUtil;
+import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.LocationComponentOptions;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.style.layers.Filter;
-import com.mapbox.services.commons.geojson.Feature;
-import com.mapbox.services.commons.models.Position;
+import com.mapbox.mapboxsdk.module.http.HttpRequestUtil;
+import com.mapbox.mapboxsdk.style.expressions.Expression;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import okhttp3.Dispatcher;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import timber.log.Timber;
 
 import static com.airmap.airmapsdk.util.Utils.getLanguageTag;
@@ -153,15 +159,12 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         if (!TextUtils.isEmpty(getLanguageTag())) {
             Dispatcher dispatcher = new Dispatcher();
             dispatcher.setMaxRequestsPerHost(20);
-            OkHttpClient mapboxHttpClient = new OkHttpClient.Builder().dispatcher(dispatcher).addInterceptor(new Interceptor() {
-                @Override
-                public Response intercept(Chain chain) throws IOException {
-                    Request request = chain.request().newBuilder()
-                            .addHeader("Accept-Language", getLanguageTag())
-                            .build();
+            OkHttpClient mapboxHttpClient = new OkHttpClient.Builder().dispatcher(dispatcher).addInterceptor(chain -> {
+                Request request = chain.request().newBuilder()
+                        .addHeader("Accept-Language", getLanguageTag())
+                        .build();
 
-                    return chain.proceed(request);
-                }
+                return chain.proceed(request);
             }).build();
 
             HttpRequestUtil.setOkHttpClient(mapboxHttpClient);
@@ -207,21 +210,29 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     }
 
     @Override
-    public void getMapAsync(final OnMapReadyCallback callback) {
-        super.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(MapboxMap mapboxMap) {
-                map = mapboxMap;
-                map.addOnMapClickListener(AirMapMapView.this);
-                map.getUiSettings().setLogoGravity(Gravity.BOTTOM | Gravity.END); // Move to bottom right
-                map.getUiSettings().setAttributionGravity(Gravity.BOTTOM | Gravity.END); // Move to bottom right
-                map.setPrefetchesTiles(true);
-                mapStyleController.onMapReady();
-                if (callback != null) {
-                    callback.onMapReady(mapboxMap);
-                }
+    public void getMapAsync(@NonNull final OnMapReadyCallback callback) {
+        super.getMapAsync(mapboxMap -> {
+            map = mapboxMap;
+            map.addOnMapClickListener(AirMapMapView.this);
+            map.getUiSettings().setLogoGravity(Gravity.BOTTOM | Gravity.END); // Move to bottom right
+            map.getUiSettings().setAttributionGravity(Gravity.BOTTOM | Gravity.END); // Move to bottom right
+            map.setPrefetchesTiles(true);
+            mapStyleController.onMapReady();
+            callback.onMapReady(mapboxMap);
 
+            // add my location w/ permission check
+            LocationComponent locationComponent = map.getLocationComponent();
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions((Activity) getContext(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MyLocationMapActivity.REQUEST_LOCATION_PERMISSION);
+                return;
             }
+            LocationComponentOptions options = LocationComponentOptions.builder(getContext())
+                    .elevation(2f)
+                    .accuracyAlpha(0f)
+                    .enableStaleState(false)
+                    .build();
+            locationComponent.activateLocationComponent(getContext(), options);
+            locationComponent.setLocationComponentEnabled(true);
         });
     }
 
@@ -293,19 +304,14 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             return;
         }
 
-        Timber.e("onMapClick");
-        advisorySelector.selectAdvisoriesAt(point, this, new AdvisorySelector.Callback() {
-            @Override
-            public void onAdvisorySelected(Feature featureClicked, AirMapAdvisory advisoryClicked, Set<AirMapAdvisory> advisoriesSelected) {
-                if (featureClicked != null) {
-                    for (AirMapMapView.OnAdvisoryClickListener advisoryClickListener : advisoryClickListeners) {
-                        advisoryClickListener.onAdvisoryClicked(advisoryClicked, new ArrayList<>(advisoriesSelected));
-                    }
-                    // draw yellow outline & zoom
-                    mapStyleController.highlight(featureClicked, advisoryClicked);
-                    zoomToFeatureIfNecessary(featureClicked);
+        advisorySelector.selectAdvisoriesAt(point, this, (featureClicked, advisoryClicked, advisoriesSelected) -> {
+            if (featureClicked != null) {
+                for (OnAdvisoryClickListener advisoryClickListener : advisoryClickListeners) {
+                    advisoryClickListener.onAdvisoryClicked(advisoryClicked, new ArrayList<>(advisoriesSelected));
                 }
-                Timber.e("onAdvisorySelected");
+                // draw yellow outline & zoom
+                mapStyleController.highlight(featureClicked, advisoryClicked);
+                zoomToFeatureIfNecessary(featureClicked);
             }
         });
     }
@@ -315,44 +321,39 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     }
 
     private void zoomToFeatureIfNecessary(Feature featureClicked) {
-        try {
-            LatLngBounds cameraBounds = getMap().getProjection().getVisibleRegion().latLngBounds;
-            LatLngBounds.Builder advisoryLatLngsBuilder = new LatLngBounds.Builder();
-            boolean zoom = false;
+        LatLngBounds cameraBounds = getMap().getProjection().getVisibleRegion().latLngBounds;
+        LatLngBounds.Builder advisoryLatLngsBuilder = new LatLngBounds.Builder();
+        boolean zoom = false;
 
-            if (featureClicked.getGeometry().getCoordinates() instanceof ArrayList) {
-                List<Position> positions = Utils.getPositionsFromFeature((ArrayList) featureClicked.getGeometry().getCoordinates());
-                for (Position position : positions) {
-                    LatLng latLng = new LatLng(position.getLatitude(), position.getLongitude());
-                    advisoryLatLngsBuilder.include(latLng);
-                    if (!cameraBounds.contains(latLng)) {
-                        Timber.d("Camera position doesn't contain point");
-                        zoom = true;
-                    }
-                }
-            } else if (featureClicked.getGeometry().getCoordinates() instanceof Position) {
-                Position position = (Position) featureClicked.getGeometry().getCoordinates();
-                LatLng latLng = new LatLng(position.getLatitude(), position.getLongitude());
-                advisoryLatLngsBuilder.include(latLng);
-                if (!cameraBounds.contains(latLng)) {
-                    Timber.d("Camera position doesn't contain point");
-                    zoom = true;
-                }
+        Geometry geometry = featureClicked.geometry();
+        List<Point> points = new ArrayList<>();
+        if (geometry instanceof Polygon) {
+            points.addAll(((Polygon) geometry).outer().coordinates());
+        } else if (geometry instanceof MultiPolygon) {
+            List<Polygon> polygons = ((MultiPolygon) geometry).polygons();
+            for (Polygon polygon : polygons) {
+                points.addAll(polygon.outer().coordinates());
             }
+        }
 
-            if (zoom) {
-                int padding = Utils.dpToPixels(getContext(), 72).intValue();
-                getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(advisoryLatLngsBuilder.build(), padding));
+        for (Point position : points) {
+            LatLng latLng = new LatLng(position.latitude(), position.longitude());
+            advisoryLatLngsBuilder.include(latLng);
+            if (!cameraBounds.contains(latLng)) {
+                Timber.d("Camera position doesn't contain point");
+                zoom = true;
             }
-        } catch (ClassCastException e) {
-            Timber.e(e,"Unable to get feature geometry");
-            Analytics.report(e);
+        }
+
+        if (zoom) {
+            int padding = Utils.dpToPixels(getContext(), 72).intValue();
+            getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(advisoryLatLngsBuilder.build(), padding));
         }
     }
 
     public void highlight(AirMapAdvisory advisory) {
         RectF mapRectF = new RectF(getLeft(), getTop(), getRight(), getBottom());
-        Filter.Statement filter = Filter.has("id");
+        Expression filter = Expression.has("id");
         List<Feature> selectedFeatures = getMap().queryRenderedFeatures(mapRectF, filter);
 
         for (Feature feature : selectedFeatures) {
