@@ -13,7 +13,7 @@ Create Flights, Send Telemetry Data, Get Realtime Traffic Alerts.
  
  
 ### Read Getting Started Guide
-[https://developers.airmap.com/v2.1/docs/getting-started-with-airmap]()
+[https://developers.airmap.com/v2.1/docs/getting-started-with-airmap](https://developers.airmap.com/v2.1/docs/getting-started-with-airmap)
 
 ## Setup
 
