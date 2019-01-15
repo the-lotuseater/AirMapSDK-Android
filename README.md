@@ -13,7 +13,7 @@ Create Flights, Send Telemetry Data, Get Realtime Traffic Alerts.
  
  
 ### Read Getting Started Guide
-[https://developers.airmap.com/v2.1/docs/getting-started-with-airmap](https://developers.airmap.com/v2.1/docs/getting-started-with-airmap)
+[https://developers.airmap.com/v2.1/docs/getting-started-with-airmap]()
 
 ## Setup
 
@@ -21,7 +21,7 @@ Start by adding the Android SDK to your project:
 
 * Add 
 ```groovy
-implementation 'com.airmap.airmapsdk:airmapsdk:2.0.1'
+implementation 'com.airmap.airmapsdk:airmapsdk:2.0.1'https://developers.airmap.com/docs/getting-started-android
 ``` 
 
 to the dependencies section of your module level `build.gradle` file
