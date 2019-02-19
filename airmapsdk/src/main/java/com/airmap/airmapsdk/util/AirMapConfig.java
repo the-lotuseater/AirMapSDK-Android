@@ -6,9 +6,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Locale;
+
 import timber.log.Timber;
 
 public class AirMapConfig {
+
+    private static final String PROD = "";
 
     public static String getDomain() {
         try {
@@ -16,6 +20,19 @@ public class AirMapConfig {
         } catch (JSONException e) {
             Timber.w(e, "Error getting airmap domain from airmap.config.json. Using fallback");
             return "airmap.com";
+        }
+    }
+
+    public static String getEnvironment() {
+        try {
+            String environment = AirMap.getConfig().getJSONObject("airmap").getString("environment");
+            if ("prod".equals(environment)) {
+                return PROD;
+            }
+            return environment;
+        } catch (JSONException e) {
+            Timber.e(e, "No environment key from airmap.config.json");
+            return PROD;
         }
     }
 
@@ -46,31 +63,12 @@ public class AirMapConfig {
         }
     }
 
-    public static String getAuth0Host() {
+    public static String getClientId() {
         try {
-            return AirMap.getConfig().getJSONObject("auth0").getString("host");
+            return AirMap.getConfig().getJSONObject("airmap").getString("client_id");
         } catch (JSONException e) {
-            Timber.w(e, "Error getting auth0 host from airmap.config.json. Using fallback");
-            return "sso.airmap.io";
-        }
-    }
-
-    public static String getAuth0ClientId() {
-        try {
-            JSONObject auth0 = AirMap.getConfig().getJSONObject("auth0");
-            return auth0.getString("client_id");
-        } catch (JSONException e) {
-            Timber.e(e, "Error getting auth0 clientId from airmap.config.json");
-            throw new RuntimeException("client_id and/or callback_url not found in airmap.config.json");
-        }
-    }
-
-    public static String getMqttDomain() {
-        try {
-            return AirMap.getConfig().getJSONObject("airmap").getString("mqtt_domain");
-        } catch (JSONException e) {
-            Timber.w(e, "No mqtt domain found in airmap.config.json, defaulting to airmap.io");
-            return "airmap.io";
+            Timber.e(e, "Error getting clientId from airmap.config.json");
+            throw new RuntimeException("client_id not found in airmap.config.json");
         }
     }
 
@@ -106,7 +104,7 @@ public class AirMapConfig {
             return AirMap.getConfig().getJSONObject("app").getString("faq_url");
         } catch (JSONException e) {
             Timber.w(e, "No FAQ in airmap.config.json using fallback");
-            return "https://airmap.typeform.com/to/ljGZpe";
+            return "https://airmap.typeform.com/to/XDkePS?language=" + Locale.getDefault().getLanguage();
         }
     }
 
@@ -156,6 +154,15 @@ public class AirMapConfig {
                     "https://cdn.airmap.io/mobile/android/intro/welcome_intro3.png",
                     "https://cdn.airmap.io/mobile/android/intro/welcome_intro4.png"
             };
+        }
+    }
+
+    public static String getTwitterHandle() {
+        try {
+            return AirMap.getConfig().getJSONObject("app").getString("twitter_handle");
+        } catch (JSONException e) {
+            Timber.e("Unable to get twitter handle");
+            return null;
         }
     }
 
