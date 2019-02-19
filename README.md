@@ -48,8 +48,8 @@ Simply add this line in your Application or Activity's `onCreate`
 AirMap.init(this);
 ```
 
-### Migration from 2.0
-See [MIGRATION GUIDE](https://raw.githubusercontent.com/airmap/AirMapSDK-Android/master/MIGRATION.md) for details.
+### Migration from 2.0 to 3.0
+See [MIGRATION GUIDE](https://github.com/airmap/AirMapSDK-Android/blob/master/MIGRATION.md) for details.
 
 ### Documentation
 Visit [https://developers.airmap.com/](https://developers.airmap.com/) for the full documentation
