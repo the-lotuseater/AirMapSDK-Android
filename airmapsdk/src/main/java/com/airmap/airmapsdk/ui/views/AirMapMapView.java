@@ -30,6 +30,7 @@ import com.airmap.airmapsdk.models.rules.AirMapRuleset;
 import com.airmap.airmapsdk.models.status.AirMapAdvisory;
 import com.airmap.airmapsdk.models.status.AirMapAirspaceStatus;
 import com.airmap.airmapsdk.networking.callbacks.AirMapCallback;
+import com.airmap.airmapsdk.networking.services.AirMap;
 import com.airmap.airmapsdk.networking.services.MappingService;
 import com.airmap.airmapsdk.ui.activities.MyLocationMapActivity;
 import com.airmap.airmapsdk.util.Utils;
@@ -49,14 +50,17 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.module.http.HttpRequestUtil;
 import com.mapbox.mapboxsdk.style.expressions.Expression;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import okhttp3.Dispatcher;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 import timber.log.Timber;
 
 import static com.airmap.airmapsdk.util.Utils.getLanguageTag;
@@ -73,6 +77,8 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     private List<OnMapLoadListener> mapLoadListeners;
     private List<OnMapDataChangeListener> mapDataChangeListeners;
     private List<OnAdvisoryClickListener> advisoryClickListeners;
+
+    private boolean useSIMeasurements;
 
     public AirMapMapView(@NonNull Context context, Configuration configuration, @Nullable MappingService.AirMapMapTheme mapTheme) {
         super(context);
@@ -124,7 +130,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
     }
 
     private void init(Configuration configuration, @Nullable MappingService.AirMapMapTheme mapTheme) {
-        addLanguageHeaders();
+        addHeaders();
 
         mapLoadListeners = new ArrayList<>();
         mapDataChangeListeners = new ArrayList<>();
@@ -155,24 +161,31 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
         addOnMapChangedListener(this);
     }
 
-    private void addLanguageHeaders() {
-        if (!TextUtils.isEmpty(getLanguageTag())) {
-            Dispatcher dispatcher = new Dispatcher();
-            dispatcher.setMaxRequestsPerHost(20);
-            OkHttpClient mapboxHttpClient = new OkHttpClient.Builder().dispatcher(dispatcher).addInterceptor(chain -> {
-                Request request = chain.request().newBuilder()
-                        .addHeader("Accept-Language", getLanguageTag())
-                        .build();
+    private void addHeaders() {
+        Dispatcher dispatcher = new Dispatcher();
+        dispatcher.setMaxRequestsPerHost(20);
+        OkHttpClient mapboxHttpClient = new OkHttpClient.Builder().dispatcher(dispatcher).addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Interceptor.Chain chain) throws IOException {
+                Request.Builder request = chain.request().newBuilder()
+                        .addHeader("x-Api-Key", AirMap.getApiKey());
 
-                return chain.proceed(request);
-            }).build();
+                if (!TextUtils.isEmpty(getLanguageTag())) {
+                    request.addHeader("Accept-Language", getLanguageTag());
+                }
+                return chain.proceed(request.build());
+            }
+        }).build();
 
-            HttpRequestUtil.setOkHttpClient(mapboxHttpClient);
-        }
+        HttpRequestUtil.setOkHttpClient(mapboxHttpClient);
     }
 
     public void configure(Configuration configuration) {
         mapDataController.configure(configuration);
+    }
+
+    public void setMeasurementSystem(boolean useSIMeasurements) {
+        this.useSIMeasurements = useSIMeasurements;
     }
 
     /**
@@ -207,6 +220,10 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             return;
         }
         mapStyleController.updateMapTheme(theme);
+    }
+
+    public void reset() {
+        mapStyleController.reset();
     }
 
     @Override
@@ -406,7 +423,7 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
         for (AirMapRuleset newRuleset : newRulesets) {
             if (oldRulesets == null || !oldRulesets.contains(newRuleset)) {
-                mapStyleController.addMapLayers(newRuleset.getId(), newRuleset.getLayers());
+                mapStyleController.addMapLayers(newRuleset.getId(), newRuleset.getLayers(), useSIMeasurements);
             }
         }
     }
@@ -437,7 +454,9 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
 
     // callbacks
     public void addOnMapLoadListener(OnMapLoadListener listener) {
-        mapLoadListeners.add(listener);
+        if (!mapLoadListeners.contains(listener)) {
+            mapLoadListeners.add(listener);
+        }
 
         if (getMap() != null) {
             listener.onMapLoaded();

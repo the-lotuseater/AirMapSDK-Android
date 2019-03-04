@@ -399,8 +399,9 @@ public class MappingService extends BaseService {
         return mapTilesBaseUrl + tiles + "?&theme=" + theme.toString() + "&apikey=" + AirMap.getInstance().getApiKey() + "&token=" + AirMap.getInstance().getApiKey();
     }
 
-    protected String getRulesetTileUrlTemplate(String rulesetId, List<String> layers) {
-        return mapTilesRulesUrl + rulesetId + "/" + TextUtils.join(",", layers) + "/{z}/{x}/{y}";
+    protected String getRulesetTileUrlTemplate(String rulesetId, List<String> layers, boolean useSIMeasurements) {
+        String units = "?units=" + (useSIMeasurements ? "si" : "airmap");
+        return mapTilesRulesUrl + rulesetId + "/" + TextUtils.join(",", layers) + "/{z}/{x}/{y}" + units;
     }
 
     protected String getStylesUrl(AirMapMapTheme theme) {
@@ -408,7 +409,7 @@ public class MappingService extends BaseService {
 
         // fallback
         if (TextUtils.isEmpty(stylesUrl)) {
-            stylesUrl = "https://cdn.airmap.com/static/map-styles/0.9.2/";
+            stylesUrl = "https://cdn.airmap.com/static/map-styles/0.9.5/";
         }
 
         switch (theme) {

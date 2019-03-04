@@ -139,6 +139,11 @@ public class MapStyleController implements MapView.OnMapChangedListener {
         updateMapTheme(theme);
     }
 
+    public void reset() {
+        callback.onMapStyleReset();
+        loadStyleJSON();
+    }
+
     public void updateMapTheme(MappingService.AirMapMapTheme theme) {
         callback.onMapStyleReset();
 
@@ -148,7 +153,7 @@ public class MapStyleController implements MapView.OnMapChangedListener {
         PreferenceManager.getDefaultSharedPreferences(map.getContext()).edit().putString(AirMapConstants.MAP_STYLE, currentTheme.toString()).apply();
     }
 
-    public void addMapLayers(String sourceId, List<String> layers) {
+    public void addMapLayers(String sourceId, List<String> layers, boolean useSIMeasurements) {
         // check if source is already added to map
         if (map.getMap().getSource(sourceId) != null) {
             Timber.e("Source already added for: %s", sourceId);

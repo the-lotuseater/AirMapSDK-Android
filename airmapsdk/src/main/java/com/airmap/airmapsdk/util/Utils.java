@@ -41,8 +41,6 @@ import timber.log.Timber;
 @SuppressWarnings("unused")
 public class Utils {
 
-    public static final String REFRESH_TOKEN_KEY = "AIRMAP_SDK_REFRESH_TOKEN";
-
     /**
      * Return the value mapped by the given key, or fallback if not present or null.
      */
@@ -191,10 +189,11 @@ public class Utils {
 
     public static void error(AirMapCallback listener, Exception e) {
         if (e != null && listener != null) {
-            if (e.getMessage().toLowerCase().startsWith("unable to resolve host")) {
+            String message = e.getMessage() != null ? e.getMessage().toLowerCase() : "Unknown error";
+            if (message.startsWith("unable to resolve host")) {
                 listener.error(new AirMapException("No internet connection"));
-            } else if (!e.getMessage().toLowerCase().contains("canceled")) { //Not an error if it was canceled
-                listener.error(new AirMapException(e.getMessage()));
+            } else if (!message.contains("canceled")) { //Not an error if it was canceled
+                listener.error(new AirMapException(message));
             }
         }
     }
@@ -302,7 +301,8 @@ public class Utils {
                 feetToMeters(1750),
                 feetToMeters(2000),
                 feetToMeters(2500),
-                feetToMeters(3000)
+                feetToMeters(3000),
+                feetToMeters(6000)
         };
     }
 
@@ -333,7 +333,8 @@ public class Utils {
                 500,
                 600,
                 750,
-                1000
+                1000,
+                2000
         };
     }
 
@@ -427,31 +428,6 @@ public class Utils {
      */
     public static String makeGeoString(List<Coordinate> coordinates) {
         return TextUtils.join(",", coordinates);
-    }
-
-
-    public static String getStagingUrl() {
-        try {
-            return AirMap.getConfig().getJSONObject("internal").getString("debug_url");
-        } catch (JSONException e) {
-            return "stage/";
-        }
-    }
-
-    public static String getMqttDebugUrl() {
-        try {
-            return AirMap.getConfig().getJSONObject("internal").getString("mqtt_url");
-        } catch (JSONException e) {
-            return "v2/";
-        }
-    }
-
-    public static String getTelemetryDebugUrl() {
-        try {
-            return AirMap.getConfig().getJSONObject("internal").getString("telemetry_url");
-        } catch (JSONException e) {
-            return "v2/";
-        }
     }
 
     public static boolean isNetworkConnected(Context context) {

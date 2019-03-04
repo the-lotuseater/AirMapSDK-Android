@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.airmap.airmapsdk.AirMapException;
 import com.airmap.airmapsdk.Auth;
+import com.airmap.airmapsdk.auth.AuthConstants;
 import com.airmap.airmapsdk.models.AirMapBaseModel;
 import com.airmap.airmapsdk.util.Utils;
 
@@ -115,6 +116,14 @@ public class AirMapClient {
         } catch (IOException e) {
             return Observable.error(e);
         }
+    }
+
+    public String postSynchronous(String url, Map<String, String> params) throws IOException {
+        Request request = new Builder().url(url).post(bodyFromMap(params)).tag(url).build();
+        Response response = client.newCall(request).execute();
+        String responseString = response.body().string();
+        response.body().close();
+        return responseString;
     }
 
     /**
@@ -304,7 +313,7 @@ public class AirMapClient {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 // Don't intercept if refresh token not yet expired or for actual refresh token request
-                if (!Auth.isTokenExpired() || chain.request().url().toString().startsWith(BaseService.loginUrl)) {
+                if (!Auth.isTokenExpired() || chain.request().url().toString().matches(AuthService.refreshTokenUrl) || chain.request().url().toString().matches(AuthService.loginUrl)) {
                     return chain.proceed(chain.request());
                 }
                 AirMap.refreshAccessToken();
@@ -322,7 +331,7 @@ public class AirMapClient {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 // Only attach our API Key and Auth token if we're going to AirMap
-                if (chain.request().url().host().equals("api.airmap.com") || chain.request().url().toString().startsWith(BaseService.baseUrl)) {
+                if (chain.request().url().host().contains("api.airmap.com") || chain.request().url().toString().contains(BaseService.apiUrl)) {
                     Builder newRequest = chain.request().newBuilder();
                     String authToken = AirMap.getAuthToken();
                     String xApiKey = AirMap.getApiKey();
