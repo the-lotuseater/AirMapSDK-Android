@@ -57,8 +57,8 @@ dependencies {
     compile "com.google.android.gms:play-services-location:$playServicesVersion"
 
     // mapbox
-    compile 'com.mapbox.mapboxsdk:mapbox-android-sdk:6.7.1'
-    compile 'com.mapbox.mapboxsdk:mapbox-sdk-services:4.1.0'
+    compile 'com.mapbox.mapboxsdk:mapbox-android-sdk:7.2.0'
+    compile 'com.mapbox.mapboxsdk:mapbox-sdk-services:4.5.0'
 
     // shared libraries
     compile 'joda-time:joda-time:2.9.9'

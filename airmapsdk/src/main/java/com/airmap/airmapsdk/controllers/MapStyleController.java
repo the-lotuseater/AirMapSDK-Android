@@ -45,7 +45,7 @@ import static com.airmap.airmapsdk.networking.services.MappingService.AirMapMapT
 import static com.airmap.airmapsdk.networking.services.MappingService.AirMapMapTheme.Satellite;
 import static com.airmap.airmapsdk.networking.services.MappingService.AirMapMapTheme.Standard;
 
-public class MapStyleController implements MapView.OnMapChangedListener {
+public class MapStyleController implements MapView.OnDidFinishLoadingStyleListener {
 
     private AirMapMapView map;
 
@@ -72,42 +72,37 @@ public class MapStyleController implements MapView.OnMapChangedListener {
     public void onMapReady() {
         loadStyleJSON();
 
-        map.addOnMapChangedListener(this);
+        map.addOnDidFinishLoadingStyleListener(this);
     }
 
     @Override
-    public void onMapChanged(int change) {
-        switch (change) {
-            case MapView.DID_FINISH_LOADING_STYLE: {
-                // Adjust the background overlay opacity to improve map visually on Android
-                BackgroundLayer backgroundLayer = map.getMap().getLayerAs("background-overlay");
-                if (backgroundLayer != null) {
-                    if (currentTheme == MappingService.AirMapMapTheme.Light || currentTheme == MappingService.AirMapMapTheme.Standard) {
-                        backgroundLayer.setProperties(PropertyFactory.backgroundOpacity(0.95f));
-                    } else if (currentTheme == MappingService.AirMapMapTheme.Dark) {
-                        backgroundLayer.setProperties(PropertyFactory.backgroundOpacity(0.9f));
-                    }
-                }
-
-                try {
-                    mapStyle = new MapStyle(map.getMap().getStyleJson());
-                } catch (JSONException e) {
-                    Timber.e(e, "Failed to parse style json");
-                }
-
-                // change labels to local if device is not in english
-                if (!Locale.ENGLISH.getLanguage().equals(Locale.getDefault().getLanguage())) {
-                    for (Layer layer : map.getMap().getLayers()) {
-                        if (layer instanceof SymbolLayer && (layer.getId().contains("label") || layer.getId().contains("place") || layer.getId().contains("poi"))) {
-                            layer.setProperties(PropertyFactory.textField("{name}"));
-                        }
-                    }
-                }
-
-                callback.onMapStyleLoaded();
-                break;
+    public void onDidFinishLoadingStyle() {
+        // Adjust the background overlay opacity to improve map visually on Android
+        BackgroundLayer backgroundLayer = map.getMap().getStyle().getLayerAs("background-overlay");
+        if (backgroundLayer != null) {
+            if (currentTheme == MappingService.AirMapMapTheme.Light || currentTheme == MappingService.AirMapMapTheme.Standard) {
+                backgroundLayer.setProperties(PropertyFactory.backgroundOpacity(0.95f));
+            } else if (currentTheme == MappingService.AirMapMapTheme.Dark) {
+                backgroundLayer.setProperties(PropertyFactory.backgroundOpacity(0.9f));
             }
         }
+
+        try {
+            mapStyle = new MapStyle(map.getMap().getStyle().getJson());
+        } catch (JSONException e) {
+            Timber.e(e, "Failed to parse style json");
+        }
+
+        // change labels to local if device is not in english
+        if (!Locale.ENGLISH.getLanguage().equals(Locale.getDefault().getLanguage())) {
+            for (Layer layer : map.getMap().getStyle().getLayers()) {
+                if (layer instanceof SymbolLayer && (layer.getId().contains("label") || layer.getId().contains("place") || layer.getId().contains("poi"))) {
+                    layer.setProperties(PropertyFactory.textField("{name}"));
+                }
+            }
+        }
+
+        callback.onMapStyleLoaded();
     }
 
     // Updates the map to use a custom style based on theme and selected layers
@@ -155,26 +150,26 @@ public class MapStyleController implements MapView.OnMapChangedListener {
 
     public void addMapLayers(String sourceId, List<String> layers, boolean useSIMeasurements) {
         // check if source is already added to map
-        if (map.getMap().getSource(sourceId) != null) {
+        if (map.getMap().getStyle().getSource(sourceId) != null) {
             Timber.e("Source already added for: %s", sourceId);
         } else {
-            String urlTemplates = AirMap.getRulesetTileUrlTemplate(sourceId, layers);
+            String urlTemplates = AirMap.getRulesetTileUrlTemplate(sourceId, layers, useSIMeasurements);
             TileSet tileSet = new TileSet("2.2.0", urlTemplates);
             tileSet.setMaxZoom(12f);
             tileSet.setMinZoom(8f);
             VectorSource tileSource = new VectorSource(sourceId, tileSet);
-            map.getMap().addSource(tileSource);
+            map.getMap().getStyle().addSource(tileSource);
         }
 
         for (String sourceLayer : layers) {
             for (AirMapLayerStyle layerStyle : mapStyle.getLayerStyles(sourceLayer)) {
                 // check if layer is already added to map
-                if (map.getMap().getLayer(layerStyle.id + "|" + sourceId + "|new") != null) {
+                if (map.getMap().getStyle().getLayer(layerStyle.id + "|" + sourceId + "|new") != null) {
                     continue;
                 }
 
                 // use layer from styles as a template
-                Layer layerToClone = map.getMap().getLayerAs(layerStyle.id);
+                Layer layerToClone = map.getMap().getStyle().getLayerAs(layerStyle.id);
 
                 Layer layer = layerStyle.toMapboxLayer(layerToClone, sourceId);
 
@@ -183,12 +178,12 @@ public class MapStyleController implements MapView.OnMapChangedListener {
                     addTemporalFilter(layer);
                 }
 
-                map.getMap().addLayerAbove(layer, layerStyle.id);
+                map.getMap().getStyle().addLayerAbove(layer, layerStyle.id);
             }
         }
 
         // add highlight layer
-        if (map.getMap().getLayer("airmap|highlight|line|" + sourceId) == null) {
+        if (map.getMap().getStyle().getLayer("airmap|highlight|line|" + sourceId) == null) {
             LineLayer highlightLayer = new LineLayer("airmap|highlight|line|" + sourceId, sourceId);
             highlightLayer.setProperties(PropertyFactory.lineColor("#f9e547"));
             highlightLayer.setProperties(PropertyFactory.lineWidth(4f));
@@ -197,7 +192,7 @@ public class MapStyleController implements MapView.OnMapChangedListener {
 
             try {
                 highlightLayer.setFilter(filter);
-                map.getMap().addLayer(highlightLayer);
+                map.getMap().getStyle().addLayer(highlightLayer);
             } catch (Throwable t) {
                 // https://github.com/mapbox/mapbox-gl-native/issues/10947
                 // https://github.com/mapbox/mapbox-gl-native/issues/11264
@@ -233,17 +228,17 @@ public class MapStyleController implements MapView.OnMapChangedListener {
 
         for (String sourceLayer : sourceLayers) {
             for (AirMapLayerStyle layerStyle : mapStyle.getLayerStyles(sourceLayer)) {
-                map.getMap().removeLayer(layerStyle.id + "|" + sourceId + "|new");
+                map.getMap().getStyle().removeLayer(layerStyle.id + "|" + sourceId + "|new");
             }
         }
 
         // remove highlight
-        map.getMap().removeLayer("airmap|highlight|line|" + sourceId);
+        map.getMap().getStyle().removeLayer("airmap|highlight|line|" + sourceId);
         if (highlightLayerId != null && highlightLayerId.equals("airmap|highlight|line|" + sourceId)) {
             highlightLayerId = null;
         }
 
-        map.getMap().removeSource(sourceId);
+        map.getMap().getStyle().removeSource(sourceId);
     }
 
     public void highlight(@NonNull Feature feature, AirMapAdvisory advisory) {
@@ -253,7 +248,7 @@ public class MapStyleController implements MapView.OnMapChangedListener {
         // add new highlight
         String sourceId = feature.getStringProperty("ruleset_id");
         highlightLayerId = "airmap|highlight|line|" + sourceId;
-        LineLayer highlightLayer = map.getMap().getLayerAs(highlightLayerId);
+        LineLayer highlightLayer = map.getMap().getStyle().getLayerAs(highlightLayerId);
         highlightLayer.setSourceLayer(sourceId + "_" + advisory.getType().toString());
 
         // feature's airspace_id can be an int or string (tile server bug), so match on either
@@ -277,7 +272,7 @@ public class MapStyleController implements MapView.OnMapChangedListener {
         // add new highlight
         String sourceId = feature.getStringProperty("ruleset_id");
         highlightLayerId = "airmap|highlight|line|" + sourceId;
-        LineLayer highlightLayer = map.getMap().getLayerAs(highlightLayerId);
+        LineLayer highlightLayer = map.getMap().getStyle().getLayerAs(highlightLayerId);
         highlightLayer.setSourceLayer(sourceId + "_" + type);
 
         // feature's airspace_id can be an int or string (tile server bug), so match on either
@@ -294,13 +289,13 @@ public class MapStyleController implements MapView.OnMapChangedListener {
     public void unhighlight() {
         if (highlightLayerId != null) {
             try {
-                LineLayer oldHighlightLayer = map.getMap().getLayerAs(highlightLayerId);
+                LineLayer oldHighlightLayer = map.getMap().getStyle().getLayerAs(highlightLayerId);
                 if (oldHighlightLayer != null) {
                     Expression filter = Expression.eq(Expression.get("id"), "x");
                     oldHighlightLayer.setFilter(filter);
                 }
             } catch (RuntimeException e) {
-                for (Layer l : map.getMap().getLayers()) {
+                for (Layer l : map.getMap().getStyle().getLayers()) {
                     if (l instanceof LineLayer) {
                         Expression filter = Expression.eq(Expression.get("id"), "x");
                         ((LineLayer) l).setFilter(filter);
@@ -312,7 +307,7 @@ public class MapStyleController implements MapView.OnMapChangedListener {
     }
 
     private void loadStyleJSON() {
-        map.getMap().setStyleUrl(AirMap.getMapStylesUrl(currentTheme));
+        map.getMap().setStyle(AirMap.getMapStylesUrl(currentTheme));
     }
 
     public void checkConnection(final AirMapCallback<Void> callback) {

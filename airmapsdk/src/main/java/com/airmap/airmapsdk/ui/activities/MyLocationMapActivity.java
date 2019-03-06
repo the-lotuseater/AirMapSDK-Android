@@ -1,17 +1,14 @@
 package com.airmap.airmapsdk.ui.activities;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
@@ -19,7 +16,6 @@ import com.airmap.airmapsdk.Analytics;
 import com.airmap.airmapsdk.R;
 import com.airmap.airmapsdk.ui.views.AirMapMapView;
 import com.airmap.airmapsdk.util.AirMapConstants;
-import com.airmap.airmapsdk.util.AirMapLocationEngine;
 import com.airmap.airmapsdk.util.Utils;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationRequest;
@@ -27,41 +23,42 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.tasks.Task;
-import com.mapbox.android.core.location.LocationEngineListener;
-import com.mapbox.android.core.location.LocationEnginePriority;
+import com.mapbox.android.core.location.LocationEngineCallback;
+import com.mapbox.android.core.location.LocationEngineResult;
+import com.mapbox.android.core.permissions.PermissionsListener;
+import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.LocationComponentOptions;
+import com.mapbox.mapboxsdk.location.modes.CameraMode;
+import com.mapbox.mapboxsdk.location.modes.RenderMode;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+
+import java.util.List;
 
 import timber.log.Timber;
 
-public abstract class MyLocationMapActivity extends AppCompatActivity implements LocationEngineListener {
+public abstract class MyLocationMapActivity extends AppCompatActivity implements PermissionsListener {
 
     public static final int REQUEST_LOCATION_PERMISSION = 7737;
     public static final int REQUEST_TURN_ON_LOCATION = 8849;
 
-    private AirMapMapView.OnMapLoadListener mapLoadListener;
+    private PermissionsManager permissionsManager;
 
-    private AirMapLocationEngine locationEngine;
-    private LocationRequest locationRequest;
+    private LocationComponent locationComponent;
+
+    private AirMapMapView.OnMapLoadListener mapLoadListener;
 
     private boolean hasLoadedMyLocation;
     private boolean isLocationDialogShowing;
     private boolean isMapFailureDialogShowing;
-
 
     @Override
     public void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
         setupMapLoadListener();
-
-        locationRequest = LocationRequest.create();
-        locationRequest.setInterval(500);
-        locationRequest.setFastestInterval(250);
-        locationRequest.setPriority(Utils.useGPSForLocation(this) ? LocationRequest.PRIORITY_HIGH_ACCURACY : LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
-        requestLocationPermissionIfNeeded();
     }
 
     @Override
@@ -75,107 +72,18 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
     public void onStop() {
         super.onStop();
 
-        if (locationEngine != null) {
-            locationEngine.removeLocationUpdates();
-        }
-
         if (getMapView() != null && mapLoadListener != null) {
             getMapView().removeOnMapLoadListener(mapLoadListener);
         }
     }
 
-    @SuppressLint("MissingPermission")
-    @Override
-    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode) {
-            case REQUEST_TURN_ON_LOCATION: {
-                if (resultCode == Activity.RESULT_OK) {
-                    Timber.i("Location setting turned on by user");
-                    if (locationEngine != null) {
-                        locationEngine.getLastLocation();
-                        locationEngine.requestLocationUpdates();
-                    } else if (getMapView().getMap() != null) {
-                        setupLocationEngine();
-                    }
-                } else {
-                    Timber.i("Location setting not turned on by user");
-                    hasLoadedMyLocation = true;
-                }
-
-                isLocationDialogShowing = false;
-                break;
-            }
-        }
-    }
-
-    @Override
-    public void onConnected() {
-        Timber.i("LocationEngine onConnected");
-    }
-
-
-    @Override
-    public void onLocationChanged(Location location) {
-        Timber.i("LocationEngine onLocationChanged: %s", location);
-        zoomTo(location, false);
-    }
-
-    @SuppressLint("MissingPermission")
-    public void goToLastLocation(boolean force) {
-        if (force) {
-            hasLoadedMyLocation = false;
-        }
-
-        if (!requestLocationPermissionIfNeeded()) {
-            return;
-        }
-
-        if (locationEngine != null) {
-            if (locationEngine.getLastLocation() != null) {
-                zoomTo(locationEngine.getLastLocation(), force);
-            } else {
-                locationEngine.getLastKnownLocation();
-                turnOnLocation();
-            }
-        } else {
-            turnOnLocation();
-        }
-    }
-
-    private void zoomTo(Location location, boolean force) {
-        // only zoom to user's location once
-        if (!hasLoadedMyLocation || force) {
-            Timber.i("zoomTo: %s", location);
-
-            int duration = getMapView().getMap().getCameraPosition().zoom < 10 ? 2500 : 1000;
-            getMapView().getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13), duration);
-            locationEngine.removeLocationUpdates();
-            hasLoadedMyLocation = true;
-
-            // save location to prefs
-            PreferenceManager.getDefaultSharedPreferences(this)
-                    .edit()
-                    .putFloat(AirMapConstants.LAST_LOCATION_LATITUDE, (float) location.getLatitude())
-                    .putFloat(AirMapConstants.LAST_LOCATION_LONGITUDE, (float) location.getLongitude())
-                    .apply();
-        }
-    }
-
     private void setupMapLoadListener() {
-        // mapview not set yet
-        if (getMapView() == null) {
-            return;
-        }
-
         mapLoadListener = new AirMapMapView.OnMapLoadListener() {
             @Override
             public void onMapLoaded() {
                 if (hasLoadedMyLocation) {
                     return;
                 }
-                Timber.i("onMapLoaded");
 
                 // use saved location is there is one
                 float savedLatitude = PreferenceManager.getDefaultSharedPreferences(MyLocationMapActivity.this)
@@ -186,7 +94,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
                     getMapView().getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(savedLatitude, savedLongitude), 13));
                 }
 
-                setupLocationEngine();
+                setupLocationEngine(getMapView().getMap());
             }
 
             @Override
@@ -235,7 +143,6 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
                                 .show();
 
                         isMapFailureDialogShowing = true;
-
                         break;
                     case UNKNOWN_FAILURE:
                     default:
@@ -253,48 +160,135 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         getMapView().addOnMapLoadListener(mapLoadListener);
     }
 
+
     @SuppressLint("MissingPermission")
-    protected void setupLocationEngine() {
-        // ask user for location permission
-        if (!requestLocationPermissionIfNeeded()) {
-            return;
+    protected void setupLocationEngine(MapboxMap map) {
+        // Check if permissions are enabled and if not request
+        if (PermissionsManager.areLocationPermissionsGranted(this)) {
+
+            // Get an instance of the component
+            locationComponent = map.getLocationComponent();
+
+            // Set options
+            LocationComponentOptions options = LocationComponentOptions.builder(this)
+                    .elevation(2f)
+                    .accuracyAlpha(0f)
+                    .enableStaleState(false)
+                    .build();
+
+            // Activate with options
+            locationComponent.activateLocationComponent(this, map.getStyle(), options);
+
+            // Enable to make component visible
+            locationComponent.setLocationComponentEnabled(true);
+
+            // Set the component's camera mode
+            locationComponent.setCameraMode(CameraMode.TRACKING);
+            locationComponent.setRenderMode(RenderMode.COMPASS);
+
+            // turn on device GPS
+            turnOnLocation();
+        } else {
+            permissionsManager = new PermissionsManager(this);
+            permissionsManager.requestLocationPermissions(this);
         }
-
-        // if location component already activated or engine already init, return
-        if (locationEngine != null) {
-            return;
-        }
-        Timber.d("setupLocationEngine");
-
-        locationEngine = AirMapLocationEngine.getLocationEngine(this);
-        locationEngine.setLocationRequest(locationRequest);
-        locationEngine.addLocationEngineListener(this);
-
-        locationEngine.activate();
-
-        turnOnLocation();
     }
 
-    private boolean requestLocationPermissionIfNeeded() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
-            return false;
+    @SuppressLint("MissingPermission")
+    public void goToLastLocation(boolean force) {
+        if (force) {
+            hasLoadedMyLocation = false;
         }
 
-        return true;
+        if (locationComponent != null && locationComponent.getLocationEngine() != null) {
+            locationComponent.getLocationEngine().getLastLocation(new LocationEngineCallback<LocationEngineResult>() {
+                @Override
+                public void onSuccess(LocationEngineResult result) {
+                    if (result.getLastLocation() != null) {
+                        zoomTo(result.getLastLocation(), force);
+                    } else if (force) {
+                        turnOnLocation();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    if (locationComponent.getLastKnownLocation() != null) {
+                        zoomTo(locationComponent.getLastKnownLocation(), force);
+                    }
+                    turnOnLocation();
+                }
+            });
+        } else {
+            turnOnLocation();
+        }
+    }
+
+    private void zoomTo(Location location, boolean force) {
+        // only zoom to user's location once
+        if (!hasLoadedMyLocation || force) {
+
+            // move map camera
+            int duration = getMapView().getMap().getCameraPosition().zoom < 10 ? 2500 : 1000;
+            getMapView().getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13), duration);
+
+            // stop location requests
+            locationComponent.getLocationEngine().removeLocationUpdates(new LocationEngineCallback<LocationEngineResult>() {
+                @Override
+                public void onSuccess(LocationEngineResult result) {}
+
+                @Override
+                public void onFailure(@NonNull Exception exception) {}
+            });
+            hasLoadedMyLocation = true;
+
+            // save location to prefs
+            PreferenceManager.getDefaultSharedPreferences(this)
+                    .edit()
+                    .putFloat(AirMapConstants.LAST_LOCATION_LATITUDE, (float) location.getLatitude())
+                    .putFloat(AirMapConstants.LAST_LOCATION_LONGITUDE, (float) location.getLongitude())
+                    .apply();
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQUEST_TURN_ON_LOCATION: {
+                // record analytics
+                Analytics.logEvent(Analytics.Event.intro, resultCode == Activity.RESULT_OK ? Analytics.Action.success : Analytics.Action.cancelled, Analytics.Label.TURN_ON_LOCATION_DIALOG);
+
+                // if location turned on, go to current location
+                if (resultCode == Activity.RESULT_OK) {
+                    goToLastLocation(true);
+                } else {
+                    hasLoadedMyLocation = true;
+                }
+
+                isLocationDialogShowing = false;
+                break;
+            }
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
-        if (requestCode == REQUEST_LOCATION_PERMISSION) {
-            for (int i = 0; i < permissions.length; i++) {
-                if ((permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION) || permissions[i].equals(Manifest.permission.ACCESS_COARSE_LOCATION))
-                        && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    goToLastLocation(false);
-                }
-            }
+    @Override
+    public void onExplanationNeeded(List<String> permissionsToExplain) {
+    }
+
+    @Override
+    public void onPermissionResult(boolean granted) {
+        Analytics.logEvent(Analytics.Event.map, granted ? Analytics.Action.success : Analytics.Action.cancelled, Analytics.Label.LOCATION_PERMISSIONS);
+
+        if (granted) {
+            setupLocationEngine(getMapView().getMap());
         }
     }
 
@@ -304,6 +298,11 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
      */
     @SuppressLint("MissingPermission")
     public void turnOnLocation() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setInterval(500);
+        locationRequest.setFastestInterval(250);
+        locationRequest.setPriority(Utils.useGPSForLocation(this) ? LocationRequest.PRIORITY_HIGH_ACCURACY : LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
         LocationSettingsRequest settingsRequest = new LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest)
                 .setAlwaysShow(true)
@@ -311,18 +310,7 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
 
         Task<LocationSettingsResponse> task = LocationServices.getSettingsClient(this).checkLocationSettings(settingsRequest);
         task.addOnSuccessListener(this, locationSettingsResponse -> {
-            if (!requestLocationPermissionIfNeeded()) {
-                return;
-            }
-
-            // All location settings are satisfied. The client can initialize
-            // location requests here.
-            if (locationEngine != null) {
-                locationEngine.getLastLocation();
-                locationEngine.requestLocationUpdates();
-            } else if (getMapView().getMap() != null) {
-                setupLocationEngine();
-            }
+            goToLastLocation(false);
         });
 
         task.addOnFailureListener(this, e -> {
@@ -347,23 +335,10 @@ public abstract class MyLocationMapActivity extends AppCompatActivity implements
         });
     }
 
-    public void setLocationProvider(boolean useGPSForLocation) {
-        if (locationEngine != null) {
-            locationEngine.removeLocationUpdates();
-            locationEngine.setPriority(useGPSForLocation ? LocationEnginePriority.HIGH_ACCURACY : LocationEnginePriority.BALANCED_POWER_ACCURACY);
-        }
-
-        turnOnLocation();
-    }
-
     @SuppressLint("MissingPermission")
     protected Location getMyLocation() {
         return getMapView() != null && getMapView().getMap() != null ? getMapView().getMap().getLocationComponent().getLastKnownLocation() : null;
     }
 
     protected abstract AirMapMapView getMapView();
-
-    public void setMapView(AirMapMapView mapView) {
-        setupMapLoadListener();
-    }
 }

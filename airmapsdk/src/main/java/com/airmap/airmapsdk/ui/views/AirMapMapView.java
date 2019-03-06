@@ -65,7 +65,8 @@ import timber.log.Timber;
 
 import static com.airmap.airmapsdk.util.Utils.getLanguageTag;
 
-public class AirMapMapView extends MapView implements MapView.OnMapChangedListener, MapboxMap.OnMapClickListener, MapDataController.Callback {
+public class AirMapMapView extends MapView implements MapView.OnDidFailLoadingMapListener, MapView.OnDidFinishLoadingStyleListener,
+        MapView.OnDidFinishRenderingMapListener, MapView.OnCameraDidChangeListener, MapboxMap.OnMapClickListener, MapDataController.Callback {
 
     private MapboxMap map;
 
@@ -158,7 +159,9 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             }
         });
 
-        addOnMapChangedListener(this);
+        addOnDidFailLoadingMapListener(this);
+        addOnDidFinishRenderingMapListener(this);
+        addOnCameraDidChangeListener(this);
     }
 
     private void addHeaders() {
@@ -236,89 +239,84 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
             map.setPrefetchesTiles(true);
             mapStyleController.onMapReady();
             callback.onMapReady(mapboxMap);
-
-            // add my location w/ permission check
-            LocationComponent locationComponent = map.getLocationComponent();
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions((Activity) getContext(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MyLocationMapActivity.REQUEST_LOCATION_PERMISSION);
-                return;
-            }
-            LocationComponentOptions options = LocationComponentOptions.builder(getContext())
-                    .elevation(2f)
-                    .accuracyAlpha(0f)
-                    .enableStaleState(false)
-                    .build();
-            locationComponent.activateLocationComponent(getContext(), options);
-            locationComponent.setLocationComponentEnabled(true);
         });
     }
 
     @Override
-    public void onMapChanged(int change) {
-        switch (change) {
-            // check if map failed
-            case MapView.DID_FAIL_LOADING_MAP: {
-                // Devices without internet connection will not be able to load the mapbox map
-                //TODO: add more sophisticated check (like actually check style url for 200)
-                if (!Utils.isNetworkConnected(getContext())) {
-                    for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
-                        mapLoadListener.onMapFailed(MapFailure.NETWORK_CONNECTION_FAILURE);
-                    }
-
-                // Devices with an inaccurate date/time will not be able to load the mapbox map
-                // If the "automatic date/time" is disabled on the device and the map fails to load, recommend the user enable it
-                } else if (Settings.Global.getInt(getContext().getContentResolver(), Settings.Global.AUTO_TIME, 0) == 0) {
-                    for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
-                        mapLoadListener.onMapFailed(MapFailure.INACCURATE_DATE_TIME_FAILURE);
-                    }
-
-                // check connection by requesting the styles json directly (async)
-                } else {
-                    mapStyleController.checkConnection(new AirMapCallback<Void>() {
-                        @Override
-                        protected void onSuccess(Void response) {
-                            for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
-                                mapLoadListener.onMapFailed(MapFailure.UNKNOWN_FAILURE);
-                            }
-
-                            String logs = Utils.getMapboxLogs();
-                            Analytics.report(new Exception("Mapbox map failed to load due to no network connection but able to access styles directly: " + logs));
-                        }
-
-                        @Override
-                        protected void onError(AirMapException e) {
-                            for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
-                                mapLoadListener.onMapFailed(MapFailure.NETWORK_CONNECTION_FAILURE);
-                            }
-                        }
-                    });
-                    return;
-                }
-                break;
-            }
-            case MapView.REGION_DID_CHANGE:
-            case MapView.REGION_DID_CHANGE_ANIMATED: {
-                if (mapDataController != null) {
-                    mapDataController.onMapRegionChanged();
-                }
-                break;
-            }
-            case MapView.DID_FINISH_RENDERING_MAP_FULLY_RENDERED: {
-                if (mapDataController != null) {
-                    mapDataController.onMapFinishedRendering();
-                }
-                break;
-            }
-            default: {
-                break;
-            }
+    public void onCameraDidChange(boolean animated) {
+        if (mapDataController != null) {
+            mapDataController.onMapRegionChanged();
         }
     }
 
     @Override
-    public void onMapClick(@NonNull LatLng point) {
-        if (advisoryClickListeners == null || advisoryClickListeners.isEmpty() || map.getCameraPosition().zoom < 11 || advisorySelector.isBusy()) {
+    public void onDidFinishLoadingStyle() {
+        // add my location w/ permission check
+        LocationComponent locationComponent = map.getLocationComponent();
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions((Activity) getContext(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MyLocationMapActivity.REQUEST_LOCATION_PERMISSION);
             return;
+        }
+        LocationComponentOptions options = LocationComponentOptions.builder(getContext())
+                .elevation(2f)
+                .accuracyAlpha(0f)
+                .enableStaleState(false)
+                .build();
+
+        locationComponent.activateLocationComponent(getContext(), map.getStyle(), options);
+        locationComponent.setLocationComponentEnabled(true);
+    }
+
+    @Override
+    public void onDidFailLoadingMap(String errorMessage) {
+        // Devices without internet connection will not be able to load the mapbox map
+        //TODO: add more sophisticated check (like actually check style url for 200)
+        if (!Utils.isNetworkConnected(getContext())) {
+            for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
+                mapLoadListener.onMapFailed(MapFailure.NETWORK_CONNECTION_FAILURE);
+            }
+
+        // Devices with an inaccurate date/time will not be able to load the mapbox map
+        // If the "automatic date/time" is disabled on the device and the map fails to load, recommend the user enable it
+        } else if (Settings.Global.getInt(getContext().getContentResolver(), Settings.Global.AUTO_TIME, 0) == 0) {
+            for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
+                mapLoadListener.onMapFailed(MapFailure.INACCURATE_DATE_TIME_FAILURE);
+            }
+
+        // check connection by requesting the styles json directly (async)
+        } else {
+            mapStyleController.checkConnection(new AirMapCallback<Void>() {
+                @Override
+                protected void onSuccess(Void response) {
+                    for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
+                        mapLoadListener.onMapFailed(MapFailure.UNKNOWN_FAILURE);
+                    }
+
+                    String logs = Utils.getMapboxLogs();
+                    Analytics.report(new Exception("Mapbox map failed to load due to no network connection but able to access styles directly: " + logs));
+                }
+
+                @Override
+                protected void onError(AirMapException e) {
+                    for (OnMapLoadListener mapLoadListener : mapLoadListeners) {
+                        mapLoadListener.onMapFailed(MapFailure.NETWORK_CONNECTION_FAILURE);
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onDidFinishRenderingMap(boolean fully) {
+        if (mapDataController != null) {
+            mapDataController.onMapFinishedRendering();
+        }
+    }
+
+    @Override
+    public boolean onMapClick(@NonNull LatLng point) {
+        if (advisoryClickListeners == null || advisoryClickListeners.isEmpty() || map.getCameraPosition().zoom < 11 || advisorySelector.isBusy()) {
+            return false;
         }
 
         advisorySelector.selectAdvisoriesAt(point, this, (featureClicked, advisoryClicked, advisoriesSelected) -> {
@@ -331,6 +329,8 @@ public class AirMapMapView extends MapView implements MapView.OnMapChangedListen
                 zoomToFeatureIfNecessary(featureClicked);
             }
         });
+
+        return true;
     }
 
     List<AirMapAdvisory> getCurrentAdvisories() {

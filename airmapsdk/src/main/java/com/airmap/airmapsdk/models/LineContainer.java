@@ -47,46 +47,46 @@ public class LineContainer extends Container {
         List<Point> lineString = new ArrayList<>(positions);
 
         // if polygon layer doesn't exist, create and add to map
-        if (map.getLayer(POINT_LAYER) == null) {
+        if (map.getStyle().getLayer(POINT_LAYER) == null) {
             Source pointSource = new GeoJsonSource(POINT_SOURCE, Feature.fromGeometry(MultiPoint.fromLngLats(positions)));
-            map.addSource(pointSource);
+            map.getStyle().addSource(pointSource);
             Layer pointLayer = new SymbolLayer(POINT_LAYER, POINT_SOURCE)
                     .withProperties(PropertyFactory.iconImage(CORNER_IMAGE));
-            map.addLayer(pointLayer);
+            map.getStyle().addLayer(pointLayer);
 
             Source midpointSource = new GeoJsonSource(MIDPOINT_SOURCE, Feature.fromGeometry(MultiPoint.fromLngLats(midPositions)));
-            map.addSource(midpointSource);
+            map.getStyle().addSource(midpointSource);
             Layer midpointLayer = new SymbolLayer(MIDPOINT_LAYER, MIDPOINT_SOURCE)
                     .withProperties(PropertyFactory.iconImage(MIDPOINT_IMAGE));
-            map.addLayer(midpointLayer);
+            map.getStyle().addLayer(midpointLayer);
 
             Source polygonSource = new GeoJsonSource(POLYGON_SOURCE, Feature.fromGeometry(polygon));
-            map.addSource(polygonSource);
+            map.getStyle().addSource(polygonSource);
             Layer polygonLayer = new FillLayer(POLYGON_LAYER, POLYGON_SOURCE)
                     .withProperties(PropertyFactory.fillColor(ContextCompat.getColor(context, R.color.colorAccent)), PropertyFactory.fillOpacity(0.5f));
-            map.addLayerBelow(polygonLayer, POINT_LAYER);
+            map.getStyle().addLayerBelow(polygonLayer, POINT_LAYER);
 
             Source polylineSource = new GeoJsonSource(POLYLINE_SOURCE, Feature.fromGeometry(LineString.fromLngLats(lineString)));
-            map.addSource(polylineSource);
+            map.getStyle().addSource(polylineSource);
             Layer polylineLayer = new LineLayer(POLYLINE_LAYER, POLYLINE_SOURCE)
                     .withProperties(PropertyFactory.lineColor(ContextCompat.getColor(context, R.color.colorPrimary)), PropertyFactory.lineOpacity(0.9f));
-            map.addLayerAbove(polylineLayer, POLYGON_LAYER);
+            map.getStyle().addLayerAbove(polylineLayer, POLYGON_LAYER);
 
             // otherwise, update source
         } else {
-            GeoJsonSource pointsSource = map.getSourceAs(POINT_SOURCE);
+            GeoJsonSource pointsSource = map.getStyle().getSourceAs(POINT_SOURCE);
             pointsSource.setGeoJson(Feature.fromGeometry(MultiPoint.fromLngLats(positions)));
 
-            GeoJsonSource midpointsSource = map.getSourceAs(MIDPOINT_SOURCE);
+            GeoJsonSource midpointsSource = map.getStyle().getSourceAs(MIDPOINT_SOURCE);
             midpointsSource.setGeoJson(Feature.fromGeometry(MultiPoint.fromLngLats(midPositions)));
 
-            GeoJsonSource polygonSource = map.getSourceAs(POLYGON_SOURCE);
+            GeoJsonSource polygonSource = map.getStyle().getSourceAs(POLYGON_SOURCE);
             polygonSource.setGeoJson(Feature.fromGeometry(polygon));
 
-            FillLayer polygonFill = map.getLayerAs(Container.POLYGON_LAYER);
+            FillLayer polygonFill = map.getStyle().getLayerAs(Container.POLYGON_LAYER);
             polygonFill.setProperties(PropertyFactory.fillColor(ContextCompat.getColor(context, R.color.colorAccent)));
 
-            GeoJsonSource polylineSource = map.getSourceAs(POLYLINE_SOURCE);
+            GeoJsonSource polylineSource = map.getStyle().getSourceAs(POLYLINE_SOURCE);
             polylineSource.setGeoJson(Feature.fromGeometry(LineString.fromLngLats(lineString)));
         }
     }
@@ -108,17 +108,17 @@ public class LineContainer extends Container {
         polygon = null;
         path = null;
 
-        map.removeLayer(POINT_LAYER);
-        map.removeSource(POINT_SOURCE);
+        map.getStyle().removeLayer(POINT_LAYER);
+        map.getStyle().removeSource(POINT_SOURCE);
 
-        map.removeLayer(MIDPOINT_LAYER);
-        map.removeSource(MIDPOINT_SOURCE);
+        map.getStyle().removeLayer(MIDPOINT_LAYER);
+        map.getStyle().removeSource(MIDPOINT_SOURCE);
 
-        map.removeLayer(POLYGON_LAYER);
-        map.removeSource(POLYGON_SOURCE);
+        map.getStyle().removeLayer(POLYGON_LAYER);
+        map.getStyle().removeSource(POLYGON_SOURCE);
 
-        map.removeLayer(POLYLINE_LAYER);
-        map.removeSource(POLYLINE_SOURCE);
+        map.getStyle().removeLayer(POLYLINE_LAYER);
+        map.getStyle().removeSource(POLYLINE_SOURCE);
     }
 
     public List<LatLng> getPath() {
