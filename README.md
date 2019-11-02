@@ -56,3 +56,4 @@ Visit [https://developers.airmap.com/](https://developers.airmap.com/) for the f
 
 # License
 See [LICENSE](https://raw.githubusercontent.com/airmap/AirMapSDK-Android/master/LICENSE) for details.
+________________________________________________________________________________________________________________________________Credit-Original app credits go to AirMap for development.
